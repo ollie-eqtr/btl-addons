@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 1 Dining, Family (hi-fi)</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- TOOLBAR -->
+  <div class="toolbar" data-device="desktop" id="rootToggleHost">
+    <span class="tlabel">Phase 1 Dining</span>
+    <div class="seg-group"><span class="gl">Booking</span>
+      <div class="seg" role="group" aria-label="Units"><button id="pt1" aria-pressed="true">1 unit</button><button id="pt2" aria-pressed="false">2 units</button></div>
+    </div>
+    <div class="right">
+      <div class="seg" role="group" aria-label="Christmas package"><button id="tgXmas" aria-pressed="false">Christmas pkg: off</button></div>
+      <div class="seg" role="group" aria-label="Lunch availability"><button id="tgLunch" aria-pressed="false">Lunch: available</button></div>
+      <div class="seg" role="group" aria-label="Device"><button id="dvMobile" aria-pressed="false">Mobile</button><button id="dvDesktop" aria-pressed="true">Desktop</button></div>
+    </div>
+  </div>
+
+  <!-- FRAME -->
+  <div class="frame-outer" id="deviceHost" data-device="desktop">
+    <div class="frame">
+
+      <div class="scroll">
+
+      <div class="appbar">
+        <span class="ico" aria-hidden="true">&#9776;</span>
+        <span class="brand">Butlin's<small>90 YEARS</small></span>
+        <span class="icons" aria-hidden="true"><span class="ico">&#128100;</span><span class="ico">?</span><span class="ico">&#8942;</span></span>
+      </div>
+      <div class="chrome-mid">
+        <div class="chrome-row">
+          <a href="#" class="backlink" onclick="return false;">&lsaquo; Back</a>
+          <nav class="stepbar" aria-label="Booking progress">
+            <span class="step done"><span class="dot" aria-hidden="true">&#10003;</span><span class="lbl">Accommodation</span></span>
+            <span class="sep" aria-hidden="true"></span>
+            <span class="step current" aria-current="step"><span class="dot" aria-hidden="true">2</span><span class="lbl">Dining</span></span>
+            <span class="sep" aria-hidden="true"></span>
+            <span class="step"><span class="dot" aria-hidden="true">3</span><span class="lbl">Extras</span></span>
+            <span class="sep" aria-hidden="true"></span>
+            <span class="step"><span class="dot" aria-hidden="true">4</span><span class="lbl">Guests</span></span>
+            <span class="sep" aria-hidden="true"></span>
+            <span class="step"><span class="dot" aria-hidden="true">5</span><span class="lbl">Payment</span></span>
+          </nav>
+        </div>
+        <div class="searchsum">
+          <span class="summ"><b>Bognor Regis</b> &middot; 27 to 31 July 2026 (4 nights) &middot; <b id="guestSumm">5 guests</b></span>
+          <button class="editsum" onclick="return false;">Edit search</button>
+        </div>
+      </div>
+
+        <div class="body">
+          <div class="intro">
+            <h2>Thought about food and drink?</h2>
+            <p>Our dining plans offer convenience, as well as being great value for money. And with so much choice, there's something for everyone.</p>
+          </div>
+          <div id="diningHost"></div>
+          <div id="xmasHost"></div>
+        </div>
+      </div>
+
+      <div class="footer" id="footer">
+        <div class="summary-panel" id="summaryPanel" role="region" aria-label="Price summary">
+          <div class="summary-inner" id="summaryInner"></div>
+        </div>
+        <div class="ftop">
+          <div class="ftot" aria-live="polite">
+            Total <b id="totalFig">&pound;428.00</b>
+            <button class="sumtoggle" id="sumToggle" aria-expanded="false" aria-controls="summaryPanel" onclick="toggleSummary()">Summary<span class="chev" aria-hidden="true"><svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.93974 5.27781L5.99959 1.21796L10.0594 5.27781" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+          </div>
+          <div class="factions">
+            <button class="savebtn" onclick="return false;">Save</button>
+            <button class="continue" id="continueBtn">Continue without dining</button>
+          </div>
+        </div>
+        <p class="reassure-foot">Amend dining options anytime before you arrive</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="sr-only" role="status" aria-live="polite" id="liveAnnounce"></div>
+
+  <div class="modal-overlay" id="drinksModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="drinksModalTitle">
+      <button class="modal-close" id="drinksModalClose" aria-label="Close">&times;</button>
+      <img class="modal-hero" src="assets-img/drinks.jpg" alt="A selection of drinks served at the resort bars">
+      <h3 id="drinksModalTitle">Drinks Package</h3>
+      <p>Soft and alcoholic drinks across the resort, served from 11am until late. Includes draught beers and ciders, house wine, spirits with mixers, soft drinks, teas and coffees. No dining plan needed, and it covers everyone on your booking.</p>
+      <ul class="modal-list">
+        <li>Available at all resort bars and venues</li>
+        <li>Soft drinks, hot drinks, beers, wines and spirits</li>
+        <li>Served from 11am, last orders at venue close</li>
+        <li>Applies to every unit on the booking</li>
+      </ul>
+      <p class="modal-note" id="drinksModalSaving"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================ DATA */
+var NIGHTS=4, ACCOM=428, DRINKS_WITH_PLAN=12, DRINKS_STANDALONE=14, XMAS_PP=32;
+
+/* meal levels. discount drives the strikethrough/save%. allinc = full board + drinks. */
+var MEALS=[
+  { id:"breakfast", name:"Breakfast only",        desc:"Full cooked breakfast each morning",            discount:0 },
+  { id:"halfboard", name:"Half board",            desc:"Breakfast and evening dinner each day",         discount:0.14 },
+  { id:"fullboard", name:"Full board",            desc:"Breakfast, lunch and dinner daily",             discount:0.17 },
+  { id:"allinc",    name:"Full board + drinks!",  desc:"Breakfast, lunch, dinner and drinks, daily!",   discount:0.20 }
+];
+function meal(id){ for(var i=0;i<MEALS.length;i++) if(MEALS[i].id===id) return MEALS[i]; return null; }
+function mealName(id){ var m=meal(id); return m?m.name:""; }
+function mealDesc(id){ var m=meal(id); return m?m.desc:""; }
+function discountOf(id){ var m=meal(id); return m?m.discount:0; }
+/* Each meal card uses a single pre-composed plate image (baked from the Figma
+   object layers) — one bounded <img> per card, so nothing crops or overlaps and
+   it scales cleanly to mobile. */
+/* asset() returns the linked path while iterating; _embed.py populates window.ASSETS
+   with base64 data URIs so the portable single-file build resolves images offline. */
+window.ASSETS=window.ASSETS||{};
+function asset(p){ return window.ASSETS[p]||p; }
+var DISH="assets-img/";
+/* pre-composed plate scenes (MealComps), one bounded image per meal card */
+var PLATE={ breakfast:"MealComps/1_breakfast.png", halfboard:"MealComps/2_half.png", fullboard:"MealComps/3_full.png", allinc:"MealComps/4_fullDrinks_v2.png" };
+function plateStack(id){
+  return '<img class="mc-photo" src="'+asset(DISH+(PLATE[id]||'meal-'+id+'.png'))+'" alt="">';
+}
+/* meals that contain lunch (disabled when lunch sold out) */
+function hasLunch(id){ return id==="fullboard"||id==="allinc"; }
+
+var PLANS=[
+  { id:"foodcourt", name:"Food Court Buffet", badge:"Best value", xmasIncluded:true,
+    desc:"Unlimited buffet dining: family favourites, salad bar and ice cream factory.",
+    img:"Food Court image",
+    incl:["Buffet breakfast and dinner","Kids' and tots' stations","Vegetarian and vegan choices"],
+    more:"Our Food Court is the heart of family dining at Butlin's, with a generous buffet that changes through the day and something to keep every age happy. Breakfast runs from a full cooked spread to pastries, fruit and cereals, while dinner brings family favourites, a fresh salad bar, a dedicated kids' and tots' station, and the ever-popular ice cream factory. Vegetarian, vegan and free-from options are available at every service, and unlimited tea, coffee and soft drinks are included throughout. Placeholder copy, brand team to set the final wording.",
+    rate:{ breakfast:13, halfboard:19, fullboard:25, allinc:37 }, resorts:["all"] },
+  { id:"premium", name:"Premium Buffet", badge:"", xmasIncluded:true,
+    desc:"Live cooking stations and themed dinner nights. A step up from the food court.",
+    img:"Premium Dining image",
+    incl:["Live cooking stations at dinner","Themed dinner nights","Cooked-to-order breakfast"],
+    more:"Premium Dining is our elevated buffet experience, for guests who want a little more from every meal. Expect live cooking stations where chefs prepare dishes to order, regular themed evenings that change through the week, and a cooked-to-order breakfast alongside the full continental spread. The hot and cold counters carry a wider premium range than the Food Court, with vegetarian, vegan and free-from choices clearly marked at every station, plus unlimited tea, coffee and soft drinks. Placeholder copy, brand team to set the final wording.",
+    rate:{ breakfast:16, halfboard:24, fullboard:30, allinc:42 }, resorts:["all"] },
+  { id:"dinearound", name:"Dinearound", badge:"", xmasIncluded:false,
+    desc:"Unlimited buffet breakfasts and dinners every day, with a great value spread of hot dishes, salad bar, soup and ice cream.",
+    img:"Dine Around image",
+    incl:["Unlimited buffet breakfast & dinner","Starters, salad bar & soup","Tea, coffee & soft drinks"],
+    more:"Dine Around gives you the freedom to eat somewhere different every day, with no need to book ahead. Start with a buffet breakfast, then choose a two-course lunch or dinner across a rotating range of resort restaurants, including Papa John's and our table-service venues, with a drink included alongside your meal. It suits families who like variety and older children who enjoy choosing for themselves, and vegetarian, vegan and free-from options are available across the participating restaurants. Placeholder copy, brand team to set the final wording.",
+    rate:{ halfboard:30 }, resorts:["all"] },
+  { id:"hotel", name:"Hotel Buffet", badge:"Bognor Regis only", xmasIncluded:false,
+    desc:"Premium quality and variety, served in your hotel restaurant.",
+    img:"Hotel Dining image",
+    incl:["Buffet breakfast and dinner","Hotel restaurant setting","Premium range"],
+    more:"Hotel Dining is exclusive to Bognor Regis and served in the comfort of the hotel restaurant, away from the busier resort venues. Enjoy a relaxed buffet breakfast and dinner each day with a premium range of hot and cold dishes, table service, and a calmer setting that many couples and families with younger children prefer. Vegetarian, vegan and free-from choices are available at every service, with unlimited tea, coffee and soft drinks included. Placeholder copy, brand team to set the final wording.",
+    rate:{ breakfast:16, halfboard:24, fullboard:30, allinc:42 }, resorts:["bognor"] }
+];
+var RESORT="bognor";
+function planById(id){ for(var i=0;i<PLANS.length;i++) if(PLANS[i].id===id) return PLANS[i]; return null; }
+function planVisible(p){ return p.resorts.indexOf("all")>-1 || p.resorts.indexOf(RESORT)>-1; }
+function planMeals(p){ var o=[]; for(var i=0;i<MEALS.length;i++) if(p.rate[MEALS[i].id]!=null) o.push(MEALS[i].id); return o; }
+function planSupportsMeal(p,m){ return p.rate[m]!=null; }
+function shortName(p){ return p.name; }
+
+/* ============================================================ STATE */
+var PARTY_SETS={
+  1:[ {id:"p1",label:"Your party",sub:"5 guests",guests:5} ],
+  2:[ {id:"p1",label:"Unit 1",sub:"2 adults",guests:2}, {id:"p2",label:"Unit 2",sub:"2 adults, 1 child",guests:3} ]
+};
+var state={ approach:"A", units:1, device:"desktop", xmasEnabled:false, lunchSoldOut:false, drinks:false,
+  parties:{} };
+function curParties(){ return PARTY_SETS[state.units]; }
+function firstPid(){ return curParties()[0].id; }
+function pslot(id){ if(!state.parties[id]) state.parties[id]={plan:null,meal:null,openTiers:{},mode:(id===firstPid()?"own":"same"),collapsed:false,xmas:false}; return state.parties[id]; }
+function totalGuests(){ var n=0,ps=curParties(); for(var i=0;i<ps.length;i++) n+=ps[i].guests; return n; }
+function effFor(party){ var s=pslot(party.id); if(party.id===firstPid()) return s; if(s.mode==="same") return pslot(firstPid()); return s; }
+function bookingAllinc(){ var f=pslot(firstPid()); return f.meal==="allinc" && !!f.plan; }
+function allincMealSelected(){ var f=pslot(firstPid()); return f.meal==="allinc"; }
+function anyPlan(){ var ps=curParties(); for(var i=0;i<ps.length;i++){ var e=effFor(ps[i]); if(e.plan&&e.meal) return true; } return false; }
+
+function gbp(n){ return "\u00A3"+n.toFixed(2); }
+function nowP(p,m,guests){ return p.rate[m]*guests*NIGHTS; }
+function wasP(now,m){ var d=discountOf(m); return d>0?Math.round(now/(1-d)):null; }
+function savePct(m){ var d=discountOf(m); return d>0?Math.round(d*100):0; }
+function announce(t){ document.getElementById('liveAnnounce').textContent=t; }
+
+function summaryText(s){
+  if(s.plan&&s.meal){
+    var t=shortName(planById(s.plan))+", "+mealName(s.meal);
+    if(state.xmasEnabled && s.xmas && !planById(s.plan).xmasIncluded) t+=" + Christmas Day dinner";
+    return t;
+  }
+  return "No dining selected yet";
+}
+
+/* ============================================================ RENDER */
+var dHost=document.getElementById('diningHost');
+var xHost=document.getElementById('xmasHost');
+
+function render(){
+  dHost.innerHTML="";
+  var ps=curParties();
+  if(ps.length===1){
+    pslot(ps[0].id).mode="own";
+    var sec=document.createElement('section');
+    var body=document.createElement('div'); body.className="party-body"; body.style.padding="0"; body.appendChild(unitBody(ps[0],true));
+    sec.appendChild(body); dHost.appendChild(sec);
+  } else {
+    /* Drinks bar sits above all unit containers in multi-unit.
+       It is a booking-level product, not unit-level, so hiding it inside
+       Unit 1 is misleading when Unit 2 has no reference to it. */
+    var bookingLevel=document.createElement('div'); bookingLevel.className="booking-level-bar"; bookingLevel.dataset.bookinglvl="1";
+    bookingLevel.innerHTML=drinksBar();
+    dHost.appendChild(bookingLevel);
+    for(var i=0;i<ps.length;i++){ dHost.appendChild(renderPartyBlock(ps[i])); }
+    /* Allergen band sits at the very bottom, below all unit containers */
+    var allergenEl=document.createElement('div'); allergenEl.innerHTML=allergenBand();
+    dHost.appendChild(allergenEl);
+  }
+  renderXmas();
+  wireAll();
+  recompute();
+}
+
+/* Unit 2 compact summary row: mirrors Unit 1's selection, shows this unit's
+   price, and offers a single "Customise for this unit" control (replaces the
+   old same/different toggle). forced=true when full board + drinks locks the
+   whole booking to one plan. */
+function sameRow(party, e, forced){
+  var has=e.plan&&e.meal;
+  var planTxt=has?(mealName(e.meal)+", "+shortName(planById(e.plan))):"No dining selected yet";
+  var price=has?gbp(nowP(planById(e.plan), e.meal, party.guests)):"";
+  var right=forced
+    ? '<span class="usr-note">Whole-booking plan</span>'
+    : '<button type="button" class="unit-customise" data-mode="own">Customise for this unit</button>';
+  return '<div class="unit-samerow">'+
+    '<div class="usr-text"><span class="usr-label">Same as Unit 1</span><span class="usr-plan'+(has?'':' none')+'">'+planTxt+'</span></div>'+
+    '<div class="usr-right">'+(price?'<span class="usr-price">'+price+'</span>':'')+right+'</div>'+
+    '</div>';
+}
+
+function renderPartyBlock(party){
+  var s=pslot(party.id);
+  var isFirst=party.id===firstPid();
+  var allinc=bookingAllinc();
+  var block=document.createElement('section'); block.className="party"; block.dataset.party=party.id; block.setAttribute('aria-label',party.label);
+
+  /* when booking is full board + drinks, every unit follows Unit 1 */
+  if(!isFirst && allinc){ s.mode="same"; }
+
+  var showsModule = isFirst || s.mode==="own";
+  var expanded = showsModule && !s.collapsed;
+
+  var headRight="";
+  if(showsModule){
+    var revert = (!isFirst && !allinc) ? '<button type="button" class="unit-revert" data-mode="same">Same as Unit 1</button>' : "";
+    headRight = revert + '<button class="collapse-btn" aria-expanded="'+(expanded?"true":"false")+'" aria-label="'+(expanded?"Collapse":"Expand")+' '+party.label+'"><span class="chev" aria-hidden="true"><svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.93974 1.72219L5.99959 5.78204L10.0594 1.72219" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>';
+  }
+
+  block.innerHTML='<div class="unit-head"><div class="uh-titles"><span class="uh-title">'+party.label+'</span><span class="uh-sub">'+party.sub+'</span></div><span class="uh-right">'+headRight+'</span></div>';
+
+  if(!isFirst && allinc){
+    var e=pslot(firstPid());
+    block.insertAdjacentHTML('beforeend', sameRow(party, e, true));
+    block.insertAdjacentHTML('beforeend','<p class="mode-explainer">Full board + drinks applies to the whole booking, so every unit has the same plan.</p>');
+    return block;
+  }
+  if(!showsModule){
+    block.insertAdjacentHTML('beforeend', sameRow(party, pslot(firstPid()), false));
+  } else if(!expanded){
+    block.insertAdjacentHTML('beforeend','<div class="party-summary'+(s.plan&&s.meal?'':' none')+'"><b>'+summaryText(s)+'</b></div>');
+  } else {
+    var bd=document.createElement('div'); bd.className="party-body"; bd.appendChild(unitBody(party,isFirst)); block.appendChild(bd);
+  }
+  return block;
+}
+
+function unitBody(party,isFirst){
+  var s=pslot(party.id);
+  var frag=document.createDocumentFragment();
+  var wrap=document.createElement('div'); wrap.dataset.idp=party.id;
+  wrap.innerHTML = isFirst ? moduleA(s, party.guests, true) : moduleASlim(s, party.guests);
+  frag.appendChild(wrap);
+  if(state.xmasEnabled){
+    var x=document.createElement('div'); x.dataset.xmasfor=party.id; x.innerHTML=christmasBlock(s, party.guests); frag.appendChild(x);
+  }
+  return frag;
+}
+
+function freebiePill(){ return '<span class="freebie-pill">Under 2s eat free!</span>'; }
+function headingA(){ return '<div class="mini-h"><span class="mh-text"><span class="stepn">Step 1</span>Choose your meal</span>'+freebiePill()+'</div>'; }
+function allergenBand(){ return '<div class="allergen-band"><div class="ab-text"><h3 class="ab-title">Allergies or dietary requirements?</h3><p class="ab-desc">Every plan caters for vegetarian, vegan and free-from diets.</p></div><a href="#" onclick="return false;">View allergen information<svg class="arrow-ne" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></a></div>'; }
+
+function drinksBar(){
+  var tg=totalGuests(), ap=anyPlan(), cost=(ap?DRINKS_WITH_PLAN:DRINKS_STANDALONE)*tg*NIGHTS;
+  var photo='<div class="db-photo" aria-hidden="true"></div>';
+  var info='<button type="button" class="db-link" data-drinks-info>What\'s included?</button>';
+  var txt='<div class="db-text"><span class="db-label">Drinks Package</span>'+
+    '<span class="db-title">Drinks for everyone on your booking</span>'+info+'</div>';
+  /* Three states:
+     1. bookingAllinc (meal=allinc + plan chosen): "Included with Full board + drinks"
+     2. allincMealSelected (meal=allinc, no plan yet): same included look, no add/remove button (meal card is the control)
+     3. Standard: toggleable add/remove button */
+  if(bookingAllinc() || allincMealSelected()){
+    return '<div class="drinks-bar is-on is-included">'+photo+txt+
+      '<span class="db-incl">Included with Full board + drinks</span></div>';
+  }
+  var on=state.drinks;
+  var tick='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+  var addBtn = on
+    ? '<span class="cta-ico">'+tick+'</span><span class="cta-label">Added</span><span class="cta-ico cta-ghost" aria-hidden="true">'+tick+'</span>'
+    : 'Add to booking';
+  return '<div class="drinks-bar'+(on?' is-on':'')+'">'+photo+txt+
+    '<span class="db-price">'+gbp(cost)+'</span>'+
+    '<button type="button" class="db-add" data-drinks-toggle aria-pressed="'+(on?'true':'false')+'">'+addBtn+'</button>'+
+    '</div>';
+}
+
+/* ---- A: meal cards then plan cards ---- */
+function moduleA(t,guests,isFirst){
+  var cards="";
+  for(var mi=0;mi<MEALS.length;mi++){
+    var m=MEALS[mi].id;
+    if(m==="allinc" && !isFirst) continue; /* full board + drinks is a whole-booking choice */
+    var supported=false, cheapest=null;
+    for(var i=0;i<PLANS.length;i++){ var p=PLANS[i]; if(!planVisible(p)||!planSupportsMeal(p,m)) continue; supported=true; var pr=nowP(p,m,guests); if(cheapest===null||pr<cheapest) cheapest=pr; }
+    if(!supported) continue;
+    var sold = state.lunchSoldOut && hasLunch(m);
+    var act = t.meal===m && !sold;
+    var priceCell = sold ? '<div class="mc-price"><span class="soldout-tag">Sold out</span></div>'
+      : '<div class="mc-price"><span class="mc-radio" aria-hidden="true"></span><span class="mc-pricetext">from <b>'+gbp(cheapest)+'</b></span></div>';
+    cards+='<div class="meal-card'+(act?' is-active':'')+(sold?' is-soldout':'')+'" role="radio" aria-checked="'+(act?'true':'false')+'" aria-disabled="'+(sold?'true':'false')+'" tabindex="'+(sold?'-1':'0')+'" data-meal="'+m+'">'+
+      '<div class="mc-body"><div class="mc-name">'+MEALS[mi].name+'</div>'+
+      '<div class="mc-desc">'+MEALS[mi].desc+'</div></div>'+
+      '<div class="mc-plate" aria-hidden="true">'+plateStack(m)+'</div>'+
+      priceCell+'</div>';
+  }
+  var out=(isFirst?headingA():'<div class="mini-h"><span class="mh-text"><span class="stepn">Step 1</span>Choose your meal</span></div>')+
+    '<div class="meal-opts" role="radiogroup" aria-label="Which meals would you like covered?">'+cards+'</div>';
+
+  if(isFirst && state.units===1) out+=drinksBar(); /* single-unit: drinks bar sits between step 1 and step 2. */
+
+  if(t.meal && !(state.lunchSoldOut && hasLunch(t.meal))){
+    var pcards="";
+    for(var j=0;j<PLANS.length;j++){
+      var pl=PLANS[j]; if(!planVisible(pl)||!planSupportsMeal(pl,t.meal)) continue;
+      pcards+=planCardA(pl,t,guests);
+    }
+    out+='<div class="mini-h" data-step2 style="scroll-margin-top:16px;"><span class="mh-text"><span class="stepn">Step 2</span>Choose your dining plan</span></div>'+
+      '<div class="plan-grid" role="group" aria-label="Dining plan">'+pcards+'</div>';
+  }
+  /* Allergen band always sits at the very bottom, after all plan cards */
+  if(isFirst && state.units===1) out+=allergenBand();
+  return out;
+}
+
+function planCardA(pl,t,guests){
+  var sel=t.plan===pl.id, now=nowP(pl,t.meal,guests), was=wasP(now,t.meal), saving=was?(was-now):0;
+  var incl='<ul class="incl">'+pl.incl.map(function(x){return '<li>'+x+'</li>';}).join("")+'</ul>';
+  var readmore='<button type="button" class="plan-more-toggle" aria-expanded="false">Read more</button>';
+  var more='<div class="plan-more"><p>'+pl.more+'</p><a class="sample-link" href="#" target="_blank" rel="noopener" onclick="return false;">View sample menu<svg class="ext-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>';
+  var saveTab=saving>0?'<div class="save-tab" aria-hidden="true">save <b>'+gbp(saving)+'</b></div>':'';
+  var priceRow='<div class="plan-foot">'+
+    '<div class="price">'+(was?'<span class="was">'+gbp(was)+'</span>':'')+
+    '<div class="now-row"><span class="now">'+gbp(now)+'</span><span class="basis">party total for 4 nights</span></div></div></div>';
+  var tick='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+  var cta='<button type="button" class="card-cta" aria-pressed="'+(sel?'true':'false')+'">'+
+    (sel
+      ? '<span class="cta-ico">'+tick+'</span><span class="cta-label">Added to booking</span><span class="cta-ico cta-ghost" aria-hidden="true">'+tick+'</span>'
+      : '<span class="cta-label">Add '+pl.name+'</span>')+
+    '</button>';
+  return '<div class="card'+(sel?' is-selected':'')+'" data-plan="'+pl.id+'">'+
+    '<h4>'+pl.name+'</h4>'+
+    '<div class="card-img" aria-hidden="true">'+saveTab+'</div>'+
+    '<div class="card-body">'+
+    '<p class="desc">'+pl.desc+'</p>'+
+    '<div class="incl-row">'+incl+readmore+'</div>'+
+    more+
+    priceRow+
+    cta+
+    '</div></div>';
+}
+
+/* ---- Slim module for units after Unit 1 (lighter, less repetitive) ---- */
+function moduleASlim(t,guests){
+  var rows="";
+  for(var mi=0;mi<MEALS.length;mi++){
+    var m=MEALS[mi].id;
+    if(m==="allinc") continue; /* whole-booking choice, Unit 1 only */
+    var supported=false,cheapest=null;
+    for(var i=0;i<PLANS.length;i++){ var p=PLANS[i]; if(!planVisible(p)||!planSupportsMeal(p,m)) continue; supported=true; var pr=nowP(p,m,guests); if(cheapest===null||pr<cheapest) cheapest=pr; }
+    if(!supported) continue;
+    var sold=state.lunchSoldOut&&hasLunch(m), act=t.meal===m&&!sold;
+    var price = sold ? '<span class="soldout-tag">Sold out</span>' : 'from <b>'+gbp(cheapest)+'</b>';
+    rows+='<div class="slim-row slim-meal'+(act?' is-active':'')+(sold?' is-soldout':'')+'" role="radio" aria-checked="'+(act?'true':'false')+'" aria-disabled="'+(sold?'true':'false')+'" tabindex="'+(sold?'-1':'0')+'" data-meal="'+m+'"><span class="sr-radio" aria-hidden="true"></span><div class="sr-main"><div class="sr-name">'+MEALS[mi].name+'</div><div class="sr-desc">'+MEALS[mi].desc+'</div></div><div class="sr-price">'+price+'</div></div>';
+  }
+  var out='<div class="mini-h"><span class="mh-text"><span class="stepn">Step 1</span>Choose your meal</span></div><div class="slim-list slim-meals" role="radiogroup" aria-label="Meals">'+rows+'</div>';
+  if(t.meal && !(state.lunchSoldOut&&hasLunch(t.meal))){
+    var prows="";
+    for(var j=0;j<PLANS.length;j++){
+      var pl=PLANS[j]; if(!planVisible(pl)||!planSupportsMeal(pl,t.meal)) continue;
+      var sel=t.plan===pl.id, now=nowP(pl,t.meal,guests), w=wasP(now,t.meal), sv=w?(w-now):0;
+      var cta='<button type="button" class="slim-cta" aria-pressed="'+(sel?'true':'false')+'">'+(sel?'Added':'Add')+'</button>';
+      prows+='<div class="slim-row slim-plan'+(sel?' is-active':'')+'" role="radio" aria-checked="'+(sel?'true':'false')+'" tabindex="0" data-plan="'+pl.id+'"><div class="sr-main"><div class="sr-name">'+pl.name+'</div><div class="sr-desc">'+pl.desc+'</div></div><div class="sr-right"><div class="sr-price">'+(w?'<span class="sr-was">'+gbp(w)+'</span>':'')+'<b>'+gbp(now)+'</b>'+(sv>0?'<span class="save-amt">Save '+gbp(sv)+'</span>':'')+'</div>'+cta+'</div></div>';
+    }
+    out+='<div class="mini-h"><span class="mh-text"><span class="stepn">Step 2</span>Choose your dining plan</span></div><div class="slim-list slim-plans" role="radiogroup" aria-label="Dining plan">'+prows+'</div>';
+  }
+  return out;
+}
+
+/* ---- Christmas ---- */
+function christmasBlock(s, guests){
+  var plan=s.plan?planById(s.plan):null;
+  var included=!!(plan && s.meal && plan.xmasIncluded);
+  var clarifier = included ? "" : '<p class="xmas-sub">Already included with Premium and Food Court plans.</p>';
+  var detail='<div class="xmas-detail" hidden><p class="ph">A festive three-course lunch with all the trimmings. You will get an invite in your welcome pack on arrival confirming your restaurant. Placeholder copy, brand team to set the final wording.</p><a href="#" onclick="return false;">Christmas Day sample menu</a></div>';
+  var rowHtml;
+  if(included){
+    rowHtml='<div class="xrow is-included"><div class="xr-l"><b>A three-course Christmas dinner with all the trimmings</b></div><div class="inc-tag">Included with '+shortName(plan)+'</div></div>';
+  } else {
+    var on=!!s.xmas, price=XMAS_PP*guests;
+    rowHtml='<div class="xrow'+(on?' is-on':'')+'"><div class="xr-l"><b>A three-course Christmas dinner with all the trimmings</b><span class="sub">'+gbp(XMAS_PP)+' per person &middot; '+gbp(price)+' for this unit</span></div>'+
+      '<div class="xr-r"><select class="sitting" aria-label="Choose a sitting"><option>Choose a sitting</option><option>12:00</option><option>13:30</option><option>15:00</option></select>'+
+      '<button type="button" class="mini" aria-pressed="'+(on?'true':'false')+'"><span class="m-off">Add</span><span class="m-on">&#10003; Added</span></button></div></div>';
+  }
+  return '<div class="xmas-block"><div class="xmas-head-row"><div class="xmas-heading">Christmas Day dinner</div>'+
+    '<button type="button" class="xmas-more" aria-expanded="false">Learn more</button></div>'+clarifier+detail+rowHtml+'</div>';
+}
+function renderXmas(){ xHost.innerHTML=""; } /* Christmas now lives inside each unit body */
+
+/* ============================================================ WIRING */
+function wireAll(){
+  dHost.querySelectorAll('[data-idp]').forEach(function(wrap){
+    var idp=wrap.dataset.idp, target=pslot(idp);
+    wrap.querySelectorAll('.meal-card').forEach(function(card){
+      if(card.getAttribute('aria-disabled')==='true') return;
+      function pick(){
+        var m=card.dataset.meal, selecting=(target.meal!==m);
+        if(target.meal===m){ target.meal=null; target.plan=null; announce(mealName(m)+" deselected."); }
+        else { target.meal=m; if(target.plan){ var p=planById(target.plan); if(!planSupportsMeal(p,target.meal)) target.plan=null; } announce(mealName(m)+" selected."); }
+        /* Full board + drinks includes drinks, so auto-select the drinks package */
+        if(selecting && m==="allinc") state.drinks=true;
+        render();
+        if(selecting && target.meal && !(state.lunchSoldOut && hasLunch(target.meal))){
+          setTimeout(function(){
+            /* Scroll to the drinks bar so it sits at the top of the viewport.
+               This ensures users see the drinks package before the plan cards. */
+            var anchor=dHost.querySelector('[data-idp="'+idp+'"] .drinks-bar') || dHost.querySelector('[data-idp="'+idp+'"] [data-step2]');
+            if(anchor && anchor.scrollIntoView){ var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches; anchor.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'}); }
+          }, 180);
+        }
+      }
+      card.addEventListener('click',pick);
+      card.addEventListener('keydown',function(e){ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); pick(); } });
+    });
+    wrap.querySelectorAll('.plan-grid .card-cta').forEach(function(btn){
+      var card=btn.closest('.card');
+      btn.addEventListener('click',function(){
+        var id=card.dataset.plan, selecting=(target.plan!==id);
+        if(target.plan===id){ target.plan=null; announce("Plan removed."); }
+        else { target.plan=id; announce(shortName(planById(id))+" selected."); }
+        render();
+        if(selecting && target.plan && idp===firstPid() && state.units>1){
+          setTimeout(function(){
+            var u2=dHost.querySelector('.party[data-party="'+curParties()[1].id+'"]');
+            if(u2 && u2.scrollIntoView){ var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches; u2.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'}); }
+          }, 180);
+        }
+      });
+    });
+    wrap.querySelectorAll('.plan-more-toggle').forEach(function(mt){
+      mt.addEventListener('click',function(e){ e.stopPropagation(); var d=mt.closest('.card').querySelector('.plan-more'); var o=d.classList.toggle('open'); mt.setAttribute('aria-expanded',o?'true':'false'); mt.textContent=o?'Read less':'Read more'; });
+    });
+    wrap.querySelectorAll('[data-drinks-toggle]').forEach(function(b){
+      b.addEventListener('click',function(){ state.drinks=!state.drinks; render(); });
+    });
+    wrap.querySelectorAll('[data-drinks-info]').forEach(function(b){
+      b.addEventListener('click',openDrinksModal);
+    });
+    wrap.querySelectorAll('.slim-meal').forEach(function(row){
+      if(row.getAttribute('aria-disabled')==='true') return;
+      function pick(){ var m=row.dataset.meal; if(target.meal===m){ target.meal=null; target.plan=null; } else { target.meal=m; if(target.plan){ var p=planById(target.plan); if(!planSupportsMeal(p,target.meal)) target.plan=null; } } render(); }
+      row.addEventListener('click',pick);
+      row.addEventListener('keydown',function(e){ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); pick(); } });
+    });
+    wrap.querySelectorAll('.slim-plan').forEach(function(row){
+      function pick(){ var id=row.dataset.plan; target.plan=(target.plan===id)?null:id; render(); }
+      row.addEventListener('click',pick);
+      row.addEventListener('keydown',function(e){ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); pick(); } });
+    });
+  });
+
+  dHost.querySelectorAll('[data-xmasfor]').forEach(function(x){
+    var id=x.dataset.xmasfor;
+    var more=x.querySelector('.xmas-more');
+    if(more) more.addEventListener('click',function(){ var d=x.querySelector('.xmas-detail'); var h=d.hasAttribute('hidden'); if(h){ d.removeAttribute('hidden'); this.setAttribute('aria-expanded','true'); this.textContent='Hide details'; } else { d.setAttribute('hidden',''); this.setAttribute('aria-expanded','false'); this.textContent='Learn more'; } });
+    var mini=x.querySelector('.mini');
+    if(mini) mini.addEventListener('click',function(){ var s=pslot(id); s.xmas=!s.xmas; render(); });
+  });
+
+  dHost.querySelectorAll('.party .unit-customise, .party .unit-revert').forEach(function(b){
+    var party=b.closest('.party').dataset.party;
+    b.addEventListener('click',function(){ var s=pslot(party); s.mode=b.dataset.mode; s.collapsed=false; if(s.mode==="own"&&!s.plan){ var f=pslot(firstPid()); s.plan=f.plan; s.meal=f.meal; s.xmas=f.xmas; } render(); });
+  });
+  dHost.querySelectorAll('.collapse-btn').forEach(function(b){
+    var party=b.closest('.party').dataset.party;
+    b.addEventListener('click',function(){ var s=pslot(party); s.collapsed=!s.collapsed; render(); });
+  });
+
+  /* Booking-level drinks bar (multi-unit): sits outside unit containers */
+  dHost.querySelectorAll('[data-bookinglvl] [data-drinks-toggle]').forEach(function(b){
+    b.addEventListener('click',function(){ state.drinks=!state.drinks; render(); });
+  });
+  dHost.querySelectorAll('[data-bookinglvl] [data-drinks-info]').forEach(function(b){
+    b.addEventListener('click',openDrinksModal);
+  });
+}
+
+function toggleDrinks(){ state.drinks=!state.drinks; render(); }
+
+function openDrinksModal(){ document.getElementById('drinksModal').hidden=false; document.getElementById('drinksModalClose').focus(); }
+function closeDrinksModal(){ document.getElementById('drinksModal').hidden=true; }
+
+/* ============================================================ RECOMPUTE */
+function recompute(){
+  var ps=curParties(), tg=totalGuests(), ap=anyPlan(), allinc=bookingAllinc();
+
+  var drinksCost=(ap?DRINKS_WITH_PLAN:DRINKS_STANDALONE)*tg*NIGHTS;
+  var dmSave=document.getElementById('drinksModalSaving');
+  if(ap){ var sv=(DRINKS_STANDALONE-DRINKS_WITH_PLAN)*tg*NIGHTS; dmSave.textContent="Buying drinks with a dining plan saves "+gbp(sv)+" versus booking separately."; }
+  else dmSave.textContent="";
+
+  var diningTotal=0, xmasTotal=0, dineSaving=0, calc=[];
+  for(var i=0;i<ps.length;i++){
+    var party=ps[i], e=effFor(party), hasPlan=!!(e.plan&&e.meal), dCost=0, xCost=0, included=false;
+    if(hasPlan){ var p=planById(e.plan); dCost=nowP(p,e.meal,party.guests); var w=wasP(dCost,e.meal); if(w) dineSaving+=(w-dCost); included=p.xmasIncluded; }
+    if(state.xmasEnabled && !included && e.xmas){ xCost=XMAS_PP*party.guests; }
+    diningTotal+=dCost; xmasTotal+=xCost;
+    calc.push({party:party,e:e,hasPlan:hasPlan,dCost:dCost,xCost:xCost,included:included});
+  }
+  var dc = (state.drinks && !allinc) ? drinksCost : 0;
+  var total=ACCOM+diningTotal+xmasTotal+dc;
+  document.getElementById('totalFig').innerHTML=gbp(total);
+
+  var anySelected = ap || (state.drinks && !allinc) || xmasTotal>0;
+  document.getElementById('continueBtn').textContent = anySelected ? "Continue to extras" : "Continue without dining";
+  document.getElementById('guestSumm').textContent = tg+" guests";
+
+  buildSummary(calc, dc, total, dineSaving, allinc);
+}
+
+function buildSummary(calc, drinksCost, total, dineSaving, allinc){
+  var inner=document.getElementById('summaryInner');
+  var html='<h3>Your break</h3>';
+  html+='<div class="sum-group"><div class="sg-head">Accommodation <span class="sub">Comfort Rooms, Bognor Regis</span></div>'+
+        '<div class="sum-line"><span>Room and break</span><span>'+gbp(ACCOM)+'</span></div></div>';
+  for(var i=0;i<calc.length;i++){
+    var c=calc[i], party=c.party;
+    html+='<div class="sum-group"><div class="sg-head">'+party.label+' <span class="sub">'+party.sub+'</span></div>';
+    if(c.hasPlan) html+='<div class="sum-line"><span>'+shortName(planById(c.e.plan))+', '+mealName(c.e.meal)+'</span><span>'+gbp(c.dCost)+'</span></div>';
+    else html+='<div class="sum-line muted"><span>No dining selected</span><span>&pound;0.00</span></div>';
+    if(state.xmasEnabled){
+      if(c.included) html+='<div class="sum-line"><span>Christmas Day dinner <span class="inc">included</span></span><span>&pound;0.00</span></div>';
+      else if(c.xCost>0) html+='<div class="sum-line"><span>Christmas Day dinner</span><span>'+gbp(c.xCost)+'</span></div>';
+    }
+    html+='</div>';
+  }
+  if(state.drinks && !allinc){
+    html+='<div class="sum-group"><div class="sg-head">Everyone on the booking</div>'+
+          '<div class="sum-line"><span>Drinks Package</span><span>'+gbp(drinksCost)+'</span></div></div>';
+  }
+  if(dineSaving>0) html+='<div class="sum-save">You save '+gbp(dineSaving)+' on dining versus the standard price.</div>';
+  html+='<div class="sum-total"><span>Total</span><span>'+gbp(total)+'</span></div>';
+  inner.innerHTML=html;
+}
+
+function toggleSummary(){
+  var panel=document.getElementById('summaryPanel'), btn=document.getElementById('sumToggle');
+  var open=panel.classList.toggle('open'); btn.setAttribute('aria-expanded',open?"true":"false");
+}
+
+/* ============================================================ CONTROLS */
+function clearLunchMeals(){
+  for(var k in state.parties){ var s=state.parties[k]; if(s && hasLunch(s.meal)){ s.meal=null; s.plan=null; } }
+}
+function setUnits(u){
+  state.units=u; state.parties={};
+  document.getElementById('pt1').setAttribute('aria-pressed',u===1?"true":"false");
+  document.getElementById('pt2').setAttribute('aria-pressed',u===2?"true":"false");
+  render();
+}
+var hosts=[document.getElementById('rootToggleHost'),document.getElementById('deviceHost')];
+function setDevice(d){
+  state.device=d; hosts.forEach(function(h){ h.setAttribute('data-device',d); });
+  document.getElementById('dvMobile').setAttribute('aria-pressed',d==="mobile"?"true":"false");
+  document.getElementById('dvDesktop').setAttribute('aria-pressed',d==="desktop"?"true":"false");
+}
+document.getElementById('pt1').addEventListener('click',function(){ setUnits(1); });
+document.getElementById('pt2').addEventListener('click',function(){ setUnits(2); });
+document.getElementById('dvMobile').addEventListener('click',function(){ setDevice("mobile"); });
+document.getElementById('dvDesktop').addEventListener('click',function(){ setDevice("desktop"); });
+document.getElementById('tgXmas').addEventListener('click',function(){
+  state.xmasEnabled=!state.xmasEnabled;
+  this.setAttribute('aria-pressed',state.xmasEnabled?"true":"false");
+  this.textContent="Christmas pkg: "+(state.xmasEnabled?"on":"off");
+  render();
+});
+document.getElementById('tgLunch').addEventListener('click',function(){
+  state.lunchSoldOut=!state.lunchSoldOut;
+  this.setAttribute('aria-pressed',state.lunchSoldOut?"true":"false");
+  this.textContent="Lunch: "+(state.lunchSoldOut?"sold out":"available");
+  if(state.lunchSoldOut) clearLunchMeals();
+  render();
+});
+
+document.getElementById('drinksModalClose').addEventListener('click',closeDrinksModal);
+document.getElementById('drinksModal').addEventListener('click',function(e){ if(e.target===this) closeDrinksModal(); });
+document.addEventListener('keydown',function(e){ if(e.key==="Escape" && !document.getElementById('drinksModal').hidden) closeDrinksModal(); });
+
+render();
+</script>
+</body>
+</html>

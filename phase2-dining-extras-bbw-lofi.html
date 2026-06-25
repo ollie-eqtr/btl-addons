@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 2 BBW Dining and Extras (lo-fi)</title>
+<style>
+/* ============================================================ WIREFRAME TOKENS */
+:root{
+  --ink:#2b2b2b; --ink2:#555; --muted:#7a7a7a;
+  --line:#cfcfcf; --line2:#a9a9a9; --line3:#8a8a8a;
+  --fill:#f2f2f2; --fill2:#e7e7e7; --fill3:#dcdcdc;
+  --paper:#fff; --bg:#9a9a9a;
+  --dark:#2b2b2b; --radius:10px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:var(--font);color:var(--ink);background:var(--bg);line-height:1.45;-webkit-font-smoothing:antialiased;}
+button{font-family:inherit;cursor:pointer;}
+h1,h2,h3,h4{margin:0;font-weight:700;color:var(--ink);}
+p{margin:0;}
+ul{margin:0;padding:0;list-style:none;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;}
+
+/* ============================================================ STAGE + TOOLBAR */
+.stage{padding:18px;min-height:100vh;}
+.toolbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1120px;margin:0 auto 14px;
+  background:#1f1f1f;color:#eee;border-radius:10px;padding:9px 12px;font-size:12px;}
+.toolbar .tlabel{font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:11px;}
+.toolbar .right{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap;}
+.seg-group{display:flex;align-items:center;gap:7px;}
+.seg-group .gl{color:#aaa;text-transform:uppercase;letter-spacing:.05em;font-size:10px;}
+.seg{display:inline-flex;border:1px solid #555;border-radius:7px;overflow:hidden;}
+.seg button{background:#2b2b2b;color:#ddd;border:0;padding:5px 9px;font-size:11px;border-right:1px solid #555;}
+.seg button:last-child{border-right:0;}
+.seg button[aria-pressed="true"]{background:#eee;color:#1f1f1f;font-weight:700;}
+
+/* ============================================================ DEVICE FRAME */
+.frame-outer{max-width:1120px;margin:0 auto;display:flex;justify-content:center;}
+.frame{position:relative;display:flex;flex-direction:column;width:1080px;height:880px;
+  background:var(--paper);border:1px solid #6f6f6f;border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.25);}
+.frame-outer[data-device="mobile"] .frame{width:390px;height:780px;}
+.scroll{flex:1;overflow:auto;scroll-behavior:smooth;}
+
+/* ============================================================ APP CHROME */
+.appbar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--line);background:var(--paper);}
+.appbar .ico{width:26px;height:26px;border:1px solid var(--line2);border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:var(--ink2);}
+.appbar .brand{font-weight:800;letter-spacing:.02em;font-size:17px;}
+.appbar .brand small{display:block;font-weight:600;font-size:8px;letter-spacing:.18em;color:var(--muted);}
+.appbar .icons{margin-left:auto;display:flex;gap:7px;}
+.chrome-mid{padding:12px 18px;border-bottom:1px solid var(--line);background:var(--fill);}
+.chrome-row{display:flex;align-items:center;gap:16px;}
+.backlink{color:var(--ink2);text-decoration:none;font-size:13px;font-weight:600;white-space:nowrap;}
+.stepbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.step{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:12px;}
+.step .dot{width:20px;height:20px;border-radius:50%;border:1px solid var(--line2);display:inline-flex;align-items:center;justify-content:center;font-size:11px;background:var(--paper);}
+.step.done .dot{background:var(--dark);color:#fff;border-color:var(--dark);}
+.step.current{color:var(--ink);font-weight:700;}
+.step.current .dot{border-color:var(--dark);border-width:2px;color:var(--ink);}
+.step .lbl{white-space:nowrap;}
+.sep{width:18px;height:1px;background:var(--line2);}
+.searchsum{display:flex;align-items:center;gap:12px;margin-top:10px;font-size:12.5px;color:var(--ink2);}
+.searchsum .editsum{margin-left:auto;background:var(--paper);border:1px solid var(--line2);border-radius:7px;padding:5px 10px;font-size:12px;color:var(--ink);}
+
+/* ============================================================ BODY + LAYOUT */
+.body{padding:16px 18px 22px;}
+.intro{margin-bottom:6px;}
+.intro h2{font-size:31px;line-height:1.06;margin-bottom:9px;text-transform:uppercase;letter-spacing:.035em;font-weight:800;}
+.intro p{color:var(--ink2);font-size:14px;max-width:60ch;}
+.frame-outer[data-device="mobile"] .intro h2{font-size:23px;}
+
+/* ---- section nav: horizontal tabs ---- */
+.sectionnav{position:sticky;top:0;z-index:4;display:flex;gap:2px;align-items:stretch;overflow-x:auto;
+  background:var(--paper);border-bottom:1px solid var(--line2);margin:0 -18px 18px;padding:0 14px;}
+.nav-item{display:inline-flex;align-items:center;gap:7px;background:none;border:0;border-radius:0;white-space:nowrap;
+  padding:12px 13px;font-size:13px;color:var(--ink2);border-bottom:2px solid transparent;}
+.nav-item:hover{color:var(--ink);}
+.nav-item.is-active{color:var(--ink);font-weight:700;border-bottom-color:var(--dark);}
+.nav-tick{width:15px;height:15px;border-radius:50%;border:1px solid var(--line2);display:none;align-items:center;justify-content:center;font-size:9px;background:var(--dark);border-color:var(--dark);color:#fff;}
+.nav-item.added .nav-tick{display:inline-flex;}
+
+/* ---- dining promo banner ---- */
+.promo-banner{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;
+  border:2px dashed var(--line3);border-radius:var(--radius);background:var(--fill);padding:16px;margin-bottom:14px;}
+.promo-banner .pb-main{font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink);}
+.promo-banner .pb-main .ast{font-size:11px;vertical-align:super;}
+.promo-banner .pb-sub{font-size:12.5px;color:var(--ink2);max-width:64ch;line-height:1.4;}
+.promo-note{font-size:11.5px;color:var(--muted);margin-top:8px;}
+.frame-outer[data-device="mobile"] .promo-banner .pb-main{font-size:14px;}
+
+/* ============================================================ SECTIONS + CARDS */
+.sec{scroll-margin-top:70px;margin-bottom:26px;}
+.group-label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;
+  border-bottom:1px solid var(--line);padding-bottom:6px;margin-bottom:12px;}
+.sec-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;}
+.sec-label{font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
+.scope-hint{font-size:11.5px;color:var(--muted);}
+.card{border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);margin-bottom:12px;overflow:hidden;}
+.card.is-added{border-color:var(--line3);box-shadow:inset 3px 0 0 var(--dark);}
+
+/* placeholder image */
+.ph-img{position:relative;background:repeating-linear-gradient(45deg,#ededed,#ededed 9px,#e3e3e3 9px,#e3e3e3 18px);
+  border-bottom:1px solid var(--line);height:120px;display:flex;align-items:center;justify-content:center;}
+.ph-img span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;background:rgba(255,255,255,.7);padding:2px 7px;border-radius:4px;}
+.ph-img.sm{height:84px;width:120px;flex:none;border-bottom:0;border-right:1px solid var(--line);}
+
+/* ---- dining cards (2-up grid; full width when single) ---- */
+.desc{color:var(--ink2);font-size:13px;margin-bottom:8px;}
+.price{display:flex;flex-direction:column;line-height:1.25;}
+.price .was{font-size:12px;color:var(--muted);text-decoration:line-through;}
+.price .now{font-size:20px;font-weight:800;}
+.price .pp{font-size:11px;color:var(--muted);}
+.dining-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.dining-grid.one{grid-template-columns:1fr;}
+.frame-outer[data-device="mobile"] .dining-grid{grid-template-columns:1fr;}
+.dcard{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);overflow:hidden;}
+.dcard.is-added{border-color:var(--line3);box-shadow:inset 3px 0 0 var(--dark);}
+.dc-head{padding:12px 14px;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:var(--fill2);border-bottom:1px solid var(--line);}
+.dc-img{height:150px;}
+.dc-save{position:absolute;left:0;bottom:0;display:inline-flex;align-items:baseline;gap:5px;background:var(--dark);color:#fff;font-size:12px;font-weight:700;padding:6px 12px;border-top-right-radius:16px;text-transform:lowercase;}
+.dc-save b{font-size:16px;}
+.dc-body{display:flex;flex-direction:column;gap:9px;padding:14px;flex:1;}
+.dc-body .desc{margin:0;}
+.dc-incl{display:flex;flex-direction:column;gap:4px;}
+.dc-incl li{position:relative;padding-left:20px;font-size:12.5px;color:var(--ink2);}
+.dc-incl li:before{content:"\2713";position:absolute;left:0;top:0;font-weight:800;color:var(--ink);}
+.dc-more-toggle{align-self:flex-start;background:none;border:0;border-bottom:1.5px solid var(--ink);padding:0 0 1px;font-size:13px;font-weight:600;color:var(--ink);}
+.dc-more{display:none;font-size:12.5px;color:var(--ink2);line-height:1.45;}
+.dc-more.open{display:block;}
+.dc-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:11px;}
+.dc-cta{width:100%;background:var(--paper);border:1.5px dashed var(--line3);border-radius:8px;padding:11px 14px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink);}
+.dc-cta:hover{background:var(--fill);}
+.dc-cta.is-added{background:var(--dark);color:#fff;border:1.5px solid var(--dark);}
+
+/* ---- unit blocks (multi-unit dining) ---- */
+.unit-block{border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin-bottom:12px;background:var(--paper);}
+.unit-head{display:flex;align-items:center;gap:9px;margin-bottom:10px;}
+.unit-head b{font-size:14px;}
+.unit-sub{font-size:12px;color:var(--muted);}
+.unit-head .btn.sm{margin-left:auto;}
+.samerow{display:flex;align-items:center;gap:10px;background:var(--fill);border:1px solid var(--line);border-radius:8px;padding:10px;}
+.same-label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+.same-plan{font-weight:700;font-size:13.5px;}
+.same-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.same-price{font-weight:700;}
+
+/* ---- buttons ---- */
+.btn{background:var(--paper);border:1px solid var(--line2);border-radius:8px;padding:8px 13px;font-size:13px;font-weight:600;color:var(--ink);}
+.btn:hover{background:var(--fill);}
+.btn.ghost{background:none;border-color:var(--line2);color:var(--ink2);}
+.btn.sm{padding:5px 9px;font-size:12px;}
+.btn.primary{background:var(--dark);color:#fff;border-color:var(--dark);}
+.btn-add{background:var(--paper);border:1.5px dashed var(--line3);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap;}
+.btn-add:hover{background:var(--fill);}
+.btn-add.is-added{background:var(--dark);color:#fff;border:1.5px solid var(--dark);}
+.btn-add .tick{font-weight:800;}
+
+/* ---- steppers ---- */
+.stepper{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line2);border-radius:8px;overflow:hidden;}
+.step-btn{width:34px;height:34px;border:0;background:var(--paper);font-size:18px;line-height:1;color:var(--ink);}
+.step-btn:hover{background:var(--fill);}
+.qty{min-width:30px;text-align:center;font-weight:700;font-size:14px;}
+.addall{background:none;border:0;color:var(--ink);text-decoration:underline;font-size:12px;padding:6px 0 0;display:inline-block;}
+
+/* ---- callouts ---- */
+.callout{display:flex;align-items:center;gap:12px;border:1px solid var(--line2);border-left:4px solid var(--dark);
+  border-radius:8px;background:var(--fill);padding:11px 13px;margin-bottom:12px;}
+.callout.strong{background:var(--fill2);}
+.callout b{font-size:14px;}
+.callout-sub{display:block;font-size:12px;color:var(--ink2);}
+.callout .btn{margin-left:auto;}
+
+/* ---- brunch: square image left, copy + controls right ---- */
+.chosen-line{font-size:12.5px;font-weight:700;margin:6px 0 8px;}
+.brunch-card2{display:flex;align-items:stretch;}
+.brunch-card2 .ph-img.square{width:210px;min-width:210px;flex:none;height:auto;border-bottom:0;border-right:1px solid var(--line);}
+.brunch-main{padding:14px;flex:1;}
+.brunch-main h3{font-size:16px;margin-bottom:4px;}
+.brunch-slots{margin-top:10px;border-top:1px dashed var(--line2);padding-top:10px;}
+.bp-day{margin-bottom:10px;}
+.bp-day-head{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;}
+.bp-pp{font-size:12px;color:var(--muted);}
+.bp-slot{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);}
+.bp-label{flex:1;font-size:13px;}
+.bp-right{display:flex;align-items:center;gap:12px;}
+.bp-line{font-weight:700;font-size:13px;min-width:54px;text-align:right;}
+.frame-outer[data-device="mobile"] .brunch-card2{flex-direction:column;}
+.frame-outer[data-device="mobile"] .brunch-card2 .ph-img.square{width:100%;min-width:0;height:120px;border-right:0;border-bottom:1px solid var(--line);}
+.frame-outer[data-device="mobile"] .bp-slot{flex-wrap:wrap;}
+
+/* ---- extras ---- */
+.card.extra{display:flex;align-items:stretch;gap:0;}
+.card.extra .ph-img{width:104px;min-width:104px;flex:none;height:auto;border-bottom:0;border-right:1px solid var(--line);}
+.card.extra.col{display:block;padding:13px;}
+.frame-outer[data-device="mobile"] .card.extra .ph-img{width:80px;min-width:80px;}
+.extra-body{padding:12px 13px;flex:1;}
+.extra-head{display:flex;align-items:center;gap:9px;margin-bottom:4px;}
+.extra-head h3{font-size:15px;}
+.scope-tag{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);border:1px solid var(--line2);border-radius:20px;padding:2px 8px;background:var(--fill);}
+.extra-foot{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:8px;padding:12px 13px;border-left:1px solid var(--line);min-width:120px;}
+.extra-foot.inline{flex-direction:row;border-left:0;padding:0;min-width:0;gap:10px;}
+.toggle-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line);}
+.toggle-row:first-of-type{border-top:0;}
+.row-sub{display:block;font-size:12px;color:var(--muted);}
+.toggle-row>div:first-child{flex:1;}
+
+/* ---- order overview ---- */
+.ov-block{border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);padding:13px;margin-bottom:12px;}
+.ov-head{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14px;margin-bottom:8px;}
+.ov-head .ov-sub{font-weight:500;font-size:12px;color:var(--muted);}
+.ov-head .btn{margin-left:auto;}
+.ov-head.as-toggle{width:100%;background:none;border:0;margin:0;cursor:pointer;}
+.ov-head .chev{margin-left:auto;color:var(--muted);}
+.ov-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line);font-size:13px;}
+.ov-row:first-child{border-top:0;}
+.ov-row .row-sub{font-weight:400;}
+.ov-row.muted{color:var(--muted);}
+.ov-price{margin-left:auto;text-align:right;display:flex;flex-direction:column;line-height:1.2;}
+.ov-price .pp{font-size:11px;color:var(--muted);}
+.ov-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.inc-tag{margin-left:auto;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);border:1px solid var(--line2);border-radius:20px;padding:2px 8px;background:var(--fill);}
+.ov-block.summary{background:var(--fill);}
+.sum-line{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:var(--ink2);}
+.sum-save{font-size:12.5px;font-weight:700;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:6px 9px;margin:6px 0;}
+.sum-total{display:flex;justify-content:space-between;font-weight:800;font-size:16px;border-top:2px solid var(--line2);margin-top:6px;padding-top:8px;}
+
+/* ============================================================ FOOTER */
+.footer{border-top:1px solid var(--line2);background:var(--paper);position:relative;z-index:6;}
+.summary-panel{max-height:0;overflow:hidden;transition:max-height .25s ease;border-bottom:0 solid var(--line);}
+.summary-panel.open{max-height:340px;overflow:auto;border-bottom:1px solid var(--line);}
+.summary-inner{padding:14px 18px;}
+.summary-inner h4{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;}
+.ftop{display:flex;align-items:center;gap:14px;padding:11px 18px;}
+.ftot{font-size:13px;color:var(--ink2);}
+.ftot b{font-size:18px;color:var(--ink);margin-left:4px;}
+.sumtoggle{margin-left:10px;background:none;border:0;color:var(--ink);text-decoration:underline;font-size:12.5px;font-weight:600;}
+.factions{margin-left:auto;display:flex;gap:9px;}
+.savebtn{background:var(--paper);border:1px solid var(--line2);border-radius:8px;padding:9px 15px;font-weight:600;font-size:13px;}
+.continue{background:var(--dark);color:#fff;border:1px solid var(--dark);border-radius:8px;padding:9px 17px;font-weight:700;font-size:13px;}
+.reassure-foot{text-align:center;font-size:11.5px;color:var(--muted);padding:0 0 9px;}
+.frame-outer[data-device="mobile"] .ftop{flex-wrap:wrap;gap:10px;}
+.frame-outer[data-device="mobile"] .factions{width:100%;}
+.frame-outer[data-device="mobile"] .continue{flex:1;}
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- DEV TOOLBAR -->
+  <div class="toolbar" id="rootToggleHost" data-device="desktop">
+    <span class="tlabel">Phase 2 · BBW Dining &amp; Extras</span>
+    <div class="seg-group"><span class="gl">Resort</span>
+      <div class="seg" role="group" aria-label="Resort"><button id="rsBognor" aria-pressed="true">Bognor Regis</button><button id="rsMine" aria-pressed="false">Minehead</button></div>
+    </div>
+    <div class="seg-group"><span class="gl">Dining options</span>
+      <div class="seg" role="group" aria-label="Dining options"><button id="dc1" aria-pressed="true">1</button><button id="dc2" aria-pressed="false">2</button><button id="dc3" aria-pressed="false">3</button></div>
+    </div>
+    <div class="right">
+      <div class="seg-group"><span class="gl">Units</span>
+        <div class="seg" role="group" aria-label="Units"><button id="un1" aria-pressed="true">1</button><button id="un2" aria-pressed="false">2</button></div>
+      </div>
+      <div class="seg" role="group" aria-label="Device"><button id="dvMobile" aria-pressed="false">Mobile</button><button id="dvDesktop" aria-pressed="true">Desktop</button></div>
+    </div>
+  </div>
+
+  <!-- DEVICE FRAME -->
+  <div class="frame-outer" id="deviceHost" data-device="desktop">
+    <div class="frame">
+
+      <div class="scroll" id="scroll">
+
+        <div class="appbar">
+          <span class="ico" aria-hidden="true">&#9776;</span>
+          <span class="brand">Butlin's<small>90 YEARS</small></span>
+          <span class="icons" aria-hidden="true"><span class="ico">&#128100;</span><span class="ico">?</span><span class="ico">&#8942;</span></span>
+        </div>
+
+        <div class="chrome-mid">
+          <div class="chrome-row">
+            <a href="#" class="backlink" onclick="return false;">&lsaquo; Back</a>
+            <nav class="stepbar" aria-label="Booking progress">
+              <span class="step done"><span class="dot" aria-hidden="true">&#10003;</span><span class="lbl">Accommodation</span></span>
+              <span class="sep" aria-hidden="true"></span>
+              <span class="step current" aria-current="step"><span class="dot" aria-hidden="true">2</span><span class="lbl">Dining &amp; Extras</span></span>
+              <span class="sep" aria-hidden="true"></span>
+              <span class="step"><span class="dot" aria-hidden="true">3</span><span class="lbl">Login</span></span>
+              <span class="sep" aria-hidden="true"></span>
+              <span class="step"><span class="dot" aria-hidden="true">4</span><span class="lbl">Payment</span></span>
+            </nav>
+          </div>
+          <div class="searchsum">
+            <span class="summ"><b id="resortSumm">Bognor Regis</b> &middot; 24 to 27 Apr 2026 (3 nights) &middot; <b id="guestSumm">4 guests</b></span>
+            <button class="editsum" onclick="return false;">Edit search</button>
+          </div>
+        </div>
+
+        <div class="body">
+          <div class="intro">
+            <h2>Eat, drink and make a weekend of it</h2>
+            <p>Sort your meals and the extras that make your Big Weekender, all in one place. Everything here can be amended before you arrive.</p>
+          </div>
+
+          <nav class="sectionnav" id="sectionNav" aria-label="Sections on this page"></nav>
+          <div class="content" id="content"></div>
+        </div>
+
+      </div>
+
+      <div class="footer" id="footer">
+        <div class="summary-panel" id="summaryPanel" role="region" aria-label="Price summary">
+          <div class="summary-inner" id="summaryInner"></div>
+        </div>
+        <div class="ftop">
+          <div class="ftot" aria-live="polite">Total <b id="totalFig">&pound;0.00</b>
+            <button class="sumtoggle" id="sumToggle" aria-expanded="false" aria-controls="summaryPanel">Summary</button>
+          </div>
+          <div class="factions">
+            <button class="savebtn" onclick="return false;">Save</button>
+            <button class="continue" id="continueBtn">Continue to login</button>
+          </div>
+        </div>
+        <p class="reassure-foot">Amend dining and extras anytime before you arrive</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="sr-only" role="status" aria-live="polite" id="liveAnnounce"></div>
+</div>
+
+<script>
+/* ============================================================ DATA */
+var ACCOM_UNIT=299.00;       /* per unit, from previous step */
+var DINING_DAYS=3, DINING_PAY=2;  /* "eat 3 days, pay for 2" promo */
+
+/* Flat BBW dining packages (no half/full board). rank drives how many show:
+   1 = Premium only, 2 = + Food Court, 3 = + Breakfast only. */
+var DINING=[
+  { id:"premium", name:"Premium Dining", rank:1, perDay:18, promo:true,
+    desc:"Hearty classics and brand-new street-food faves, finished with our Ultimate Carvery on Sunday.",
+    incl:["Unlimited buffet breakfast & dinner","Classics + globally-inspired street food","Ultimate Carvery Sunday roast"],
+    more:"No Big Weekender is complete without a Sunday roast, and our Ultimate Carvery is the perfect finale feast. Tuck into hearty dishes you know and love, or try something different with our brand-new globally-inspired street food." },
+  { id:"foodcourt", name:"Food Court", rank:2, perDay:14, promo:true,
+    desc:"Unlimited buffet breakfast and dinner \u2014 great value to help you stick to a budget.",
+    incl:["Unlimited buffet breakfast & dinner","Homemade favourites","Great value"],
+    more:"Whatever you fancy, satisfy those cravings with delicious homemade favourites. Available at Minehead and Skegness on selected weekenders." },
+  { id:"breakfast", name:"Breakfast Only", rank:3, perDay:9, promo:false,
+    desc:"Start each of your 3 days with a full cooked breakfast buffet.",
+    incl:["Full cooked breakfast daily","Pastries, fruit & cereals","Tea, coffee & juice"],
+    more:"A simple way to fuel up before a big day, with a full cooked breakfast plus a continental spread." }
+];
+
+/* Bottomless brunch (standalone, whole-booking). Per-guest steppers per slot. */
+var BRUNCH=[
+  { day:"Saturday", pp:35.95, slots:[ {id:"sat1",label:"11:30am – 1:30pm"}, {id:"sat2",label:"6:00pm – 8:00pm"} ] },
+  { day:"Sunday",   pp:34.65, slots:[ {id:"sun1",label:"3:00pm – 5:00pm"} ] }
+];
+
+var PRICE={ vip:40.00, spaEach:30.00, earlyCheckin:15.00, lateCheckout:15.00, towelEach:6.00, donation:2.00 };
+var INCLUDED=["Fairground","Silent Disco","Live Comedy","Singalong Quiz"];
+
+var PARTY_SETS={
+  1:[ {id:"p1",label:"Your party",sub:"4 guests",guests:4} ],
+  2:[ {id:"p1",label:"Unit 1",sub:"2 guests",guests:2}, {id:"p2",label:"Unit 2",sub:"2 guests",guests:2} ]
+};
+
+/* ============================================================ STATE */
+var state={
+  resort:"bognor", diningCount:1, units:1, device:"desktop",
+  parties:{},               /* pid -> {plan, mode, } */
+  brunch:{}, _brunchOpen:false,
+  vip:false, spaQty:0, earlyCheckin:false, lateCheckout:false, towelsQty:0, donation:false,
+  _inclOpen:false, _activeSec:"dining"
+};
+
+/* ============================================================ HELPERS */
+function gbp(n){ return "\u00A3"+n.toFixed(2); }
+function curParties(){ return PARTY_SETS[state.units]; }
+function firstPid(){ return curParties()[0].id; }
+function pslot(id){ if(!state.parties[id]) state.parties[id]={plan:null,mode:(id===firstPid()?"own":"same")}; return state.parties[id]; }
+function totalGuests(){ var n=0,ps=curParties(); for(var i=0;i<ps.length;i++) n+=ps[i].guests; return n; }
+function resortName(){ return state.resort==="bognor"?"Bognor Regis":"Minehead"; }
+function spaActive(){ return state.resort==="bognor"; }
+function diningById(id){ for(var i=0;i<DINING.length;i++) if(DINING[i].id===id) return DINING[i]; return null; }
+function visibleDining(){ var o=[]; for(var i=0;i<DINING.length;i++) if(DINING[i].rank<=state.diningCount) o.push(DINING[i]); return o; }
+function effPlan(party){ var s=pslot(party.id); if(party.id===firstPid()) return s.plan; return s.mode==="same"?pslot(firstPid()).plan:s.plan; }
+function anyDining(){ var ps=curParties(); for(var i=0;i<ps.length;i++) if(effPlan(ps[i])) return true; return false; }
+function announce(t){ document.getElementById('liveAnnounce').textContent=t; }
+
+function diningNow(plan,guests){ return plan.perDay*guests*(plan.promo?DINING_PAY:DINING_DAYS); }
+function diningWas(plan,guests){ return plan.perDay*guests*DINING_DAYS; }
+function brunchTotal(){ var t=0; BRUNCH.forEach(function(d){ d.slots.forEach(function(sl){ t+=(state.brunch[sl.id]||0)*d.pp; }); }); return t; }
+function brunchGuests(){ var n=0; BRUNCH.forEach(function(d){ d.slots.forEach(function(sl){ n+=(state.brunch[sl.id]||0); }); }); return n; }
+function vipCost(){ return state.vip?PRICE.vip:0; }
+function spaCost(){ return spaActive()?state.spaQty*PRICE.spaEach:0; }
+function checkCost(){ return (state.earlyCheckin?PRICE.earlyCheckin:0)+(state.lateCheckout?PRICE.lateCheckout:0); }
+function towelsCost(){ return state.towelsQty*PRICE.towelEach; }
+function donationCost(){ return state.donation?PRICE.donation:0; }
+function anyExtra(){ return brunchTotal()>0||vipCost()>0||spaCost()>0||checkCost()>0||towelsCost()>0||donationCost()>0; }
+
+function diningTotals(){
+  var ps=curParties(), total=0, save=0;
+  for(var i=0;i<ps.length;i++){ var id=effPlan(ps[i]); if(id){ var pl=diningById(id); total+=diningNow(pl,ps[i].guests); save+=diningWas(pl,ps[i].guests)-diningNow(pl,ps[i].guests); } }
+  return {total:total,save:save};
+}
+function computeAll(){
+  var accom=ACCOM_UNIT*state.units, d=diningTotals();
+  var brunch=brunchTotal(),vip=vipCost(),spa=spaCost(),chk=checkCost(),tow=towelsCost(),don=donationCost();
+  var extras=brunch+vip+spa+chk+tow+don;
+  return {accom:accom,dining:d.total,save:d.save,brunch:brunch,vip:vip,spa:spa,checkin:chk,towels:tow,donation:don,extras:extras,grand:accom+d.total+extras};
+}
+
+/* ============================================================ UI HELPERS */
+function phImg(label,cls){ return '<div class="ph-img '+(cls||'')+'" aria-hidden="true"><span>'+label+'</span></div>'; }
+function addBtn(on,attrs,off,onl){ off=off||"Add"; onl=onl||"Added";
+  return '<button type="button" class="btn-add'+(on?' is-added':'')+'" aria-pressed="'+(on?'true':'false')+'" '+attrs+'>'+
+    (on?('<span class="tick">\u2713</span> '+onl):off)+'</button>'; }
+function stepper(qty,attrs){ return '<div class="stepper" '+attrs+'><button type="button" class="step-btn" data-dir="-1" aria-label="Decrease">\u2212</button><span class="qty">'+qty+'</span><button type="button" class="step-btn" data-dir="1" aria-label="Increase">+</button></div>'; }
+
+/* ============================================================ DINING SECTION */
+function sectionDining(){
+  var head='<div class="sec-head"><span class="sec-label">Dining</span><span class="scope-hint">Priced per room &middot; your 3-day Big Weekender</span></div>';
+  var hasPromo=visibleDining().some(function(p){ return p.promo; });
+  var banner = hasPromo ? '<div class="promo-banner"><span class="pb-main">EAT FOR 3 DAYS, PAY FOR 2<span class="ast">*</span></span>'+
+    '<span class="pb-sub">Every Big Weekender runs for 3 days. Add a dining plan and we only charge you for 2 &mdash; with unlimited buffet breakfast and dinner throughout.</span></div>' : '';
+  var body = state.units===1 ? diningUnit(curParties()[0],true)
+                             : curParties().map(function(p,i){ return diningUnit(p,i===0); }).join('');
+  var note = hasPromo ? '<p class="promo-note">*Saving applies to Premium Dining and Food Court plans on selected weekenders, and is shown in your total.</p>' : '';
+  return '<section class="sec" id="sec-dining" data-sec="dining"><div class="group-label">Food &amp; drink</div>'+head+banner+body+note+'</section>';
+}
+function diningUnit(party,isFirst){
+  var s=pslot(party.id), plans=visibleDining();
+  if(!isFirst && s.mode==="same"){
+    var fid=effPlan(curParties()[0]);
+    var txt=fid?diningById(fid).name:"No plan selected";
+    var price=fid?gbp(diningNow(diningById(fid),party.guests)):"";
+    return '<div class="unit-block"><div class="unit-head"><b>'+party.label+'</b><span class="unit-sub">'+party.sub+'</span></div>'+
+      '<div class="samerow"><div><span class="same-label">Same as Unit 1</span><span class="same-plan">'+txt+'</span></div>'+
+      '<div class="same-right">'+(price?'<span class="same-price">'+price+'</span>':'')+'<button class="btn ghost sm" data-unit-customise="'+party.id+'">Customise</button></div></div></div>';
+  }
+  var chooser = '<div class="dining-grid'+(plans.length===1?' one':'')+'">'+plans.map(function(p){ return diningCard(p,party); }).join('')+'</div>';
+  if(state.units===1) return chooser;
+  var sameBtn = isFirst ? '' : '<button class="btn ghost sm" data-unit-same="'+party.id+'">Use same as Unit 1</button>';
+  var head = '<div class="unit-head"><b>'+party.label+'</b><span class="unit-sub">'+party.sub+'</span>'+sameBtn+'</div>';
+  return '<div class="unit-block">'+head+chooser+'</div>';
+}
+function diningCard(plan,party){
+  var s=pslot(party.id), on=s.plan===plan.id;
+  var now=diningNow(plan,party.guests), was=diningWas(plan,party.guests), save=was-now;
+  var saveTab = (plan.promo && save>0) ? '<div class="dc-save">save <b>'+gbp(save)+'</b></div>' : '';
+  var wasEl = (plan.promo && was>now) ? '<span class="was">'+gbp(was)+'</span>' : '';
+  var incl='<ul class="dc-incl">'+plan.incl.map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ul>';
+  var mid=plan.id+'-'+party.id;
+  var more = plan.more ? '<button type="button" class="dc-more-toggle" data-more="'+mid+'">Read more</button><div class="dc-more" id="more-'+mid+'">'+plan.more+'</div>' : '';
+  return '<div class="dcard'+(on?' is-added':'')+'" data-party="'+party.id+'" data-plan="'+plan.id+'">'+
+    '<div class="dc-head">'+plan.name+'</div>'+
+    '<div class="ph-img dc-img" aria-hidden="true"><span>'+plan.name+'</span>'+saveTab+'</div>'+
+    '<div class="dc-body"><p class="desc">'+plan.desc+'</p>'+incl+more+
+    '<div class="dc-foot"><div class="price">'+wasEl+'<span class="now">'+gbp(now)+'</span><span class="pp">party total &middot; 3-day break</span></div>'+
+    '<button type="button" class="dc-cta'+(on?' is-added':'')+'" data-dining-add="'+plan.id+'" data-party="'+party.id+'" aria-pressed="'+(on?'true':'false')+'">'+(on?'\u2713 Added':'Add '+plan.name)+'</button>'+
+    '</div></div></div>';
+}
+
+/* ============================================================ BRUNCH SECTION */
+function sectionBrunch(){
+  var g=brunchGuests(), total=brunchTotal();
+  var head='<div class="sec-head"><span class="sec-label">Bottomless Brunch</span><span class="scope-hint">Standalone &middot; priced per guest</span></div>';
+  var chosen = g>0 ? '<div class="chosen-line">'+g+' guest'+(g>1?'s':'')+' booked &middot; '+gbp(total)+' total</div>' : '';
+  var card='<div class="card brunch-card2">'+phImg("Bottomless Brunch","square")+
+    '<div class="brunch-main"><h3>Bottomless Brunch</h3>'+
+    '<p class="desc">Free-flowing drinks and a relaxed brunch with feel-good tunes. Pick a sitting and add the guests going.</p>'+
+    chosen+brunchPicker()+'</div></div>';
+  return '<section class="sec" id="sec-brunch" data-sec="brunch">'+head+card+'</section>';
+}
+function brunchPicker(){
+  var tg=totalGuests();
+  return '<div class="brunch-slots">'+BRUNCH.map(function(d){
+    return '<div class="bp-day"><div class="bp-day-head"><b>'+d.day+'</b><span class="bp-pp">'+gbp(d.pp)+'pp</span></div>'+
+      d.slots.map(function(sl){ var q=state.brunch[sl.id]||0;
+        return '<div class="bp-slot"><span class="bp-label">'+sl.label+'</span>'+
+          '<div class="bp-right">'+(q>0?'<span class="bp-line">'+gbp(q*d.pp)+'</span>':'')+
+          '<button type="button" class="addall" data-brunch-all="'+sl.id+'">'+(q>=tg&&tg>0?'Remove all':'Add all ('+tg+')')+'</button>'+
+          stepper(q,'data-brunch-slot="'+sl.id+'"')+'</div></div>'; }).join('')+
+      '</div>';
+  }).join('')+'</div>';
+}
+
+/* ============================================================ EXTRAS SECTION */
+function sectionExtras(){
+  var cards=[extraVIP()];
+  if(spaActive()) cards.push(extraSpa());
+  cards.push(extraCheck(),extraTowels());
+  return '<section class="sec" id="sec-extras" data-sec="extras"><div class="group-label">Extras</div>'+cards.join('')+'</section>';
+}
+function extraVIP(){
+  var on=state.vip, tg=totalGuests();
+  return '<div class="card extra'+(on?' is-added':'')+'">'+phImg("VIP Pass")+
+    '<div class="extra-body"><div class="extra-head"><h3>VIP Pass</h3><span class="scope-tag">Whole booking</span></div>'+
+    '<p class="desc">Priority access to Silent Disco, Bingo, Soul Stroll and Pool Party, plus a VIP pit with private bar.</p></div>'+
+    '<div class="extra-foot"><div class="price"><span class="now">'+gbp(PRICE.vip)+'</span><span class="pp">for your booking ('+gbp(PRICE.vip/tg)+'pp)</span></div>'+
+    addBtn(on,'data-extra="vip"','Add','Added')+'</div></div>';
+}
+function extraSpa(){
+  var q=state.spaQty, tg=totalGuests(), total=q*PRICE.spaEach;
+  return '<div class="card extra'+(q>0?' is-added':'')+'">'+phImg("Spa Experience")+
+    '<div class="extra-body"><div class="extra-head"><h3>Spa Experience</h3><span class="scope-tag">Per guest &middot; Bognor Regis</span></div>'+
+    '<p class="desc">A 2-hour experience at Ocean Spa with full use of the hydrospa, outdoor hot tub, sauna, crystal steam room and relaxation pods. Treatments available at extra cost.</p>'+
+    (q>0?'<div class="chosen-line">'+q+' guest'+(q>1?'s':'')+' &middot; '+gbp(total)+'</div>':'')+
+    '<button class="addall" data-spa-all>Add for all guests ('+tg+')</button></div>'+
+    '<div class="extra-foot"><div class="price"><span class="now">'+gbp(PRICE.spaEach)+'</span><span class="pp">per guest</span></div>'+stepper(q,'data-spa')+'</div></div>';
+}
+function extraCheck(){
+  function row(key,title,sub,price){ return '<div class="toggle-row"><div><b>'+title+'</b><span class="row-sub">'+sub+'</span></div>'+
+    '<div class="extra-foot inline"><span class="now">'+gbp(price)+'</span>'+addBtn(state[key],'data-extra="'+key+'"','Add','Added')+'</div></div>'; }
+  return '<div class="card extra col"><div class="extra-head"><h3>Check-in &amp; check-out</h3><span class="scope-tag">Whole booking</span></div>'+
+    row("earlyCheckin","Early check-in","Get into your room earlier",PRICE.earlyCheckin)+
+    row("lateCheckout","Late check-out","Stay later on your last day",PRICE.lateCheckout)+'</div>';
+}
+function extraTowels(){
+  var q=state.towelsQty, tg=totalGuests(), total=q*PRICE.towelEach;
+  return '<div class="card extra'+(q>0?' is-added':'')+'">'+phImg("Towels")+
+    '<div class="extra-body"><div class="extra-head"><h3>Towel Pack</h3><span class="scope-tag">Per item</span></div>'+
+    '<p class="desc">A fresh towel pack per person for your stay.</p>'+
+    (q>0?'<div class="chosen-line">'+q+' pack'+(q>1?'s':'')+' &middot; '+gbp(total)+'</div>':'')+
+    '<button class="addall" data-towels-all>Add for all guests ('+tg+')</button></div>'+
+    '<div class="extra-foot"><div class="price"><span class="now">'+gbp(PRICE.towelEach)+'</span><span class="pp">each</span></div>'+stepper(q,'data-towels')+'</div></div>';
+}
+
+/* ============================================================ ORDER OVERVIEW */
+function sectionOverview(){
+  return '<section class="sec" id="sec-overview" data-sec="overview"><div class="group-label">Your order</div>'+
+    ovDonation()+ovAccom()+ovDining()+ovIncluded()+ovSummary()+'</section>';
+}
+function ovDonation(){
+  var on=state.donation;
+  return '<div class="card extra'+(on?' is-added':'')+'"><div class="extra-body"><div class="extra-head"><h3>GOSH Donation</h3><span class="scope-tag">Whole booking</span></div>'+
+    '<p class="desc">Add a &pound;2 donation to Great Ormond Street Hospital Children\'s Charity. <a href="#" onclick="return false;">Find out more</a></p></div>'+
+    '<div class="extra-foot"><div class="price"><span class="now">'+gbp(PRICE.donation)+'</span></div>'+addBtn(on,'data-extra="donation"','Add','Added')+'</div></div>';
+}
+function ovAccom(){
+  var rows=curParties().map(function(p){ var pp=ACCOM_UNIT/p.guests;
+    return '<div class="ov-row"><div><b>'+p.label+'</b><span class="row-sub">'+p.sub+'</span></div><div class="ov-price"><span>'+gbp(ACCOM_UNIT)+'</span><span class="pp">'+gbp(pp)+'pp</span></div></div>'; }).join('');
+  return '<div class="ov-block"><div class="ov-head">Accommodation<span class="ov-sub">Comfort Room, '+resortName()+'</span></div>'+rows+
+    '<div class="ov-actions"><button class="btn ghost sm" onclick="return false;">Change accommodation</button><button class="btn ghost sm" onclick="return false;">Choose your room</button></div></div>';
+}
+function ovDining(){
+  var ps=curParties();
+  if(!anyDining()){
+    return '<div class="ov-block"><div class="ov-head">Dining</div><div class="callout strong"><div><b>No dining added</b><span class="callout-sub">Add a plan to sort meals before you arrive.</span></div><button class="btn primary sm" data-goto="dining">Choose dining</button></div></div>';
+  }
+  var rows=ps.map(function(p){ var id=effPlan(p); if(!id) return '<div class="ov-row muted"><span>'+p.label+'</span><span>No plan</span></div>';
+    var pl=diningById(id); return '<div class="ov-row"><div><b>'+p.label+'</b><span class="row-sub">'+pl.name+'</span></div><div class="ov-price"><span>'+gbp(diningNow(pl,p.guests))+'</span></div></div>'; }).join('');
+  return '<div class="ov-block"><div class="ov-head">Dining<button class="btn ghost sm" data-goto="dining">Edit</button></div>'+rows+'</div>';
+}
+function ovIncluded(){
+  var open=state._inclOpen;
+  return '<div class="ov-block"><button class="ov-head as-toggle" data-incl-toggle aria-expanded="'+(open?'true':'false')+'">Extras included in the price<span class="chev">'+(open?'\u25BE':'\u25B8')+'</span></button>'+
+    (open?('<div class="incl-list">'+INCLUDED.map(function(x){ return '<div class="ov-row"><span>'+x+'</span><span class="inc-tag">Included</span></div>'; }).join('')+'</div>'):'')+'</div>';
+}
+function summaryLines(c){
+  var h='';
+  h+='<div class="sum-line"><span>Accommodation</span><span>'+gbp(c.accom)+'</span></div>';
+  h+='<div class="sum-line"><span>Dining</span><span>'+(c.dining>0?gbp(c.dining):'\u2014')+'</span></div>';
+  if(c.brunch>0) h+='<div class="sum-line"><span>Bottomless Brunch</span><span>'+gbp(c.brunch)+'</span></div>';
+  if(c.vip>0) h+='<div class="sum-line"><span>VIP Pass</span><span>'+gbp(c.vip)+'</span></div>';
+  if(c.spa>0) h+='<div class="sum-line"><span>Spa Experience</span><span>'+gbp(c.spa)+'</span></div>';
+  if(c.checkin>0) h+='<div class="sum-line"><span>Check-in / check-out</span><span>'+gbp(c.checkin)+'</span></div>';
+  if(c.towels>0) h+='<div class="sum-line"><span>Towel packs</span><span>'+gbp(c.towels)+'</span></div>';
+  if(c.donation>0) h+='<div class="sum-line"><span>GOSH donation</span><span>'+gbp(c.donation)+'</span></div>';
+  if(c.save>0) h+='<div class="sum-save">You save '+gbp(c.save)+' on dining with this break\'s offer</div>';
+  return h;
+}
+function ovSummary(){
+  var c=computeAll();
+  return '<div class="ov-block summary"><div class="ov-head">Booking summary</div>'+summaryLines(c)+
+    '<div class="sum-total"><span>Total cost of holiday</span><span>'+gbp(c.grand)+'</span></div></div>';
+}
+
+/* ============================================================ NAV */
+var NAV=[{id:"dining",label:"Dining"},{id:"brunch",label:"Bottomless brunch"},{id:"extras",label:"Extras"},{id:"overview",label:"Your order"}];
+function navAdded(id){
+  if(id==="dining") return anyDining();
+  if(id==="brunch") return brunchGuests()>0;
+  if(id==="extras") return vipCost()>0||spaCost()>0||checkCost()>0||towelsCost()>0;
+  if(id==="overview") return donationCost()>0;
+  return false;
+}
+function buildNav(){
+  var el=document.getElementById('sectionNav');
+  el.innerHTML=NAV.map(function(n){
+    var added=navAdded(n.id), active=state._activeSec===n.id;
+    return '<button type="button" class="nav-item'+(active?' is-active':'')+(added?' added':'')+'" data-nav="'+n.id+'">'+
+      '<span class="nav-tick" aria-hidden="true">\u2713</span>'+n.label+'</button>';
+  }).join('');
+  el.querySelectorAll('[data-nav]').forEach(function(b){ b.addEventListener('click',function(){ gotoSec(b.getAttribute('data-nav')); }); });
+}
+function setActiveNav(id){ if(state._activeSec===id) return; state._activeSec=id;
+  document.querySelectorAll('#sectionNav .nav-item').forEach(function(b){ b.classList.toggle('is-active',b.getAttribute('data-nav')===id); }); }
+function gotoSec(id){ var el=document.getElementById('sec-'+id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }
+
+/* ============================================================ RENDER */
+var content=document.getElementById('content');
+var scrollEl=document.getElementById('scroll');
+function render(){
+  var keep=scrollEl.scrollTop;
+  content.innerHTML=sectionDining()+sectionBrunch()+sectionExtras()+sectionOverview();
+  wireContent();
+  buildNav();
+  recompute();
+  scrollEl.scrollTop=keep;
+}
+function recompute(){
+  var c=computeAll();
+  document.getElementById('totalFig').innerHTML=gbp(c.grand);
+  document.getElementById('continueBtn').textContent=(anyDining()||anyExtra())?"Continue to login":"Skip dining & extras";
+  document.getElementById('guestSumm').textContent=totalGuests()+" guests";
+  document.getElementById('resortSumm').textContent=resortName();
+  document.getElementById('summaryInner').innerHTML='<h4>Your break</h4>'+summaryLines(c)+
+    '<div class="sum-total"><span>Total cost of holiday</span><span>'+gbp(c.grand)+'</span></div>';
+  document.querySelectorAll('#sectionNav .nav-item').forEach(function(b){ b.classList.toggle('added',navAdded(b.getAttribute('data-nav'))); });
+}
+
+/* ============================================================ WIRING */
+function wireContent(){
+  content.querySelectorAll('[data-dining-add]').forEach(function(b){
+    b.addEventListener('click',function(){ var id=b.getAttribute('data-dining-add'), pid=b.getAttribute('data-party'); var s=pslot(pid);
+      var sel=s.plan!==id; s.plan=sel?id:null; announce(diningById(id).name+(sel?" added":" removed")); render(); });
+  });
+  content.querySelectorAll('[data-unit-customise]').forEach(function(b){
+    b.addEventListener('click',function(){ var s=pslot(b.getAttribute('data-unit-customise')); s.mode="own"; if(!s.plan) s.plan=pslot(firstPid()).plan; render(); });
+  });
+  content.querySelectorAll('[data-unit-same]').forEach(function(b){
+    b.addEventListener('click',function(){ var s=pslot(b.getAttribute('data-unit-same')); s.mode="same"; render(); });
+  });
+  content.querySelectorAll('[data-more]').forEach(function(b){
+    b.addEventListener('click',function(e){ e.stopPropagation(); var d=document.getElementById('more-'+b.getAttribute('data-more')); if(!d) return; var open=d.classList.toggle('open'); b.textContent=open?'Read less':'Read more'; });
+  });
+  content.querySelectorAll('[data-brunch-all]').forEach(function(b){
+    b.addEventListener('click',function(){ var sl=b.getAttribute('data-brunch-all'), tg=totalGuests(); state.brunch[sl]=((state.brunch[sl]||0)>=tg?0:tg); render(); });
+  });
+  content.querySelectorAll('.stepper').forEach(function(st){
+    var slot=st.getAttribute('data-brunch-slot'), spa=st.hasAttribute('data-spa'), tow=st.hasAttribute('data-towels');
+    st.querySelectorAll('.step-btn').forEach(function(btn){
+      btn.addEventListener('click',function(){ var dir=parseInt(btn.getAttribute('data-dir'),10);
+        if(slot){ state.brunch[slot]=Math.max(0,(state.brunch[slot]||0)+dir); }
+        else if(spa){ state.spaQty=Math.max(0,state.spaQty+dir); }
+        else if(tow){ state.towelsQty=Math.max(0,state.towelsQty+dir); }
+        render(); });
+    });
+  });
+  content.querySelectorAll('[data-spa-all]').forEach(function(b){ b.addEventListener('click',function(){ var tg=totalGuests(); state.spaQty=(state.spaQty>=tg?0:tg); render(); }); });
+  content.querySelectorAll('[data-towels-all]').forEach(function(b){ b.addEventListener('click',function(){ var tg=totalGuests(); state.towelsQty=(state.towelsQty>=tg?0:tg); render(); }); });
+  content.querySelectorAll('[data-extra]').forEach(function(b){
+    b.addEventListener('click',function(){ var k=b.getAttribute('data-extra'); state[k]=!state[k]; announce((state[k]?"Added ":"Removed ")+k); render(); });
+  });
+  content.querySelectorAll('[data-incl-toggle]').forEach(function(b){ b.addEventListener('click',function(){ state._inclOpen=!state._inclOpen; render(); }); });
+  content.querySelectorAll('[data-goto]').forEach(function(b){ b.addEventListener('click',function(){ gotoSec(b.getAttribute('data-goto')); }); });
+}
+
+/* ============================================================ SCROLL-SPY */
+function onScroll(){
+  var top=scrollEl.getBoundingClientRect().top, secs=content.querySelectorAll('.sec'), cur=null;
+  secs.forEach(function(s){ if(s.getBoundingClientRect().top-top<=90) cur=s; });
+  if(cur) setActiveNav(cur.getAttribute('data-sec'));
+}
+scrollEl.addEventListener('scroll',onScroll,{passive:true});
+
+/* ============================================================ FOOTER SUMMARY TOGGLE */
+document.getElementById('sumToggle').addEventListener('click',function(){
+  var p=document.getElementById('summaryPanel'), open=p.classList.toggle('open'); this.setAttribute('aria-expanded',open?'true':'false');
+});
+
+/* ============================================================ DEV CONTROLS */
+function press(id,on){ document.getElementById(id).setAttribute('aria-pressed',on?'true':'false'); }
+function pruneDining(){ var vis=visibleDining().map(function(p){return p.id;}); for(var k in state.parties){ var s=state.parties[k]; if(s.plan&&vis.indexOf(s.plan)<0) s.plan=null; } }
+function setResort(r){ state.resort=r; press('rsBognor',r==="bognor"); press('rsMine',r==="minehead"); render(); }
+function setDiningCount(n){ state.diningCount=n; press('dc1',n===1); press('dc2',n===2); press('dc3',n===3); pruneDining(); render(); }
+function setUnits(u){ state.units=u; state.parties={}; press('un1',u===1); press('un2',u===2); render(); }
+function setDevice(d){ state.device=d; document.getElementById('rootToggleHost').setAttribute('data-device',d); document.getElementById('deviceHost').setAttribute('data-device',d); press('dvMobile',d==="mobile"); press('dvDesktop',d==="desktop"); }
+document.getElementById('rsBognor').addEventListener('click',function(){ setResort("bognor"); });
+document.getElementById('rsMine').addEventListener('click',function(){ setResort("minehead"); });
+document.getElementById('dc1').addEventListener('click',function(){ setDiningCount(1); });
+document.getElementById('dc2').addEventListener('click',function(){ setDiningCount(2); });
+document.getElementById('dc3').addEventListener('click',function(){ setDiningCount(3); });
+document.getElementById('un1').addEventListener('click',function(){ setUnits(1); });
+document.getElementById('un2').addEventListener('click',function(){ setUnits(2); });
+document.getElementById('dvMobile').addEventListener('click',function(){ setDevice("mobile"); });
+document.getElementById('dvDesktop').addEventListener('click',function(){ setDevice("desktop"); });
+
+render();
+</script>
+</body>
+</html>
