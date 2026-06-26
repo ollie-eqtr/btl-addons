@@ -223,12 +223,15 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 [data-device="mobile"] .drinks-bar .db-link{grid-area:link;justify-self:start;font-size:14px;margin-top:2px;}
 [data-device="mobile"] .drinks-bar .db-price{grid-area:price;align-self:center;justify-self:end;font-size:22px;}
 [data-device="mobile"] .drinks-bar .db-add{grid-area:add;width:100%;min-width:0;margin-top:calc(var(--u)*1.5);}
-/* included: whole card turns green; keep the Drinks Package heading, included note as body copy */
-[data-device="mobile"] .drinks-bar.is-included{grid-template-columns:1fr;grid-template-areas:"label" "incl" "link";background:var(--positive);}
-[data-device="mobile"] .drinks-bar.is-included .db-title{display:none;}
-[data-device="mobile"] .drinks-bar.is-included .db-incl{grid-area:incl;background:none;border-radius:0;padding:0;font-size:14px;font-weight:400;color:#fff;}
-[data-device="mobile"] .drinks-bar.is-included .db-incl::before{width:auto;height:auto;background:none;border-radius:0;color:#fff;font-size:14px;}
-[data-device="mobile"] .drinks-bar.is-included .db-link{grid-area:link;color:#fff;border-bottom-color:rgba(255,255,255,.8);margin-top:6px;}
+/* included (Figma 272:935 mobile): black + green glow, stacked text, full-width translucent button */
+[data-device="mobile"] .drinks-bar.is-included{display:flex;flex-direction:column;align-items:stretch;gap:calc(var(--u)*3);grid-template-areas:none;padding:calc(var(--u)*1.5);background:radial-gradient(80% 300% at 60% 150%,rgba(101,179,46,.13) 0%,rgba(101,179,46,0) 65%),#181818;}
+[data-device="mobile"] .drinks-bar.is-included .db-text{display:flex;flex-direction:column;align-items:flex-start;gap:12px;}
+[data-device="mobile"] .drinks-bar.is-included .db-label{align-self:flex-start;font-size:16px;letter-spacing:.1em;color:var(--paper-2);}
+[data-device="mobile"] .drinks-bar.is-included .db-title{display:block;font-size:16px;font-weight:400;text-transform:none;letter-spacing:0;line-height:24px;color:var(--paper-2);}
+[data-device="mobile"] .drinks-bar.is-included .db-link{align-self:flex-start;color:var(--paper-2);border-bottom-color:var(--paper-2);font-size:16px;margin-top:0;}
+[data-device="mobile"] .drinks-bar.is-included .db-incl{width:100%;justify-content:space-between;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.03);border-radius:3px;padding:10px 20px;gap:16px;font-size:16px;font-weight:600;letter-spacing:1.6px;color:#fff;}
+[data-device="mobile"] .drinks-bar.is-included .db-incl::before{content:"";width:15px;height:11px;border-radius:0;background:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016.4142%2011.7071'%20fill='none'%3E%3Cpath%20d='M0.707107%205.70711L5.70711%2010.7071L15.7071%200.707107'%20stroke='%23fff'%20stroke-width='2'%20stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;}
+[data-device="mobile"] .drinks-bar.is-included .db-incl::after{content:"";flex:0 0 auto;width:15px;height:11px;}
 
 /* ============================================================
    STEP 2 — PLAN CARDS (coloured header band per Figma)
