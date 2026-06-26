@@ -29,7 +29,6 @@
   .cards{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*2);}
   .card{display:flex;flex-direction:column;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:calc(var(--u)*3);text-decoration:none;color:inherit;box-shadow:0 6px 24px rgba(0,0,0,.08);transition:transform .15s ease,box-shadow .15s ease;}
   .card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.14);}
-  .card .tag{align-self:flex-start;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);background:var(--paper-2);border-radius:999px;padding:4px 10px;margin-bottom:calc(var(--u)*2);}
   .card h2{font-size:22px;margin:0 0 6px;}
   .card p{font-size:14px;color:var(--ink-2);margin:0 0 calc(var(--u)*3);flex:1;}
   .go{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-ink);background:var(--accent);border-radius:var(--radius);padding:10px 16px;align-self:flex-start;}
@@ -43,20 +42,18 @@
 </head>
 <body>
   <main class="wrap">
-    <p class="eyebrow">Butlin's · Family Add-On Workstream</p>
-    <h1>Phase 1 — Dining prototypes</h1>
+    <p class="eyebrow">Butlin's Add-On Workstream</p>
+    <h1>Phase 01: Family Dining</h1>
     <p class="lede">Two versions of the family dining booking flow. Pick one to preview.</p>
 
     <div class="cards">
       <a class="card" href="/hifi">
-        <span class="tag">Hi-fi</span>
         <h2>High-fidelity</h2>
         <p>Fully branded, interactive prototype with final visual styling, imagery and motion.</p>
         <span class="go">View hi-fi &rarr;</span>
       </a>
 
       <a class="card" href="/lofi">
-        <span class="tag">Lo-fi</span>
         <h2>Low-fidelity</h2>
         <p>Lightweight wireframe focused on structure, content and flow without final styling.</p>
         <span class="go">View lo-fi &rarr;</span>
