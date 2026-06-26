@@ -14,10 +14,13 @@
   --dark:#2b2b2b; --radius:10px;
   --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 }
+/* A11Y NOTE: --muted (#7a7a7a) on white (--paper) is ~3.7:1 contrast. That clears WCAG 2.2 AA for large text only; for small (<18.66px) body text it is below the 4.5:1 threshold. Darken muted text or restrict it to large/decorative use at hi-fi. */
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{font-family:var(--font);color:var(--ink);background:var(--bg);line-height:1.45;-webkit-font-smoothing:antialiased;}
 button{font-family:inherit;cursor:pointer;}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:3px;}
+.toolbar :focus-visible{outline-color:#fff;}
 h1,h2,h3,h4{margin:0;font-weight:700;color:var(--ink);}
 p{margin:0;}
 ul{margin:0;padding:0;list-style:none;}
@@ -52,23 +55,25 @@ ul{margin:0;padding:0;list-style:none;}
 .chrome-mid{padding:12px 18px;border-bottom:1px solid var(--line);background:var(--fill);}
 .chrome-row{display:flex;align-items:center;gap:16px;}
 .backlink{color:var(--ink2);text-decoration:none;font-size:13px;font-weight:600;white-space:nowrap;}
-.stepbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.step{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:12px;}
-.step .dot{width:20px;height:20px;border-radius:50%;border:1px solid var(--line2);display:inline-flex;align-items:center;justify-content:center;font-size:11px;background:var(--paper);}
-.step.done .dot{background:var(--dark);color:#fff;border-color:var(--dark);}
-.step.current{color:var(--ink);font-weight:700;}
-.step.current .dot{border-color:var(--dark);border-width:2px;color:var(--ink);}
-.step .lbl{white-space:nowrap;}
-.sep{width:18px;height:1px;background:var(--line2);}
-.searchsum{display:flex;align-items:center;gap:12px;margin-top:10px;font-size:12.5px;color:var(--ink2);}
+.step-title{text-align:center;font-size:13.5px;font-weight:800;letter-spacing:.02em;color:var(--ink);margin-bottom:10px;}
+.step-row{position:relative;display:flex;align-items:center;justify-content:center;min-height:30px;}
+.step-row .backlink{position:absolute;left:0;top:50%;transform:translateY(-50%);}
+.dots{display:flex;align-items:center;gap:10px;}
+.dotstep{width:22px;height:22px;border-radius:50%;border:1px solid var(--line2);background:var(--paper);display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);}
+.dotstep.done{background:var(--dark);border-color:var(--dark);color:#fff;}
+.dotstep.current{background:var(--dark);border-color:var(--dark);color:#fff;box-shadow:0 0 0 3px var(--fill3);}
+.frame-outer[data-device="mobile"] .step-row{justify-content:flex-start;gap:14px;}
+.frame-outer[data-device="mobile"] .step-row .backlink{position:static;transform:none;}
+.searchsum{display:flex;align-items:center;gap:12px;margin-top:12px;font-size:12.5px;color:var(--ink2);}
 .searchsum .editsum{margin-left:auto;background:var(--paper);border:1px solid var(--line2);border-radius:7px;padding:5px 10px;font-size:12px;color:var(--ink);}
+.frame-outer[data-device="mobile"] .searchsum{flex-wrap:wrap;}
 
 /* ============================================================ BODY + LAYOUT */
 .body{padding:16px 18px 22px;}
 .intro{margin-bottom:6px;}
-.intro h2{font-size:31px;line-height:1.06;margin-bottom:9px;text-transform:uppercase;letter-spacing:.035em;font-weight:800;}
+.intro h1{font-size:31px;line-height:1.06;margin-bottom:9px;text-transform:uppercase;letter-spacing:.035em;font-weight:800;}
 .intro p{color:var(--ink2);font-size:14px;max-width:60ch;}
-.frame-outer[data-device="mobile"] .intro h2{font-size:23px;}
+.frame-outer[data-device="mobile"] .intro h1{font-size:23px;}
 
 /* ---- section nav: horizontal tabs ---- */
 .sectionnav{position:sticky;top:0;z-index:4;display:flex;gap:2px;align-items:stretch;overflow-x:auto;
@@ -132,6 +137,9 @@ ul{margin:0;padding:0;list-style:none;}
 .dc-cta{width:100%;background:var(--paper);border:1.5px dashed var(--line3);border-radius:8px;padding:11px 14px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink);}
 .dc-cta:hover{background:var(--fill);}
 .dc-cta.is-added{background:var(--dark);color:#fff;border:1.5px solid var(--dark);}
+/* equal-height compare: reserve consistent space so benefit rows line up across 2-3 cards */
+.dining-grid:not(.one) .dcard .desc{min-height:2.6em;}
+.dining-grid:not(.one) .dcard .dc-incl{min-height:66px;}
 
 /* ---- unit blocks (multi-unit dining) ---- */
 .unit-block{border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin-bottom:12px;background:var(--paper);}
@@ -158,7 +166,7 @@ ul{margin:0;padding:0;list-style:none;}
 
 /* ---- steppers ---- */
 .stepper{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line2);border-radius:8px;overflow:hidden;}
-.step-btn{width:34px;height:34px;border:0;background:var(--paper);font-size:18px;line-height:1;color:var(--ink);}
+.step-btn{width:44px;height:44px;border:0;background:var(--paper);font-size:18px;line-height:1;color:var(--ink);}
 .step-btn:hover{background:var(--fill);}
 .qty{min-width:30px;text-align:center;font-weight:700;font-size:14px;}
 .addall{background:none;border:0;color:var(--ink);text-decoration:underline;font-size:12px;padding:6px 0 0;display:inline-block;}
@@ -185,25 +193,28 @@ ul{margin:0;padding:0;list-style:none;}
 .bp-label{flex:1;font-size:13px;}
 .bp-right{display:flex;align-items:center;gap:12px;}
 .bp-line{font-weight:700;font-size:13px;min-width:54px;text-align:right;}
+.from-line{font-size:13px;font-weight:700;margin:2px 0 8px;}
+.brunch-reveal{align-self:flex-start;}
+.linklike{background:none;border:0;padding:0;margin-left:8px;color:var(--ink);text-decoration:underline;font-size:12.5px;font-weight:600;}
 .frame-outer[data-device="mobile"] .brunch-card2{flex-direction:column;}
 .frame-outer[data-device="mobile"] .brunch-card2 .ph-img.square{width:100%;min-width:0;height:120px;border-right:0;border-bottom:1px solid var(--line);}
 .frame-outer[data-device="mobile"] .bp-slot{flex-wrap:wrap;}
 
-/* ---- extras ---- */
-.card.extra{display:flex;align-items:stretch;gap:0;}
-.card.extra .ph-img{width:104px;min-width:104px;flex:none;height:auto;border-bottom:0;border-right:1px solid var(--line);}
-.card.extra.col{display:block;padding:13px;}
-.frame-outer[data-device="mobile"] .card.extra .ph-img{width:80px;min-width:80px;}
-.extra-body{padding:12px 13px;flex:1;}
-.extra-head{display:flex;align-items:center;gap:9px;margin-bottom:4px;}
-.extra-head h3{font-size:15px;}
+/* ---- extras: one consistent icon-led card ---- */
+.xcard{display:flex;align-items:stretch;}
+.xc-icon{width:74px;min-width:74px;flex:none;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--line);background:var(--fill);color:var(--ink2);}
+.xc-icon span{font-size:26px;line-height:1;}
+.xc-body{flex:1;padding:12px 13px;display:flex;flex-direction:column;gap:6px;}
+.xc-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.xc-head h3{font-size:15px;}
+.xc-body .desc{margin:0;}
+.xc-foot{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:8px;padding:12px 13px;border-left:1px solid var(--line);min-width:130px;}
 .scope-tag{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);border:1px solid var(--line2);border-radius:20px;padding:2px 8px;background:var(--fill);}
-.extra-foot{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:8px;padding:12px 13px;border-left:1px solid var(--line);min-width:120px;}
-.extra-foot.inline{flex-direction:row;border-left:0;padding:0;min-width:0;gap:10px;}
-.toggle-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line);}
-.toggle-row:first-of-type{border-top:0;}
 .row-sub{display:block;font-size:12px;color:var(--muted);}
-.toggle-row>div:first-child{flex:1;}
+.frame-outer[data-device="mobile"] .xcard{flex-wrap:wrap;}
+.frame-outer[data-device="mobile"] .xc-icon{width:56px;min-width:56px;}
+.frame-outer[data-device="mobile"] .xc-icon span{font-size:22px;}
+.frame-outer[data-device="mobile"] .xc-foot{border-left:0;border-top:1px solid var(--line);width:100%;flex-direction:row;justify-content:space-between;align-items:center;min-width:0;}
 
 /* ---- order overview ---- */
 .ov-block{border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);padding:13px;margin-bottom:12px;}
@@ -212,6 +223,7 @@ ul{margin:0;padding:0;list-style:none;}
 .ov-head .btn{margin-left:auto;}
 .ov-head.as-toggle{width:100%;background:none;border:0;margin:0;cursor:pointer;}
 .ov-head .chev{margin-left:auto;color:var(--muted);}
+.incl-count{font-weight:600;color:var(--muted);}
 .ov-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line);font-size:13px;}
 .ov-row:first-child{border-top:0;}
 .ov-row .row-sub{font-weight:400;}
@@ -220,27 +232,36 @@ ul{margin:0;padding:0;list-style:none;}
 .ov-price .pp{font-size:11px;color:var(--muted);}
 .ov-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
 .inc-tag{margin-left:auto;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);border:1px solid var(--line2);border-radius:20px;padding:2px 8px;background:var(--fill);}
+/* accommodation: room-picker upsell (primary) vs change link (de-emphasised) */
+.ov-upsell{display:flex;align-items:center;gap:12px;border:1px solid var(--line2);border-left:4px solid var(--dark);border-radius:8px;background:var(--fill);padding:11px 13px;margin-top:10px;}
+.ov-upsell .ovu-text{flex:1;}
+.ov-upsell .ovu-text b{font-size:13.5px;}
+.ov-upsell .btn{margin-left:auto;white-space:nowrap;}
+.ov-changelink{display:inline-block;margin-top:10px;background:none;border:0;padding:0;color:var(--ink2);text-decoration:underline;font-size:12.5px;}
+.frame-outer[data-device="mobile"] .ov-upsell{flex-wrap:wrap;}
+.frame-outer[data-device="mobile"] .ov-upsell .btn{width:100%;}
 .ov-block.summary{background:var(--fill);}
-.sum-line{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:var(--ink2);}
-.sum-save{font-size:12.5px;font-weight:700;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:6px 9px;margin:6px 0;}
-.sum-total{display:flex;justify-content:space-between;font-weight:800;font-size:16px;border-top:2px solid var(--line2);margin-top:6px;padding-top:8px;}
+.sum-line{display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:4px 0;color:var(--ink2);}
+.sum-line.head{color:var(--ink);font-weight:700;padding-top:6px;}
+.sum-line.subtotal{color:var(--ink);font-weight:800;font-size:12.5px;letter-spacing:.02em;}
+.sum-addlink{background:none;border:0;padding:0;color:var(--ink);font-weight:600;font-size:13px;text-decoration:underline;}
+.sum-div{border-top:1px solid var(--line2);margin:7px 0;}
+.sum-total{display:flex;justify-content:space-between;gap:12px;font-weight:800;font-size:15px;border-top:2px solid var(--line2);margin-top:8px;padding-top:10px;}
 
 /* ============================================================ FOOTER */
 .footer{border-top:1px solid var(--line2);background:var(--paper);position:relative;z-index:6;}
-.summary-panel{max-height:0;overflow:hidden;transition:max-height .25s ease;border-bottom:0 solid var(--line);}
-.summary-panel.open{max-height:340px;overflow:auto;border-bottom:1px solid var(--line);}
-.summary-inner{padding:14px 18px;}
-.summary-inner h4{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;}
-.ftop{display:flex;align-items:center;gap:14px;padding:11px 18px;}
-.ftot{font-size:13px;color:var(--ink2);}
-.ftot b{font-size:18px;color:var(--ink);margin-left:4px;}
-.sumtoggle{margin-left:10px;background:none;border:0;color:var(--ink);text-decoration:underline;font-size:12.5px;font-weight:600;}
-.factions{margin-left:auto;display:flex;gap:9px;}
-.savebtn{background:var(--paper);border:1px solid var(--line2);border-radius:8px;padding:9px 15px;font-weight:600;font-size:13px;}
-.continue{background:var(--dark);color:#fff;border:1px solid var(--dark);border-radius:8px;padding:9px 17px;font-weight:700;font-size:13px;}
-.reassure-foot{text-align:center;font-size:11.5px;color:var(--muted);padding:0 0 9px;}
-.frame-outer[data-device="mobile"] .ftop{flex-wrap:wrap;gap:10px;}
-.frame-outer[data-device="mobile"] .factions{width:100%;}
+.ftop{display:flex;align-items:center;gap:18px;padding:12px 18px;}
+.ftot{display:flex;flex-direction:column;line-height:1.12;}
+.ftot-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+.ftot b{font-size:21px;color:var(--ink);}
+.finstruct{flex:1;font-size:12px;color:var(--ink2);min-width:0;}
+.factions{display:flex;gap:9px;}
+.savebtn{background:var(--paper);border:1px solid var(--line2);border-radius:8px;padding:10px 15px;font-weight:600;font-size:13px;color:var(--ink);}
+.savebtn:hover{background:var(--fill);}
+.continue{background:var(--dark);color:#fff;border:1px solid var(--dark);border-radius:8px;padding:10px 18px;font-weight:700;font-size:13px;}
+.frame-outer[data-device="mobile"] .ftop{flex-wrap:wrap;gap:8px 12px;}
+.frame-outer[data-device="mobile"] .finstruct{order:3;width:100%;flex:0 0 100%;}
+.frame-outer[data-device="mobile"] .factions{order:2;margin-left:auto;}
 .frame-outer[data-device="mobile"] .continue{flex:1;}
 </style>
 </head>
@@ -277,27 +298,26 @@ ul{margin:0;padding:0;list-style:none;}
         </div>
 
         <div class="chrome-mid">
-          <div class="chrome-row">
+          <p class="step-title">Step 2 of 5: Dining &amp; Extras</p>
+          <div class="step-row">
             <a href="#" class="backlink" onclick="return false;">&lsaquo; Back</a>
-            <nav class="stepbar" aria-label="Booking progress">
-              <span class="step done"><span class="dot" aria-hidden="true">&#10003;</span><span class="lbl">Accommodation</span></span>
-              <span class="sep" aria-hidden="true"></span>
-              <span class="step current" aria-current="step"><span class="dot" aria-hidden="true">2</span><span class="lbl">Dining &amp; Extras</span></span>
-              <span class="sep" aria-hidden="true"></span>
-              <span class="step"><span class="dot" aria-hidden="true">3</span><span class="lbl">Login</span></span>
-              <span class="sep" aria-hidden="true"></span>
-              <span class="step"><span class="dot" aria-hidden="true">4</span><span class="lbl">Payment</span></span>
-            </nav>
+            <div class="dots" role="list" aria-label="Booking progress, step 2 of 5">
+              <span class="dotstep done" role="listitem" aria-label="Step 1, complete"><span aria-hidden="true">&#10003;</span></span>
+              <span class="dotstep current" role="listitem" aria-current="step" aria-label="Step 2, current"></span>
+              <span class="dotstep" role="listitem" aria-label="Step 3"></span>
+              <span class="dotstep" role="listitem" aria-label="Step 4"></span>
+              <span class="dotstep" role="listitem" aria-label="Step 5"></span>
+            </div>
           </div>
           <div class="searchsum">
-            <span class="summ"><b id="resortSumm">Bognor Regis</b> &middot; 24 to 27 Apr 2026 (3 nights) &middot; <b id="guestSumm">4 guests</b></span>
+            <span class="summ"><b id="resortSumm">Bognor Regis</b> | 24 to 27 Apr 2026 (3 nights) | <b id="guestSumm">4 guests</b></span>
             <button class="editsum" onclick="return false;">Edit search</button>
           </div>
         </div>
 
         <div class="body">
           <div class="intro">
-            <h2>Eat, drink and make a weekend of it</h2>
+            <h1>Eat, drink and make a weekend of it</h1>
             <p>Sort your meals and the extras that make your Big Weekender, all in one place. Everything here can be amended before you arrive.</p>
           </div>
 
@@ -308,19 +328,14 @@ ul{margin:0;padding:0;list-style:none;}
       </div>
 
       <div class="footer" id="footer">
-        <div class="summary-panel" id="summaryPanel" role="region" aria-label="Price summary">
-          <div class="summary-inner" id="summaryInner"></div>
-        </div>
         <div class="ftop">
-          <div class="ftot" aria-live="polite">Total <b id="totalFig">&pound;0.00</b>
-            <button class="sumtoggle" id="sumToggle" aria-expanded="false" aria-controls="summaryPanel">Summary</button>
-          </div>
+          <div class="ftot" aria-live="polite"><span class="ftot-label">Total price</span><b id="totalFig">&pound;0.00</b></div>
+          <p class="finstruct" id="footNote">To book your break without a dining plan, select continue.</p>
           <div class="factions">
-            <button class="savebtn" onclick="return false;">Save</button>
-            <button class="continue" id="continueBtn">Continue to login</button>
+            <button class="savebtn" onclick="return false;">Save quote</button>
+            <button class="continue" id="continueBtn">Continue</button>
           </div>
         </div>
-        <p class="reassure-foot">Amend dining and extras anytime before you arrive</p>
       </div>
 
     </div>
@@ -332,6 +347,9 @@ ul{margin:0;padding:0;list-style:none;}
 <script>
 /* ============================================================ DATA */
 var ACCOM_UNIT=299.00;       /* per unit, from previous step */
+var ROOM_NAME="Comfort Room";
+var ROOM_PICK=25.00;         /* optional "choose your exact room" upsell (representational, not added to total) */
+var DINING_FROM=37.50;       /* lead-in "from" price teaser for dining plans */
 var DINING_DAYS=3, DINING_PAY=2;  /* "eat 3 days, pay for 2" promo */
 
 /* Flat BBW dining packages (no half/full board). rank drives how many show:
@@ -342,7 +360,7 @@ var DINING=[
     incl:["Unlimited buffet breakfast & dinner","Classics + globally-inspired street food","Ultimate Carvery Sunday roast"],
     more:"No Big Weekender is complete without a Sunday roast, and our Ultimate Carvery is the perfect finale feast. Tuck into hearty dishes you know and love, or try something different with our brand-new globally-inspired street food." },
   { id:"foodcourt", name:"Food Court", rank:2, perDay:14, promo:true,
-    desc:"Unlimited buffet breakfast and dinner \u2014 great value to help you stick to a budget.",
+    desc:"Unlimited buffet breakfast and dinner, great value to help you stick to a budget.",
     incl:["Unlimited buffet breakfast & dinner","Homemade favourites","Great value"],
     more:"Whatever you fancy, satisfy those cravings with delicious homemade favourites. Available at Minehead and Skegness on selected weekenders." },
   { id:"breakfast", name:"Breakfast Only", rank:3, perDay:9, promo:false,
@@ -353,11 +371,11 @@ var DINING=[
 
 /* Bottomless brunch (standalone, whole-booking). Per-guest steppers per slot. */
 var BRUNCH=[
-  { day:"Saturday", pp:35.95, slots:[ {id:"sat1",label:"11:30am – 1:30pm"}, {id:"sat2",label:"6:00pm – 8:00pm"} ] },
-  { day:"Sunday",   pp:34.65, slots:[ {id:"sun1",label:"3:00pm – 5:00pm"} ] }
+  { day:"Saturday", pp:35.95, slots:[ {id:"sat1",label:"11:30am to 1:30pm"}, {id:"sat2",label:"6:00pm to 8:00pm"} ] },
+  { day:"Sunday",   pp:34.65, slots:[ {id:"sun1",label:"3:00pm to 5:00pm"} ] }
 ];
 
-var PRICE={ vip:40.00, spaEach:30.00, earlyCheckin:15.00, lateCheckout:15.00, towelEach:6.00, donation:2.00 };
+var PRICE={ vip:40.00, spaEach:30.00, earlyCheckin:22.00, lateCheckout:28.00, towelEach:6.00, donation:2.00 };
 var INCLUDED=["Fairground","Silent Disco","Live Comedy","Singalong Quiz"];
 
 var PARTY_SETS={
@@ -394,21 +412,28 @@ function brunchTotal(){ var t=0; BRUNCH.forEach(function(d){ d.slots.forEach(fun
 function brunchGuests(){ var n=0; BRUNCH.forEach(function(d){ d.slots.forEach(function(sl){ n+=(state.brunch[sl.id]||0); }); }); return n; }
 function vipCost(){ return state.vip?PRICE.vip:0; }
 function spaCost(){ return spaActive()?state.spaQty*PRICE.spaEach:0; }
-function checkCost(){ return (state.earlyCheckin?PRICE.earlyCheckin:0)+(state.lateCheckout?PRICE.lateCheckout:0); }
+function earlyCost(){ return state.earlyCheckin?PRICE.earlyCheckin:0; }
+function lateCost(){ return state.lateCheckout?PRICE.lateCheckout:0; }
+function checkCost(){ return earlyCost()+lateCost(); }
 function towelsCost(){ return state.towelsQty*PRICE.towelEach; }
 function donationCost(){ return state.donation?PRICE.donation:0; }
-function anyExtra(){ return brunchTotal()>0||vipCost()>0||spaCost()>0||checkCost()>0||towelsCost()>0||donationCost()>0; }
 
 function diningTotals(){
-  var ps=curParties(), total=0, save=0;
-  for(var i=0;i<ps.length;i++){ var id=effPlan(ps[i]); if(id){ var pl=diningById(id); total+=diningNow(pl,ps[i].guests); save+=diningWas(pl,ps[i].guests)-diningNow(pl,ps[i].guests); } }
-  return {total:total,save:save};
+  var ps=curParties(), now=0, was=0;
+  for(var i=0;i<ps.length;i++){ var id=effPlan(ps[i]); if(id){ var pl=diningById(id); now+=diningNow(pl,ps[i].guests); was+=diningWas(pl,ps[i].guests); } }
+  return {now:now,was:was,save:was-now};
 }
 function computeAll(){
-  var accom=ACCOM_UNIT*state.units, d=diningTotals();
-  var brunch=brunchTotal(),vip=vipCost(),spa=spaCost(),chk=checkCost(),tow=towelsCost(),don=donationCost();
-  var extras=brunch+vip+spa+chk+tow+don;
-  return {accom:accom,dining:d.total,save:d.save,brunch:brunch,vip:vip,spa:spa,checkin:chk,towels:tow,donation:don,extras:extras,grand:accom+d.total+extras};
+  var accom=ACCOM_UNIT*state.units;
+  var accomSave=0, accomDiscount=0;          /* no accommodation-level reductions in this prototype; these lines hide when zero */
+  var accomTotal=accom-accomSave-accomDiscount;
+  var d=diningTotals();
+  var brunch=brunchTotal(),vip=vipCost(),spa=spaCost(),early=earlyCost(),late=lateCost(),tow=towelsCost(),don=donationCost();
+  var extras=brunch+vip+spa+early+late+tow+don;
+  return {accom:accom,accomSave:accomSave,accomDiscount:accomDiscount,accomTotal:accomTotal,
+    diningWas:d.was,diningNow:d.now,diningSave:d.save,
+    brunch:brunch,vip:vip,spa:spa,early:early,late:late,towels:tow,donation:don,
+    extras:extras,grand:accomTotal+d.now+extras};
 }
 
 /* ============================================================ UI HELPERS */
@@ -420,10 +445,10 @@ function stepper(qty,attrs){ return '<div class="stepper" '+attrs+'><button type
 
 /* ============================================================ DINING SECTION */
 function sectionDining(){
-  var head='<div class="sec-head"><span class="sec-label">Dining</span><span class="scope-hint">Priced per room &middot; your 3-day Big Weekender</span></div>';
+  var head='<div class="sec-head"><h2 class="sec-label">Dining</h2><span class="scope-hint">Priced per room, for your 3-day Big Weekender</span></div>';
   var hasPromo=visibleDining().some(function(p){ return p.promo; });
   var banner = hasPromo ? '<div class="promo-banner"><span class="pb-main">EAT FOR 3 DAYS, PAY FOR 2<span class="ast">*</span></span>'+
-    '<span class="pb-sub">Every Big Weekender runs for 3 days. Add a dining plan and we only charge you for 2 &mdash; with unlimited buffet breakfast and dinner throughout.</span></div>' : '';
+    '<span class="pb-sub">Every Big Weekender runs for 3 days. Add a dining plan and we only charge you for 2, with unlimited buffet breakfast and dinner throughout.</span></div>' : '';
   var body = state.units===1 ? diningUnit(curParties()[0],true)
                              : curParties().map(function(p,i){ return diningUnit(p,i===0); }).join('');
   var note = hasPromo ? '<p class="promo-note">*Saving applies to Premium Dining and Food Court plans on selected weekenders, and is shown in your total.</p>' : '';
@@ -454,7 +479,7 @@ function diningCard(plan,party){
   var mid=plan.id+'-'+party.id;
   var more = plan.more ? '<button type="button" class="dc-more-toggle" data-more="'+mid+'">Read more</button><div class="dc-more" id="more-'+mid+'">'+plan.more+'</div>' : '';
   return '<div class="dcard'+(on?' is-added':'')+'" data-party="'+party.id+'" data-plan="'+plan.id+'">'+
-    '<div class="dc-head">'+plan.name+'</div>'+
+    '<h3 class="dc-head">'+plan.name+'</h3>'+
     '<div class="ph-img dc-img" aria-hidden="true"><span>'+plan.name+'</span>'+saveTab+'</div>'+
     '<div class="dc-body"><p class="desc">'+plan.desc+'</p>'+incl+more+
     '<div class="dc-foot"><div class="price">'+wasEl+'<span class="now">'+gbp(now)+'</span><span class="pp">party total &middot; 3-day break</span></div>'+
@@ -464,13 +489,19 @@ function diningCard(plan,party){
 
 /* ============================================================ BRUNCH SECTION */
 function sectionBrunch(){
-  var g=brunchGuests(), total=brunchTotal();
-  var head='<div class="sec-head"><span class="sec-label">Bottomless Brunch</span><span class="scope-hint">Standalone &middot; priced per guest</span></div>';
-  var chosen = g>0 ? '<div class="chosen-line">'+g+' guest'+(g>1?'s':'')+' booked &middot; '+gbp(total)+' total</div>' : '';
-  var card='<div class="card brunch-card2">'+phImg("Bottomless Brunch","square")+
-    '<div class="brunch-main"><h3>Bottomless Brunch</h3>'+
-    '<p class="desc">Free-flowing drinks and a relaxed brunch with feel-good tunes. Pick a sitting and add the guests going.</p>'+
-    chosen+brunchPicker()+'</div></div>';
+  var g=brunchGuests(), total=brunchTotal(), open=state._brunchOpen;
+  var lowest=BRUNCH.reduce(function(m,d){ return Math.min(m,d.pp); },Infinity);
+  var head='<div class="sec-head"><h2 class="sec-label">Bottomless Brunch</h2><span class="scope-hint">Standalone, priced per guest</span></div>';
+  var editLink = (g>0 && !open) ? '<button type="button" class="linklike" data-brunch-edit>Edit</button>' : '';
+  var chosen = g>0 ? '<div class="chosen-line">'+g+' guest'+(g>1?'s':'')+' booked &middot; '+gbp(total)+editLink+'</div>' : '';
+  var btn = open
+    ? '<button type="button" class="btn brunch-reveal" data-brunch-toggle aria-expanded="true">Hide times</button>'
+    : (g>0 ? '' : '<button type="button" class="btn brunch-reveal" data-brunch-toggle aria-expanded="false">Choose a sitting</button>');
+  var card='<div class="card brunch-card2'+(g>0?' is-added':'')+'">'+phImg("Bottomless Brunch","square")+
+    '<div class="brunch-main">'+
+    '<p class="desc">Free flowing drinks and a relaxed brunch with feel good tunes. Pick a sitting and add the guests going.</p>'+
+    '<p class="from-line">from '+gbp(lowest)+'pp</p>'+
+    chosen+btn+(open?brunchPicker():'')+'</div></div>';
   return '<section class="sec" id="sec-brunch" data-sec="brunch">'+head+card+'</section>';
 }
 function brunchPicker(){
@@ -486,109 +517,161 @@ function brunchPicker(){
   }).join('')+'</div>';
 }
 
-/* ============================================================ EXTRAS SECTION */
+/* ============================================================ EXTRAS SECTION
+   One consistent icon-led card template: [icon] [title + scope + desc] [price + control].
+   Photography is reserved for food items (dining + brunch); extras use icon placeholders. */
 function sectionExtras(){
-  var cards=[extraVIP()];
-  if(spaActive()) cards.push(extraSpa());
-  cards.push(extraCheck(),extraTowels());
-  return '<section class="sec" id="sec-extras" data-sec="extras"><div class="group-label">Extras</div>'+cards.join('')+'</section>';
+  var out='<section class="sec" id="sec-vip" data-sec="vip"><h2 class="group-label">Extras</h2>'+extraVIP()+'</section>';
+  if(spaActive()) out+='<section class="sec" id="sec-spa" data-sec="spa">'+extraSpa()+'</section>';
+  out+='<section class="sec" id="sec-checkin" data-sec="checkin">'+extraEarly()+extraLate()+'</section>';
+  out+='<section class="sec" id="sec-towels" data-sec="towels">'+extraTowels()+'</section>';
+  return out;
+}
+function extraCard(o){
+  var more = o.more ? '<button type="button" class="dc-more-toggle" data-more="x-'+o.id+'">Read more</button><div class="dc-more" id="more-x-'+o.id+'">'+o.more+'</div>' : '';
+  return '<div class="card xcard'+(o.added?' is-added':'')+'">'+
+    '<div class="xc-icon" aria-hidden="true"><span>'+o.icon+'</span></div>'+
+    '<div class="xc-body"><div class="xc-head"><h3>'+o.title+'</h3><span class="scope-tag">'+o.scope+'</span></div>'+
+    '<p class="desc">'+o.desc+'</p>'+(o.body||'')+more+'</div>'+
+    '<div class="xc-foot"><div class="price"><span class="now">'+o.price+'</span>'+(o.priceSub?'<span class="pp">'+o.priceSub+'</span>':'')+'</div>'+o.control+'</div></div>';
 }
 function extraVIP(){
-  var on=state.vip, tg=totalGuests();
-  return '<div class="card extra'+(on?' is-added':'')+'">'+phImg("VIP Pass")+
-    '<div class="extra-body"><div class="extra-head"><h3>VIP Pass</h3><span class="scope-tag">Whole booking</span></div>'+
-    '<p class="desc">Priority access to Silent Disco, Bingo, Soul Stroll and Pool Party, plus a VIP pit with private bar.</p></div>'+
-    '<div class="extra-foot"><div class="price"><span class="now">'+gbp(PRICE.vip)+'</span><span class="pp">for your booking ('+gbp(PRICE.vip/tg)+'pp)</span></div>'+
-    addBtn(on,'data-extra="vip"','Add','Added')+'</div></div>';
+  var on=state.vip;
+  return extraCard({ id:"vip", icon:"\u2605\uFE0E", title:"VIP Pass", scope:"Whole booking", added:on,
+    desc:"Priority access to Silent Disco, Bingo, Soul Stroll and Pool Party, plus a VIP pit with private bar.",
+    more:"What's included: skip-the-queue priority entry to the Silent Disco, Bingo, Soul Stroll and Pool Party; an exclusive VIP pit with its own private bar at the main stage; and a dedicated VIP host across the weekend. One pass covers everyone on your booking.",
+    price:gbp(PRICE.vip), priceSub:"party total",
+    control:addBtn(on,'data-extra="vip"','Add','Added') });
 }
 function extraSpa(){
   var q=state.spaQty, tg=totalGuests(), total=q*PRICE.spaEach;
-  return '<div class="card extra'+(q>0?' is-added':'')+'">'+phImg("Spa Experience")+
-    '<div class="extra-body"><div class="extra-head"><h3>Spa Experience</h3><span class="scope-tag">Per guest &middot; Bognor Regis</span></div>'+
-    '<p class="desc">A 2-hour experience at Ocean Spa with full use of the hydrospa, outdoor hot tub, sauna, crystal steam room and relaxation pods. Treatments available at extra cost.</p>'+
-    (q>0?'<div class="chosen-line">'+q+' guest'+(q>1?'s':'')+' &middot; '+gbp(total)+'</div>':'')+
-    '<button class="addall" data-spa-all>Add for all guests ('+tg+')</button></div>'+
-    '<div class="extra-foot"><div class="price"><span class="now">'+gbp(PRICE.spaEach)+'</span><span class="pp">per guest</span></div>'+stepper(q,'data-spa')+'</div></div>';
+  var body=(q>0?'<div class="chosen-line">'+q+' guest'+(q>1?'s':'')+' &middot; '+gbp(total)+'</div>':'')+
+    '<button type="button" class="addall" data-spa-all>'+(q>=tg&&tg>0?'Remove for all guests':'Add for all guests ('+tg+')')+'</button>';
+  return extraCard({ id:"spa", icon:"\u2741", title:"Spa Experience", scope:"Per guest, Bognor Regis only", added:q>0,
+    desc:"A 2 hour experience at Ocean Spa with full use of the hydrospa, outdoor hot tub, sauna, crystal steam room and relaxation pods.",
+    more:"Your 2 hour session covers the hydrospa pool, outdoor hot tub, sauna, crystal steam room and heated relaxation loungers. Bring swimwear and a towel (or add a towel pack below). Treatments such as massages and facials can be booked on arrival at extra cost. Over 16s only.",
+    price:gbp(PRICE.spaEach), priceSub:"per guest", body:body,
+    control:stepper(q,'data-spa') });
 }
-function extraCheck(){
-  function row(key,title,sub,price){ return '<div class="toggle-row"><div><b>'+title+'</b><span class="row-sub">'+sub+'</span></div>'+
-    '<div class="extra-foot inline"><span class="now">'+gbp(price)+'</span>'+addBtn(state[key],'data-extra="'+key+'"','Add','Added')+'</div></div>'; }
-  return '<div class="card extra col"><div class="extra-head"><h3>Check-in &amp; check-out</h3><span class="scope-tag">Whole booking</span></div>'+
-    row("earlyCheckin","Early check-in","Get into your room earlier",PRICE.earlyCheckin)+
-    row("lateCheckout","Late check-out","Stay later on your last day",PRICE.lateCheckout)+'</div>';
+function extraEarly(){
+  var on=state.earlyCheckin;
+  return extraCard({ id:"early", icon:"\u25D4", title:"Early check-in", scope:"Whole booking", added:on,
+    desc:"Get into your room from 12:00, so your Big Weekender starts sooner.",
+    more:"Guaranteed access to your accommodation from 12:00 on arrival day, rather than the standard mid-afternoon check-in. Drop your bags, settle in and head straight out to enjoy the resort. Applies to every room on your booking.",
+    price:gbp(PRICE.earlyCheckin),
+    control:addBtn(on,'data-extra="earlyCheckin"','Add','Added') });
+}
+function extraLate(){
+  var on=state.lateCheckout;
+  return extraCard({ id:"late", icon:"\u25D1", title:"Late check-out", scope:"Whole booking", added:on,
+    desc:"Keep your room until 11:00 on your last day, with no rush to pack up.",
+    more:"Hold on to your accommodation until 11:00 on departure day, instead of the standard earlier check-out. Enjoy a relaxed final morning and one last look around the resort before you set off home. Applies to every room on your booking.",
+    price:gbp(PRICE.lateCheckout),
+    control:addBtn(on,'data-extra="lateCheckout"','Add','Added') });
 }
 function extraTowels(){
   var q=state.towelsQty, tg=totalGuests(), total=q*PRICE.towelEach;
-  return '<div class="card extra'+(q>0?' is-added':'')+'">'+phImg("Towels")+
-    '<div class="extra-body"><div class="extra-head"><h3>Towel Pack</h3><span class="scope-tag">Per item</span></div>'+
-    '<p class="desc">A fresh towel pack per person for your stay.</p>'+
-    (q>0?'<div class="chosen-line">'+q+' pack'+(q>1?'s':'')+' &middot; '+gbp(total)+'</div>':'')+
-    '<button class="addall" data-towels-all>Add for all guests ('+tg+')</button></div>'+
-    '<div class="extra-foot"><div class="price"><span class="now">'+gbp(PRICE.towelEach)+'</span><span class="pp">each</span></div>'+stepper(q,'data-towels')+'</div></div>';
+  var body=(q>0?'<div class="chosen-line">'+q+' pack'+(q>1?'s':'')+' &middot; '+gbp(total)+'</div>':'')+
+    '<button type="button" class="addall" data-towels-all>'+(q>=tg&&tg>0?'Remove for all guests':'Add for all guests ('+tg+')')+'</button>';
+  return extraCard({ id:"towels", icon:"\u25A4", title:"Towel Pack", scope:"Per item", added:q>0,
+    desc:"A fresh towel pack per person for your stay.",
+    more:"Each pack has a bath towel and a hand towel per guest, freshly laundered and waiting in your room on arrival. Saves packing space and comes in handy after the pool or spa.",
+    price:gbp(PRICE.towelEach), priceSub:"each", body:body,
+    control:stepper(q,'data-towels') });
+}
+function extraDonation(){
+  var on=state.donation;
+  return extraCard({ id:"donation", icon:"\u2665\uFE0E", title:"Donation", scope:"Whole booking", added:on,
+    desc:"Add a &pound;2 donation to Great Ormond Street Hospital Children's Charity.",
+    more:"Great Ormond Street Hospital cares for some of the country's sickest children. Your optional &pound;2 donation goes straight to the charity to help fund pioneering research, equipment and support for families. <a href='#' onclick='return false;'>Find out more</a>",
+    price:gbp(PRICE.donation),
+    control:addBtn(on,'data-extra="donation"','Add','Added') });
 }
 
 /* ============================================================ ORDER OVERVIEW */
 function sectionOverview(){
-  return '<section class="sec" id="sec-overview" data-sec="overview"><div class="group-label">Your order</div>'+
-    ovDonation()+ovAccom()+ovDining()+ovIncluded()+ovSummary()+'</section>';
-}
-function ovDonation(){
-  var on=state.donation;
-  return '<div class="card extra'+(on?' is-added':'')+'"><div class="extra-body"><div class="extra-head"><h3>GOSH Donation</h3><span class="scope-tag">Whole booking</span></div>'+
-    '<p class="desc">Add a &pound;2 donation to Great Ormond Street Hospital Children\'s Charity. <a href="#" onclick="return false;">Find out more</a></p></div>'+
-    '<div class="extra-foot"><div class="price"><span class="now">'+gbp(PRICE.donation)+'</span></div>'+addBtn(on,'data-extra="donation"','Add','Added')+'</div></div>';
+  return '<section class="sec" id="sec-overview" data-sec="overview"><h2 class="group-label">Your booking</h2>'+
+    ovAccom()+ovDining()+ovIncluded()+extraDonation()+ovSummary()+'</section>';
 }
 function ovAccom(){
   var rows=curParties().map(function(p){ var pp=ACCOM_UNIT/p.guests;
     return '<div class="ov-row"><div><b>'+p.label+'</b><span class="row-sub">'+p.sub+'</span></div><div class="ov-price"><span>'+gbp(ACCOM_UNIT)+'</span><span class="pp">'+gbp(pp)+'pp</span></div></div>'; }).join('');
-  return '<div class="ov-block"><div class="ov-head">Accommodation<span class="ov-sub">Comfort Room, '+resortName()+'</span></div>'+rows+
-    '<div class="ov-actions"><button class="btn ghost sm" onclick="return false;">Change accommodation</button><button class="btn ghost sm" onclick="return false;">Choose your room</button></div></div>';
+  return '<div class="ov-block"><h3 class="ov-head">Accommodation<span class="ov-sub">'+ROOM_NAME+', '+resortName()+'</span></h3>'+rows+
+    '<div class="ov-upsell"><div class="ovu-text"><b>Choose your exact room</b><span class="callout-sub">Make it yours: hand-pick your room and spot, from a quiet corner to steps from the action.</span></div>'+
+    '<button class="btn primary sm" onclick="return false;">Choose your room &middot; '+gbp(ROOM_PICK)+'</button></div>'+
+    '<a class="ov-changelink" href="#" onclick="return false;">Change accommodation</a></div>';
 }
 function ovDining(){
   var ps=curParties();
   if(!anyDining()){
-    return '<div class="ov-block"><div class="ov-head">Dining</div><div class="callout strong"><div><b>No dining added</b><span class="callout-sub">Add a plan to sort meals before you arrive.</span></div><button class="btn primary sm" data-goto="dining">Choose dining</button></div></div>';
+    return '<div class="ov-block"><h3 class="ov-head">Dining</h3><div class="callout strong"><div><b>No dining added</b><span class="callout-sub">Sort your meals before you arrive, plans from '+gbp(DINING_FROM)+'.</span></div><button class="btn primary sm" data-goto="dining">Choose dining</button></div></div>';
   }
   var rows=ps.map(function(p){ var id=effPlan(p); if(!id) return '<div class="ov-row muted"><span>'+p.label+'</span><span>No plan</span></div>';
     var pl=diningById(id); return '<div class="ov-row"><div><b>'+p.label+'</b><span class="row-sub">'+pl.name+'</span></div><div class="ov-price"><span>'+gbp(diningNow(pl,p.guests))+'</span></div></div>'; }).join('');
-  return '<div class="ov-block"><div class="ov-head">Dining<button class="btn ghost sm" data-goto="dining">Edit</button></div>'+rows+'</div>';
+  return '<div class="ov-block"><h3 class="ov-head">Dining<button class="btn ghost sm" data-goto="dining">Edit</button></h3>'+rows+'</div>';
 }
 function ovIncluded(){
   var open=state._inclOpen;
-  return '<div class="ov-block"><button class="ov-head as-toggle" data-incl-toggle aria-expanded="'+(open?'true':'false')+'">Extras included in the price<span class="chev">'+(open?'\u25BE':'\u25B8')+'</span></button>'+
+  return '<div class="ov-block"><button class="ov-head as-toggle" data-incl-toggle aria-expanded="'+(open?'true':'false')+'">Extras included in the price <span class="incl-count">('+INCLUDED.length+')</span><span class="chev">'+(open?'\u25BE':'\u25B8')+'</span></button>'+
     (open?('<div class="incl-list">'+INCLUDED.map(function(x){ return '<div class="ov-row"><span>'+x+'</span><span class="inc-tag">Included</span></div>'; }).join('')+'</div>'):'')+'</div>';
 }
-function summaryLines(c){
-  var h='';
-  h+='<div class="sum-line"><span>Accommodation</span><span>'+gbp(c.accom)+'</span></div>';
-  h+='<div class="sum-line"><span>Dining</span><span>'+(c.dining>0?gbp(c.dining):'\u2014')+'</span></div>';
-  if(c.brunch>0) h+='<div class="sum-line"><span>Bottomless Brunch</span><span>'+gbp(c.brunch)+'</span></div>';
-  if(c.vip>0) h+='<div class="sum-line"><span>VIP Pass</span><span>'+gbp(c.vip)+'</span></div>';
-  if(c.spa>0) h+='<div class="sum-line"><span>Spa Experience</span><span>'+gbp(c.spa)+'</span></div>';
-  if(c.checkin>0) h+='<div class="sum-line"><span>Check-in / check-out</span><span>'+gbp(c.checkin)+'</span></div>';
-  if(c.towels>0) h+='<div class="sum-line"><span>Towel packs</span><span>'+gbp(c.towels)+'</span></div>';
-  if(c.donation>0) h+='<div class="sum-line"><span>GOSH donation</span><span>'+gbp(c.donation)+'</span></div>';
-  if(c.save>0) h+='<div class="sum-save">You save '+gbp(c.save)+' on dining with this break\'s offer</div>';
-  return h;
-}
+function exLine(label,val){ return '<div class="sum-line"><span>'+label+'</span><span>'+gbp(val)+'</span></div>'; }
+/* Grouped, fully-open breakdown that mirrors the later payment-step summary.
+   Components show at full price, with reductions on their own lines and a subtotal per group. */
 function ovSummary(){
-  var c=computeAll();
-  return '<div class="ov-block summary"><div class="ov-head">Booking summary</div>'+summaryLines(c)+
-    '<div class="sum-total"><span>Total cost of holiday</span><span>'+gbp(c.grand)+'</span></div></div>';
+  var c=computeAll(), h='';
+  var roomLabel=ROOM_NAME+', '+resortName()+(state.units>1?' ('+state.units+' rooms)':'');
+  h+='<div class="sum-line head"><span>Accommodation</span><span></span></div>';
+  h+='<div class="sum-line"><span>'+roomLabel+'</span><span>'+gbp(c.accom)+'</span></div>';
+  if(c.accomSave>0) h+='<div class="sum-line"><span>Savings</span><span>-'+gbp(c.accomSave)+'</span></div>';
+  if(c.accomDiscount>0) h+='<div class="sum-line"><span>Special discount</span><span>-'+gbp(c.accomDiscount)+'</span></div>';
+  h+='<div class="sum-line subtotal"><span>ACCOMMODATION TOTAL</span><span>'+gbp(c.accomTotal)+'</span></div>';
+  h+='<div class="sum-div"></div>';
+  h+='<div class="sum-line head"><span>Dining</span><span>'+(anyDining()?gbp(c.diningWas):'<button type="button" class="sum-addlink" data-goto="dining">Add a dining plan</button>')+'</span></div>';
+  if(c.diningSave>0) h+='<div class="sum-line"><span>Savings</span><span>-'+gbp(c.diningSave)+'</span></div>';
+  h+='<div class="sum-div"></div>';
+  var items='';
+  if(c.vip>0) items+=exLine('VIP Pass',c.vip);
+  if(c.spa>0) items+=exLine('Spa Experience',c.spa);
+  if(c.early>0) items+=exLine('Early check-in',c.early);
+  if(c.late>0) items+=exLine('Late check-out',c.late);
+  if(c.towels>0) items+=exLine('Towel Pack',c.towels);
+  if(c.brunch>0) items+=exLine('Bottomless Brunch',c.brunch);
+  if(c.donation>0) items+=exLine('Donation',c.donation);
+  if(items){
+    h+='<div class="sum-line head"><span>Extras</span><span></span></div>'+items+
+       '<div class="sum-line subtotal"><span>EXTRAS TOTAL</span><span>'+gbp(c.extras)+'</span></div>';
+  } else {
+    h+='<div class="sum-line head"><span>Extras</span><span>Not added</span></div>';
+  }
+  h+='<div class="sum-div"></div>';
+  h+='<div class="sum-total"><span>TOTAL COST OF YOUR HOLIDAY</span><span>'+gbp(c.grand)+'</span></div>';
+  return '<div class="ov-block summary"><h3 class="ov-head">Booking summary</h3>'+h+'</div>';
 }
 
 /* ============================================================ NAV */
-var NAV=[{id:"dining",label:"Dining"},{id:"brunch",label:"Bottomless brunch"},{id:"extras",label:"Extras"},{id:"overview",label:"Your order"}];
+var NAV=[
+  {id:"dining",label:"Dining"},
+  {id:"brunch",label:"Bottomless brunch"},
+  {id:"vip",label:"VIP Pass"},
+  {id:"spa",label:"Spa Experience"},
+  {id:"checkin",label:"Check-in & out"},
+  {id:"towels",label:"Towels"},
+  {id:"overview",label:"Your booking"}
+];
 function navAdded(id){
   if(id==="dining") return anyDining();
   if(id==="brunch") return brunchGuests()>0;
-  if(id==="extras") return vipCost()>0||spaCost()>0||checkCost()>0||towelsCost()>0;
+  if(id==="vip") return vipCost()>0;
+  if(id==="spa") return spaCost()>0;
+  if(id==="checkin") return checkCost()>0;
+  if(id==="towels") return towelsCost()>0;
   if(id==="overview") return donationCost()>0;
   return false;
 }
 function buildNav(){
   var el=document.getElementById('sectionNav');
-  el.innerHTML=NAV.map(function(n){
+  el.innerHTML=NAV.filter(function(n){ return n.id!=="spa" || spaActive(); }).map(function(n){
     var added=navAdded(n.id), active=state._activeSec===n.id;
     return '<button type="button" class="nav-item'+(active?' is-active':'')+(added?' added':'')+'" data-nav="'+n.id+'">'+
       '<span class="nav-tick" aria-hidden="true">\u2713</span>'+n.label+'</button>';
@@ -613,11 +696,11 @@ function render(){
 function recompute(){
   var c=computeAll();
   document.getElementById('totalFig').innerHTML=gbp(c.grand);
-  document.getElementById('continueBtn').textContent=(anyDining()||anyExtra())?"Continue to login":"Skip dining & extras";
+  document.getElementById('footNote').textContent=anyDining()
+    ? "Amend dining and extras anytime before you arrive."
+    : "To book your break without a dining plan, select continue.";
   document.getElementById('guestSumm').textContent=totalGuests()+" guests";
   document.getElementById('resortSumm').textContent=resortName();
-  document.getElementById('summaryInner').innerHTML='<h4>Your break</h4>'+summaryLines(c)+
-    '<div class="sum-total"><span>Total cost of holiday</span><span>'+gbp(c.grand)+'</span></div>';
   document.querySelectorAll('#sectionNav .nav-item').forEach(function(b){ b.classList.toggle('added',navAdded(b.getAttribute('data-nav'))); });
 }
 
@@ -636,23 +719,31 @@ function wireContent(){
   content.querySelectorAll('[data-more]').forEach(function(b){
     b.addEventListener('click',function(e){ e.stopPropagation(); var d=document.getElementById('more-'+b.getAttribute('data-more')); if(!d) return; var open=d.classList.toggle('open'); b.textContent=open?'Read less':'Read more'; });
   });
+  content.querySelectorAll('[data-brunch-toggle]').forEach(function(b){
+    b.addEventListener('click',function(){ state._brunchOpen=!state._brunchOpen; announce(state._brunchOpen?"Bottomless Brunch sittings shown":"Bottomless Brunch sittings hidden"); render(); });
+  });
+  content.querySelectorAll('[data-brunch-edit]').forEach(function(b){
+    b.addEventListener('click',function(){ state._brunchOpen=true; render(); });
+  });
   content.querySelectorAll('[data-brunch-all]').forEach(function(b){
-    b.addEventListener('click',function(){ var sl=b.getAttribute('data-brunch-all'), tg=totalGuests(); state.brunch[sl]=((state.brunch[sl]||0)>=tg?0:tg); render(); });
+    b.addEventListener('click',function(){ var sl=b.getAttribute('data-brunch-all'), tg=totalGuests(); state.brunch[sl]=((state.brunch[sl]||0)>=tg?0:tg); announce("Bottomless Brunch, "+brunchGuests()+" guest"+(brunchGuests()===1?"":"s")+" booked"); render(); });
   });
   content.querySelectorAll('.stepper').forEach(function(st){
     var slot=st.getAttribute('data-brunch-slot'), spa=st.hasAttribute('data-spa'), tow=st.hasAttribute('data-towels');
     st.querySelectorAll('.step-btn').forEach(function(btn){
       btn.addEventListener('click',function(){ var dir=parseInt(btn.getAttribute('data-dir'),10);
-        if(slot){ state.brunch[slot]=Math.max(0,(state.brunch[slot]||0)+dir); }
-        else if(spa){ state.spaQty=Math.max(0,state.spaQty+dir); }
-        else if(tow){ state.towelsQty=Math.max(0,state.towelsQty+dir); }
+        if(slot){ state.brunch[slot]=Math.max(0,(state.brunch[slot]||0)+dir); announce("Bottomless Brunch, "+brunchGuests()+" guest"+(brunchGuests()===1?"":"s")+" booked"); }
+        else if(spa){ state.spaQty=Math.max(0,state.spaQty+dir); announce("Spa Experience, "+state.spaQty+" guest"+(state.spaQty===1?"":"s")); }
+        else if(tow){ state.towelsQty=Math.max(0,state.towelsQty+dir); announce("Towel Pack, "+state.towelsQty+" pack"+(state.towelsQty===1?"":"s")); }
         render(); });
     });
   });
-  content.querySelectorAll('[data-spa-all]').forEach(function(b){ b.addEventListener('click',function(){ var tg=totalGuests(); state.spaQty=(state.spaQty>=tg?0:tg); render(); }); });
-  content.querySelectorAll('[data-towels-all]').forEach(function(b){ b.addEventListener('click',function(){ var tg=totalGuests(); state.towelsQty=(state.towelsQty>=tg?0:tg); render(); }); });
+  content.querySelectorAll('[data-spa-all]').forEach(function(b){ b.addEventListener('click',function(){ var tg=totalGuests(); state.spaQty=(state.spaQty>=tg?0:tg); announce("Spa Experience, "+state.spaQty+" guest"+(state.spaQty===1?"":"s")); render(); }); });
+  content.querySelectorAll('[data-towels-all]').forEach(function(b){ b.addEventListener('click',function(){ var tg=totalGuests(); state.towelsQty=(state.towelsQty>=tg?0:tg); announce("Towel Pack, "+state.towelsQty+" pack"+(state.towelsQty===1?"":"s")); render(); }); });
   content.querySelectorAll('[data-extra]').forEach(function(b){
-    b.addEventListener('click',function(){ var k=b.getAttribute('data-extra'); state[k]=!state[k]; announce((state[k]?"Added ":"Removed ")+k); render(); });
+    b.addEventListener('click',function(){ var k=b.getAttribute('data-extra'); state[k]=!state[k];
+      var names={vip:"VIP Pass",earlyCheckin:"Early check-in",lateCheckout:"Late check-out",donation:"Donation"};
+      announce((state[k]?"Added ":"Removed ")+(names[k]||k)); render(); });
   });
   content.querySelectorAll('[data-incl-toggle]').forEach(function(b){ b.addEventListener('click',function(){ state._inclOpen=!state._inclOpen; render(); }); });
   content.querySelectorAll('[data-goto]').forEach(function(b){ b.addEventListener('click',function(){ gotoSec(b.getAttribute('data-goto')); }); });
@@ -665,11 +756,6 @@ function onScroll(){
   if(cur) setActiveNav(cur.getAttribute('data-sec'));
 }
 scrollEl.addEventListener('scroll',onScroll,{passive:true});
-
-/* ============================================================ FOOTER SUMMARY TOGGLE */
-document.getElementById('sumToggle').addEventListener('click',function(){
-  var p=document.getElementById('summaryPanel'), open=p.classList.toggle('open'); this.setAttribute('aria-expanded',open?'true':'false');
-});
 
 /* ============================================================ DEV CONTROLS */
 function press(id,on){ document.getElementById(id).setAttribute('aria-pressed',on?'true':'false'); }
