@@ -12,14 +12,16 @@
 
   <!-- TOOLBAR -->
   <div class="toolbar" data-device="desktop" id="rootToggleHost">
-    <span class="tlabel">Phase 1 Dining</span>
-    <div class="seg-group"><span class="gl">Booking</span>
-      <div class="seg" role="group" aria-label="Units"><button id="pt1" aria-pressed="true">1 unit</button><button id="pt2" aria-pressed="false">2 units</button></div>
-    </div>
+    <span class="tlabel"><span class="tver">Version 1.0</span><span class="tname">Phase 1 Dining</span></span>
     <div class="right">
-      <div class="seg" role="group" aria-label="Christmas package"><button id="tgXmas" aria-pressed="false">Christmas pkg: off</button></div>
-      <div class="seg" role="group" aria-label="Lunch availability"><button id="tgLunch" aria-pressed="false">Lunch: available</button></div>
-      <div class="seg" role="group" aria-label="Device"><button id="dvMobile" aria-pressed="false">Mobile</button><button id="dvDesktop" aria-pressed="true">Desktop</button></div>
+      <div class="tg-field"><span class="gl">Lunch:</span><button type="button" class="switch" id="tgLunch" role="switch" aria-checked="true" aria-label="Lunch available"></button></div>
+      <div class="tg-field"><span class="gl">Christmas:</span><button type="button" class="switch" id="tgXmas" role="switch" aria-checked="false" aria-label="Christmas package"></button></div>
+      <div class="seg-group"><span class="gl">Booking:</span>
+        <div class="seg" role="group" aria-label="Parties"><button id="pt1" aria-pressed="true">1 Party</button><button id="pt2" aria-pressed="false">2 Parties</button></div>
+      </div>
+      <div class="seg-group"><span class="gl">Screen:</span>
+        <div class="seg" role="group" aria-label="Screen"><button id="dvMobile" aria-pressed="false">Mobile</button><button id="dvDesktop" aria-pressed="true">Desktop</button></div>
+      </div>
     </div>
   </div>
 
@@ -86,22 +88,6 @@
   </div>
 
   <div class="sr-only" role="status" aria-live="polite" id="liveAnnounce"></div>
-
-  <div class="modal-overlay" id="drinksModal" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="drinksModalTitle">
-      <button class="modal-close" id="drinksModalClose" aria-label="Close">&times;</button>
-      <img class="modal-hero" src="assets-img/drinks.jpg" alt="A selection of drinks served at the resort bars">
-      <h3 id="drinksModalTitle">Drinks Package</h3>
-      <p>Soft and alcoholic drinks across the resort, served from 11am until late. Includes draught beers and ciders, house wine, spirits with mixers, soft drinks, teas and coffees. No dining plan needed, and it covers everyone on your booking.</p>
-      <ul class="modal-list">
-        <li>Available at all resort bars and venues</li>
-        <li>Soft drinks, hot drinks, beers, wines and spirits</li>
-        <li>Served from 11am, last orders at venue close</li>
-        <li>Applies to every unit on the booking</li>
-      </ul>
-      <p class="modal-note" id="drinksModalSaving"></p>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -110,15 +96,26 @@ var NIGHTS=4, ACCOM=428, DRINKS_WITH_PLAN=12, DRINKS_STANDALONE=14, XMAS_PP=32;
 
 /* meal levels. discount drives the strikethrough/save%. allinc = full board + drinks. */
 var MEALS=[
-  { id:"breakfast", name:"Breakfast only",        desc:"Full cooked breakfast each morning",            discount:0 },
+  { id:"breakfast", name:"Breakfast only",        desc:"Full cooked breakfast each morning",            discount:0.10 },
   { id:"halfboard", name:"Half board",            desc:"Breakfast and evening dinner each day",         discount:0.14 },
   { id:"fullboard", name:"Full board",            desc:"Breakfast, lunch and dinner daily",             discount:0.17 },
-  { id:"allinc",    name:"Full board + drinks!",  desc:"Breakfast, lunch, dinner and drinks, daily!",   discount:0.20 }
+  { id:"allinc",    name:"Full board + drinks package",  desc:"Breakfast, lunch, dinner and drinks, daily!",   discount:0.20 }
 ];
 function meal(id){ for(var i=0;i<MEALS.length;i++) if(MEALS[i].id===id) return MEALS[i]; return null; }
 function mealName(id){ var m=meal(id); return m?m.name:""; }
 function mealDesc(id){ var m=meal(id); return m?m.desc:""; }
 function discountOf(id){ var m=meal(id); return m?m.discount:0; }
+/* meal-card headings sit on two balanced lines: split the words where the two halves are closest in length */
+function twoLineName(s){
+  var w=String(s).split(' ');
+  if(w.length<2) return s;
+  var best=1, bestDiff=Infinity;
+  for(var i=1;i<w.length;i++){
+    var diff=Math.abs(w.slice(0,i).join(' ').length - w.slice(i).join(' ').length);
+    if(diff<bestDiff){ bestDiff=diff; best=i; }
+  }
+  return w.slice(0,best).join(' ')+'<br>'+w.slice(best).join(' ');
+}
 /* Each meal card uses a single pre-composed plate image (baked from the Figma
    object layers) — one bounded <img> per card, so nothing crops or overlaps and
    it scales cleanly to mobile. */
@@ -127,6 +124,47 @@ function discountOf(id){ var m=meal(id); return m?m.discount:0; }
 window.ASSETS=window.ASSETS||{};
 function asset(p){ return window.ASSETS[p]||p; }
 var DISH="assets-img/";
+/* small placeholder image gallery per plan (real per-plan photography TBD) — cycled by the card arrows */
+var PLAN_IMAGES={
+  foodcourt:["foodcourt.jpg","dinearound.jpg","drinks.jpg"],
+  premium:["premium.jpg","hotel.jpg","drinks.jpg"],
+  dinearound:["dinearound.jpg","foodcourt.jpg","drinks.jpg"],
+  hotel:["hotel.jpg","premium.jpg","drinks.jpg"]
+};
+function planImgs(id){ return (PLAN_IMAGES[id]||[id+".jpg"]).map(function(f){return DISH+f;}); }
+var CHEV_L='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg>';
+var CHEV_R='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>';
+/* builds the layered slide markup used by both the initial render and the arrow transition */
+function ciSlideHTML(url){
+  return '<div class="ci-slide"><div class="ci-par"><div class="ci-img" style="background-image:url(\''+url+'\')"></div></div></div>';
+}
+/* animate the plan card image: incoming slide eases in from the click direction with a small parallax
+   lag and a gentle zoom-settle; the outgoing slide eases out with the opposite parallax/zoom. */
+function slidePlanImage(ci, dir){
+  if(!ci || ci.dataset.animating==="1") return;
+  var pid=ci.dataset.plan, imgs=planImgs(pid);
+  if(imgs.length<2) return;
+  var cur=state.planImg[pid]||0, nx=(cur+dir+imgs.length)%imgs.length;
+  state.planImg[pid]=nx;
+  var curEl=ci.querySelector('.ci-slide'), curPar=curEl&&curEl.querySelector('.ci-par');
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!curEl||reduce){ var im0=curEl&&curEl.querySelector('.ci-img'); if(im0) im0.style.backgroundImage="url('"+asset(imgs[nx])+"')"; return; }
+  var tmp=document.createElement('div'); tmp.innerHTML=ciSlideHTML(asset(imgs[nx]));
+  var inEl=tmp.firstChild, inPar=inEl.querySelector('.ci-par');
+  inEl.style.transform='translateX('+(dir>0?100:-100)+'%)';
+  inPar.style.transform='translateX('+(-3*dir)+'%) scale(1.08)';
+  ci.insertBefore(inEl, ci.querySelector('.img-nav'));
+  ci.dataset.animating="1";
+  void inEl.offsetWidth; /* commit the start transforms before transitioning */
+  curEl.classList.add('ci-anim'); inEl.classList.add('ci-anim'); inPar.classList.add('ci-anim'); if(curPar) curPar.classList.add('ci-anim');
+  curEl.style.transform='translateX('+(dir>0?-100:100)+'%)';
+  if(curPar) curPar.style.transform='translateX('+(3*dir)+'%) scale(1.08)';
+  inEl.style.transform='translateX(0)';
+  inPar.style.transform='translateX(0) scale(1)';
+  var done=false, finish=function(){ if(done) return; done=true; if(curEl.parentNode) curEl.parentNode.removeChild(curEl); inEl.classList.remove('ci-anim'); inPar.classList.remove('ci-anim'); inEl.style.transform=''; inPar.style.transform=''; ci.dataset.animating="0"; };
+  inEl.addEventListener('transitionend', finish, {once:true});
+  setTimeout(finish, 750);
+}
 /* pre-composed plate scenes (MealComps), one bounded image per meal card */
 var PLATE={ breakfast:"MealComps/1_breakfast.png", halfboard:"MealComps/2_half.png", fullboard:"MealComps/3_full.png", allinc:"MealComps/4_fullDrinks_v2.png" };
 function plateStack(id){
@@ -170,11 +208,11 @@ function shortName(p){ return p.name; }
 
 /* ============================================================ STATE */
 var PARTY_SETS={
-  1:[ {id:"p1",label:"Your party",sub:"5 guests",guests:5} ],
-  2:[ {id:"p1",label:"Unit 1",sub:"2 adults",guests:2}, {id:"p2",label:"Unit 2",sub:"2 adults, 1 child",guests:3} ]
+  1:[ {id:"p1",label:"Your party",sub:"3 guests",guests:3} ],
+  2:[ {id:"p1",label:"Party 1",sub:"2 adults",guests:2}, {id:"p2",label:"Party 2",sub:"2 adults, 1 child",guests:3} ]
 };
 var state={ approach:"A", units:1, device:"desktop", xmasEnabled:false, lunchSoldOut:false, drinks:false,
-  parties:{} };
+  parties:{}, planImg:{} };
 function curParties(){ return PARTY_SETS[state.units]; }
 function firstPid(){ return curParties()[0].id; }
 function pslot(id){ if(!state.parties[id]) state.parties[id]={plan:null,meal:null,openTiers:{},mode:(id===firstPid()?"own":"same"),collapsed:false,xmas:false}; return state.parties[id]; }
@@ -226,10 +264,11 @@ function render(){
   renderXmas();
   wireAll();
   recompute();
+  setupPlanSpy();
 }
 
 /* Unit 2 compact summary row: mirrors Unit 1's selection, shows this unit's
-   price, and offers a single "Customise for this unit" control (replaces the
+   price, and offers a single "Customise for this party" control (replaces the
    old same/different toggle). forced=true when full board + drinks locks the
    whole booking to one plan. */
 function sameRow(party, e, forced){
@@ -238,9 +277,9 @@ function sameRow(party, e, forced){
   var price=has?gbp(nowP(planById(e.plan), e.meal, party.guests)):"";
   var right=forced
     ? '<span class="usr-note">Whole-booking plan</span>'
-    : '<button type="button" class="unit-customise" data-mode="own">Customise for this unit</button>';
+    : '<button type="button" class="unit-customise" data-mode="own">Customise for this party</button>';
   return '<div class="unit-samerow">'+
-    '<div class="usr-text"><span class="usr-label">Same as Unit 1</span><span class="usr-plan'+(has?'':' none')+'">'+planTxt+'</span></div>'+
+    '<div class="usr-text"><span class="usr-label">Same as Party 1</span><span class="usr-plan'+(has?'':' none')+'">'+planTxt+'</span></div>'+
     '<div class="usr-right">'+(price?'<span class="usr-price">'+price+'</span>':'')+right+'</div>'+
     '</div>';
 }
@@ -259,7 +298,7 @@ function renderPartyBlock(party){
 
   var headRight="";
   if(showsModule){
-    var revert = (!isFirst && !allinc) ? '<button type="button" class="unit-revert" data-mode="same">Same as Unit 1</button>' : "";
+    var revert = (!isFirst && !allinc) ? '<button type="button" class="unit-revert" data-mode="same">Same as Party 1</button>' : "";
     headRight = revert + '<button class="collapse-btn" aria-expanded="'+(expanded?"true":"false")+'" aria-label="'+(expanded?"Collapse":"Expand")+' '+party.label+'"><span class="chev" aria-hidden="true"><svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.93974 1.72219L5.99959 5.78204L10.0594 1.72219" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>';
   }
 
@@ -268,7 +307,7 @@ function renderPartyBlock(party){
   if(!isFirst && allinc){
     var e=pslot(firstPid());
     block.insertAdjacentHTML('beforeend', sameRow(party, e, true));
-    block.insertAdjacentHTML('beforeend','<p class="mode-explainer">Full board + drinks applies to the whole booking, so every unit has the same plan.</p>');
+    block.insertAdjacentHTML('beforeend','<p class="mode-explainer">Full board + drinks applies to the whole booking, so every party has the same plan.</p>');
     return block;
   }
   if(!showsModule){
@@ -294,32 +333,62 @@ function unitBody(party,isFirst){
 }
 
 function freebiePill(){ return '<span class="freebie-pill">Under 2s eat free!</span>'; }
-function headingA(){ return '<div class="mini-h"><span class="mh-text"><span class="stepn">Step 1</span>Choose your meal</span>'+freebiePill()+'</div>'; }
-function allergenBand(){ return '<div class="allergen-band"><div class="ab-text"><h3 class="ab-title">Allergies or dietary requirements?</h3><p class="ab-desc">Every plan caters for vegetarian, vegan and free-from diets.</p></div><a href="#" onclick="return false;">View allergen information<svg class="arrow-ne" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></a></div>'; }
+function headingA(){ return '<div class="mini-h"><span class="mh-text"><span class="stepn">Step 1</span>Choose your meals</span>'+freebiePill()+'</div>'; }
+function allergenBand(){ return '<div class="allergen-band"><div class="ab-text"><h3 class="ab-title">Allergies or dietary requirements?</h3><p class="ab-desc">Every plan caters for vegetarian, vegan and free-from diets.</p></div><a href="#" onclick="return false;">Allergen info<svg class="arrow-ne" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></a></div>'; }
 
+/* drink-type icons (mobile only) — exact vectors from Figma Drinks-Mobile (295:596) */
+var DRINK_ICONS='<div class="db-icons" aria-hidden="true">'+
+  '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 5.25V2.25C7.5 2.05109 7.57902 1.86032 7.71967 1.71967C7.86032 1.57902 8.05109 1.5 8.25 1.5C8.44891 1.5 8.63968 1.57902 8.78033 1.71967C8.92098 1.86032 9 2.05109 9 2.25V5.25C9 5.44891 8.92098 5.63968 8.78033 5.78033C8.63968 5.92098 8.44891 6 8.25 6C8.05109 6 7.86032 5.92098 7.71967 5.78033C7.57902 5.63968 7.5 5.44891 7.5 5.25ZM11.25 6C11.4489 6 11.6397 5.92098 11.7803 5.78033C11.921 5.63968 12 5.44891 12 5.25V2.25C12 2.05109 11.921 1.86032 11.7803 1.71967C11.6397 1.57902 11.4489 1.5 11.25 1.5C11.0511 1.5 10.8603 1.57902 10.7197 1.71967C10.579 1.86032 10.5 2.05109 10.5 2.25V5.25C10.5 5.44891 10.579 5.63968 10.7197 5.78033C10.8603 5.92098 11.0511 6 11.25 6ZM14.25 6C14.4489 6 14.6397 5.92098 14.7803 5.78033C14.921 5.63968 15 5.44891 15 5.25V2.25C15 2.05109 14.921 1.86032 14.7803 1.71967C14.6397 1.57902 14.4489 1.5 14.25 1.5C14.0511 1.5 13.8603 1.57902 13.7197 1.71967C13.579 1.86032 13.5 2.05109 13.5 2.25V5.25C13.5 5.44891 13.579 5.63968 13.7197 5.78033C13.8603 5.92098 14.0511 6 14.25 6ZM23.25 11.25V12C23.2497 12.954 22.8859 13.8719 22.2325 14.5671C21.5792 15.2622 20.6855 15.6822 19.7334 15.7416C19.2218 17.1887 18.3508 18.482 17.2022 19.5H19.5C19.6989 19.5 19.8897 19.579 20.0303 19.7197C20.171 19.8603 20.25 20.0511 20.25 20.25C20.25 20.4489 20.171 20.6397 20.0303 20.7803C19.8897 20.921 19.6989 21 19.5 21H3C2.80109 21 2.61032 20.921 2.46967 20.7803C2.32902 20.6397 2.25 20.4489 2.25 20.25C2.25 20.0511 2.32902 19.8603 2.46967 19.7197C2.61032 19.579 2.80109 19.5 3 19.5H5.30063C4.34372 18.6546 3.57703 17.6158 3.05117 16.4523C2.52531 15.2887 2.25224 14.0269 2.25 12.75V8.25C2.25 8.05109 2.32902 7.86032 2.46967 7.71967C2.61032 7.57902 2.80109 7.5 3 7.5H19.5C20.4946 7.5 21.4484 7.89509 22.1517 8.59835C22.8549 9.30161 23.25 10.2554 23.25 11.25ZM18.75 9H3.75V12.75C3.75289 14.1582 4.15085 15.5373 4.89863 16.7306C5.6464 17.9239 6.71399 18.8834 7.98 19.5H14.52C15.786 18.8834 16.8536 17.9239 17.6014 16.7306C18.3492 15.5373 18.7471 14.1582 18.75 12.75V9ZM21.75 11.25C21.7499 10.7848 21.6055 10.3311 21.3369 9.95137C21.0683 9.57161 20.6886 9.28443 20.25 9.12937V12.75C20.2494 13.221 20.2118 13.6912 20.1375 14.1562C20.6028 14.0188 21.0113 13.7345 21.3019 13.3459C21.5925 12.9574 21.7497 12.4852 21.75 12V11.25Z" fill="currentColor"/></svg>'+
+  '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.2806 4.28062C22.3856 4.17573 22.4572 4.04204 22.4861 3.89648C22.5151 3.75092 22.5003 3.60002 22.4435 3.46291C22.3867 3.32579 22.2904 3.20861 22.167 3.12621C22.0435 3.04381 21.8984 2.99988 21.75 3H2.25C2.10158 2.99988 1.95646 3.04381 1.83301 3.12621C1.70957 3.20861 1.61335 3.32579 1.55653 3.46291C1.49972 3.60002 1.48487 3.75092 1.51385 3.89648C1.54284 4.04204 1.61437 4.17573 1.71938 4.28062L11.25 13.8103V19.5H8.25C8.05109 19.5 7.86032 19.579 7.71967 19.7197C7.57902 19.8603 7.5 20.0511 7.5 20.25C7.5 20.4489 7.57902 20.6397 7.71967 20.7803C7.86032 20.921 8.05109 21 8.25 21H15.75C15.9489 21 16.1397 20.921 16.2803 20.7803C16.421 20.6397 16.5 20.4489 16.5 20.25C16.5 20.0511 16.421 19.8603 16.2803 19.7197C16.1397 19.579 15.9489 19.5 15.75 19.5H12.75V13.8103L22.2806 4.28062ZM4.06031 4.5H19.9397L18.4397 6H5.56031L4.06031 4.5ZM12 12.4397L7.06031 7.5H16.9397L12 12.4397Z" fill="currentColor"/></svg>'+
+  '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.3125 2.50219C19.242 2.4227 19.1553 2.35911 19.0584 2.31563C18.9614 2.27215 18.8563 2.24978 18.75 2.25H5.25C5.14357 2.24996 5.03835 2.27258 4.94134 2.31634C4.84433 2.36011 4.75774 2.42402 4.68733 2.50383C4.61692 2.58363 4.5643 2.67751 4.53297 2.77923C4.50164 2.88094 4.49232 2.98816 4.50563 3.09375L6.67594 21.1875C6.72164 21.5502 6.89824 21.8838 7.17256 22.1255C7.44688 22.3672 7.80002 22.5004 8.16562 22.5H15.8344C16.2013 22.5001 16.5555 22.3657 16.83 22.1223C17.1045 21.8789 17.2803 21.5433 17.3241 21.1791L19.4944 3.09375C19.5079 2.98788 19.4987 2.88035 19.4673 2.77833C19.4359 2.67632 19.3832 2.58217 19.3125 2.50219ZM17.9062 3.75L17.6344 6H6.36563L6.09375 3.75H17.9062ZM15.8344 21H8.16562L6.54562 7.5H17.4544L15.8344 21Z" fill="currentColor"/></svg>'+
+  '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.2497 9.71906L17.2087 2.78812C17.163 2.63284 17.0683 2.49652 16.9387 2.39953C16.8091 2.30254 16.6516 2.25008 16.4897 2.25H7.51031C7.34844 2.25008 7.19093 2.30254 7.06133 2.39953C6.93172 2.49652 6.83698 2.63284 6.79125 2.78812L4.75031 9.71906C4.4301 10.7814 4.41334 11.9121 4.70193 12.9835C4.99052 14.0548 5.57295 15.0241 6.38344 15.7819C7.71666 17.0322 9.42967 17.8007 11.25 17.9653V21.75H8.25C8.05109 21.75 7.86032 21.829 7.71967 21.9697C7.57902 22.1103 7.5 22.3011 7.5 22.5C7.5 22.6989 7.57902 22.8897 7.71967 23.0303C7.86032 23.171 8.05109 23.25 8.25 23.25H15.75C15.9489 23.25 16.1397 23.171 16.2803 23.0303C16.421 22.8897 16.5 22.6989 16.5 22.5C16.5 22.3011 16.421 22.1103 16.2803 21.9697C16.1397 21.829 15.9489 21.75 15.75 21.75H12.75V17.9653C14.5703 17.8006 16.2833 17.032 17.6166 15.7819C18.427 15.0241 19.0095 14.0548 19.2981 12.9835C19.5867 11.9121 19.5699 10.7814 19.2497 9.71906ZM8.07094 3.75H15.9291L17.8125 10.1428C17.8209 10.1709 17.8284 10.1991 17.8359 10.2272C15.8278 10.9472 13.5666 10.0772 12.3394 9.45563C9.97781 8.26031 8.10281 8.10844 6.72 8.33719L8.07094 3.75ZM16.5937 14.6859C15.3484 15.8521 13.7061 16.5009 12 16.5009C10.2939 16.5009 8.65163 15.8521 7.40625 14.6859C6.79976 14.1176 6.36425 13.391 6.14889 12.5882C5.93353 11.7854 5.94691 10.9384 6.1875 10.1428L6.22969 10.0003C7.35469 9.61969 9.1425 9.51844 11.6606 10.7944C12.7059 11.3241 14.3944 11.9991 16.2009 11.9991C16.8047 12.002 17.4059 11.9199 17.9869 11.7553C17.9104 12.8734 17.4125 13.9207 16.5937 14.6859Z" fill="currentColor"/></svg>'+
+  '</div>';
 function drinksBar(){
   var tg=totalGuests(), ap=anyPlan(), cost=(ap?DRINKS_WITH_PLAN:DRINKS_STANDALONE)*tg*NIGHTS;
   var photo='<div class="db-photo" aria-hidden="true"></div>';
-  var info='<button type="button" class="db-link" data-drinks-info>What\'s included?</button>';
-  var txt='<div class="db-text"><span class="db-label">Drinks Package</span>'+
-    '<span class="db-title">Drinks for everyone on your booking</span>'+info+'</div>';
+  var extArrow='<svg class="ext-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6"/><path d="M8 6h10v10"/></svg>';
+  var sample='<a class="db-sample" href="#" target="_blank" rel="noopener" onclick="return false;">Sample drinks range'+extArrow+'</a>';
+  var info='<button type="button" class="db-link" data-drinks-info aria-expanded="false" aria-controls="drinksMore">Read more</button>';
+  var txt='<div class="db-text">'+DRINK_ICONS+'<span class="db-label">Drinks Package</span>'+
+    '<span class="db-title">Beers, wines, spirits and soft drinks, plus hot drinks.</span>'+
+    '<div class="db-links">'+sample+info+'</div></div>';
+  var included = bookingAllinc() || allincMealSelected();
+  var rowEnd, barCls;
   /* Three states:
      1. bookingAllinc (meal=allinc + plan chosen): "Included with Full board + drinks"
      2. allincMealSelected (meal=allinc, no plan yet): same included look, no add/remove button (meal card is the control)
      3. Standard: toggleable add/remove button */
-  if(bookingAllinc() || allincMealSelected()){
-    return '<div class="drinks-bar is-on is-included">'+photo+txt+
-      '<span class="db-incl">Included with your plan</span></div>';
+  if(included){
+    rowEnd='<span class="db-incl">Included with your plan</span>';
+    barCls='drinks-bar is-on is-included';
+  } else {
+    var on=state.drinks;
+    var tick='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+    var addBtn = on
+      ? '<span class="cta-ico">'+tick+'</span><span class="cta-label">Added</span><span class="cta-ico cta-ghost" aria-hidden="true">'+tick+'</span>'
+      : 'Add to booking';
+    rowEnd='<div class="db-price-wrap"><span class="db-price">'+gbp(cost)+'</span><span class="db-basis">'+tg+' guests \u2022 '+NIGHTS+' nights</span></div>'+
+      '<button type="button" class="db-add" data-drinks-toggle aria-pressed="'+(on?'true':'false')+'">'+addBtn+'</button>';
+    barCls='drinks-bar'+(on?' is-on':'');
   }
-  var on=state.drinks;
-  var tick='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
-  var addBtn = on
-    ? '<span class="cta-ico">'+tick+'</span><span class="cta-label">Added</span><span class="cta-ico cta-ghost" aria-hidden="true">'+tick+'</span>'
-    : 'Add to booking';
-  return '<div class="drinks-bar'+(on?' is-on':'')+'">'+photo+txt+
-    '<span class="db-price">'+gbp(cost)+'</span>'+
-    '<button type="button" class="db-add" data-drinks-toggle aria-pressed="'+(on?'true':'false')+'">'+addBtn+'</button>'+
+  /* .db-main is the fixed-height row; .drinks-more expands inside the same black card,
+     below the row on desktop and between the text and the price/CTA on mobile */
+  return '<div class="'+barCls+'">'+
+    '<div class="db-main">'+photo+txt+rowEnd+'</div>'+
+    drinksMore(ap,tg)+
     '</div>';
+}
+/* Expandable "What's included?" content, revealed inside the black card (replaces the
+   modal, mirrors the plan card "Read more"). No photo — it already sits in the row on desktop. */
+function drinksMore(ap,tg){
+  var save = ap
+    ? '<p class="dm-note">You save '+gbp((DRINKS_STANDALONE-DRINKS_WITH_PLAN)*tg*NIGHTS)+' buying drinks with a dining plan.</p>'
+    : '';
+  return '<div class="drinks-more" id="drinksMore"><div class="dm-in"><div class="dm-content">'+
+    '<p class="dm-desc">Soft and alcoholic drinks across the resort, served from 11am until late. Includes draught beers and ciders, house wine, spirits with mixers, soft drinks, teas and coffees. No dining plan needed, and it covers everyone on your booking.</p>'+
+    '<ul class="dm-list"><li>Available at all resort bars and venues</li><li>Soft drinks, hot drinks, beers, wines and spirits</li><li>Served from 11am, last orders at venue close</li><li>Applies to every party on the booking</li></ul>'+
+    save+
+    '</div></div></div>';
 }
 
 /* ---- A: meal cards then plan cards ---- */
@@ -336,24 +405,30 @@ function moduleA(t,guests,isFirst){
     var priceCell = sold ? '<div class="mc-price"><span class="soldout-tag">Sold out</span></div>'
       : '<div class="mc-price"><span class="mc-radio" aria-hidden="true"></span><span class="mc-pricetext">from <b>'+gbp(cheapest)+'</b></span></div>';
     cards+='<div class="meal-card'+(act?' is-active':'')+(sold?' is-soldout':'')+'" role="radio" aria-checked="'+(act?'true':'false')+'" aria-disabled="'+(sold?'true':'false')+'" tabindex="'+(sold?'-1':'0')+'" data-meal="'+m+'">'+
-      '<div class="mc-body"><div class="mc-name">'+MEALS[mi].name+'</div>'+
+      '<div class="mc-body"><div class="mc-name">'+twoLineName(MEALS[mi].name)+'</div>'+
       '<div class="mc-desc">'+MEALS[mi].desc+'</div></div>'+
       '<div class="mc-plate" aria-hidden="true">'+plateStack(m)+'</div>'+
       priceCell+'</div>';
   }
-  var out=(isFirst?headingA():'<div class="mini-h"><span class="mh-text"><span class="stepn">Step 1</span>Choose your meal</span></div>')+
+  var out=(isFirst?headingA():'<div class="mini-h"><span class="mh-text"><span class="stepn">Step 1</span>Choose your meals</span></div>')+
     '<div class="meal-opts" role="radiogroup" aria-label="Which meals would you like covered?">'+cards+'</div>';
 
   if(isFirst && state.units===1) out+=drinksBar(); /* single-unit: drinks bar sits between step 1 and step 2. */
 
   if(t.meal && !(state.lunchSoldOut && hasLunch(t.meal))){
-    var pcards="";
+    var pcards="", anchors="", pcount=0;
     for(var j=0;j<PLANS.length;j++){
       var pl=PLANS[j]; if(!planVisible(pl)||!planSupportsMeal(pl,t.meal)) continue;
+      pcount++;
       pcards+=planCardA(pl,t,guests);
+      anchors+='<a class="plan-anchor" href="#plan-'+pl.id+'">'+shortName(pl)+'</a>';
     }
-    out+='<div class="mini-h" data-step2 style="scroll-margin-top:16px;"><span class="mh-text"><span class="stepn">Step 2</span>Choose your dining plan</span></div>'+
-      '<div class="plan-grid" role="group" aria-label="Dining plan">'+pcards+'</div>';
+    out+='<div class="step2-rule" aria-hidden="true"></div>'+
+      '<div class="step2">'+
+      '<div class="mini-h" data-step2 style="scroll-margin-top:16px;"><span class="mh-text"><span class="stepn">Step 2</span>Choose from '+pcount+' dining plan'+(pcount===1?'':'s')+'</span></div>'+
+      '<nav class="plan-anchors" aria-label="Jump to a dining plan">'+anchors+'</nav>'+
+      '<div class="plan-grid" role="group" aria-label="Dining plan">'+pcards+'</div>'+
+      '</div>';
   }
   /* Allergen band always sits at the very bottom, after all plan cards */
   if(isFirst && state.units===1) out+=allergenBand();
@@ -362,9 +437,16 @@ function moduleA(t,guests,isFirst){
 
 function planCardA(pl,t,guests){
   var sel=t.plan===pl.id, now=nowP(pl,t.meal,guests), was=wasP(now,t.meal), saving=was?(was-now):0;
+  var imgs=planImgs(pl.id), imgIdx=(state.planImg[pl.id]||0)%imgs.length;
+  var imgNav=imgs.length>1?'<button type="button" class="img-nav prev" aria-label="Previous image">'+CHEV_L+'</button><button type="button" class="img-nav next" aria-label="Next image">'+CHEV_R+'</button>':'';
   var incl='<ul class="incl">'+pl.incl.map(function(x){return '<li>'+x+'</li>';}).join("")+'</ul>';
-  var readmore='<button type="button" class="plan-more-toggle" aria-expanded="false">Read more</button>';
-  var more='<div class="plan-more"><p>'+pl.more+'</p><a class="sample-link" href="#" target="_blank" rel="noopener" onclick="return false;">View sample menu<svg class="ext-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>';
+  var arrow='<svg class="ext-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6"/><path d="M8 6h10v10"/></svg>';
+  /* Dine Around spans multiple restaurants so there's no single sample menu — only allergen info (per Sarah) */
+  var sampleText=(pl.id==='dinearound')?'Allergen info':'Sample menu &amp; allergens';
+  var links='<div class="plan-links">'+
+    '<a class="sample-link" href="#" target="_blank" rel="noopener" onclick="return false;">'+sampleText+arrow+'</a>'+
+    '<button type="button" class="plan-more-toggle" aria-expanded="false">Read more</button></div>';
+  var more='<div class="plan-more"><div class="pm-in"><p>'+pl.more+'</p></div></div>';
   var saveTab=saving>0?'<div class="save-tab" aria-hidden="true">save <b>'+gbp(saving)+'</b></div>':'';
   var priceRow='<div class="plan-foot">'+
     '<div class="price">'+(was?'<span class="was">'+gbp(was)+'</span>':'')+
@@ -375,12 +457,13 @@ function planCardA(pl,t,guests){
       ? '<span class="cta-ico">'+tick+'</span><span class="cta-label">Added to booking</span><span class="cta-ico cta-ghost" aria-hidden="true">'+tick+'</span>'
       : '<span class="cta-label">Add '+pl.name+'</span>')+
     '</button>';
-  return '<div class="card'+(sel?' is-selected':'')+'" data-plan="'+pl.id+'">'+
+  return '<div class="card'+(sel?' is-selected':'')+'" id="plan-'+pl.id+'" data-plan="'+pl.id+'">'+
     '<h4>'+pl.name+'</h4>'+
-    '<div class="card-img" aria-hidden="true">'+saveTab+'</div>'+
+    '<div class="card-img" data-plan="'+pl.id+'">'+ciSlideHTML(asset(imgs[imgIdx]))+imgNav+saveTab+'</div>'+
     '<div class="card-body">'+
     '<p class="desc">'+pl.desc+'</p>'+
-    '<div class="incl-row">'+incl+readmore+'</div>'+
+    incl+
+    links+
     more+
     priceRow+
     cta+
@@ -400,7 +483,7 @@ function moduleASlim(t,guests){
     var price = sold ? '<span class="soldout-tag">Sold out</span>' : 'from <b>'+gbp(cheapest)+'</b>';
     rows+='<div class="slim-row slim-meal'+(act?' is-active':'')+(sold?' is-soldout':'')+'" role="radio" aria-checked="'+(act?'true':'false')+'" aria-disabled="'+(sold?'true':'false')+'" tabindex="'+(sold?'-1':'0')+'" data-meal="'+m+'"><span class="sr-radio" aria-hidden="true"></span><div class="sr-main"><div class="sr-name">'+MEALS[mi].name+'</div><div class="sr-desc">'+MEALS[mi].desc+'</div></div><div class="sr-price">'+price+'</div></div>';
   }
-  var out='<div class="mini-h"><span class="mh-text"><span class="stepn">Step 1</span>Choose your meal</span></div><div class="slim-list slim-meals" role="radiogroup" aria-label="Meals">'+rows+'</div>';
+  var out='<div class="mini-h"><span class="mh-text"><span class="stepn">Step 1</span>Choose your meals</span></div><div class="slim-list slim-meals" role="radiogroup" aria-label="Meals">'+rows+'</div>';
   if(t.meal && !(state.lunchSoldOut&&hasLunch(t.meal))){
     var prows="";
     for(var j=0;j<PLANS.length;j++){
@@ -425,7 +508,7 @@ function christmasBlock(s, guests){
     rowHtml='<div class="xrow is-included"><div class="xr-l"><b>A three-course Christmas dinner with all the trimmings</b></div><div class="inc-tag">Included with '+shortName(plan)+'</div></div>';
   } else {
     var on=!!s.xmas, price=XMAS_PP*guests;
-    rowHtml='<div class="xrow'+(on?' is-on':'')+'"><div class="xr-l"><b>A three-course Christmas dinner with all the trimmings</b><span class="sub">'+gbp(XMAS_PP)+' per person &middot; '+gbp(price)+' for this unit</span></div>'+
+    rowHtml='<div class="xrow'+(on?' is-on':'')+'"><div class="xr-l"><b>A three-course Christmas dinner with all the trimmings</b><span class="sub">'+gbp(XMAS_PP)+' per person &middot; '+gbp(price)+' for this party</span></div>'+
       '<div class="xr-r"><select class="sitting" aria-label="Choose a sitting"><option>Choose a sitting</option><option>12:00</option><option>13:30</option><option>15:00</option></select>'+
       '<button type="button" class="mini" aria-pressed="'+(on?'true':'false')+'"><span class="m-off">Add</span><span class="m-on">&#10003; Added</span></button></div></div>';
   }
@@ -459,6 +542,19 @@ function wireAll(){
       card.addEventListener('click',pick);
       card.addEventListener('keydown',function(e){ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); pick(); } });
     });
+    wrap.querySelectorAll('.plan-anchor').forEach(function(a){
+      a.addEventListener('click',function(e){
+        e.preventDefault();
+        var card=document.getElementById(a.getAttribute('href').slice(1));
+        if(card&&card.scrollIntoView){ var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches; card.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'}); }
+      });
+    });
+    wrap.querySelectorAll('.card-img .img-nav').forEach(function(btn){
+      btn.addEventListener('click',function(e){
+        e.stopPropagation();
+        slidePlanImage(btn.closest('.card-img'), btn.classList.contains('next')?1:-1);
+      });
+    });
     wrap.querySelectorAll('.plan-grid .card-cta').forEach(function(btn){
       var card=btn.closest('.card');
       btn.addEventListener('click',function(){
@@ -481,7 +577,7 @@ function wireAll(){
       b.addEventListener('click',function(){ state.drinks=!state.drinks; render(); });
     });
     wrap.querySelectorAll('[data-drinks-info]').forEach(function(b){
-      b.addEventListener('click',openDrinksModal);
+      b.addEventListener('click',function(e){ e.stopPropagation(); toggleDrinksInfo(b); });
     });
     wrap.querySelectorAll('.slim-meal').forEach(function(row){
       if(row.getAttribute('aria-disabled')==='true') return;
@@ -518,23 +614,98 @@ function wireAll(){
     b.addEventListener('click',function(){ state.drinks=!state.drinks; render(); });
   });
   dHost.querySelectorAll('[data-bookinglvl] [data-drinks-info]').forEach(function(b){
-    b.addEventListener('click',openDrinksModal);
+    b.addEventListener('click',function(e){ e.stopPropagation(); toggleDrinksInfo(b); });
   });
 }
 
+/* ============================================================ PLAN ANCHOR SCROLL-SPY (mobile)
+   As the user scrolls, the anchor chip whose plan card is in view becomes active
+   (black outline), and the chip row scrolls sideways to keep the active chip visible. */
+var planSpyScroll=document.querySelector('.scroll');
+var planSpy={ nav:null, anchors:[], cards:[], activeCard:null, raf:0 };
+function planSpyReduce(){ return !!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+/* Custom eased, interruptible horizontal scroll for the chip row — gives a much
+   smoother glide than native scrollTo({behavior:'smooth'}) and cancels cleanly
+   when the active chip changes mid-animation. */
+var navAnim={raf:0, from:0, to:0, start:0, dur:0};
+function animateNavScroll(nav, to){
+  var max=nav.scrollWidth-nav.clientWidth;
+  to=Math.max(0, Math.min(to, max));
+  if(planSpyReduce()){ if(navAnim.raf){cancelAnimationFrame(navAnim.raf);navAnim.raf=0;} nav.scrollLeft=to; return; }
+  if(navAnim.raf) cancelAnimationFrame(navAnim.raf);
+  navAnim.from=nav.scrollLeft; navAnim.to=to; navAnim.start=0;
+  navAnim.dur=Math.min(680, Math.max(380, Math.abs(to-navAnim.from)*1.3));
+  var ease=function(t){ return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }; /* easeInOutCubic */
+  var step=function(ts){
+    if(!navAnim.start) navAnim.start=ts;
+    var p=navAnim.dur?Math.min(1,(ts-navAnim.start)/navAnim.dur):1;
+    nav.scrollLeft=navAnim.from+(navAnim.to-navAnim.from)*ease(p);
+    navAnim.raf = p<1 ? requestAnimationFrame(step) : 0;
+  };
+  navAnim.raf=requestAnimationFrame(step);
+}
+function updatePlanSpy(){
+  planSpy.raf=0;
+  var sp=planSpy;
+  /* offsetParent is null while the nav is hidden (desktop), so the spy no-ops off mobile */
+  if(!sp.nav || sp.nav.offsetParent===null || !sp.cards.length) return;
+  /* Fixed dock line just below where the chip row sticks. Measuring from the
+     scroll viewport top (not the nav's live position) means NOTHING is active
+     until a card is actually scrolled up to the top. */
+  var scRect=planSpyScroll.getBoundingClientRect();
+  var line=scRect.top+sp.nav.offsetHeight+12;
+  var active=null;
+  for(var i=0;i<sp.cards.length;i++){
+    if(sp.cards[i].getBoundingClientRect().top<=line) active=sp.cards[i]; else break;
+  }
+  /* at the very bottom the last card can't reach the top — keep it active there */
+  if(planSpyScroll.scrollTop+planSpyScroll.clientHeight >= planSpyScroll.scrollHeight-2) active=sp.cards[sp.cards.length-1];
+  if(active===sp.activeCard) return;
+  sp.activeCard=active;
+  var activeId=active?active.id:null, activeA=null;
+  for(var j=0;j<sp.anchors.length;j++){
+    var on=activeId!==null && sp.anchors[j].getAttribute('href')==='#'+activeId;
+    sp.anchors[j].classList.toggle('is-current',on);
+    if(on){ sp.anchors[j].setAttribute('aria-current','location'); activeA=sp.anchors[j]; }
+    else sp.anchors[j].removeAttribute('aria-current');
+  }
+  /* keep the active chip centred within the horizontally-scrolling chip row */
+  if(activeA){
+    var nr=sp.nav.getBoundingClientRect(), ar=activeA.getBoundingClientRect();
+    var to=sp.nav.scrollLeft+(ar.left-nr.left)-(sp.nav.clientWidth-ar.width)/2;
+    animateNavScroll(sp.nav, to);
+  }
+}
+function onPlanSpyScroll(){ if(!planSpy.raf) planSpy.raf=requestAnimationFrame(updatePlanSpy); }
+function setupPlanSpy(){
+  var nav=dHost.querySelector('.plan-anchors');
+  var step2=nav?nav.closest('.step2'):null;
+  planSpy.nav=nav;
+  planSpy.anchors=nav?Array.prototype.slice.call(nav.querySelectorAll('.plan-anchor')):[];
+  planSpy.cards=step2?Array.prototype.slice.call(step2.querySelectorAll('.plan-grid .card')):[];
+  planSpy.activeCard=null;
+  planSpy.anchors.forEach(function(a){ a.classList.remove('is-current'); a.removeAttribute('aria-current'); });
+  updatePlanSpy();
+}
+if(planSpyScroll) planSpyScroll.addEventListener('scroll',onPlanSpyScroll,{passive:true});
+window.addEventListener('resize',onPlanSpyScroll,{passive:true});
+
 function toggleDrinks(){ state.drinks=!state.drinks; render(); }
 
-function openDrinksModal(){ document.getElementById('drinksModal').hidden=false; document.getElementById('drinksModalClose').focus(); }
-function closeDrinksModal(){ document.getElementById('drinksModal').hidden=true; }
+/* Toggle the inline "What's included?" detail panel (mirrors the plan card Read more). */
+function toggleDrinksInfo(btn){
+  var bar=btn.closest('.drinks-bar'); if(!bar) return;
+  var panel=bar.querySelector('.drinks-more'); if(!panel) return;
+  var o=panel.classList.toggle('open');
+  btn.setAttribute('aria-expanded',o?'true':'false');
+  btn.textContent=o?'Read less':'Read more';
+}
 
 /* ============================================================ RECOMPUTE */
 function recompute(){
   var ps=curParties(), tg=totalGuests(), ap=anyPlan(), allinc=bookingAllinc();
 
   var drinksCost=(ap?DRINKS_WITH_PLAN:DRINKS_STANDALONE)*tg*NIGHTS;
-  var dmSave=document.getElementById('drinksModalSaving');
-  if(ap){ var sv=(DRINKS_STANDALONE-DRINKS_WITH_PLAN)*tg*NIGHTS; dmSave.textContent="Buying drinks with a dining plan saves "+gbp(sv)+" versus booking separately."; }
-  else dmSave.textContent="";
 
   var diningTotal=0, xmasTotal=0, dineSaving=0, calc=[];
   for(var i=0;i<ps.length;i++){
@@ -600,6 +771,7 @@ function setDevice(d){
   state.device=d; hosts.forEach(function(h){ h.setAttribute('data-device',d); });
   document.getElementById('dvMobile').setAttribute('aria-pressed',d==="mobile"?"true":"false");
   document.getElementById('dvDesktop').setAttribute('aria-pressed',d==="desktop"?"true":"false");
+  setupPlanSpy();
 }
 document.getElementById('pt1').addEventListener('click',function(){ setUnits(1); });
 document.getElementById('pt2').addEventListener('click',function(){ setUnits(2); });
@@ -607,21 +779,16 @@ document.getElementById('dvMobile').addEventListener('click',function(){ setDevi
 document.getElementById('dvDesktop').addEventListener('click',function(){ setDevice("desktop"); });
 document.getElementById('tgXmas').addEventListener('click',function(){
   state.xmasEnabled=!state.xmasEnabled;
-  this.setAttribute('aria-pressed',state.xmasEnabled?"true":"false");
-  this.textContent="Christmas pkg: "+(state.xmasEnabled?"on":"off");
+  this.setAttribute('aria-checked',state.xmasEnabled?"true":"false");
   render();
 });
 document.getElementById('tgLunch').addEventListener('click',function(){
   state.lunchSoldOut=!state.lunchSoldOut;
-  this.setAttribute('aria-pressed',state.lunchSoldOut?"true":"false");
-  this.textContent="Lunch: "+(state.lunchSoldOut?"sold out":"available");
+  /* switch reflects availability: on = available, off = sold out */
+  this.setAttribute('aria-checked',state.lunchSoldOut?"false":"true");
   if(state.lunchSoldOut) clearLunchMeals();
   render();
 });
-
-document.getElementById('drinksModalClose').addEventListener('click',closeDrinksModal);
-document.getElementById('drinksModal').addEventListener('click',function(e){ if(e.target===this) closeDrinksModal(); });
-document.addEventListener('keydown',function(e){ if(e.key==="Escape" && !document.getElementById('drinksModal').hidden) closeDrinksModal(); });
 
 render();
 </script>
