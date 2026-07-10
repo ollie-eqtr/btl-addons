@@ -65,14 +65,30 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 .stage{max-width:var(--maxw);margin:0 auto;padding:calc(var(--u)*2);}
 
 /* ---------- REVIEW TOOLBAR ---------- */
+/* Prototype review chrome — flush on the grey page background (no card fill or
+   shadow), dark text. Stacked version/title, toggle switches for Lunch and
+   Christmas, and bordered segmented controls for Booking/Screen, per sketch. */
 .toolbar{background:transparent;border:none;border-radius:0;padding:0;margin-bottom:calc(var(--u)*2);display:flex;align-items:center;gap:calc(var(--u)*2);flex-wrap:wrap;box-shadow:none;}
-.toolbar .tlabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);}
-.seg{display:inline-flex;gap:4px;}
-.seg button{font:inherit;font-family:var(--font);font-size:12px;font-weight:600;padding:5px 10px;cursor:pointer;background:transparent;border:none;border-radius:var(--radius);color:var(--ink-3);text-transform:uppercase;letter-spacing:.04em;}
-.seg button:hover{color:var(--ink);}
-.seg button[aria-pressed="true"]{background:transparent;color:var(--ink);box-shadow:inset 0 -2px 0 var(--accent);border-radius:0;}
-.seg-group{display:flex;align-items:center;gap:6px;}
-.seg-group .gl{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:700;}
+.toolbar .tlabel{display:inline-flex;flex-direction:column;line-height:1.15;}
+.toolbar .tver{font-size:10px;font-weight:400;font-style:italic;letter-spacing:.02em;color:var(--ink-3);}
+.toolbar .tname{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink);}
+.toolbar .gl{font-size:12px;font-weight:600;letter-spacing:0;color:var(--ink);}
+/* toggle switches (Lunch / Christmas) */
+.tg-field{display:inline-flex;align-items:center;gap:8px;}
+.switch{position:relative;flex:0 0 auto;width:40px;height:22px;padding:0;border:none;border-radius:var(--radius-pill);background:var(--line-strong);cursor:pointer;transition:background .15s ease;}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.35);transition:transform .15s ease;}
+.switch[aria-checked="true"]{background:var(--positive);}
+.switch[aria-checked="true"]::after{transform:translateX(18px);}
+.switch:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+/* segmented control: bordered group with dividers + filled selected state */
+.seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:var(--radius);overflow:hidden;background:transparent;}
+.seg button{font:inherit;font-family:var(--font);font-size:12px;font-weight:600;padding:6px 12px;cursor:pointer;background:transparent;border:none;border-right:1px solid var(--line-strong);border-radius:0;color:var(--ink);text-transform:uppercase;letter-spacing:.04em;transition:background .12s ease,color .12s ease;}
+.seg button:last-child{border-right:none;}
+@media(hover:hover){.seg button:hover{background:rgba(0,0,0,.06);}}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff;}
+@media(hover:hover){.seg button[aria-pressed="true"]:hover{background:var(--ink);color:#fff;}}
+.seg button:focus-visible{outline:2px solid var(--focus);outline-offset:-2px;}
+.seg-group{display:flex;align-items:center;gap:8px;}
 .toolbar .right{margin-left:auto;display:flex;align-items:center;gap:calc(var(--u)*1.5);flex-wrap:wrap;}
 
 /* ---------- DEVICE FRAME ---------- */
@@ -122,11 +138,14 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 .intro h2{font-size:40px;line-height:1.2;margin:0 0 10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);font-weight:700;}
 .intro p{margin:0;color:var(--ink-2);font-size:18px;line-height:1.33;max-width:62ch;}
 [data-device="mobile"] .intro h2{font-size:28px;}
+/* hide the intro body copy on mobile (heading only) */
+[data-device="mobile"] .intro p{display:none;}
 .offerslot{font-size:13px;color:var(--ink);background:var(--offer-bg);border-left:4px solid var(--offer-bar);border-radius:var(--radius);padding:10px 14px;margin-top:calc(var(--u)*2);}
 .sec-h{font-size:18px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink);font-weight:700;margin:calc(var(--u)*3) 0 calc(var(--u)*1.5);}
 
 /* ---------- intro divider ---------- */
-.body > .intro{padding-bottom:calc(var(--u)*2);border-bottom:1px solid var(--line);margin-bottom:calc(var(--u)*3);}
+.body > .intro{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding-bottom:calc(var(--u)*3);border-bottom:1px solid var(--line);margin-bottom:calc(var(--u)*3);}
+[data-device="mobile"] .body > .intro{padding-bottom:calc(var(--u)*2);}
 
 /* ============================================================
    STEP HEADINGS (Step 1 / Step 2)
@@ -145,7 +164,7 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 [data-device="mobile"] .meal-opts{grid-template-columns:repeat(2,minmax(0,1fr));}
 .meal-card{position:relative;min-width:0;height:257px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;background:var(--paper-2);border:3px solid transparent;border-top-color:var(--select);border-radius:var(--radius);padding:18px 12px 12px;cursor:pointer;transition:box-shadow .15s ease,transform .05s ease,background .15s ease;}
 .meal-card .mc-body{position:relative;z-index:1;display:flex;flex-direction:column;gap:10px;}
-.meal-card .mc-name{font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink);line-height:1.3;}
+.meal-card .mc-name{font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink);line-height:1.3;min-height:2.6em;}
 .meal-card .mc-desc{font-size:14px;line-height:1.28;color:var(--ink);}
 /* single pre-composed plate image per card (assets-img/MealComps). Absolutely
    positioned and pinned to the bottom edge of the fixed-height card so the scene
@@ -183,18 +202,32 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 /* ============================================================
    DRINKS BAND (booking-level)
    ============================================================ */
-.drinks-bar{position:relative;display:flex;align-items:center;gap:calc(var(--u)*3);background:#181818;color:var(--paper-2);border-radius:var(--radius);padding-right:calc(var(--u)*3);margin:calc(var(--u)*3) 0;min-height:124px;overflow:hidden;scroll-margin-top:12px;}
-/* fixed height so the bar doesn't resize between Add / Added / Included states */
+/* the black card holds the fixed-height main row (.db-main) and the expandable
+   "What's included?" content (.drinks-more) stacked below it, so the card grows when expanded */
+.drinks-bar{position:relative;background:#181818;color:var(--paper-2);border-radius:var(--radius);margin:calc(var(--u)*3) 0;overflow:hidden;scroll-margin-top:12px;}
+/* Sunshine-shady frame flags the drinks package once it's on the booking — whether
+   added manually (.is-on) or bundled with Full board + drinks (.is-on.is-included).
+   An inset pseudo-border sits above the edge-to-edge photo with no layout shift. */
+.drinks-bar.is-on::after{content:"";position:absolute;inset:0;z-index:2;border:3px solid var(--c-sunshine-2);border-radius:inherit;pointer-events:none;}
+.db-main{display:flex;align-items:center;gap:calc(var(--u)*3);padding-right:calc(var(--u)*3);min-height:124px;}
+/* fixed row height so the main row doesn't resize between Add / Added / Included states */
 /* 12px gap so the text lines up with the 2nd meal card's left edge (matches the meal grid gap) */
-[data-device="desktop"] .drinks-bar{height:138px;gap:calc(var(--u)*1.5);}
+[data-device="desktop"] .db-main{height:138px;gap:calc(var(--u)*1.5);}
 .drinks-bar .db-photo{flex:0 0 calc((100% - var(--u)*1.5)/4);align-self:stretch;position:relative;background:#181818 url("assets-img/drinks.jpg") center/cover no-repeat;}
 .drinks-bar .db-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(267.78deg,#181818 4%,rgba(24,24,24,0) 28%);}
 .drinks-bar .db-text{flex:1 1 auto;display:flex;flex-direction:column;gap:6px;align-items:flex-start;padding:calc(var(--u)*2) 0;}
-.drinks-bar .db-label{font-size:20px;font-weight:700;color:var(--paper-2);text-transform:uppercase;letter-spacing:.04em;}
+.drinks-bar .db-icons{display:none;}/* drink-type icons: mobile only (Figma Drinks-Mobile) */
+.drinks-bar .db-label{font-size:16px;font-weight:700;color:var(--paper-2);text-transform:uppercase;letter-spacing:.04em;}
 .drinks-bar .db-title{font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--paper-2);}
 .drinks-bar .db-link{font:inherit;font-family:var(--font);font-size:16px;font-weight:600;color:var(--paper-2);background:none;border:none;border-bottom:1.5px solid var(--paper-2);cursor:pointer;padding:0 0;}
 @media(hover:hover){.drinks-bar .db-link:hover{color:#fff;}}
-.drinks-bar .db-price{flex:0 0 auto;font-weight:700;color:var(--paper-2);font-size:24px;letter-spacing:.1em;white-space:nowrap;}
+/* links row under the title: gold "Sample drinks range" (external) + white "Read more" (expand toggle) */
+.drinks-bar .db-links{display:flex;align-items:center;gap:calc(var(--u)*3);}
+.drinks-bar .db-sample{display:inline-flex;align-items:center;gap:5px;font:inherit;font-family:var(--font);font-size:16px;font-weight:600;color:var(--select);text-decoration:none;border-bottom:1.5px solid var(--select);padding:0;white-space:nowrap;}
+@media(hover:hover){.drinks-bar .db-sample:hover{color:#ffdb4d;border-bottom-color:#ffdb4d;}}
+.drinks-bar .db-price-wrap{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+.drinks-bar .db-price{font-weight:700;color:var(--paper-2);font-size:24px;letter-spacing:.1em;white-space:nowrap;}
+.drinks-bar .db-basis{font-size:14px;color:var(--paper-2);opacity:.7;white-space:nowrap;}
 .drinks-bar .db-add{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-family:var(--font);font-size:16px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;padding:10px 20px;cursor:pointer;border-radius:var(--radius);border:1px solid var(--paper-2);background:var(--paper-2);color:var(--ink);width:200px;}
 .drinks-bar.is-on .db-add{justify-content:space-between;}
 .db-add .cta-ico{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:16px;}
@@ -211,27 +244,61 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 [data-device="desktop"] .drinks-bar .db-incl::before{content:"";width:15px;height:11px;border-radius:0;background:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016.4142%2011.7071'%20fill='none'%3E%3Cpath%20d='M0.707107%205.70711L5.70711%2010.7071L15.7071%200.707107'%20stroke='%23fff'%20stroke-width='2'%20stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;}
 /* desktop banner text (Figma 272:935): H2 heading, sentence-case body copy, 12px rhythm */
 [data-device="desktop"] .drinks-bar .db-text{gap:6px;height:100%;justify-content:center;padding:0;}
-[data-device="desktop"] .drinks-bar .db-title{font-size:18px;font-weight:400;text-transform:none;letter-spacing:0;line-height:24px;}
+[data-device="desktop"] .drinks-bar .db-title{font-size:14px;font-weight:400;text-transform:none;letter-spacing:0;line-height:24px;}
 /* desktop included banner: green radial glow over the black fill (Figma fill layer, ~12% lawn) */
 [data-device="desktop"] .drinks-bar.is-included{background:radial-gradient(70% 340% at 60% 150%,rgba(101,179,46,.13) 0%,rgba(101,179,46,0) 65%),#181818;}
-/* mobile: compact stacked card — title + price row, description, link, full-width button */
-[data-device="mobile"] .drinks-bar{display:grid;grid-template-columns:1fr auto;grid-template-areas:"label price" "desc desc" "link link" "add add";align-items:start;gap:4px calc(var(--u)*1.5);min-height:0;padding:calc(var(--u)*2);}
+/* mobile: stacked card — Figma Drinks-Mobile default (296:666 / 295:611): icon row + text block, then price + button row.
+   .db-main is display:contents so its children join the bar's grid, letting .drinks-more slot between the text and price/CTA */
+[data-device="mobile"] .drinks-bar{display:grid;grid-template-columns:auto 1fr;grid-template-areas:"text text" "more more" "price add";align-items:center;gap:0 calc(var(--u)*4);min-height:0;padding:calc(var(--u)*1.5);background:#181818;}
+[data-device="mobile"] .db-main{display:contents;}
+/* row-gap is 0 so the always-present (but collapsed) "more" row adds no space; the text block
+   carries the spacing down to the price/CTA, and the panel animates its own height when opened */
+[data-device="mobile"] .drinks-bar:not(.is-included) .db-text{margin-bottom:calc(var(--u)*4);}
 [data-device="mobile"] .drinks-bar .db-photo{display:none;}
-[data-device="mobile"] .drinks-bar .db-text{display:contents;}
-[data-device="mobile"] .drinks-bar .db-label{grid-area:label;align-self:center;font-size:20px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#fff;}
-[data-device="mobile"] .drinks-bar .db-title{grid-area:desc;font-size:16px;font-weight:400;text-transform:none;letter-spacing:0;line-height:1.35;color:rgba(255,255,255,.7);}
-[data-device="mobile"] .drinks-bar .db-link{grid-area:link;justify-self:start;font-size:14px;margin-top:2px;}
-[data-device="mobile"] .drinks-bar .db-price{grid-area:price;align-self:center;justify-self:end;font-size:22px;}
-[data-device="mobile"] .drinks-bar .db-add{grid-area:add;width:100%;min-width:0;margin-top:calc(var(--u)*1.5);}
+[data-device="mobile"] .drinks-bar .db-text{grid-area:text;display:flex;flex-direction:column;align-items:flex-start;gap:calc(var(--u)*1.5);padding:0;}
+[data-device="mobile"] .drinks-bar .db-icons{display:flex;align-items:flex-end;gap:calc(var(--u)*2);opacity:.3;color:var(--paper);}
+[data-device="mobile"] .drinks-bar .db-icons svg{flex:0 0 auto;width:24px;height:24px;display:block;}
+/* negative margins below cancel the line-box leading (top ~cap, bottom ~baseline) so gaps read glyph-to-glyph
+   without CSS text-box trimming — keeps inter-line spacing intact for the wrapping description, and works in older browsers */
+[data-device="mobile"] .drinks-bar .db-label{font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;line-height:24px;color:var(--paper-2);margin:-4.8px 0 -8px;}
+[data-device="mobile"] .drinks-bar .db-title{font-size:16px;font-weight:400;text-transform:none;letter-spacing:0;line-height:24px;color:var(--paper-2);opacity:.8;margin:-4.8px 0 -8px;}
+/* mobile: the two links sit on one row, spread to the edges (sample left, read more right) */
+[data-device="mobile"] .drinks-bar .db-links{width:100%;justify-content:space-between;gap:calc(var(--u)*2);margin-top:calc(var(--u)*0.5);}
+[data-device="mobile"] .drinks-bar .db-link{font-size:16px;font-weight:600;line-height:20px;color:var(--paper-2);border-bottom:1.5px solid var(--paper-2);padding:0;}
+[data-device="mobile"] .drinks-bar .db-sample{font-size:16px;line-height:20px;}
+[data-device="mobile"] .drinks-bar .db-price-wrap{grid-area:price;align-self:center;justify-self:start;align-items:flex-start;gap:6px;}
+[data-device="mobile"] .drinks-bar .db-price{font-size:24px;line-height:30px;letter-spacing:.1em;color:var(--paper);margin:-5.2px 0 -8px;}
+[data-device="mobile"] .drinks-bar .db-basis{font-size:14px;line-height:18px;color:var(--paper);opacity:.8;margin:-3.2px 0 -5px;}
+[data-device="mobile"] .drinks-bar .db-add{grid-area:add;width:100%;min-width:0;margin-top:0;align-self:center;background:var(--paper);border:2px solid rgba(255,255,255,.03);color:var(--ink);}
+/* added (selected) state stays red on mobile, matching desktop */
+[data-device="mobile"] .drinks-bar.is-on .db-add{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+@media(hover:hover){[data-device="mobile"] .drinks-bar.is-on .db-add:hover{background:var(--accent-strong);border-color:var(--accent-strong);}}
 /* included (Figma 272:935 mobile): black + green glow, stacked text, full-width translucent button */
-[data-device="mobile"] .drinks-bar.is-included{display:flex;flex-direction:column;align-items:stretch;gap:calc(var(--u)*3);grid-template-areas:none;padding:calc(var(--u)*1.5);background:radial-gradient(80% 300% at 60% 150%,rgba(101,179,46,.13) 0%,rgba(101,179,46,0) 65%),#181818;}
-[data-device="mobile"] .drinks-bar.is-included .db-text{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:0;}
-[data-device="mobile"] .drinks-bar.is-included .db-label{align-self:flex-start;font-size:16px;letter-spacing:.1em;color:var(--paper-2);}
-[data-device="mobile"] .drinks-bar.is-included .db-title{display:block;font-size:16px;font-weight:400;text-transform:none;letter-spacing:0;line-height:24px;color:var(--paper-2);}
-[data-device="mobile"] .drinks-bar.is-included .db-link{align-self:flex-start;color:var(--paper-2);border-bottom-color:var(--paper-2);font-size:16px;margin-top:0;}
-[data-device="mobile"] .drinks-bar.is-included .db-incl{width:100%;justify-content:space-between;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.03);border-radius:3px;padding:10px 13px;gap:16px;font-size:16px;font-weight:600;letter-spacing:1.6px;color:#fff;}
+[data-device="mobile"] .drinks-bar.is-included{display:flex;flex-direction:column;align-items:stretch;gap:calc(var(--u)*4);grid-template-areas:none;padding:calc(var(--u)*1.5);background:radial-gradient(80% 300% at 60% 150%,rgba(101,179,46,.12) 0%,rgba(101,179,46,0) 65%),#181818;}
+[data-device="mobile"] .drinks-bar.is-included .db-incl{width:100%;justify-content:space-between;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.03);border-radius:3px;padding:10px 13px;gap:16px;font-size:14px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#fff;}
 [data-device="mobile"] .drinks-bar.is-included .db-incl::before{content:"";width:15px;height:11px;border-radius:0;background:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016.4142%2011.7071'%20fill='none'%3E%3Cpath%20d='M0.707107%205.70711L5.70711%2010.7071L15.7071%200.707107'%20stroke='%23fff'%20stroke-width='2'%20stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;}
 [data-device="mobile"] .drinks-bar.is-included .db-incl::after{content:"";flex:0 0 auto;width:15px;height:11px;}
+/* ---- expandable "What's included?" content, shown inside the black card (mirrors plan card Read more) ---- */
+/* expand/collapse animates via grid-template-rows (0fr->1fr) so the black card grows rather than snapping */
+.drinks-more{display:grid;grid-template-rows:0fr;grid-area:more;color:var(--paper-2);transition:grid-template-rows .22s cubic-bezier(.4,0,.2,1);}
+.drinks-more.open{grid-template-rows:1fr;}
+.dm-in{overflow:hidden;min-height:0;opacity:0;visibility:hidden;transition:opacity .16s ease,visibility .16s;}
+.drinks-more.open .dm-in{opacity:1;visibility:visible;}
+.dm-content{border-top:1px solid rgba(255,255,255,.15);}
+.dm-desc{font-size:14px;line-height:1.5;color:var(--paper-2);opacity:.85;margin:0 0 calc(var(--u)*1.5);}
+.dm-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+.dm-list li{position:relative;padding-left:26px;font-size:14px;line-height:1.35;color:var(--paper-2);}
+.dm-list li::before{content:"";position:absolute;left:0;top:3px;width:15px;height:11px;background:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016.4142%2011.7071'%20fill='none'%3E%3Cpath%20d='M0.707107%205.70711L5.70711%2010.7071L15.7071%200.707107'%20stroke='%23fff'%20stroke-width='2'%20stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;}
+.dm-note{font-size:14px;font-weight:700;color:#84cf80;margin:calc(var(--u)*1.5) 0 0;}
+/* desktop: full-width block below the main row, divided from it by a full-width hairline;
+   only the text is capped (to two-thirds) for a readable line length, so the divider still spans the card */
+[data-device="desktop"] .dm-content{padding:calc(var(--u)*2.5) calc(var(--u)*3) calc(var(--u)*3);}
+[data-device="desktop"] .dm-content > *{max-width:66%;}
+/* mobile: sits in the "more" grid row between the text and the price/CTA */
+[data-device="mobile"] .dm-content{padding:calc(var(--u)*2) 0 calc(var(--u)*4);}
+/* included state is a flex column (no grid), so cancel the flex gap above the collapsed panel */
+[data-device="mobile"] .drinks-bar.is-included .drinks-more{margin-top:calc(var(--u)*-4);}
+@media(prefers-reduced-motion: reduce){.plan-more,.drinks-more,.pm-in,.dm-in{transition:none !important;}}
 
 /* ============================================================
    STEP 2 — PLAN CARDS (coloured header band per Figma)
@@ -239,6 +306,21 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 .plan-grid{display:grid;gap:calc(var(--u)*3);}
 [data-device="desktop"] .plan-grid{grid-template-columns:repeat(2,1fr);align-items:start;}
 [data-device="mobile"] .plan-grid{grid-template-columns:1fr;}
+/* full-width light rule above Step 2, 24px clear above and below the line */
+.step2-rule{height:1px;background:rgba(228,228,227,.5);border:0;margin:24px 0;}
+.step2{position:relative;}
+/* mobile-only: sticky in-section anchor chips to jump between dining plans */
+.plan-anchors{display:none;}
+/* full-bleed to the frame edges: negative margin cancels the .body side padding, inner padding keeps the first/last chip aligned with the content */
+[data-device="mobile"] .plan-anchors{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;position:sticky;top:0;z-index:6;background:var(--paper);padding:10px calc(var(--u)*1.5);margin:0 calc(var(--u)*-1.5) calc(var(--u)*2);box-shadow:0 1px 0 var(--line);scrollbar-width:none;}
+[data-device="mobile"] .plan-anchors::-webkit-scrollbar{display:none;}
+[data-device="mobile"] .plan-anchor{flex:0 0 auto;font-size:13px;font-weight:600;color:var(--ink);background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius-pill);padding:7px 14px;white-space:nowrap;text-decoration:none;transition:border-color .18s ease,box-shadow .18s ease,background .18s ease,color .18s ease;}
+@media(hover:hover){[data-device="mobile"] .plan-anchor:hover{background:var(--paper-3);}}
+/* scroll-spy: the chip whose plan card is in view gets a black outline.
+   inset shadow (not a wider border) keeps the chip geometry stable so the row doesn't jitter as the active state moves */
+[data-device="mobile"] .plan-anchor.is-current{color:var(--ink);background:var(--paper);border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);}
+@media(hover:hover){[data-device="mobile"] .plan-anchor.is-current:hover{background:var(--paper);}}
+[data-device="mobile"] .plan-grid .card{scroll-margin-top:64px;}
 .card{position:relative;display:flex;flex-direction:column;background:var(--paper-2);border:3px solid transparent;border-radius:var(--radius);overflow:hidden;transition:box-shadow .15s ease;}
 /* category header band — black text per Figma */
 .card h4{font-size:16px;margin:0;padding:18px 24px;color:var(--ink);text-transform:uppercase;letter-spacing:.1em;font-weight:700;border-bottom:1.5px solid transparent;}
@@ -252,31 +334,50 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 .card[data-plan="premium"].is-selected{border-color:var(--c-sky);}
 .card[data-plan="hotel"].is-selected{border-color:var(--c-lawn);}
 .card[data-plan="dinearound"].is-selected{border-color:var(--c-candy);}
-.card-img{position:relative;height:160px;background:var(--paper-3) center/cover no-repeat;}
+.card-img{position:relative;height:160px;overflow:hidden;background:var(--paper-3);}
+/* carousel layers — motion happens ONLY during the arrow transition, there is no idle animation:
+   .ci-slide = the horizontal slide, .ci-par = parallax lag + zoom-settle, .ci-img = the image (static at rest) */
+.card-img .ci-slide{position:absolute;inset:0;overflow:hidden;}
+.card-img .ci-par{position:absolute;inset:0;}
+.card-img .ci-img{position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;}
+.card-img .ci-slide.ci-anim,.card-img .ci-par.ci-anim{transition:transform .55s cubic-bezier(.22,1,.36,1);}
 /* "save £X" price tab overlaid on the image (per Figma) */
 .save-tab{position:absolute;left:0;bottom:0;display:inline-flex;align-items:baseline;gap:5px;padding:8px 12px;background:var(--accent);color:#fff;border-top-right-radius:20px;font-size:14px;font-weight:700;text-transform:lowercase;letter-spacing:.02em;line-height:1;}
 .save-tab b{font-size:22px;font-weight:700;}
-.card[data-plan="foodcourt"] .card-img{background-image:url("assets-img/foodcourt.jpg");}
-.card[data-plan="premium"] .card-img{background-image:url("assets-img/premium.jpg");}
-.card[data-plan="hotel"] .card-img{background-image:url("assets-img/hotel.jpg");}
-.card[data-plan="dinearound"] .card-img{background-image:url("assets-img/dinearound.jpg");}
+/* image carousel arrows — white circle + chevron, 12px from the card edges, vertically centred (Figma 297:901) */
+.card-img .img-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2;display:flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border:none;border-radius:50%;background:rgba(255,255,255,.92);color:var(--ink);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.25);transition:background .12s ease;}
+.card-img .img-nav.prev{left:12px;}
+.card-img .img-nav.next{right:12px;}
+@media(hover:hover){.card-img .img-nav:hover{background:#fff;}}
+.card-img .img-nav:active{transform:translateY(-50%) scale(.94);}
+/* plan card images are now driven by JS (.ci-slide) so the carousel can animate between them */
 .card-body{display:flex;flex-direction:column;gap:calc(var(--u)*3);padding:calc(var(--u)*3);}
 .card .desc{font-size:16px;line-height:1.5;color:var(--ink);margin:0;}
-.incl-row{display:flex;gap:calc(var(--u)*2);align-items:flex-end;justify-content:space-between;}
-.incl{list-style:none;margin:0;padding:0;font-size:16px;display:flex;flex-direction:column;gap:8px;flex:1 1 auto;}
+.plan-links{display:flex;gap:calc(var(--u)*2);align-items:flex-end;justify-content:space-between;}
+.incl{list-style:none;margin:0;padding:0;font-size:16px;display:flex;flex-direction:column;gap:8px;flex:0 0 auto;}
 .incl li{padding-left:26px;position:relative;color:var(--ink);line-height:1.3;}
 .incl li::before{content:"";position:absolute;left:0;top:2px;width:18px;height:18px;background:url("assets-hdr/check.svg") center/18px no-repeat;}
-.plan-more-toggle{flex:0 0 auto;align-self:flex-end;font:inherit;font-family:var(--font);font-size:16px;font-weight:600;color:var(--ink);background:none;border:none;border-bottom:1.5px solid var(--ink);padding:0 0;cursor:pointer;white-space:nowrap;}
-.plan-more{display:none;}
-.plan-more.open{display:block;}
-.plan-more p{font-size:14px;color:var(--ink-2);margin:0 0 var(--u);line-height:1.5;}
+.plan-more-toggle{flex:0 0 auto;align-self:flex-end;font:inherit;font-family:var(--font);font-size:16px;font-weight:600;color:var(--ink);background:none;border:none;border-bottom:1.5px solid var(--ink);padding:6px 0 0;cursor:pointer;white-space:nowrap;}
+/* Read more: expand/collapse animates via grid-template-rows (0fr->1fr) so the card grows
+   rather than snapping. The negative margin cancels the card-body gap above it (so the collapsed
+   state keeps its original spacing); the open top spacing comes from the paragraph's padding-top,
+   which lives inside the clipped inner and therefore animates in too. */
+.plan-more{display:grid;grid-template-rows:0fr;margin-top:calc(var(--u)*-3);transition:grid-template-rows .22s cubic-bezier(.4,0,.2,1);}
+.plan-more.open{grid-template-rows:1fr;}
+.pm-in{overflow:hidden;min-height:0;opacity:0;visibility:hidden;transition:opacity .16s ease,visibility .16s;}
+.plan-more.open .pm-in{opacity:1;visibility:visible;}
+.plan-more p{font-size:14px;color:var(--ink-2);margin:0;padding-top:calc(var(--u)*3);line-height:1.5;}
 /* price foot (divider + price) */
 .plan-foot{display:flex;align-items:center;border-top:1px solid var(--line);padding-top:calc(var(--u)*3);}
-.price{flex:1 1 auto;display:flex;flex-direction:column;gap:2px;min-width:0;}
-.price .was{font-size:14px;color:var(--ink-2);text-decoration:line-through;opacity:.6;}
+.price{flex:1 1 auto;display:flex;flex-direction:column;gap:0;min-width:0;}
+/* strikethrough was-price: Figma Body-L 18px, Primary/Grey (--ink-2 #3c3c3b) at 100%.
+   line-heights mirror Figma; the was↔now spacing is the line-box leading alone (gap:0),
+   which measures ~13px ink-to-ink and matches Figma's trimmed 12px gap. Figma trims that
+   leading away, so any positive flex gap here reads too large against the design. */
+.price .was{font-size:18px;line-height:24px;color:var(--ink-2);text-decoration:line-through;}
 .price .now-row{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;}
-.price .now{font-size:24px;font-weight:700;letter-spacing:.1em;color:var(--ink);}
-.price .basis{font-size:14px;color:var(--ink);}
+.price .now{font-size:24px;line-height:30px;font-weight:700;letter-spacing:.1em;color:var(--ink);}
+.price .basis{font-size:14px;line-height:18px;color:var(--ink);}
 /* full-width commit button (per Figma): outline = select, filled red = selected */
 .card-cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;font:inherit;font-family:var(--font);font-size:16px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;border:1px solid var(--ink);border-radius:var(--radius);background:transparent;color:var(--ink);padding:11px 20px;cursor:pointer;transition:background .12s ease,border-color .12s ease,color .12s ease;}
 @media(hover:hover){.card-cta:hover{background:rgba(0,0,0,.05);}}
@@ -286,8 +387,8 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 .card-cta .cta-ico{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:16px;}
 .card-cta .cta-ghost{opacity:0;}
 .card-cta .cta-label{flex:0 1 auto;}
-.sample-link{display:inline-flex;align-items:center;font:inherit;font-family:var(--font);font-size:14px;font-weight:700;color:var(--accent);text-decoration:underline;}
-.ext-ico{margin-left:5px;vertical-align:-2px;}
+.sample-link{display:inline-flex;align-items:center;gap:6px;font:inherit;font-family:var(--font);font-size:16px;font-weight:600;color:var(--accent);text-decoration:none;border-bottom:1.5px solid var(--accent);padding:6px 0 0;white-space:nowrap;}
+.ext-ico{flex:0 0 auto;}
 
 /* ============================================================
    SLIM ROWS (Unit 2+)
@@ -302,9 +403,11 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 .slim-meals .sr-price{flex:1 1 100%;text-align:left;padding-left:calc(24px + var(--u)*1.5);}
 /* grey, borderless rows (mirrors Unit 1 cards) */
 .slim-row{display:flex;align-items:center;gap:calc(var(--u)*1.5);border:none;border-radius:var(--radius);background:var(--paper-2);padding:14px 16px;cursor:pointer;transition:box-shadow .15s ease,background .15s ease;}
-@media(hover:hover){.slim-row:hover{box-shadow:0 4px 14px rgba(0,0,0,.1);}}
+/* hover = light-grey border (darker than the grey fill, lighter than the selected border), no drop shadow */
+@media(hover:hover){.slim-row:hover{box-shadow:inset 0 0 0 1.5px #cccccc;}}
 .slim-row:active{transform:translateY(1px);}
 .slim-row.is-soldout{opacity:.5;cursor:not-allowed;}
+@media(hover:hover){.slim-row.is-soldout:hover{box-shadow:none;}}
 .slim-row .sr-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;}
 .slim-row .sr-name{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink);}
 .slim-row .sr-desc{font-size:13px;color:var(--ink-2);line-height:1.3;}
@@ -346,15 +449,18 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 /* ============================================================
    PARTY BLOCK (multi-unit)
    ============================================================ */
-.party{border:1.5px solid #e5e5e5;border-radius:var(--radius);margin-bottom:calc(var(--u)*3);background:var(--paper);overflow:hidden;box-shadow:2px 4px 17px rgba(0,0,0,.06);}
+/* overflow:clip (not hidden) still clips children to the rounded corners but is NOT a
+   scroll container, so the sticky .plan-anchors nav inside Unit 1 can stick to .scroll
+   in the 2-party view. hidden is kept as a fallback for very old browsers. */
+.party{border:1.5px solid #e5e5e5;border-radius:var(--radius);margin-bottom:calc(var(--u)*3);background:var(--paper);overflow:hidden;overflow:clip;box-shadow:2px 4px 17px rgba(0,0,0,.06);}
 /* light unit header (pebble) per Figma multi-unit design */
 .unit-head{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--paper-2);border-bottom:1.5px solid #e5e5e5;padding:calc(var(--u)*2) calc(var(--u)*3);color:var(--ink);}
 .unit-head .uh-titles{display:flex;flex-direction:column;gap:3px;min-width:0;}
 .unit-head .uh-title{font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;}
 .unit-head .uh-sub{font-size:14px;font-weight:400;color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em;}
 .unit-head .uh-right{display:flex;align-items:center;gap:12px;flex:0 0 auto;}
-.unit-revert{font:inherit;font-family:var(--font);font-size:14px;font-weight:600;color:var(--ink-2);background:none;border:none;border-bottom:1.5px solid var(--ink-2);padding:2px 0;cursor:pointer;white-space:nowrap;}
-@media(hover:hover){.unit-revert:hover{color:var(--ink);}}
+.unit-revert{font:inherit;font-family:var(--font);font-size:14px;font-weight:600;color:var(--accent);background:none;border:none;border-bottom:1.5px solid var(--accent);padding:2px 0 0;cursor:pointer;white-space:nowrap;}
+@media(hover:hover){.unit-revert:hover{color:var(--accent-strong);border-bottom-color:var(--accent-strong);}}
 .collapse-btn{background:none;border:none;cursor:pointer;color:var(--ink);padding:4px;font-size:12px;line-height:1;display:inline-flex;}
 .collapse-btn .chev{display:inline-flex;align-items:center;transition:transform .2s;}
 .collapse-btn[aria-expanded="true"] .chev{transform:rotate(180deg);}
@@ -452,19 +558,6 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 [data-device="mobile"] .factions{display:flex;gap:var(--u);}
 [data-device="mobile"] .factions .savebtn{flex:0 0 auto;padding:10px 14px;letter-spacing:.04em;}
 [data-device="mobile"] .factions .continue{flex:1 1 auto;padding:10px 8px;letter-spacing:.02em;}
-
-/* ============ MODAL ============ */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:calc(var(--u)*2);z-index:50;}
-.modal-overlay[hidden]{display:none;}
-.modal{background:var(--paper);border-radius:var(--radius);max-width:460px;width:100%;max-height:80vh;overflow:auto;padding:calc(var(--u)*5) calc(var(--u)*3) calc(var(--u)*3);position:relative;}
-.modal-hero{display:block;width:100%;height:160px;object-fit:cover;border-radius:var(--radius);margin:0 0 calc(var(--u)*2);}
-.modal h3{font-size:20px;margin:0 0 var(--u);text-transform:uppercase;letter-spacing:.04em;font-weight:700;}
-.modal p{font-size:14px;color:var(--ink-2);margin:0 0 var(--u);line-height:1.5;}
-.modal-list{margin:0 0 var(--u);padding-left:18px;font-size:14px;color:var(--ink-2);}
-.modal-list li{margin-bottom:5px;}
-.modal-note{font-size:13px;color:var(--positive-text);font-weight:700;}
-.modal-fineprint{font-size:12px;color:var(--ink-3);}
-.modal-close{position:absolute;top:10px;right:calc(var(--u)*3);background:none;border:none;font-size:26px;line-height:1;cursor:pointer;color:var(--ink);}
 
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
 :focus-visible{outline:3px solid var(--focus);outline-offset:2px;}
