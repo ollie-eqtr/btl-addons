@@ -1,2 +1,4 @@
 .DS_Store
 _shots/
+node_modules/
+screenshots/

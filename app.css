@@ -162,7 +162,7 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 .meal-opts{display:grid;gap:calc(var(--u)*1.5);margin-bottom:calc(var(--u)*3);}
 [data-device="desktop"] .meal-opts{grid-template-columns:repeat(4,minmax(0,1fr));align-items:stretch;}
 [data-device="mobile"] .meal-opts{grid-template-columns:repeat(2,minmax(0,1fr));}
-.meal-card{position:relative;min-width:0;height:257px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;background:var(--paper-2);border:3px solid transparent;border-top-color:var(--select);border-radius:var(--radius);padding:18px 12px 12px;cursor:pointer;transition:box-shadow .15s ease,transform .05s ease,background .15s ease;}
+.meal-card{position:relative;min-width:0;height:257px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;background:var(--paper-2);border:3px solid transparent;border-top-color:var(--select);border-radius:var(--radius);padding:18px 12px 12px;cursor:pointer;transition:border-color .15s ease,transform .05s ease,background .15s ease;}
 .meal-card .mc-body{position:relative;z-index:1;display:flex;flex-direction:column;gap:10px;}
 .meal-card .mc-name{font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink);line-height:1.3;min-height:2.6em;}
 .meal-card .mc-desc{font-size:14px;line-height:1.28;color:var(--ink);}
@@ -185,16 +185,15 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 .meal-card .mc-radio{flex:0 0 auto;width:24px;height:24px;border:1.5px solid var(--ink-2);border-radius:50%;background-color:transparent;background-position:center;background-repeat:no-repeat;background-size:24px 24px;}
 .meal-card .mc-price b{font-weight:700;font-size:16px;letter-spacing:.1em;text-transform:uppercase;}
 .meal-card .mc-was{color:var(--ink-3);text-decoration:line-through;font-size:13px;letter-spacing:0;}
-/* hover (pointer only) */
-@media(hover:hover){.meal-card:hover{box-shadow:0 6px 18px rgba(0,0,0,.12);}}
+/* hover (pointer only): white fill, no drop shadow — the gold top border stays */
+@media(hover:hover){.meal-card:not(.is-soldout):hover{background:var(--paper);}}
 /* pressed (desktop + mobile) */
 .meal-card:active{transform:translateY(1px);}
-/* selected */
-.meal-card.is-active{background:var(--paper);border-color:var(--select);box-shadow:2px 4px 12px rgba(0,0,0,.14);}
-.meal-card.is-active .mc-radio{border-color:var(--ink);background-color:var(--ink);background-image:url("assets-img/check-white.svg");}
+/* selected: white fill + 3px gold border, no drop shadow */
+.meal-card.is-active{background:var(--paper);border-color:var(--select);}
+.meal-card.is-active .mc-radio{border-color:var(--accent);background-color:var(--accent);background-image:url("assets-img/check-white.svg");}
 /* sold out (disabled) */
 .meal-card.is-soldout{opacity:.5;cursor:not-allowed;}
-@media(hover:hover){.meal-card.is-soldout:hover{box-shadow:none;}}
 .meal-card.is-soldout .mc-plate{filter:grayscale(1);}
 .soldout-tag{display:inline-block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-2);background:var(--paper-3);border:1px solid var(--line-strong);border-radius:var(--radius);padding:3px 8px;}
 .save-amt{font-size:12px;color:var(--positive-text);font-weight:700;}
@@ -328,8 +327,8 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 .card[data-plan="premium"] h4{background:var(--c-sky);border-bottom-color:var(--c-sky-2);}
 .card[data-plan="hotel"] h4{background:var(--c-lawn);border-bottom-color:var(--c-lawn-2);}
 .card[data-plan="dinearound"] h4{background:var(--c-candy);border-bottom-color:var(--c-candy-2);}
-/* selected = white card + category-colour border + shadow */
-.card.is-selected{background:var(--paper);box-shadow:2px 4px 14px rgba(0,0,0,.14);}
+/* selected = white card + category-colour border (drop shadow removed) */
+.card.is-selected{background:var(--paper);}
 .card[data-plan="foodcourt"].is-selected{border-color:var(--c-sunset);}
 .card[data-plan="premium"].is-selected{border-color:var(--c-sky);}
 .card[data-plan="hotel"].is-selected{border-color:var(--c-lawn);}
@@ -401,13 +400,13 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 .slim-meals .slim-row{flex-wrap:wrap;align-items:flex-start;}
 .slim-meals .sr-main{flex:1 1 auto;}
 .slim-meals .sr-price{flex:1 1 100%;text-align:left;padding-left:calc(24px + var(--u)*1.5);}
-/* grey, borderless rows (mirrors Unit 1 cards) */
-.slim-row{display:flex;align-items:center;gap:calc(var(--u)*1.5);border:none;border-radius:var(--radius);background:var(--paper-2);padding:14px 16px;cursor:pointer;transition:box-shadow .15s ease,background .15s ease;}
-/* hover = light-grey border (darker than the grey fill, lighter than the selected border), no drop shadow */
-@media(hover:hover){.slim-row:hover{box-shadow:inset 0 0 0 1.5px #cccccc;}}
+/* grey rows with a reserved 3px transparent border (padding trimmed by 3px to keep
+   the same footprint), so selecting a gold border causes no layout shift — matches Unit 1 meal cards */
+.slim-row{display:flex;align-items:center;gap:calc(var(--u)*1.5);border:3px solid transparent;border-radius:var(--radius);background:var(--paper-2);padding:11px 13px;cursor:pointer;transition:border-color .15s ease,background .15s ease;}
+/* hover: white fill, no border, no drop shadow (matches Unit 1 meal cards) */
+@media(hover:hover){.slim-row:not(.is-soldout):hover{background:var(--paper);}}
 .slim-row:active{transform:translateY(1px);}
 .slim-row.is-soldout{opacity:.5;cursor:not-allowed;}
-@media(hover:hover){.slim-row.is-soldout:hover{box-shadow:none;}}
 .slim-row .sr-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;}
 .slim-row .sr-name{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink);}
 .slim-row .sr-desc{font-size:13px;color:var(--ink-2);line-height:1.3;}
@@ -416,13 +415,13 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 .slim-row .sr-was{color:var(--ink-3);text-decoration:line-through;font-size:11px;margin-left:4px;}
 /* meal rows: radio button + select highlight when active */
 .slim-meal .sr-radio{flex:0 0 auto;width:24px;height:24px;border:1.5px solid var(--ink-2);border-radius:50%;background-color:transparent;background-position:center;background-repeat:no-repeat;background-size:24px 24px;}
-.slim-meal.is-active{background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--line-strong);}
-.slim-meal.is-active .sr-radio{border-color:var(--ink);background-color:var(--ink);background-image:url("assets-img/check-white.svg");}
+.slim-meal.is-active{background:var(--paper);border-color:var(--select);}
+.slim-meal.is-active .sr-radio{border-color:var(--accent);background-color:var(--accent);background-image:url("assets-img/check-white.svg");}
 /* plan rows: outline "Select" -> filled red "Selected" button */
 .slim-plan .sr-right{display:flex;align-items:center;gap:calc(var(--u)*2);flex:0 0 auto;}
 .slim-plan .sr-price{display:flex;flex-direction:column;align-items:flex-end;gap:1px;line-height:1.2;}
 .slim-plan .sr-was{margin-left:0;}
-.slim-plan.is-active{background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--line-strong);}
+.slim-plan.is-active{background:var(--paper);border-color:var(--select);}
 .slim-cta{flex:0 0 auto;font:inherit;font-family:var(--font);font-size:14px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;border:1px solid var(--ink);border-radius:var(--radius);background:transparent;color:var(--ink);padding:9px 18px;cursor:pointer;transition:background .12s ease,border-color .12s ease,color .12s ease;}
 @media(hover:hover){.slim-cta:hover{background:rgba(0,0,0,.05);}}
 .slim-cta:active{transform:translateY(1px);}
@@ -452,7 +451,7 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 /* overflow:clip (not hidden) still clips children to the rounded corners but is NOT a
    scroll container, so the sticky .plan-anchors nav inside Unit 1 can stick to .scroll
    in the 2-party view. hidden is kept as a fallback for very old browsers. */
-.party{border:1.5px solid #e5e5e5;border-radius:var(--radius);margin-bottom:calc(var(--u)*3);background:var(--paper);overflow:hidden;overflow:clip;box-shadow:2px 4px 17px rgba(0,0,0,.06);}
+.party{border:1.5px solid #e5e5e5;border-radius:var(--radius);margin-bottom:calc(var(--u)*3);background:var(--paper);overflow:hidden;overflow:clip;}
 /* light unit header (pebble) per Figma multi-unit design */
 .unit-head{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--paper-2);border-bottom:1.5px solid #e5e5e5;padding:calc(var(--u)*2) calc(var(--u)*3);color:var(--ink);}
 .unit-head .uh-titles{display:flex;flex-direction:column;gap:3px;min-width:0;}

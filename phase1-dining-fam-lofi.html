@@ -22,6 +22,7 @@
   /* TOOLBAR */
   .toolbar{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:var(--u) calc(var(--u)*1.5);margin-bottom:calc(var(--u)*2);display:flex;align-items:center;gap:calc(var(--u)*2);flex-wrap:wrap;}
   .toolbar .tlabel{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink);}
+  .toolbar .tver{display:inline-block;margin-left:6px;font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:999px;padding:2px 8px;vertical-align:middle;}
   .seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:var(--radius);overflow:hidden;}
   .seg button{font:inherit;font-size:13px;padding:6px 12px;cursor:pointer;background:var(--paper);border:none;border-right:1px solid var(--line-strong);color:var(--ink);}
   .seg button:last-child{border-right:none;}
@@ -289,7 +290,7 @@
 
   <!-- TOOLBAR -->
   <div class="toolbar" data-device="desktop" id="rootToggleHost">
-    <span class="tlabel">Phase 1 Dining</span>
+    <span class="tlabel">Phase 1 Dining<span class="tver">v1.0</span></span>
     <div class="seg-group"><span class="gl">Booking</span>
       <div class="seg" role="group" aria-label="Units"><button id="pt1" aria-pressed="true">1 unit</button><button id="pt2" aria-pressed="false">2 units</button></div>
     </div>

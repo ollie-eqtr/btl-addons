@@ -29,10 +29,12 @@
   .phase{margin-bottom:calc(var(--u)*4);}
   .phase-h{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2);margin:0 0 calc(var(--u)*1.5);padding-bottom:6px;border-bottom:1px solid var(--line);}
   .cards{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*2);}
-  .card{display:flex;flex-direction:column;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:calc(var(--u)*3);text-decoration:none;color:inherit;box-shadow:0 6px 24px rgba(0,0,0,.08);transition:transform .15s ease,box-shadow .15s ease;}
+  .card{position:relative;display:flex;flex-direction:column;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:calc(var(--u)*3);text-decoration:none;color:inherit;box-shadow:0 6px 24px rgba(0,0,0,.08);transition:transform .15s ease,box-shadow .15s ease;}
   .card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.14);}
   .card h3{font-size:22px;margin:0 0 6px;}
-  .card p{font-size:14px;color:var(--ink-2);margin:0 0 calc(var(--u)*3);flex:1;}
+  .card p{font-size:14px;color:var(--ink-2);margin:0 0 calc(var(--u)*2);flex:1;}
+  .meta{position:absolute;right:calc(var(--u)*3);bottom:calc(var(--u)*2);margin:0;font-size:9px;font-weight:600;text-transform:none;letter-spacing:.01em;color:var(--ink-3);}
+  .meta .ver{color:var(--accent);font-weight:700;}
   .go{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-ink);background:var(--accent);border-radius:var(--radius);padding:10px 16px;align-self:flex-start;}
   .card:hover .go{background:var(--accent-strong);}
   .foot{margin-top:calc(var(--u)*2);font-size:12px;color:var(--ink-3);}
@@ -55,12 +57,14 @@
           <h3>High-fidelity</h3>
           <p>Fully branded, interactive prototype with final visual styling, imagery and motion.</p>
           <span class="go">View hi-fi &rarr;</span>
+          <span class="meta"><span class="ver">v1.0</span> · last updated 06/07/26</span>
         </a>
 
         <a class="card" href="/phase1-lofi">
           <h3>Low-fidelity</h3>
           <p>Lightweight wireframe focused on structure, content and flow without final styling.</p>
           <span class="go">View lo-fi &rarr;</span>
+          <span class="meta"><span class="ver">v1.0</span> · last updated 06/07/26</span>
         </a>
       </div>
     </section>
@@ -72,6 +76,7 @@
           <h3>Low-fidelity</h3>
           <p>Lightweight wireframe for the dining extras (Bar, Brew &amp; Wine) flow, focused on structure and content.</p>
           <span class="go">View lo-fi &rarr;</span>
+          <span class="meta"><span class="ver">v1.0</span> · last updated 06/07/26</span>
         </a>
       </div>
     </section>
