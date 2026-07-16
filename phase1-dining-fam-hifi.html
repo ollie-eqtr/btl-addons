@@ -215,7 +215,7 @@ var state={ approach:"A", units:1, device:"desktop", xmasEnabled:false, lunchSol
   parties:{}, planImg:{} };
 function curParties(){ return PARTY_SETS[state.units]; }
 function firstPid(){ return curParties()[0].id; }
-function pslot(id){ if(!state.parties[id]) state.parties[id]={plan:null,meal:null,openTiers:{},mode:(id===firstPid()?"own":"same"),collapsed:false,xmas:false}; return state.parties[id]; }
+function pslot(id){ if(!state.parties[id]) state.parties[id]={plan:null,meal:null,openTiers:{},mode:(id===firstPid()?"own":"same"),collapsed:false,xmas:false,xmasSitting:""}; return state.parties[id]; }
 function totalGuests(){ var n=0,ps=curParties(); for(var i=0;i<ps.length;i++) n+=ps[i].guests; return n; }
 function effFor(party){ var s=pslot(party.id); if(party.id===firstPid()) return s; if(s.mode==="same") return pslot(firstPid()); return s; }
 function bookingAllinc(){ var f=pslot(firstPid()); return f.meal==="allinc" && !!f.plan; }
@@ -249,6 +249,8 @@ function render(){
     var sec=document.createElement('section');
     var body=document.createElement('div'); body.className="party-body"; body.style.padding="0"; body.appendChild(unitBody(ps[0],true));
     sec.appendChild(body); dHost.appendChild(sec);
+    /* Allergen band sits at the very bottom, after the unit body (incl. the Christmas block) */
+    var allergenEl=document.createElement('div'); allergenEl.innerHTML=allergenBand(); dHost.appendChild(allergenEl);
   } else {
     /* Drinks bar sits above all unit containers in multi-unit.
        It is a booking-level product, not unit-level, so hiding it inside
@@ -430,8 +432,6 @@ function moduleA(t,guests,isFirst){
       '<div class="plan-grid" role="group" aria-label="Dining plan">'+pcards+'</div>'+
       '</div>';
   }
-  /* Allergen band always sits at the very bottom, after all plan cards */
-  if(isFirst && state.units===1) out+=allergenBand();
   return out;
 }
 
@@ -497,23 +497,48 @@ function moduleASlim(t,guests){
   return out;
 }
 
-/* ---- Christmas ---- */
+/* ---- Christmas (same bones as drinks bar; light-pebble Figma banner 452:3298) ---- */
 function christmasBlock(s, guests){
   var plan=s.plan?planById(s.plan):null;
   var included=!!(plan && s.meal && plan.xmasIncluded);
-  var clarifier = included ? "" : '<p class="xmas-sub">Already included with Premium and Food Court plans.</p>';
-  var detail='<div class="xmas-detail" hidden><p class="ph">A festive three-course lunch with all the trimmings. You will get an invite in your welcome pack on arrival confirming your restaurant. Placeholder copy, brand team to set the final wording.</p><a href="#" onclick="return false;">Christmas Day sample menu</a></div>';
-  var rowHtml;
+  var extArrow='<svg class="ext-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6"/><path d="M8 6h10v10"/></svg>';
+  var tick='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+  var photo='<div class="xb-photo" aria-hidden="true"></div>';
+  var sample='<a class="xb-sample" href="#" target="_blank" rel="noopener" onclick="return false;">Sample menu &amp; allergens'+extArrow+'</a>';
+  var info='<button type="button" class="xb-link" data-xmas-info aria-expanded="false" aria-controls="xmasMore">Read more</button>';
+  var txt='<div class="xb-text"><span class="xb-label">Christmas Dinner!</span>'+
+    '<span class="xb-title">Celebrate the big day with a 3 course meal and all the trimmings. Already included with Premium and Food Court plans.</span>'+
+    '<div class="xb-links">'+sample+info+'</div></div>';
+  var rowEnd, barCls;
   if(included){
-    rowHtml='<div class="xrow is-included"><div class="xr-l"><b>A three-course Christmas dinner with all the trimmings</b></div><div class="inc-tag">Included with '+shortName(plan)+'</div></div>';
+    rowEnd='<span class="xb-incl">Included with '+shortName(plan)+'</span>';
+    barCls='xmas-bar is-on is-included';
   } else {
     var on=!!s.xmas, price=XMAS_PP*guests;
-    rowHtml='<div class="xrow'+(on?' is-on':'')+'"><div class="xr-l"><b>A three-course Christmas dinner with all the trimmings</b><span class="sub">'+gbp(XMAS_PP)+' per person &middot; '+gbp(price)+' for this party</span></div>'+
-      '<div class="xr-r"><select class="sitting" aria-label="Choose a sitting"><option>Choose a sitting</option><option>12:00</option><option>13:30</option><option>15:00</option></select>'+
-      '<button type="button" class="mini" aria-pressed="'+(on?'true':'false')+'"><span class="m-off">Add</span><span class="m-on">&#10003; Added</span></button></div></div>';
+    /* a sitting must be chosen before the plan can be added; the choice persists across re-renders */
+    var sittings=['12:00','13:30','15:00'];
+    var sitOpts='<option value="">Choose sitting</option>'+sittings.map(function(t){return '<option value="'+t+'"'+(s.xmasSitting===t?' selected':'')+'>'+t+'</option>';}).join('');
+    var canAdd = on || !!s.xmasSitting;
+    var addBtn = on
+      ? '<span class="cta-ico">'+tick+'</span><span class="cta-label">Added</span><span class="cta-ico cta-ghost" aria-hidden="true">'+tick+'</span>'
+      : 'Add';
+    rowEnd='<div class="xb-price-wrap"><span class="xb-price">'+gbp(price)+'</span><span class="xb-basis">'+gbp(XMAS_PP)+' per person</span></div>'+
+      '<div class="xb-actions">'+
+        '<select class="xb-sitting" aria-label="Choose sitting">'+sitOpts+'</select>'+
+        '<button type="button" class="xb-add" aria-pressed="'+(on?'true':'false')+'"'+(canAdd?'':' disabled')+'>'+addBtn+'</button>'+
+      '</div>';
+    barCls='xmas-bar'+(on?' is-on':'');
   }
-  return '<div class="xmas-block"><div class="xmas-head-row"><div class="xmas-heading">Christmas Day dinner</div>'+
-    '<button type="button" class="xmas-more" aria-expanded="false">Learn more</button></div>'+clarifier+detail+rowHtml+'</div>';
+  return '<div class="'+barCls+'">'+
+    '<div class="xb-main">'+photo+txt+rowEnd+'</div>'+
+    christmasMore()+
+    '</div>';
+}
+function christmasMore(){
+  return '<div class="xmas-more" id="xmasMore"><div class="xm-in"><div class="xm-content">'+
+    '<p class="xm-desc">A festive three-course lunch with all the trimmings. You will get an invite in your welcome pack on arrival confirming your restaurant. Placeholder copy, brand team to set the final wording.</p>'+
+    '<ul class="xm-list"><li>Three-course Christmas Day lunch</li><li>All the trimmings included</li><li>Sitting confirmed in your welcome pack</li><li>Already included with Premium and Food Court plans</li></ul>'+
+    '</div></div></div>';
 }
 function renderXmas(){ xHost.innerHTML=""; } /* Christmas now lives inside each unit body */
 
@@ -594,10 +619,18 @@ function wireAll(){
 
   dHost.querySelectorAll('[data-xmasfor]').forEach(function(x){
     var id=x.dataset.xmasfor;
-    var more=x.querySelector('.xmas-more');
-    if(more) more.addEventListener('click',function(){ var d=x.querySelector('.xmas-detail'); var h=d.hasAttribute('hidden'); if(h){ d.removeAttribute('hidden'); this.setAttribute('aria-expanded','true'); this.textContent='Hide details'; } else { d.setAttribute('hidden',''); this.setAttribute('aria-expanded','false'); this.textContent='Learn more'; } });
-    var mini=x.querySelector('.mini');
-    if(mini) mini.addEventListener('click',function(){ var s=pslot(id); s.xmas=!s.xmas; render(); });
+    var add=x.querySelector('.xb-add');
+    var sit=x.querySelector('.xb-sitting');
+    if(sit) sit.addEventListener('change',function(){
+      var s=pslot(id); s.xmasSitting=this.value;
+      /* clearing the sitting also removes the plan (can't be added without one) */
+      if(!s.xmasSitting && s.xmas){ s.xmas=false; render(); return; }
+      if(add) add.disabled=!(s.xmas || s.xmasSitting);
+    });
+    if(add) add.addEventListener('click',function(){ var s=pslot(id); if(!s.xmas && !s.xmasSitting) return; s.xmas=!s.xmas; render(); });
+    x.querySelectorAll('[data-xmas-info]').forEach(function(b){
+      b.addEventListener('click',function(e){ e.stopPropagation(); toggleXmasInfo(b); });
+    });
   });
 
   dHost.querySelectorAll('.party .unit-customise, .party .unit-revert').forEach(function(b){
@@ -696,6 +729,13 @@ function toggleDrinks(){ state.drinks=!state.drinks; render(); }
 function toggleDrinksInfo(btn){
   var bar=btn.closest('.drinks-bar'); if(!bar) return;
   var panel=bar.querySelector('.drinks-more'); if(!panel) return;
+  var o=panel.classList.toggle('open');
+  btn.setAttribute('aria-expanded',o?'true':'false');
+  btn.textContent=o?'Read less':'Read more';
+}
+function toggleXmasInfo(btn){
+  var bar=btn.closest('.xmas-bar'); if(!bar) return;
+  var panel=bar.querySelector('.xmas-more'); if(!panel) return;
   var o=panel.classList.toggle('open');
   btn.setAttribute('aria-expanded',o?'true':'false');
   btn.textContent=o?'Read less':'Read more';
