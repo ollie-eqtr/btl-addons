@@ -3,6 +3,7 @@
   "rewrites": [
     { "source": "/phase1-hifi", "destination": "/phase1-dining-fam-hifi" },
     { "source": "/phase1-lofi", "destination": "/phase1-dining-fam-lofi" },
-    { "source": "/phase2-lofi", "destination": "/phase2-dining-extras-bbw-lofi" }
+    { "source": "/phase2-lofi", "destination": "/phase2-dining-extras-bbw-lofi" },
+    { "source": "/phase2-hifi", "destination": "/phase2-dining-extras-bbw-hifi" }
   ]
 }

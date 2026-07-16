@@ -1,0 +1,519 @@
+/* ============================================================================
+   Phase 2 BBW Dining & Extras: Hi-Fi prototype stylesheet ("Butlin's BBW" skin).
+   Standalone dark design system for the Big Weekender aesthetic. Deliberately
+   separate from app.css (the "Butlin's Family" skin) so phase 1 is untouched.
+   Tokens from Figma "BTL BBW- Search Bar" (V2): background #181818 (per Oliver,
+   not pure black), Yellow #ffd614, Red #da291c, Green #8ce852, Pink #d9598f,
+   Grey #d4d3d6. Headings: League Gothic (uppercase). Body: Proxima Nova.
+   8px grid. AA contrast on #181818.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- FONTS */
+@font-face{font-family:"Proxima Nova";src:url("ProximaNova/ProximaNovaRegular/ProximaNovaRegular.woff") format("woff");font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:"Proxima Nova";src:url("ProximaNova/ProximaNovaBold/ProximaNovaBold.woff") format("woff");font-weight:700;font-style:normal;font-display:swap;}
+@font-face{font-family:"Proxima Nova";src:url("ProximaNova/ProximaNovaBlack/ProximaNovaBlack.woff") format("woff");font-weight:900;font-style:normal;font-display:swap;}
+@font-face{font-family:"League Gothic";src:url("LeagueGothic/LeagueGothic.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:"Neutraface Text";src:url("neutraface-text/Neutraface Text Book.otf") format("opentype");font-weight:400;font-style:normal;font-display:swap;}
+
+/* ---------------------------------------------------------------- TOKENS */
+:root{
+  --bg:#181818;              /* page + chrome surface (user-specified, not #000) */
+  --bg-2:#202020;            /* raised surface: cards, summary, popups */
+  --bg-3:#2a2a2a;            /* pressed / deeper surface */
+  --ink:#ffffff;             /* primary text */
+  --ink2:#d4d3d6;            /* Grey: secondary text (11.4:1 on #181818) */
+  --muted:#a5a4a8;           /* tertiary text (6.5:1 on #181818, AA for small text) */
+  --line:rgba(255,255,255,.1); /* inner card dividers: always 10% white */
+  --line2:rgba(255,255,255,.34);
+  --line3:rgba(255,255,255,.55);
+  --fill:#202020; --fill2:#242424; --fill3:#2e2e2e;
+  --paper:#181818;           /* the lofi used --paper for component surfaces */
+  --dark:#ffd614;            /* lofi "selected/active" colour role -> BBW yellow */
+  --yellow:#ffd614; --yellow-strong:#e0bc12; /* hover shade, = brightness(.88) of Yellow */
+  --red:#da291c; --red-strong:#b0190e;
+  --green:#8ce852;
+  --pink:#d9598f;
+  --on-yellow:#000000;       /* black is reserved for text on yellow/white */
+  --radius:6px; --radius-pill:999px; --u:8px;
+  --focus:#ffd614;
+  --font:"Proxima Nova","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --font-display:"League Gothic","Arial Narrow","Impact",sans-serif;
+  /* prototype shell (matches phase 1 hi-fi / app.css) */
+  --shell:#dedede;
+  --shell-ink:#000000;
+  --shell-ink-3:#6f6f6e;
+  --shell-line-strong:#9a9a99;
+  --maxw:1100px;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:var(--font);color:var(--ink);background:var(--shell);line-height:1.45;-webkit-font-smoothing:antialiased;}
+button{font-family:inherit;cursor:pointer;}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:3px;}
+.toolbar :focus-visible{outline:2px solid #004680;outline-offset:-2px;}
+h1,h2,h3,h4{margin:0;font-weight:700;color:var(--ink);}
+p{margin:0;}
+ul{margin:0;padding:0;list-style:none;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;}
+
+/* ---------------------------------------------------------------- STAGE + REVIEW TOOLBAR
+   Prototype shell matches the phase 1 hi-fi (app.css): flush toolbar on the
+   grey #dedede page, stacked version/title, bordered segmented controls. */
+.stage{max-width:var(--maxw);margin:0 auto;padding:calc(var(--u)*2);}
+.toolbar{background:transparent;border:none;border-radius:0;padding:0;margin:0 0 calc(var(--u)*2);display:flex;align-items:center;gap:calc(var(--u)*2);flex-wrap:wrap;box-shadow:none;color:var(--shell-ink);font-size:16px;}
+.toolbar .tlabel{display:inline-flex;flex-direction:column;line-height:1.15;}
+.toolbar .tver{font-size:10px;font-weight:400;font-style:italic;letter-spacing:.02em;color:var(--shell-ink-3);}
+.toolbar .tname{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--shell-ink);}
+.toolbar .gl{font-size:12px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--shell-ink);}
+.toolbar .right{margin-left:auto;display:flex;align-items:center;gap:calc(var(--u)*1.5);flex-wrap:wrap;}
+.seg-group{display:flex;align-items:center;gap:8px;}
+.seg{display:inline-flex;border:1px solid var(--shell-line-strong);border-radius:3px;overflow:hidden;background:transparent;}
+.seg button{font:inherit;font-family:var(--font);font-size:12px;font-weight:600;padding:6px 12px;cursor:pointer;background:transparent;border:none;border-right:1px solid var(--shell-line-strong);border-radius:0;color:var(--shell-ink);text-transform:uppercase;letter-spacing:.04em;transition:background .12s ease,color .12s ease;}
+.seg button:last-child{border-right:none;}
+@media(hover:hover){.seg button:hover{background:rgba(0,0,0,.06);}}
+.seg button[aria-pressed="true"]{background:var(--shell-ink);color:#fff;}
+@media(hover:hover){.seg button[aria-pressed="true"]:hover{background:var(--shell-ink);color:#fff;}}
+
+/* ---------------------------------------------------------------- DEVICE FRAME (matches phase 1 hi-fi) */
+.frame-outer{display:flex;justify-content:center;}
+.frame{position:relative;display:flex;flex-direction:column;background:var(--bg);width:100%;max-width:var(--maxw);height:82vh;
+  border:1px solid #cfcfcf;border-radius:12px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.10);}
+.frame-outer[data-device="mobile"] .frame{max-width:390px;height:740px;box-shadow:0 0 0 8px #cfcfcf,0 8px 28px rgba(0,0,0,.18);}
+.scroll{flex:1;overflow:auto;scroll-behavior:smooth;}
+
+/* ---------------------------------------------------------------- APP CHROME
+   Header per Figma 333:708 (Header_Desktop / Header_Mobile): black, top
+   utility row (desktop only), script logo, Proxima Bold nav, icon set,
+   then the progress zone with green step dots and the search summary. */
+.appbar{display:flex;flex-direction:column;padding:0;border-bottom:0;background:#000;}
+.appbar-top{display:flex;justify-content:flex-end;align-items:center;gap:30px;height:40px;padding:0 24px;font-size:12px;font-weight:400;color:#fff;text-transform:uppercase;letter-spacing:.02em;}
+.appbar-main{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:6px 24px;}
+.burger{display:none;background:none;border:0;padding:0;align-items:center;}
+.burger img{width:28px;height:20px;display:block;}
+.appbar .brand{display:inline-flex;align-items:center;}
+.appbar .brand .logo{height:60px;width:auto;display:block;}
+.appbar-nav{display:flex;align-items:center;gap:10px;}
+.appbar-nav a{color:#fff;text-decoration:none;font-weight:700;font-size:14px;line-height:22px;text-transform:uppercase;padding:10px;white-space:nowrap;}
+.appbar-nav a:hover{text-decoration:underline;}
+.appbar .icons{display:flex;align-items:center;gap:24px;}
+.appbar .icons .ico{width:21px;height:21px;display:block;}
+.appbar .icons .ico-more{display:none;}
+.frame-outer[data-device="mobile"] .appbar-top{display:none;}
+.frame-outer[data-device="mobile"] .appbar-nav{display:none;}
+.frame-outer[data-device="mobile"] .burger{display:inline-flex;}
+.frame-outer[data-device="mobile"] .appbar-main{padding:10px 16px;}
+.frame-outer[data-device="mobile"] .appbar .brand .logo{height:52px;}
+.frame-outer[data-device="mobile"] .appbar .icons{gap:10px;}
+.frame-outer[data-device="mobile"] .appbar .icons .ico-more{display:block;}
+
+.chrome-mid{padding:10px 18px 12px;border-bottom:1px solid rgba(255,255,255,.2);background:#000;}
+.chrome-row{display:flex;align-items:center;gap:16px;}
+.backlink{color:var(--ink);text-decoration:none;font-size:14px;font-weight:700;white-space:nowrap;}
+.backlink:hover{text-decoration:underline;}
+.step-title{text-align:center;font-size:16px;font-weight:700;line-height:22px;color:var(--ink);margin-bottom:8px;}
+.step-row{position:relative;display:flex;align-items:center;justify-content:center;gap:18px;min-height:30px;}
+.step-row .backlink{position:static;}
+.dots{display:flex;align-items:center;gap:14px;}
+.dotstep{position:relative;width:22px;height:22px;border-radius:50%;border:2px solid #7d7d7d;background:transparent;display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:transparent;}
+.dotstep.done{background:var(--green);border-color:var(--green);color:#fff;font-weight:900;}
+.dotstep.current{background:var(--green);border-color:var(--green);}
+.dotstep.current::after{content:"\2022\2022\2022";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;letter-spacing:1px;line-height:1;}
+.frame-outer[data-device="mobile"] .step-row{gap:12px;}
+.frame-outer[data-device="mobile"] .dots{gap:10px;}
+.searchsum{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;margin-top:10px;font-size:12px;color:var(--ink);}
+.searchsum b{color:var(--ink);}
+.frame-outer[data-device="mobile"] .searchsum{flex-wrap:wrap;justify-content:flex-start;}
+
+/* ---------------------------------------------------------------- BODY + INTRO
+   Intro banner per Figma 333:745: full-bleed black band, centred League
+   Gothic H1 (72/62) and Proxima 20/24 sub-copy at 60% opacity, max 760px. */
+.body{padding:16px 18px 48px;}
+.intro{display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center;
+  background:linear-gradient(to top,#181818,#000);margin:-16px -18px 0;padding:24px 64px 0;}
+.intro h1{font-family:var(--font-display);font-weight:400;font-size:72px;line-height:62px;margin:0;text-transform:uppercase;letter-spacing:0;color:#fff;}
+.intro p{display:none;color:#fff;opacity:.6;font-size:16px;line-height:22px;max-width:760px;}
+.frame-outer[data-device="mobile"] .intro{gap:10px;padding:16px 20px 0;}
+.frame-outer[data-device="mobile"] .intro h1{font-size:32px;line-height:normal;}
+.frame-outer[data-device="mobile"] .intro p{display:none;}
+
+/* ---------------------------------------------------------------- SECTION NAV (sticky pills)
+   Anchor tabs per Figma 333:846: #181818 bar, white bottom border, pills at
+   radius 100 with 24px Phosphor icons (assets-bbw/tab-*.svg), Proxima Bold 14
+   uppercase. Inactive: white on 12% white. Active: black on Yellow. */
+.nav-wrap{position:sticky;top:0;z-index:4;background:var(--bg);border-bottom:1px solid rgba(255,255,255,.2);margin:0 -18px;}
+.sectionnav{display:flex;gap:12px;align-items:center;overflow-x:auto;padding:24px 18px;
+  scrollbar-width:none;-ms-overflow-style:none;}
+/* vertical padding is scrubbed by scroll depth in onScroll (24px -> 12px over
+   the last 48px before the bar sticks); no timed transition here by design */
+.sectionnav::-webkit-scrollbar{display:none;}
+.nav-item{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+  background:#262626;border:0;border-radius:100px;
+  padding:8px 16px 8px 12px;font-size:14px;font-weight:700;color:rgba(255,255,255,.8);text-transform:uppercase;}
+.nav-item:hover{background:#262626;color:#fff;}
+.nav-item.is-active{background:var(--yellow);color:#000;font-weight:700;}
+.nav-ico{width:18px;height:18px;display:block;opacity:.8;}
+.nav-item:hover .nav-ico{opacity:1;}
+.nav-item.is-active .nav-ico{filter:brightness(0);opacity:1;}
+.frame-outer[data-device="mobile"] .sectionnav{padding:14px;gap:8px;}
+.frame-outer[data-device="mobile"] .nav-item{font-size:12px;padding:6px 12px 6px 10px;}
+.nav-fade{position:absolute;top:0;bottom:1px;width:24px;pointer-events:none;display:none;z-index:1;}
+.nav-fade-left{left:0;background:linear-gradient(to right,var(--bg),rgba(24,24,24,0));}
+.nav-fade-right{right:0;background:linear-gradient(to left,var(--bg),rgba(24,24,24,0));}
+.nav-chev{position:absolute;top:50%;transform:translateY(-50%);z-index:2;display:none;width:34px;height:34px;
+  border-radius:50%;border:none;background:#fff;color:#000;
+  align-items:center;justify-content:center;box-shadow:0 1px 6px rgba(0,0,0,.5);}
+.nav-chev svg{display:block;}
+.nav-chev-left{left:6px;}
+.nav-chev-right{right:6px;}
+.nav-wrap.has-left .nav-fade-left,.nav-wrap.has-right .nav-fade-right{display:block;}
+.nav-wrap.has-left .nav-chev-left,.nav-wrap.has-right .nav-chev-right{display:inline-flex;}
+
+/* ---------------------------------------------------------------- PROMO BANNER (3-for-2)
+   Per Figma 462:18256: dark gradient panel, #999 border, orange "EAT FOR
+   3 DAYS" left, pink "BUT PAY FOR 2!" right, centred sub-copy between. */
+.promo-banner{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:24px;text-align:left;
+  border:0;border-radius:3px;color:#fff;padding:24px;margin-bottom:24px;
+  background:linear-gradient(168deg,rgba(38,38,38,.6) 29.4%,rgba(24,24,24,.056) 81.4%);}
+.promo-banner .pb-left,.promo-banner .pb-right{font-family:var(--font-display);font-weight:400;font-size:64px;line-height:62px;text-transform:uppercase;letter-spacing:0;white-space:nowrap;}
+.promo-banner .pb-left{color:#ff9637;}
+.promo-banner .pb-right{color:var(--pink);text-align:right;}
+.promo-banner .pb-sub{font-size:14px;font-weight:400;color:#fff;opacity:.8;max-width:351px;line-height:1.35;text-align:center;}
+.promo-banner .pb-mobile{display:none;}
+.promo-note{font-size:11.5px;color:var(--muted);margin-top:8px;}
+/* Mobile banner per Figma 474:3758: single combined headline (orange + pink),
+   centred, 94deg gradient, 24px padding, 12px gap, no border */
+.frame-outer[data-device="mobile"] .promo-banner{flex-direction:column;gap:12px;padding:24px;text-align:center;
+  background:linear-gradient(94deg,rgba(38,38,38,.6) 20.7%,rgba(21,21,21,.6) 55.4%);}
+.frame-outer[data-device="mobile"] .promo-banner .pb-left,.frame-outer[data-device="mobile"] .promo-banner .pb-right{display:none;}
+.frame-outer[data-device="mobile"] .promo-banner .pb-mobile{display:block;width:100%;font-family:var(--font-display);font-weight:400;font-size:32px;line-height:normal;text-transform:uppercase;letter-spacing:0;color:#ff9637;}
+.frame-outer[data-device="mobile"] .promo-banner .pb-mobile b{font-weight:400;color:var(--pink);}
+.frame-outer[data-device="mobile"] .promo-banner .pb-sub{max-width:none;width:100%;}
+.was-row{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+.promo-pill{font-family:var(--font);font-size:14px;line-height:normal;font-weight:400;text-transform:uppercase;letter-spacing:0;background:var(--green);color:#000;border-radius:3px;padding:4px 8px;white-space:nowrap;}
+
+/* ---------------------------------------------------------------- SECTIONS + CARDS */
+.sec{scroll-margin-top:104px;margin-bottom:24px;}
+.group-label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;
+  border-bottom:1px solid var(--line);padding-bottom:6px;margin-bottom:12px;}
+.sec-head{display:flex;align-items:baseline;gap:10px;margin:0;padding:24px 0;}
+/* Type ramp (Figma text styles): H1 72/62 desktop, 32/auto mobile; H2 36/auto
+   desktop, 30/auto mobile; H3 28/auto desktop, 24/auto mobile; Body L 20/24
+   desktop, 18/24 mobile; Body M 16/22; Body S 14/auto; Button L 18/auto. */
+.sec-label{font-family:var(--font-display);font-weight:400;font-size:36px;line-height:normal;text-transform:uppercase;letter-spacing:0;}
+.frame-outer[data-device="mobile"] .sec-label{font-size:30px;}
+.subsec{scroll-margin-top:104px;margin-bottom:24px;}
+.anchor-wrap{scroll-margin-top:104px;}
+.subsec-label{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;}
+.scope-hint{font-size:11.5px;color:var(--muted);}
+.card{border:1px solid rgba(255,255,255,.4);border-radius:3px;background:#161616;margin-bottom:24px;overflow:hidden;}
+.card.is-added{border-color:transparent;background:linear-gradient(to bottom,#2b2b2b,#222121);outline:2px solid var(--yellow);outline-offset:4px;border-radius:3px;}
+
+/* ---------------------------------------------------------------- PLACEHOLDER IMAGE PANELS
+   Styled placeholder blocks (no stand-in photos): dark panel, accent diagonal
+   stripes and an accent-keyed label chip naming the intended shot. */
+.ph-img{position:relative;background:
+  repeating-linear-gradient(45deg,rgba(255,255,255,.05),rgba(255,255,255,.05) 10px,transparent 10px,transparent 22px),#141414;
+  border-bottom:1px solid var(--line);height:120px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.ph-img span{font-size:10px;font-weight:700;color:#000;text-transform:uppercase;letter-spacing:.1em;background:var(--yellow);padding:3px 9px;border-radius:3px;z-index:1;}
+.ph-img.sm{height:84px;width:120px;flex:none;border-bottom:0;border-right:1px solid var(--line);}
+/* real photography inside a ph-img slot */
+.ph-img.photo{background:#141414;}
+.ph-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+/* brunch open/close: crossfade layer + revealed-content fade (driven by JS FLIP) */
+.ph-photo.ph-b{opacity:0;transition:opacity .5s ease;}
+#sec-brunch .card.is-open .ph-b{opacity:1;}
+/* open sittings per Figma 532:5068: one bordered container per day */
+.brunch-slots{display:flex;flex-direction:column;gap:24px;margin:0 24px;transition:opacity .35s ease,transform .35s ease;}
+#sec-brunch .card.is-open .brunch-main .cbar{border-top:0;}
+.brunch-anim{overflow:hidden;transition:height .45s cubic-bezier(.22,1,.36,1);}
+@media (prefers-reduced-motion:reduce){
+  .ph-photo.ph-b,.brunch-slots,.brunch-anim{transition:none;}
+}
+/* accent keys per section */
+.ph-img.acc-yellow{background:repeating-linear-gradient(45deg,rgba(255,214,20,.10),rgba(255,214,20,.10) 10px,transparent 10px,transparent 22px),#141414;}
+.ph-img.acc-yellow span{background:var(--yellow);color:#000;}
+.ph-img.acc-pink{background:repeating-linear-gradient(45deg,rgba(217,89,143,.14),rgba(217,89,143,.14) 10px,transparent 10px,transparent 22px),#141414;}
+.ph-img.acc-pink span{background:var(--pink);color:#000;}
+.ph-img.acc-green{background:repeating-linear-gradient(45deg,rgba(140,232,82,.12),rgba(140,232,82,.12) 10px,transparent 10px,transparent 22px),#141414;}
+.ph-img.acc-green span{background:var(--green);color:#000;}
+.ph-img.acc-grey{background:repeating-linear-gradient(45deg,rgba(212,211,214,.08),rgba(212,211,214,.08) 10px,transparent 10px,transparent 22px),#141414;}
+.ph-img.acc-grey span{background:var(--ink2);color:#000;}
+
+/* ---------------------------------------------------------------- DINING CARDS
+   Meal cards per Figma 471:3640 (default) / 471:3698 (selected): black card,
+   1px white border, League Gothic 28 header, 160px image with yellow LG save
+   flag (rounded TR 20), white Body M copy, green check bullets, yellow
+   "Sample menu & allergens" + white "Read more" links, 20% white divider,
+   grey strikethrough + green Neutraface deal pill, LG 36 price, outlined
+   white CTA. Selected: yellow ring (4px offset), #2b2b2b->#222121 gradient,
+   inner borders dropped, red "Added to booking" CTA. */
+/* lead body line under card headings: Body M (16/22), 80% white */
+.desc{color:rgba(255,255,255,.8);font-size:16px;line-height:22px;margin-bottom:8px;}
+.price{display:flex;flex-direction:column;line-height:1.25;}
+.price .was{font-size:20px;line-height:24px;color:var(--ink2);text-decoration:line-through;}
+.price .now{font-family:var(--font-display);font-weight:400;font-size:36px;line-height:1;color:#fff;}
+.price .pp{font-size:11px;color:var(--muted);}
+.price-row{display:flex;align-items:flex-end;gap:6px;flex-wrap:wrap;}
+.price-unit{font-size:12px;color:var(--muted);}
+/* ---- unified commerce bar (split footer): price bottom-left, control bottom-right ---- */
+.cbar{border-top:1px solid var(--line);padding:24px 0;margin:0 24px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.cbar.sm{padding:12px 0;margin:0 12px;}
+.cbar-left{display:flex;flex-direction:row;align-items:center;gap:12px;}
+.cbar .price .pp{font-size:14px;color:rgba(255,255,255,.6);}
+.price-meta{font-size:14px;color:#fff;padding-bottom:3px;}
+.price-meta .pm-dot{color:rgba(255,255,255,.4);}
+.price-meta .pm-ppd{color:rgba(255,255,255,.6);}
+.dining-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;}
+.dining-grid.one{grid-template-columns:1fr;}
+.frame-outer[data-device="mobile"] .dining-grid{grid-template-columns:1fr;}
+.dcard{display:flex;flex-direction:column;border:1px solid rgba(255,255,255,.4);border-radius:3px;background:#161616;overflow:hidden;}
+.dcard.is-added{border-color:transparent;background:linear-gradient(to bottom,#2b2b2b,#222121);
+  outline:2px solid var(--yellow);outline-offset:4px;border-radius:3px;}
+.dc-title{font-family:var(--font-display);font-weight:400;font-size:28px;line-height:normal;text-transform:uppercase;letter-spacing:0;color:#fff;}
+.frame-outer[data-device="mobile"] .dc-title{font-size:24px;}
+.dc-img{position:relative;height:226px;border-bottom:0;background:#141414;overflow:hidden;}
+.frame-outer[data-device="mobile"] .dc-img{height:160px;}
+/* image carousel: layered slides; animation settings copied exactly from the
+   phase 1 hi-fi (app.css .ci-*): .55s cubic-bezier(.22,1,.36,1) slide with
+   parallax lag + zoom-settle on .ci-par */
+.dc-img .ci-slide{position:absolute;inset:0;overflow:hidden;}
+.dc-img .ci-par{position:absolute;inset:0;}
+.dc-img .ci-img{position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;}
+.dc-img .ci-slide.ci-anim,.dc-img .ci-par.ci-anim{transition:transform .55s cubic-bezier(.22,1,.36,1);}
+.dc-img.contain .ci-img{background-size:contain;}
+/* carousel arrows: match the anchor nav chevrons (white circle, black chevron) */
+.dc-img .img-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2;display:flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;border:none;border-radius:50%;background:#fff;color:#000;cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,.5);transition:background .12s ease;}
+.dc-img .img-nav.prev{left:12px;}
+.dc-img .img-nav.next{right:12px;}
+@media(hover:hover){.dc-img .img-nav:hover{background:#f2f2f2;}}
+.dc-img .img-nav:active{transform:translateY(-50%) scale(.94);}
+/* yellow save flag: League Gothic, rounded top-right corner */
+.dc-save{position:absolute;left:0;bottom:0;display:inline-flex;align-items:baseline;gap:4px;background:var(--yellow);color:#000;
+  font-family:var(--font-display);font-weight:400;font-size:14px;padding:10px;border-top-right-radius:20px;text-transform:lowercase;}
+.dc-save b{font-size:24px;font-weight:400;}
+.dc-body{display:flex;flex-direction:column;gap:16px;padding:24px;flex:1;}
+.dc-body .desc{margin:0;}
+.dc-incl{display:flex;flex-direction:column;gap:6px;}
+.dc-incl li{position:relative;padding-left:26px;font-size:14px;line-height:normal;color:#fff;}
+.dc-incl li:before{content:"";position:absolute;left:0;top:2px;width:16px;height:16px;background:url("assets-bbw/check-green.svg") center/contain no-repeat;}
+.dc-links{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;width:100%;}
+.dc-menulink{display:inline-flex;align-items:center;gap:6px;color:var(--yellow);font-weight:700;font-size:16px;line-height:22px;text-decoration:none;border-bottom:1.5px solid var(--yellow);padding:3px 0;}
+.dc-menulink img{width:14px;height:14px;display:block;}
+.dc-menulink:hover{color:var(--yellow-strong);border-bottom-color:var(--yellow-strong);}
+.dc-menulink:hover img{filter:brightness(.88);}
+.dc-more-toggle{align-self:flex-start;background:none;border:0;border-bottom:1.5px solid #fff;padding:3px 0;font-size:16px;line-height:22px;font-weight:700;color:#fff;}
+.dc-more{display:none;font-size:14px;color:rgba(255,255,255,.8);line-height:1.45;}
+.dc-more.open{display:block;}
+.dc-more a{color:#fff;}
+.dc-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:24px;display:flex;flex-direction:column;gap:24px;}
+.dc-cta{position:relative;width:100%;display:flex;align-items:center;justify-content:center;background:transparent;border:1.5px solid #fff;border-radius:3px;padding:16px 24px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:-.01em;color:#fff;}
+.dc-cta:hover{background:rgba(255,255,255,.08);}
+.dc-cta.is-added{background:var(--red);border-color:var(--red);color:#fff;}
+.dc-cta.is-added:hover{background:var(--red-strong);border-color:var(--red-strong);}
+.cta-check{position:absolute;left:20px;top:50%;transform:translateY(-50%);width:15px;height:11px;display:block;}
+.dining-grid:not(.one) .dcard .desc{min-height:2.6em;}
+.dining-grid:not(.one) .dcard .dc-incl{min-height:72px;}
+/* mobile meal card padding/spacing per the phase 1 mobile card (Figma 453:15492);
+   text styles and colours stay BBW */
+.frame-outer[data-device="mobile"] .dc-body{padding:24px 12px 12px;gap:24px;}
+.frame-outer[data-device="mobile"] .dc-incl{gap:8px;}
+.frame-outer[data-device="mobile"] .dc-menulink,
+.frame-outer[data-device="mobile"] .dc-more-toggle{padding:6px 0;}
+.frame-outer[data-device="mobile"] .dc-foot{padding-top:24px;gap:12px;}
+.frame-outer[data-device="mobile"] .dcard .was-row{margin-bottom:12px;}
+
+/* ---------------------------------------------------------------- UNIT BLOCKS (multi-party) */
+.unit-block{border:1px solid rgba(255,255,255,.4);border-radius:3px;padding:12px;margin-bottom:24px;background:#161616;}
+.unit-head{display:flex;align-items:center;gap:9px;margin-bottom:10px;}
+.unit-head b{font-size:14px;}
+.unit-sub{font-size:12px;color:var(--muted);}
+.unit-head .btn.sm{margin-left:auto;}
+.samerow{display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);padding:10px;}
+.same-label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+.same-plan{font-weight:700;font-size:13.5px;}
+.same-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.same-price{font-weight:700;}
+
+/* ---------------------------------------------------------------- BUTTONS */
+.btn{background:transparent;border:1.5px solid #fff;border-radius:3px;padding:16px 24px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:-.01em;color:#fff;}
+.btn:hover{border-color:var(--ink);}
+.btn.ghost{background:none;border-color:#fff;color:#fff;}
+.btn.ghost:hover{background:rgba(255,255,255,.08);}
+.btn.sm{padding:8px 14px;font-size:12px;}  /* interim smaller secondary, pending review */
+.btn.primary{background:transparent;color:#fff;border-color:#fff;}
+.btn.primary:hover{background:rgba(255,255,255,.08);}
+.btn-add{position:relative;background:transparent;border:1.5px solid #fff;border-radius:3px;padding:16px 24px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:-.01em;color:#fff;white-space:nowrap;}
+.btn-add:hover{background:rgba(255,255,255,.08);}
+.btn-add.is-added{background:var(--red);color:#fff;border:1.5px solid var(--red);padding-left:44px;padding-right:44px;}
+.btn-add.is-added:hover{background:var(--red-strong);border-color:var(--red-strong);}
+/* ghost reveal pill (Figma 517:4517): anchor-pill fill, no border, button metrics */
+.btn-reveal{background:#262626;border:1.5px solid transparent;border-radius:3px;padding:16px 24px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:-.01em;color:#fff;white-space:nowrap;}
+.btn-reveal:hover{background:#2e2e2e;}
+
+/* outlined = opens another step (red fill = adds instantly) */
+.btn-step{background:transparent;border:1.5px solid #fff;border-radius:3px;padding:16px 24px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:-.01em;color:#fff;white-space:nowrap;}
+.btn-step:hover{background:rgba(255,255,255,.08);}
+.btn-step[aria-expanded="true"]{background:#262626;border-color:transparent;color:#fff;}
+.btn-step[aria-expanded="true"]:hover{background:#2e2e2e;}
+
+/* ---------------------------------------------------------------- STEPPERS */
+/* stepper: same family as the outline buttons (radius 3, 1.5px border) but at
+   the 40% card-border tone, one hierarchy step below the add-for-all action */
+.stepper{display:inline-flex;align-items:center;gap:0;border:1.5px solid rgba(255,255,255,.4);border-radius:3px;overflow:hidden;background:transparent;}
+.step-btn{width:52px;height:50px;border:0;background:transparent;font-size:18px;line-height:1;color:var(--ink);}
+.step-btn:hover{background:var(--bg-3);color:var(--yellow);}
+.qty{min-width:37px;text-align:center;font-weight:700;font-size:14px;color:var(--ink);}
+/* add-all: promoted from underlined link to a proper secondary button */
+.addall{background:transparent;border:1.5px solid #fff;border-radius:3px;padding:16px 24px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:-.01em;color:#fff;white-space:nowrap;}
+.addall:hover{border-color:var(--ink);}
+
+/* ---------------------------------------------------------------- CALLOUTS */
+.callout{display:flex;align-items:center;gap:12px;border:1px solid var(--line2);border-left:4px solid var(--yellow);
+  border-radius:var(--radius);background:var(--bg-2);padding:11px 13px;margin-bottom:12px;}
+.callout.strong{background:var(--bg-3);}
+.callout b{font-size:14px;}
+.callout-sub{display:block;font-size:12px;color:var(--ink2);}
+.callout .btn{margin-left:auto;}
+
+/* ---------------------------------------------------------------- BRUNCH */
+.chosen-line{font-size:12.5px;font-weight:700;margin:0;color:var(--green);}
+.brunch-card2{display:flex;align-items:stretch;}
+.brunch-card2 .ph-img.square{width:282px;min-width:282px;flex:none;height:auto;border-bottom:0;border-right:0;}
+.brunch-main{flex:1;display:flex;flex-direction:column;}
+.bm-pad{padding:24px;flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:16px;}
+.bm-pad .desc{margin:0;}
+.brunch-main .cbar{margin:0 24px;padding:24px 0;}
+.brunch-main h3{font-family:var(--font-display);font-weight:400;font-size:28px;line-height:normal;text-transform:uppercase;letter-spacing:0;margin-bottom:0;}
+.frame-outer[data-device="mobile"] .brunch-main h3{font-size:24px;}
+.bp-day{border:1.5px solid rgba(255,255,255,.2);border-radius:3px;background:#222;overflow:hidden;padding:12px;display:flex;flex-direction:column;gap:12px;}
+.bp-day-head{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.bp-day-head b{font-size:20px;line-height:24px;font-weight:700;text-transform:uppercase;}
+.bp-pp{font-size:14px;color:rgba(255,255,255,.8);font-weight:400;}
+.bp-slot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0 0;border-bottom:0;border-top:1.5px solid rgba(255,255,255,.1);}
+.bp-label{flex:1;font-size:16px;line-height:22px;color:rgba(255,255,255,.8);}
+.bp-right{display:flex;align-items:center;gap:12px;}
+/* yellow link style per Figma 471:3640 ("Sample menu & allergens") */
+.linklike{display:inline-flex;align-items:center;gap:6px;background:none;border:0;border-bottom:1.5px solid var(--yellow);padding:3px 0;margin-left:8px;color:var(--yellow);text-decoration:none;font-size:16px;line-height:22px;font-weight:700;}
+.linklike img{width:14px;height:14px;display:block;}
+.linklike:hover{color:var(--yellow-strong);border-bottom-color:var(--yellow-strong);}
+.linklike:hover img{filter:brightness(.88);}
+.frame-outer[data-device="mobile"] .brunch-card2{flex-direction:column;}
+.frame-outer[data-device="mobile"] .brunch-card2 .ph-img.square{width:100%;min-width:0;height:120px;border-right:0;border-bottom:1px solid var(--line);}
+.frame-outer[data-device="mobile"] .bp-slot{flex-wrap:wrap;}
+.brunch-main .dc-incl{margin:0;}
+.brunch-main .linklike{margin-left:0;display:inline-flex;align-self:flex-start;margin-bottom:0;}
+
+/* ---------------------------------------------------------------- EXTRAS CARDS */
+.xcard{display:block;}
+/* extras card icons per Figma 523:4575: 36px accent icons (colour baked into
+   assets-bbw/ico-*.svg; spa orange from the design, others assumed) */
+.xc-ico{width:36px;height:36px;flex:none;display:block;}
+.xc-body{padding:24px;display:flex;flex-direction:column;gap:12px;}
+.xc-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.xc-head .scope-tag{margin-left:auto;}
+.xc-head h3{font-family:var(--font-display);font-weight:400;font-size:28px;line-height:normal;text-transform:uppercase;letter-spacing:0;}
+.frame-outer[data-device="mobile"] .xc-head h3{font-size:24px;}
+.xc-body .desc{margin:0;}
+/* scope pill: lives in the card's commerce bar; slightly promoted (yellow tint) */
+.scope-tag{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:400;text-transform:uppercase;letter-spacing:0;color:#000;border:0;border-radius:var(--radius-pill);padding:4px 8px;background:#e0457b;}
+.st-ico{width:12px;height:12px;display:block;}
+.row-sub{display:block;font-size:12px;color:var(--muted);}
+.xc-control{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end;}
+/* brunch-style feature cards (VIP) share .dc-head; keep their headers consistent */
+
+/* ---------------------------------------------------------------- CHECK-IN / CHECK-OUT */
+.checkin-opts{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:8px;border:1.5px solid rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.checkin-opts:not(.one) .checkin-opt:first-child{border-right:1.5px solid rgba(255,255,255,.1);}
+.checkin-opts.one{grid-template-columns:1fr;}
+.checkin-opt{display:flex;flex-direction:column;border:0;border-radius:0;background:#222;overflow:hidden;}
+.checkin-opt.is-added{background:linear-gradient(to bottom,#2b2b2b,#222121);box-shadow:inset 0 0 0 2px var(--yellow);}
+.checkin-opt .co-info{flex:1;padding:12px;display:flex;flex-direction:column;gap:8px;}
+.co-head{display:flex;align-items:center;gap:12px;}
+.co-ico{width:24px;height:24px;display:block;}
+.checkin-opt .co-info b{font-size:20px;line-height:24px;font-weight:700;text-transform:uppercase;display:block;}
+.checkin-opt .row-sub{font-size:14px;line-height:normal;color:rgba(255,255,255,.8);}
+.checkin-opt .co-priceblock{display:flex;flex-direction:column;line-height:1.2;}
+.checkin-opt .co-price{font-family:var(--font-display);font-weight:400;font-size:36px;line-height:1;}
+.checkin-opts.one .co-price{font-size:36px;}
+.checkin-opt .co-pp{font-size:14px;color:rgba(255,255,255,.6);}
+
+/* ---------------------------------------------------------------- ORDER OVERVIEW */
+.ov-block{border:1px solid rgba(255,255,255,.4);border-radius:3px;background:#161616;padding:13px;margin-bottom:24px;}
+.ov-head{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.02em;}
+.ov-head .ov-sub{font-weight:400;font-size:12px;color:var(--muted);text-transform:none;letter-spacing:0;}
+.ov-head .btn{margin-left:auto;}
+.ov-head.as-toggle{width:100%;background:none;border:0;margin:0;cursor:pointer;color:var(--ink);}
+.ov-head .chev{margin-left:auto;color:var(--yellow);}
+.incl-count{font-weight:700;color:var(--muted);}
+.ov-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line);font-size:13px;}
+.ov-row:first-child{border-top:0;}
+.ov-row .row-sub{font-weight:400;}
+.ov-row.muted{color:var(--muted);}
+.ov-price{margin-left:auto;text-align:right;display:flex;flex-direction:column;line-height:1.2;}
+.ov-price .pp{font-size:11px;color:var(--muted);}
+.ov-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.inc-tag{margin-left:auto;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--green);border:1px solid var(--green);border-radius:var(--radius-pill);padding:2px 8px;background:transparent;}
+.ov-upsell{display:flex;align-items:center;gap:12px;border:1px solid var(--line2);border-left:4px solid var(--yellow);border-radius:var(--radius);background:var(--bg);padding:11px 13px;margin-top:10px;}
+.ov-upsell .ovu-text{flex:1;}
+.ov-upsell .ovu-text b{font-size:13.5px;}
+.ov-upsell .btn{margin-left:auto;white-space:nowrap;}
+.ov-changelink{display:inline-block;margin-top:10px;background:none;border:0;padding:0;color:var(--ink2);text-decoration:underline;font-size:12.5px;}
+.ov-changelink:hover{color:var(--ink);}
+.frame-outer[data-device="mobile"] .ov-upsell{flex-wrap:wrap;}
+.frame-outer[data-device="mobile"] .ov-upsell .btn{width:100%;}
+.ov-block.summary{background:#161616;border-color:rgba(255,255,255,.4);}
+.sum-line{display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:4px 0;color:var(--ink2);}
+.sum-line.head{color:var(--ink);font-weight:700;padding-top:6px;}
+.sum-line.subtotal{color:var(--ink);font-weight:700;font-size:12.5px;letter-spacing:.02em;}
+.sum-addlink{background:none;border:0;border-bottom:1.5px solid var(--yellow);padding:3px 0;color:var(--yellow);font-weight:700;font-size:16px;line-height:22px;text-decoration:none;}
+.sum-addlink:hover{color:var(--yellow-strong);border-bottom-color:var(--yellow-strong);}
+.sum-div{border-top:1px solid var(--line);margin:7px 0;}
+.sum-total{display:flex;justify-content:space-between;gap:12px;font-weight:900;font-size:15px;color:var(--yellow);border-top:2px solid var(--yellow);margin-top:8px;padding-top:10px;text-transform:uppercase;}
+
+/* ---------------------------------------------------------------- FOOTER
+   Per Figma 333:711 (Footer_Desktop / Footer_Mobile): yellow TOTAL PRICE tab
+   over a WHITE action bar with bordered Save quote + red Continue. */
+.footer{position:relative;z-index:6;}
+.fprice{position:absolute;right:0;bottom:100%;display:flex;align-items:center;gap:10px;background:var(--yellow);border:0;
+  border-top-left-radius:3px;border-top-right-radius:3px;height:61px;padding:0 48px;}
+.fprice-label{font-size:24px;font-weight:700;letter-spacing:-.01em;text-transform:uppercase;color:#000;line-height:1;text-box:trim-both cap alphabetic;}
+.fprice b{font-size:30px;color:#000;font-weight:700;letter-spacing:-.01em;line-height:1;text-box:trim-both cap alphabetic;}
+.fbar{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:0;min-height:86px;padding:10px 20px;background:#fff;}
+.finstruct{flex:1;font-size:18px;line-height:24px;font-weight:700;color:#000;min-width:0;}
+.factions{display:flex;gap:20px;margin-left:auto;align-items:center;}
+.savebtn{background:#fff;border:2px solid #000;border-radius:3px;padding:16px 24px;font-weight:700;font-size:14px;color:#000;text-transform:uppercase;letter-spacing:-.01em;}
+.savebtn:hover{background:#f2f2f2;}
+.continue{background:var(--red);color:#fff;border:2px solid var(--red);border-radius:3px;padding:16px 24px;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:-.01em;}
+.continue:hover{background:var(--red-strong);border-color:var(--red-strong);}
+.frame-outer[data-device="mobile"] .fprice{height:48px;padding:0 24px;}
+.frame-outer[data-device="mobile"] .fprice-label{font-size:14px;}
+.frame-outer[data-device="mobile"] .fprice b{font-size:20px;}
+.frame-outer[data-device="mobile"] .fbar{flex-direction:column;gap:12px;padding:10px;min-height:0;}
+.frame-outer[data-device="mobile"] .finstruct{display:block;flex:none;width:100%;text-align:center;font-size:14px;line-height:normal;font-weight:400;}
+.frame-outer[data-device="mobile"] .factions{width:100%;margin:0;gap:20px;justify-content:center;}
+.frame-outer[data-device="mobile"] .factions button{flex:0 0 auto;padding:16px 24px;}
+
+/* ---------------------------------------------------------------- PROMO POPUP */
+.promo-pop{position:absolute;left:14px;bottom:110px;z-index:5;width:360px;box-sizing:border-box;
+  display:grid;grid-template-columns:auto 1fr;grid-template-areas:"img head" "img sub";column-gap:12px;row-gap:2px;align-items:center;
+  background:var(--bg-2);border:1px solid var(--yellow);border-bottom:0;border-top-left-radius:10px;border-top-right-radius:10px;
+  padding:14px 16px;box-shadow:0 -4px 22px rgba(255,214,20,.18);cursor:pointer;text-align:left;
+  transform:translateY(150%);opacity:0;pointer-events:none;transition:transform .35s ease;}
+.promo-pop.show{transform:translateY(0);opacity:1;pointer-events:auto;}
+.promo-img{grid-area:img;width:72px;height:72px;align-self:center;background:
+  repeating-linear-gradient(45deg,rgba(255,214,20,.12),rgba(255,214,20,.12) 8px,transparent 8px,transparent 17px),#141414;
+  border:1px solid var(--line);}
+.promo-head{grid-area:head;align-self:end;font-family:var(--font-display);font-weight:400;font-size:34px;line-height:1;text-transform:uppercase;color:var(--yellow);}
+.promo-sub{grid-area:sub;align-self:start;font-size:13px;color:var(--ink2);}
+.promo-x{position:absolute;top:8px;right:8px;width:22px;height:22px;border:0;background:none;font-size:14px;line-height:1;color:var(--ink2);cursor:pointer;}
+.promo-x:hover{color:var(--ink);}
+.frame-outer[data-device="mobile"] .promo-pop{width:190px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:24px 36px 14px 16px;}
+.frame-outer[data-device="mobile"] .promo-head,.frame-outer[data-device="mobile"] .promo-img,.frame-outer[data-device="mobile"] .promo-sub{align-self:center;}
+.frame-outer[data-device="mobile"] .promo-img{width:75px;height:72px;}
+
+/* ---------------------------------------------------------------- MOTION PREFERENCES */
+@media (prefers-reduced-motion:reduce){
+  .scroll{scroll-behavior:auto;}
+  .promo-pop{transition:none;}
+}

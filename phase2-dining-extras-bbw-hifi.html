@@ -3,350 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Phase 2 BBW Dining and Extras (lo-fi)</title>
-<style>
-/* ============================================================ WIREFRAME TOKENS */
-:root{
-  --ink:#2b2b2b; --ink2:#555; --muted:#7a7a7a;
-  --line:#cfcfcf; --line2:#a9a9a9; --line3:#8a8a8a;
-  --fill:#f2f2f2; --fill2:#e7e7e7; --fill3:#dcdcdc;
-  --paper:#fff; --bg:#9a9a9a;
-  --dark:#2b2b2b; --radius:10px;
-  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-}
-/* A11Y NOTE: --muted (#7a7a7a) on white (--paper) is ~3.7:1 contrast. That clears WCAG 2.2 AA for large text only; for small (<18.66px) body text it is below the 4.5:1 threshold. Darken muted text or restrict it to large/decorative use at hi-fi. */
-*{box-sizing:border-box;}
-html,body{margin:0;padding:0;}
-body{font-family:var(--font);color:var(--ink);background:var(--bg);line-height:1.45;-webkit-font-smoothing:antialiased;}
-button{font-family:inherit;cursor:pointer;}
-:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:3px;}
-.toolbar :focus-visible{outline-color:#fff;}
-h1,h2,h3,h4{margin:0;font-weight:700;color:var(--ink);}
-p{margin:0;}
-ul{margin:0;padding:0;list-style:none;}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;}
-
-/* ============================================================ STAGE + TOOLBAR */
-.stage{padding:18px;min-height:100vh;}
-.toolbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1120px;margin:0 auto 14px;
-  background:#1f1f1f;color:#eee;border-radius:10px;padding:9px 12px;font-size:12px;}
-.toolbar .tlabel{font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:11px;}
-.toolbar .right{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap;}
-.seg-group{display:flex;align-items:center;gap:7px;}
-.seg-group .gl{color:#aaa;text-transform:uppercase;letter-spacing:.05em;font-size:10px;}
-.seg{display:inline-flex;border:1px solid #555;border-radius:7px;overflow:hidden;}
-.seg button{background:#2b2b2b;color:#ddd;border:0;padding:5px 9px;font-size:11px;border-right:1px solid #555;}
-.seg button:last-child{border-right:0;}
-.seg button[aria-pressed="true"]{background:#eee;color:#1f1f1f;font-weight:700;}
-
-/* ============================================================ DEVICE FRAME */
-.frame-outer{max-width:1120px;margin:0 auto;display:flex;justify-content:center;}
-.frame{position:relative;display:flex;flex-direction:column;width:1080px;height:880px;
-  background:var(--paper);border:1px solid #6f6f6f;border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.25);}
-.frame-outer[data-device="mobile"] .frame{width:390px;height:780px;}
-.scroll{flex:1;overflow:auto;scroll-behavior:smooth;}
-
-/* ============================================================ APP CHROME */
-.appbar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--line);background:var(--paper);}
-.appbar .ico{width:26px;height:26px;border:1px solid var(--line2);border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:var(--ink2);}
-.appbar .brand{font-weight:800;letter-spacing:.02em;font-size:17px;}
-.appbar .brand small{display:block;font-weight:600;font-size:8px;letter-spacing:.18em;color:var(--muted);}
-.appbar .icons{margin-left:auto;display:flex;gap:7px;}
-.chrome-mid{padding:12px 18px;border-bottom:1px solid var(--line);background:var(--fill);}
-.chrome-row{display:flex;align-items:center;gap:16px;}
-.backlink{color:var(--ink2);text-decoration:none;font-size:13px;font-weight:600;white-space:nowrap;}
-.step-title{text-align:center;font-size:13.5px;font-weight:800;letter-spacing:.02em;color:var(--ink);margin-bottom:10px;}
-.step-row{position:relative;display:flex;align-items:center;justify-content:center;min-height:30px;}
-.step-row .backlink{position:absolute;left:0;top:50%;transform:translateY(-50%);}
-.dots{display:flex;align-items:center;gap:10px;}
-.dotstep{width:22px;height:22px;border-radius:50%;border:1px solid var(--line2);background:var(--paper);display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);}
-.dotstep.done{background:var(--dark);border-color:var(--dark);color:#fff;}
-.dotstep.current{background:var(--dark);border-color:var(--dark);color:#fff;box-shadow:0 0 0 3px var(--fill3);}
-.frame-outer[data-device="mobile"] .step-row{justify-content:flex-start;gap:14px;}
-.frame-outer[data-device="mobile"] .step-row .backlink{position:static;transform:none;}
-.searchsum{display:flex;align-items:center;gap:12px;margin-top:12px;font-size:12.5px;color:var(--ink2);}
-.searchsum .editsum{margin-left:auto;background:var(--paper);border:1px solid var(--line2);border-radius:7px;padding:5px 10px;font-size:12px;color:var(--ink);}
-.frame-outer[data-device="mobile"] .searchsum{flex-wrap:wrap;}
-
-/* ============================================================ BODY + LAYOUT */
-.body{padding:16px 18px 48px;}
-.intro{margin-bottom:6px;}
-.intro h1{font-size:31px;line-height:1.06;margin-bottom:9px;text-transform:uppercase;letter-spacing:.035em;font-weight:800;}
-.intro p{color:var(--ink2);font-size:14px;max-width:60ch;}
-.frame-outer[data-device="mobile"] .intro h1{font-size:23px;}
-.frame-outer[data-device="mobile"] .intro p{display:none;}
-
-/* ---- section nav: sticky pill tabs with overflow affordance ---- */
-.nav-wrap{position:sticky;top:0;z-index:4;background:var(--paper);border-bottom:1px solid var(--line);margin:0 -18px 18px;}
-.sectionnav{display:flex;gap:8px;align-items:center;overflow-x:auto;padding:10px 14px;
-  scrollbar-width:none;-ms-overflow-style:none;}
-.sectionnav::-webkit-scrollbar{display:none;}
-.nav-item{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
-  background:var(--paper);border:1px solid var(--line2);border-radius:999px;
-  padding:7px 14px;font-size:13px;color:var(--ink2);}
-.nav-item:hover{background:var(--fill);color:var(--ink);}
-.nav-item.is-active{background:var(--dark);border-color:var(--dark);color:#fff;font-weight:700;}
-.nav-tick{width:15px;height:15px;border-radius:50%;border:1px solid var(--dark);display:none;align-items:center;justify-content:center;font-size:9px;background:var(--dark);color:#fff;}
-.nav-item.added .nav-tick,.nav-item.partial .nav-tick{display:inline-flex;}
-/* partial = some (not all) available grouped extras added: half-filled ring, no check */
-.nav-item.partial .nav-tick{background:linear-gradient(90deg,var(--dark) 50%,var(--paper) 50%);color:transparent;}
-.nav-item.is-active .nav-tick{background:#fff;border-color:#fff;color:var(--dark);}
-.nav-item.is-active.partial .nav-tick{background:linear-gradient(90deg,#fff 50%,transparent 50%);border-color:#fff;color:transparent;}
-.nav-fade{position:absolute;top:0;bottom:1px;width:24px;pointer-events:none;display:none;z-index:1;}
-.nav-fade-left{left:0;background:linear-gradient(to right,var(--paper),rgba(255,255,255,0));}
-.nav-fade-right{right:0;background:linear-gradient(to left,var(--paper),rgba(255,255,255,0));}
-.nav-chev{position:absolute;top:50%;transform:translateY(-50%);z-index:2;display:none;width:28px;height:28px;
-  border-radius:50%;border:1px solid var(--line2);background:var(--paper);color:var(--ink);font-size:16px;line-height:1;
-  align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.15);}
-.nav-chev-left{left:6px;}
-.nav-chev-right{right:6px;}
-.nav-wrap.has-left .nav-fade-left,.nav-wrap.has-right .nav-fade-right{display:block;}
-.nav-wrap.has-left .nav-chev-left,.nav-wrap.has-right .nav-chev-right{display:inline-flex;}
-
-/* ---- dining promo banner (section level) ---- */
-.promo-banner{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;
-  border:2px dashed var(--line3);border-radius:var(--radius);background:var(--fill);padding:16px;margin-bottom:14px;}
-.promo-banner .pb-main{font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink);}
-.promo-banner .pb-main .ast{font-size:11px;vertical-align:super;}
-.promo-banner .pb-sub{font-size:12.5px;color:var(--ink2);max-width:64ch;line-height:1.4;}
-.promo-note{font-size:11.5px;color:var(--muted);margin-top:8px;}
-.frame-outer[data-device="mobile"] .promo-banner .pb-main{font-size:14px;}
-/* per-card 3-for-2 pill beside the strikethrough price (greyscale stand-in for the hi-fi red) */
-.was-row{display:flex;align-items:center;gap:8px;margin-bottom:2px;}
-.promo-pill{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;background:var(--dark);color:#fff;border-radius:999px;padding:2px 8px;white-space:nowrap;}
-
-/* ============================================================ SECTIONS + CARDS */
-.sec{scroll-margin-top:70px;margin-bottom:26px;}
-.group-label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;
-  border-bottom:1px solid var(--line);padding-bottom:6px;margin-bottom:12px;}
-.sec-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;}
-.sec-label{font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
-.subsec{scroll-margin-top:70px;margin-bottom:22px;}
-.anchor-wrap{scroll-margin-top:70px;}
-.subsec-label{font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;}
-.scope-hint{font-size:11.5px;color:var(--muted);}
-.card{border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);margin-bottom:12px;overflow:hidden;}
-.card.is-added{border-color:var(--line3);box-shadow:inset 3px 0 0 var(--dark);}
-
-/* placeholder image */
-.ph-img{position:relative;background:repeating-linear-gradient(45deg,#ededed,#ededed 9px,#e3e3e3 9px,#e3e3e3 18px);
-  border-bottom:1px solid var(--line);height:120px;display:flex;align-items:center;justify-content:center;}
-.ph-img span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;background:rgba(255,255,255,.7);padding:2px 7px;border-radius:4px;}
-.ph-img.sm{height:84px;width:120px;flex:none;border-bottom:0;border-right:1px solid var(--line);}
-
-/* ---- dining cards (2-up grid; full width when single) ---- */
-.desc{color:var(--ink2);font-size:13px;margin-bottom:8px;}
-.price{display:flex;flex-direction:column;line-height:1.25;}
-.price .was{font-size:18px;color:var(--muted);text-decoration:line-through;}
-.price .now{font-size:20px;font-weight:800;}
-.price .pp{font-size:11px;color:var(--muted);}
-.price-row{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;}
-.price-unit{font-size:12px;color:var(--muted);}
-/* ---- unified commerce bar (Option A): price bottom-left, control bottom-right ---- */
-.cbar{border-top:1px solid var(--line);padding:10px 13px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-.cbar.sm{padding:8px 12px;}
-.cbar-left{display:flex;flex-direction:column;align-items:flex-start;gap:5px;}
-.dining-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
-.dining-grid.one{grid-template-columns:1fr;}
-.frame-outer[data-device="mobile"] .dining-grid{grid-template-columns:1fr;}
-.dcard{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);overflow:hidden;}
-.dcard.is-added{border-color:var(--line3);box-shadow:inset 3px 0 0 var(--dark);}
-.dc-head{padding:12px 14px;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:var(--fill2);border-bottom:1px solid var(--line);}
-.dc-img{height:150px;}
-.dc-save{position:absolute;left:0;bottom:0;display:inline-flex;align-items:baseline;gap:5px;background:var(--dark);color:#fff;font-size:12px;font-weight:700;padding:6px 12px;border-top-right-radius:16px;text-transform:lowercase;}
-.dc-save b{font-size:16px;}
-.dc-body{display:flex;flex-direction:column;gap:9px;padding:14px;flex:1;}
-.dc-body .desc{margin:0;}
-.dc-incl{display:flex;flex-direction:column;gap:4px;}
-.dc-incl li{position:relative;padding-left:20px;font-size:12.5px;color:var(--ink2);}
-.dc-incl li:before{content:"\2713";position:absolute;left:0;top:0;font-weight:800;color:var(--ink);}
-.dc-more-toggle{align-self:flex-start;background:none;border:0;border-bottom:1.5px solid var(--ink);padding:0 0 1px;font-size:13px;font-weight:600;color:var(--ink);}
-.dc-more{display:none;font-size:12.5px;color:var(--ink2);line-height:1.45;}
-.dc-more.open{display:block;}
-.dc-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:11px;}
-.dc-cta{width:100%;background:var(--paper);border:1.5px dashed var(--line3);border-radius:8px;padding:11px 14px;font-size:14px;font-weight:700;color:var(--ink);}
-.dc-cta:hover{background:var(--fill);}
-.dc-cta.is-added{background:var(--dark);color:#fff;border:1.5px solid var(--dark);}
-/* equal-height compare: reserve consistent space so benefit rows line up across 2-3 cards */
-.dining-grid:not(.one) .dcard .desc{min-height:2.6em;}
-.dining-grid:not(.one) .dcard .dc-incl{min-height:66px;}
-
-/* ---- unit blocks (multi-unit dining) ---- */
-.unit-block{border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin-bottom:12px;background:var(--paper);}
-.unit-head{display:flex;align-items:center;gap:9px;margin-bottom:10px;}
-.unit-head b{font-size:14px;}
-.unit-sub{font-size:12px;color:var(--muted);}
-.unit-head .btn.sm{margin-left:auto;}
-.samerow{display:flex;align-items:center;gap:10px;background:var(--fill);border:1px solid var(--line);border-radius:8px;padding:10px;}
-.same-label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
-.same-plan{font-weight:700;font-size:13.5px;}
-.same-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
-.same-price{font-weight:700;}
-
-/* ---- buttons ---- */
-.btn{background:var(--paper);border:1px solid var(--line2);border-radius:8px;padding:8px 13px;font-size:13px;font-weight:600;color:var(--ink);}
-.btn:hover{background:var(--fill);}
-.btn.ghost{background:none;border-color:var(--line2);color:var(--ink2);}
-.btn.sm{padding:5px 9px;font-size:12px;}
-.btn.primary{background:var(--dark);color:#fff;border-color:var(--dark);}
-.btn-add{background:var(--paper);border:1.5px dashed var(--line3);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap;}
-.btn-add:hover{background:var(--fill);}
-.btn-add.is-added{background:var(--dark);color:#fff;border:1.5px solid var(--dark);}
-.btn-add .tick{font-weight:800;}
-/* solid outline = opens another step (dashed = adds instantly) */
-.btn-step{background:var(--paper);border:1.5px solid var(--ink);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap;}
-.btn-step:hover{background:var(--fill);}
-
-/* ---- steppers ---- */
-.stepper{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line2);border-radius:8px;overflow:hidden;}
-.step-btn{width:44px;height:44px;border:0;background:var(--paper);font-size:18px;line-height:1;color:var(--ink);}
-.step-btn:hover{background:var(--fill);}
-.qty{min-width:30px;text-align:center;font-weight:700;font-size:14px;}
-/* add-all: promoted from underlined link to a proper secondary button */
-.addall{background:var(--paper);border:1px solid var(--line2);border-radius:8px;padding:7px 10px;font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap;}
-.addall:hover{background:var(--fill);}
-
-/* ---- callouts ---- */
-.callout{display:flex;align-items:center;gap:12px;border:1px solid var(--line2);border-left:4px solid var(--dark);
-  border-radius:8px;background:var(--fill);padding:11px 13px;margin-bottom:12px;}
-.callout.strong{background:var(--fill2);}
-.callout b{font-size:14px;}
-.callout-sub{display:block;font-size:12px;color:var(--ink2);}
-.callout .btn{margin-left:auto;}
-
-/* ---- brunch: square image left, copy + controls right ---- */
-.chosen-line{font-size:12.5px;font-weight:700;margin:6px 0 8px;}
-.brunch-card2{display:flex;align-items:stretch;}
-.brunch-card2 .ph-img.square{width:210px;min-width:210px;flex:none;height:auto;border-bottom:0;border-right:1px solid var(--line);}
-.brunch-main{flex:1;display:flex;flex-direction:column;}
-.bm-pad{padding:14px 14px 10px;flex:1;}
-.brunch-main h3{font-size:16px;margin-bottom:4px;}
-.brunch-slots{margin-top:10px;border-top:1px dashed var(--line2);padding-top:10px;}
-.bp-day{margin-bottom:10px;}
-.bp-day-head{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;}
-.bp-pp{font-size:12px;color:var(--muted);}
-.bp-slot{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);}
-.bp-label{flex:1;font-size:13px;}
-.bp-right{display:flex;align-items:center;gap:12px;}
-.linklike{background:none;border:0;padding:0;margin-left:8px;color:var(--ink);text-decoration:underline;font-size:12.5px;font-weight:600;}
-.frame-outer[data-device="mobile"] .brunch-card2{flex-direction:column;}
-.frame-outer[data-device="mobile"] .brunch-card2 .ph-img.square{width:100%;min-width:0;height:120px;border-right:0;border-bottom:1px solid var(--line);}
-.frame-outer[data-device="mobile"] .bp-slot{flex-wrap:wrap;}
-.brunch-main .dc-incl{margin:8px 0 6px;}
-.brunch-main .linklike{margin-left:0;display:inline-block;margin-bottom:6px;}
-
-/* ---- extras: consistent card, icon inline in the header, commerce bar footer ---- */
-.xcard{display:block;}
-.xc-ico{font-size:20px;line-height:1;color:var(--ink2);flex:none;}
-.xc-body{padding:12px 13px 10px;display:flex;flex-direction:column;gap:6px;}
-.xc-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
-.xc-head h3{font-size:15px;}
-.xc-body .desc{margin:0;}
-.scope-tag{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);border:1px solid var(--line2);border-radius:20px;padding:2px 8px;background:var(--fill);}
-.row-sub{display:block;font-size:12px;color:var(--muted);}
-.xc-control{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end;}
-
-/* ---- check-in and check-out: exclusive options, side-by-side (incl. mobile) ---- */
-.checkin-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
-.checkin-opts.one{grid-template-columns:1fr;}
-.checkin-opt{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:8px;background:var(--paper);overflow:hidden;}
-.checkin-opt.is-added{border-color:var(--line3);box-shadow:inset 3px 0 0 var(--dark);background:var(--fill);}
-.checkin-opt .co-info{flex:1;padding:10px 12px;}
-.checkin-opt .co-info b{font-size:13.5px;display:block;}
-.checkin-opt .co-priceblock{display:flex;flex-direction:column;line-height:1.2;}
-.checkin-opt .co-price{font-weight:800;font-size:16px;}
-.checkin-opts.one .co-price{font-size:20px;}
-.checkin-opt .co-pp{font-size:11px;color:var(--muted);}
-
-/* ---- order overview ---- */
-.ov-block{border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);padding:13px;margin-bottom:12px;}
-.ov-head{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14px;margin-bottom:8px;}
-.ov-head .ov-sub{font-weight:500;font-size:12px;color:var(--muted);}
-.ov-head .btn{margin-left:auto;}
-.ov-head.as-toggle{width:100%;background:none;border:0;margin:0;cursor:pointer;}
-.ov-head .chev{margin-left:auto;color:var(--muted);}
-.incl-count{font-weight:600;color:var(--muted);}
-.ov-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line);font-size:13px;}
-.ov-row:first-child{border-top:0;}
-.ov-row .row-sub{font-weight:400;}
-.ov-row.muted{color:var(--muted);}
-.ov-price{margin-left:auto;text-align:right;display:flex;flex-direction:column;line-height:1.2;}
-.ov-price .pp{font-size:11px;color:var(--muted);}
-.ov-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
-.inc-tag{margin-left:auto;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);border:1px solid var(--line2);border-radius:20px;padding:2px 8px;background:var(--fill);}
-/* accommodation: room-picker upsell (primary) vs change link (de-emphasised) */
-.ov-upsell{display:flex;align-items:center;gap:12px;border:1px solid var(--line2);border-left:4px solid var(--dark);border-radius:8px;background:var(--fill);padding:11px 13px;margin-top:10px;}
-.ov-upsell .ovu-text{flex:1;}
-.ov-upsell .ovu-text b{font-size:13.5px;}
-.ov-upsell .btn{margin-left:auto;white-space:nowrap;}
-.ov-changelink{display:inline-block;margin-top:10px;background:none;border:0;padding:0;color:var(--ink2);text-decoration:underline;font-size:12.5px;}
-.frame-outer[data-device="mobile"] .ov-upsell{flex-wrap:wrap;}
-.frame-outer[data-device="mobile"] .ov-upsell .btn{width:100%;}
-.ov-block.summary{background:var(--fill);}
-.sum-line{display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:4px 0;color:var(--ink2);}
-.sum-line.head{color:var(--ink);font-weight:700;padding-top:6px;}
-.sum-line.subtotal{color:var(--ink);font-weight:800;font-size:12.5px;letter-spacing:.02em;}
-.sum-addlink{background:none;border:0;padding:0;color:var(--ink);font-weight:600;font-size:13px;text-decoration:underline;}
-.sum-div{border-top:1px solid var(--line2);margin:7px 0;}
-.sum-total{display:flex;justify-content:space-between;gap:12px;font-weight:800;font-size:15px;border-top:2px solid var(--line2);margin-top:8px;padding-top:10px;}
-
-/* ============================================================ FOOTER
-   Layout mirrors the live site: a right-aligned "Total price" tab above a bar with the
-   instruction copy and Save quote / Continue actions. Greyscale stand-in for lo-fi. */
-.footer{position:relative;z-index:6;}
-/* price is a tab that pokes up above the bar (over the page content), so the footer only
-   reserves the bar height - no empty white row to the left of the tab. */
-.fprice{position:absolute;right:0;bottom:100%;display:flex;align-items:baseline;gap:8px;background:var(--fill2);border:1px solid var(--line);border-bottom:0;
-  border-top-left-radius:8px;border-top-right-radius:8px;padding:8px 18px;}
-.fprice-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);}
-.fprice b{font-size:20px;color:var(--ink);}
-.fbar{width:100%;display:flex;align-items:center;gap:16px;border-top:1px solid var(--line2);padding:12px 18px;background:var(--paper);}
-.finstruct{flex:1;font-size:13px;color:var(--ink2);min-width:0;}
-.factions{display:flex;gap:10px;margin-left:auto;}
-.savebtn{background:var(--paper);border:1px solid var(--ink);border-radius:6px;padding:12px 20px;font-weight:700;font-size:13px;color:var(--ink);text-transform:uppercase;letter-spacing:.04em;}
-.savebtn:hover{background:var(--fill);}
-.continue{background:var(--dark);color:#fff;border:1px solid var(--dark);border-radius:6px;padding:12px 22px;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em;}
-.frame-outer[data-device="mobile"] .finstruct{display:none;}
-.frame-outer[data-device="mobile"] .fbar{padding:10px;}
-.frame-outer[data-device="mobile"] .factions{width:100%;gap:10px;}
-.frame-outer[data-device="mobile"] .factions button{flex:1;}
-
-/* ---- Uber-style "you missed the food" prompt: pops up from behind the footer ---- */
-.promo-pop{position:absolute;left:14px;bottom:110px;z-index:5;width:360px;box-sizing:border-box;
-  display:grid;grid-template-columns:auto 1fr;grid-template-areas:"img head" "img sub";column-gap:12px;row-gap:2px;align-items:center;
-  background:var(--fill2);border:1px solid var(--line2);border-bottom:0;border-top-left-radius:10px;border-top-right-radius:10px;
-  padding:14px 16px;box-shadow:0 -4px 14px rgba(0,0,0,.12);cursor:pointer;text-align:left;
-  transform:translateY(150%);opacity:0;pointer-events:none;transition:transform .35s ease;}
-.promo-pop.show{transform:translateY(0);opacity:1;pointer-events:auto;}
-.promo-img{grid-area:img;width:72px;height:72px;align-self:center;background:var(--fill3);border:1px solid var(--line);}
-.promo-head{grid-area:head;align-self:end;font-size:24px;font-weight:800;letter-spacing:-.01em;color:var(--ink);}
-.promo-sub{grid-area:sub;align-self:start;font-size:13px;color:var(--ink2);}
-.promo-x{position:absolute;top:8px;right:8px;width:22px;height:22px;border:0;background:none;font-size:14px;line-height:1;color:var(--ink2);cursor:pointer;}
-.frame-outer[data-device="mobile"] .promo-pop{width:190px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:24px 36px 14px 16px;}
-.frame-outer[data-device="mobile"] .promo-head,.frame-outer[data-device="mobile"] .promo-img,.frame-outer[data-device="mobile"] .promo-sub{align-self:center;}
-.frame-outer[data-device="mobile"] .promo-img{width:75px;height:72px;}
-</style>
+<title>Phase 2 BBW Dining and Extras (hi-fi)</title>
+<!--
+  HI-FI FIRST PASS: Butlin's BBW (Big Weekender) skin.
+  - Styling lives in app-bbw.css (standalone dark design system; app.css / phase 1 untouched).
+  - Tokens from Figma "BTL BBW- Search Bar": bg #181818, Yellow #ffd614, Red #da291c,
+    Green #8ce852, Pink #d9598f, Grey #d4d3d6. League Gothic headings, Proxima Nova body.
+  - MEAL CARD PHOTOS (interim picks from assets-img, swap when final photography lands):
+      Premium Dining -> assets-img/premium.jpg; Food Court -> assets-img/foodcourt.jpg;
+      Breakfast Only -> assets-img/breakfast1.jpg;
+      Bottomless Brunch -> assets-img/brunch4.webp; VIP Pass -> assets-img/vip1.webp.
+  - IMAGE GAPS (styled placeholder panels until photography is supplied):
+      1. Promo popup food thumbnail (72x72)
+  - "Bottomless Brunch" product name is a placeholder pending brand/legal sign-off.
+-->
+<link rel="stylesheet" href="app-bbw.css">
 </head>
 <body>
 <div class="stage">
 
-  <!-- DEV TOOLBAR -->
+  <!-- TOOLBAR -->
   <div class="toolbar" id="rootToggleHost" data-device="desktop">
-    <span class="tlabel">Phase 2 · BBW Dining &amp; Extras</span>
-    <div class="seg-group"><span class="gl">Resort</span>
-      <div class="seg" role="group" aria-label="Resort"><button id="rsBognor" aria-pressed="true">Bognor Regis</button><button id="rsMine" aria-pressed="false">Minehead</button></div>
-    </div>
-    <div class="seg-group"><span class="gl">Dining options</span>
-      <div class="seg" role="group" aria-label="Dining options"><button id="dc1" aria-pressed="true">1</button><button id="dc2" aria-pressed="false">2</button><button id="dc3" aria-pressed="false">3</button></div>
-    </div>
-    <div class="seg-group"><span class="gl">Check-in</span>
-      <div class="seg" role="group" aria-label="Check-in options"><button id="ci1" aria-pressed="false">1</button><button id="ci2" aria-pressed="true">2</button></div>
-    </div>
+    <span class="tlabel"><span class="tver">Version 1.0</span><span class="tname">Phase 2 · BBW Dining &amp; Extras</span></span>
     <div class="right">
-      <div class="seg-group"><span class="gl">Parties</span>
+      <div class="seg-group"><span class="gl">Resort:</span>
+        <div class="seg" role="group" aria-label="Resort"><button id="rsBognor" aria-pressed="true">Bognor Regis</button><button id="rsMine" aria-pressed="false">Minehead</button></div>
+      </div>
+      <div class="seg-group"><span class="gl">Dining options:</span>
+        <div class="seg" role="group" aria-label="Dining options"><button id="dc1" aria-pressed="true">1</button><button id="dc2" aria-pressed="false">2</button><button id="dc3" aria-pressed="false">3</button></div>
+      </div>
+      <div class="seg-group"><span class="gl">Check-in:</span>
+        <div class="seg" role="group" aria-label="Check-in options"><button id="ci1" aria-pressed="false">1</button><button id="ci2" aria-pressed="true">2</button></div>
+      </div>
+      <div class="seg-group"><span class="gl">Parties:</span>
         <div class="seg" role="group" aria-label="Parties"><button id="un1" aria-pressed="true">1</button><button id="un2" aria-pressed="false">2</button></div>
       </div>
-      <div class="seg" role="group" aria-label="Device"><button id="dvMobile" aria-pressed="false">Mobile</button><button id="dvDesktop" aria-pressed="true">Desktop</button></div>
+      <div class="seg-group"><span class="gl">Screen:</span>
+        <div class="seg" role="group" aria-label="Screen"><button id="dvMobile" aria-pressed="false">Mobile</button><button id="dvDesktop" aria-pressed="true">Desktop</button></div>
+      </div>
     </div>
   </div>
 
@@ -357,13 +51,29 @@ ul{margin:0;padding:0;list-style:none;}
       <div class="scroll" id="scroll">
 
         <div class="appbar">
-          <span class="ico" aria-hidden="true">&#9776;</span>
-          <span class="brand">Butlin's<small>90 YEARS</small></span>
-          <span class="icons" aria-hidden="true"><span class="ico">&#128100;</span><span class="ico">?</span><span class="ico">&#8942;</span></span>
+          <div class="appbar-top" aria-hidden="true">
+            <span>Family breaks</span><span>Conferences &amp; events</span><span>Caravan sales</span>
+          </div>
+          <div class="appbar-main">
+            <button type="button" class="burger" aria-label="Menu"><img src="assets-bbw/menu.svg" alt=""></button>
+            <span class="brand"><img class="logo" src="assets-bbw/logo-bbw.png" alt="Butlin's Big Weekenders"></span>
+            <nav class="appbar-nav" aria-label="Site">
+              <a href="#" onclick="return false;">What's a Big Weekender</a>
+              <a href="#" onclick="return false;">Our Weekenders</a>
+              <a href="#" onclick="return false;">Dates</a>
+              <a href="#" onclick="return false;">Locations</a>
+              <a href="#" onclick="return false;">Before you go</a>
+            </nav>
+            <span class="icons" aria-hidden="true">
+              <img class="ico" src="assets-bbw/account.svg" alt="">
+              <img class="ico" src="assets-bbw/help.svg" alt="">
+              <img class="ico ico-more" src="assets-bbw/more.svg" alt="">
+            </span>
+          </div>
         </div>
 
         <div class="chrome-mid">
-          <p class="step-title">Step 2 of 5: Dining &amp; Extras</p>
+          <p class="step-title">Step 2: Dining &amp; Extras</p>
           <div class="step-row">
             <a href="#" class="backlink" onclick="return false;">&lsaquo; Back</a>
             <div class="dots" role="list" aria-label="Booking progress, step 2 of 5">
@@ -376,13 +86,12 @@ ul{margin:0;padding:0;list-style:none;}
           </div>
           <div class="searchsum">
             <span class="summ"><b id="resortSumm">Bognor Regis</b> | 24 to 27 Apr 2026 (3 nights) | <b id="guestSumm">4 guests</b></span>
-            <button class="editsum" onclick="return false;">Edit search</button>
           </div>
         </div>
 
         <div class="body">
           <div class="intro">
-            <h1>Eat, drink and make a weekend of it</h1>
+            <h1>Eat, drink &amp; make a weekend of it</h1>
             <p>Sort your meals and the extras that make your Big Weekender, all in one place. Everything here can be amended before you arrive.</p>
           </div>
 
@@ -390,8 +99,8 @@ ul{margin:0;padding:0;list-style:none;}
             <nav class="sectionnav" id="sectionNav" aria-label="Sections on this page"></nav>
             <span class="nav-fade nav-fade-left" aria-hidden="true"></span>
             <span class="nav-fade nav-fade-right" aria-hidden="true"></span>
-            <button type="button" class="nav-chev nav-chev-left" id="navChevLeft" aria-label="Scroll sections left">&lsaquo;</button>
-            <button type="button" class="nav-chev nav-chev-right" id="navChevRight" aria-label="Scroll sections right">&rsaquo;</button>
+            <button type="button" class="nav-chev nav-chev-left" id="navChevLeft" aria-label="Scroll sections left"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg></button>
+            <button type="button" class="nav-chev nav-chev-right" id="navChevRight" aria-label="Scroll sections right"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
           </div>
           <div class="content" id="content"></div>
         </div>
@@ -449,8 +158,8 @@ var DINING=[
 
 /* Brunch (standalone, whole-booking). Per-guest steppers per slot. */
 var BRUNCH=[
-  { day:"Saturday", pp:35.95, slots:[ {id:"sat1",label:"11:30am to 1:30pm"}, {id:"sat2",label:"6:00pm to 8:00pm"} ] },
-  { day:"Sunday",   pp:34.65, slots:[ {id:"sun1",label:"3:00pm to 5:00pm"} ] }
+  { day:"Saturday", pp:35.95, slots:[ {id:"sat1",label:"11:30 - 13:30"}, {id:"sat2",label:"18:00 - 20:00"} ] },
+  { day:"Sunday",   pp:34.65, slots:[ {id:"sun1",label:"15:00 - 17:00"} ] }
 ];
 
 var PRICE={ vipPP:49.50, spaEach:30.00, earlyCheckin:20.00, lateCheckout:22.00, towelEach:4.00, donation:2.00 };
@@ -465,8 +174,8 @@ var PARTY_SETS={
 var state={
   resort:"bognor", diningCount:1, units:1, device:"desktop",
   parties:{},               /* pid -> {plan, mode, } */
-  brunch:{}, _brunchOpen:false,
-  vip:false, spaQty:0, earlyCheckin:false, lateCheckout:false, towelsQty:0, donation:false,
+  brunch:{}, _brunchOpen:false, _brunchReveal:{}, planImg:{},
+  vip:false, spaQty:0, spaRevealed:false, earlyCheckin:false, lateCheckout:false, towelsQty:0, towelsRevealed:false, donation:false,
   checkinOpts:2,
   _inclOpen:false, _activeSec:"dining", promoDismissed:false, extrasReached:false
 };
@@ -516,18 +225,81 @@ function computeAll(){
 }
 
 /* ============================================================ UI HELPERS */
-function phImg(label,cls){ return '<div class="ph-img '+(cls||'')+'" aria-hidden="true"><span>'+label+'</span></div>'; }
+/* Meal plan photography galleries (interim picks from assets-img), cycled by the
+   card arrows. Breakfast has a single cutout, so it renders without arrows. */
+var PLAN_IMGS={
+  premium:["assets-img/premium.jpg","assets-img/hotel.jpg","assets-img/drinks.jpg"],
+  foodcourt:["assets-img/foodcourt.jpg","assets-img/dinearound.jpg","assets-img/drinks.jpg"],
+  breakfast:["assets-img/breakfast1.jpg"]
+};
+function planImgs(id){ return PLAN_IMGS[id]||[]; }
+var CHEV_L='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg>';
+var CHEV_R='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>';
+/* builds the layered slide markup used by both the initial render and the arrow transition */
+function ciSlideHTML(url){
+  return '<div class="ci-slide"><div class="ci-par"><div class="ci-img" style="background-image:url(\''+url+'\')"></div></div></div>';
+}
+/* the meal card image block: current slide + carousel arrows (galleries only) + save flag */
+function diningCardImg(plan,saveTab){
+  var imgs=planImgs(plan.id), idx=state.planImg[plan.id]||0;
+  var nav=imgs.length>1?'<button type="button" class="img-nav prev" aria-label="Previous image">'+CHEV_L+'</button><button type="button" class="img-nav next" aria-label="Next image">'+CHEV_R+'</button>':'';
+  return '<div class="dc-img" data-plan="'+plan.id+'">'+ciSlideHTML(imgs[idx])+nav+saveTab+'</div>';
+}
+/* animate the plan card image: incoming slide eases in from the click direction with a small parallax
+   lag and a gentle zoom-settle; the outgoing slide eases out with the opposite parallax/zoom.
+   (Animation settings copied exactly from phase1-dining-fam-hifi.html.) */
+function slidePlanImage(ci, dir){
+  if(!ci || ci.dataset.animating==="1") return;
+  var pid=ci.dataset.plan, imgs=planImgs(pid);
+  if(imgs.length<2) return;
+  var cur=state.planImg[pid]||0, nx=(cur+dir+imgs.length)%imgs.length;
+  state.planImg[pid]=nx;
+  var curEl=ci.querySelector('.ci-slide'), curPar=curEl&&curEl.querySelector('.ci-par');
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!curEl||reduce){ var im0=curEl&&curEl.querySelector('.ci-img'); if(im0) im0.style.backgroundImage="url('"+imgs[nx]+"')"; return; }
+  var tmp=document.createElement('div'); tmp.innerHTML=ciSlideHTML(imgs[nx]);
+  var inEl=tmp.firstChild, inPar=inEl.querySelector('.ci-par');
+  inEl.style.transform='translateX('+(dir>0?100:-100)+'%)';
+  inPar.style.transform='translateX('+(-3*dir)+'%) scale(1.08)';
+  ci.insertBefore(inEl, ci.querySelector('.img-nav'));
+  ci.dataset.animating="1";
+  void inEl.offsetWidth; /* commit the start transforms before transitioning */
+  curEl.classList.add('ci-anim'); inEl.classList.add('ci-anim'); inPar.classList.add('ci-anim'); if(curPar) curPar.classList.add('ci-anim');
+  curEl.style.transform='translateX('+(dir>0?-100:100)+'%)';
+  if(curPar) curPar.style.transform='translateX('+(3*dir)+'%) scale(1.08)';
+  inEl.style.transform='translateX(0)';
+  inPar.style.transform='translateX(0) scale(1)';
+  var done=false, finish=function(){ if(done) return; done=true; if(curEl.parentNode) curEl.parentNode.removeChild(curEl); inEl.classList.remove('ci-anim'); inPar.classList.remove('ci-anim'); inEl.style.transform=''; inPar.style.transform=''; ci.dataset.animating="0"; };
+  inEl.addEventListener('transitionend', finish, {once:true});
+  setTimeout(finish, 750);
+}
+function phImg(label,cls,accent){ return '<div class="ph-img '+(cls||'')+' '+(accent||'acc-grey')+'" aria-hidden="true"><span>Photo: '+label+'</span></div>'; }
 function addBtn(on,attrs,off,onl){ off=off||"Add"; onl=onl||"Added";
   return '<button type="button" class="btn-add'+(on?' is-added':'')+'" aria-pressed="'+(on?'true':'false')+'" '+attrs+'>'+
-    (on?('<span class="tick">\u2713</span> '+onl):off)+'</button>'; }
+    (on?('<img class="cta-check" src="assets-bbw/cta-check.svg" alt="" aria-hidden="true">'+onl):off)+'</button>'; }
 function stepper(qty,attrs){ return '<div class="stepper" '+attrs+'><button type="button" class="step-btn" data-dir="-1" aria-label="Decrease">\u2212</button><span class="qty">'+qty+'</span><button type="button" class="step-btn" data-dir="1" aria-label="Increase">+</button></div>'; }
+/* three-state quantity control (Figma 517:4517): ghost reveal pill -> stepper,
+   beside an outlined add-for-all that goes red with a tick once added */
+function qtyControl(o){
+  var left=(!o.revealed && o.qty===0)
+    ? '<button type="button" class="btn-reveal" '+o.revealAttr+' aria-expanded="false">Choose how many</button>'
+    : stepper(o.qty,o.attr);
+  var on=o.qty>0;
+  var label=on
+    ? o.qty+' of '+o.tg+' added'
+    : 'Add for all '+o.tg+' guests';
+  return left+'<button type="button" class="btn-add'+(on?' is-added':'')+'" aria-pressed="'+(on?'true':'false')+'" '+o.allAttr+'>'+
+    (on?'<img class="cta-check" src="assets-bbw/cta-check.svg" alt="" aria-hidden="true">':'')+label+'</button>';
+}
 
 /* ============================================================ DINING SECTION */
 function sectionDining(){
   var head='<div class="sec-head"><h2 class="sec-label">Dining</h2></div>';
   var hasPromo=visibleDining().some(function(p){ return p.promo; });
-  var banner = hasPromo ? '<div class="promo-banner"><span class="pb-main">EAT FOR 3 DAYS, PAY FOR 2<span class="ast">*</span></span>'+
-    '<span class="pb-sub">Every Big Weekender runs for 3 days. Add a dining plan and we only charge you for 2, with unlimited buffet breakfast and dinner throughout.</span></div>' : '';
+  var banner = hasPromo ? '<div class="promo-banner"><span class="pb-left">Eat for 3 days</span>'+
+    '<span class="pb-mobile">Eat for 3 days, <b>pay for 2!</b></span>'+
+    '<span class="pb-sub">Every Big Weekender runs for 3 days. Add a dining plan and we only charge you for 2, with unlimited buffet breakfast and dinner throughout.</span>'+
+    '<span class="pb-right">but pay for 2!</span></div>' : '';
   var body = state.units===1 ? diningUnit(curParties()[0],true)
                              : curParties().map(function(p,i){ return diningUnit(p,i===0); }).join('');
   var note = hasPromo ? '<p class="promo-note">*Applies to Premium Dining and Food Court on selected Big Weekenders. Saving shown in your total. New bookings only.</p>' : '';
@@ -554,16 +326,17 @@ function diningCard(plan,party){
   var now=diningNow(plan,party.guests), was=diningWas(plan,party.guests), save=was-now;
   var perday=now/(party.guests*DINING_DAYS);
   var saveTab = (plan.promo && save>0) ? '<div class="dc-save">save <b>'+gbp(save)+'</b></div>' : '';
-  var wasEl = (plan.promo && was>now) ? '<div class="was-row"><span class="was">'+gbp(was)+'</span><span class="promo-pill">3 for 2</span></div>' : '';
+  var wasEl = (plan.promo && was>now) ? '<div class="was-row"><span class="was">'+gbp(was)+'</span><span class="promo-pill">3 for 2 deal!</span></div>' : '';
   var incl='<ul class="dc-incl">'+plan.incl.map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ul>';
   var mid=plan.id+'-'+party.id;
-  var more = plan.more ? '<button type="button" class="dc-more-toggle" data-more="'+mid+'">Read more</button><div class="dc-more" id="more-'+mid+'">'+plan.more+'</div>' : '';
+  var links='<div class="dc-links"><a class="dc-menulink" href="#" onclick="return false;">Sample menu &amp; allergens<img src="assets-bbw/arrow-up-right.svg" alt="" aria-hidden="true"></a>'+
+    (plan.more?'<button type="button" class="dc-more-toggle" data-more="'+mid+'">Read more</button>':'')+'</div>';
+  var moreBody = plan.more ? '<div class="dc-more" id="more-'+mid+'">'+plan.more+'</div>' : '';
   return '<div class="dcard'+(on?' is-added':'')+'" data-party="'+party.id+'" data-plan="'+plan.id+'">'+
-    '<h3 class="dc-head">'+plan.name+'</h3>'+
-    '<div class="ph-img dc-img" aria-hidden="true"><span>'+plan.name+'</span>'+saveTab+'</div>'+
-    '<div class="dc-body"><p class="desc">'+plan.desc+'</p>'+incl+more+
-    '<div class="dc-foot"><div class="price">'+wasEl+'<div class="price-row"><span class="now">'+gbp(now)+'</span><span class="price-unit">party total</span></div><span class="pp">'+gbp(perday)+' per person, per day</span></div>'+
-    '<button type="button" class="dc-cta'+(on?' is-added':'')+'" data-dining-add="'+plan.id+'" data-party="'+party.id+'" aria-pressed="'+(on?'true':'false')+'">'+(on?'\u2713 Added':'Add '+plan.name)+'</button>'+
+    diningCardImg(plan,saveTab)+
+    '<div class="dc-body"><h3 class="dc-title">'+plan.name+'</h3><p class="desc">'+plan.desc+'</p>'+incl+links+moreBody+
+    '<div class="dc-foot"><div class="price">'+wasEl+'<div class="price-row"><span class="now">'+gbp(now)+'</span><span class="price-meta">party total <span class="pm-dot">&bull;</span> <span class="pm-ppd">'+gbp(perday)+' per person, per day</span></span></div></div>'+
+    '<button type="button" class="dc-cta'+(on?' is-added':'')+'" data-dining-add="'+plan.id+'" data-party="'+party.id+'" aria-pressed="'+(on?'true':'false')+'">'+(on?'<img class="cta-check" src="assets-bbw/cta-check.svg" alt="" aria-hidden="true">Added to booking':'Add '+plan.name)+'</button>'+
     '</div></div></div>';
 }
 
@@ -572,10 +345,10 @@ function subsecBrunch(){
   var g=brunchGuests(), total=brunchTotal(), open=state._brunchOpen;
   var lowest=BRUNCH.reduce(function(m,d){ return Math.min(m,d.pp); },Infinity);
   var price = g>0
-    ? '<div class="price"><span class="now">'+gbp(total)+'</span><span class="pp">'+g+' guest'+(g>1?'s':'')+' booked</span></div>'
-    : '<div class="price"><span class="now">from '+gbp(lowest)+'</span><span class="pp">per person</span></div>';
+    ? '<div class="price"><span class="now">'+gbp(total)+'</span></div>'
+    : '<div class="price"><span class="now">from '+gbp(lowest)+'</span></div>';
   var btn = open
-    ? '<button type="button" class="btn-step" data-brunch-toggle aria-expanded="true">Hide times</button>'
+    ? '<button type="button" class="btn-step" data-brunch-toggle aria-expanded="true">Hide sittings</button>'
     : '<button type="button" class="btn-step" data-brunch-toggle aria-expanded="false">'+(g>0?'Change booking':'Choose a sitting')+'</button>';
   var inclList='<ul class="dc-incl">'+
     ['DJ, party games and big singalongs',
@@ -583,13 +356,14 @@ function subsecBrunch(){
      'Your choice of brunch dish from the new menu',
      'Upgrade available on arrival for more drink options'
     ].map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ul>';
-  var card='<div class="card'+(g>0?' is-added':'')+'"><h3 class="dc-head">Bottomless Brunch</h3>'+
-    '<div class="brunch-card2">'+phImg("Bottomless Brunch","square")+
+  var card='<div class="card'+(g>0?' is-added':'')+(open?' is-open':'')+'">'+
+    '<div class="brunch-card2"><div class="ph-img square photo" aria-hidden="true"><img class="ph-photo" src="assets-img/brunch4.webp" alt=""><img class="ph-photo ph-b" src="assets-img/brunch5.webp" alt=""></div>'+
     '<div class="brunch-main"><div class="bm-pad">'+
+    '<h3>Bottomless Brunch</h3>'+
     '<p class="desc">The warm up before the big night: a party brunch with a DJ spinning anthems themed to your Weekender.</p>'+
-    inclList+'<a class="linklike" href="#" onclick="return false;">Sample menu</a>'+
-    (open?brunchPicker():'')+'</div>'+
-    '<div class="cbar"><div class="cbar-left"><span class="scope-tag">Per person</span>'+price+'</div>'+btn+'</div>'+
+    inclList+'<a class="linklike" href="#" onclick="return false;">Sample menu &amp; allergens<img src="assets-bbw/arrow-up-right.svg" alt="" aria-hidden="true"></a>'+'</div>'+
+    (open?brunchPicker():'')+
+    '<div class="cbar"><div class="cbar-left">'+price+scopeTag("Per person")+'</div>'+btn+'</div>'+
     '</div></div></div>';
   return '<!-- Product name placeholder pending brand/legal sign-off -->'+
     '<section class="subsec" id="sec-brunch" data-sec="brunch">'+card+'</section>';
@@ -600,9 +374,8 @@ function brunchPicker(){
     return '<div class="bp-day"><div class="bp-day-head"><b>'+d.day+'</b><span class="bp-pp">'+gbp(d.pp)+' per person</span></div>'+
       d.slots.map(function(sl){ var q=state.brunch[sl.id]||0;
         return '<div class="bp-slot"><span class="bp-label">'+sl.label+'</span>'+
-          '<div class="bp-right">'+
-          '<button type="button" class="addall" data-brunch-all="'+sl.id+'">'+(q>=tg&&tg>0?'Remove all':'Add all ('+tg+')')+'</button>'+
-          stepper(q,'data-brunch-slot="'+sl.id+'"')+'</div></div>'; }).join('')+
+          '<div class="bp-right">'+qtyControl({qty:q,revealed:!!state._brunchReveal[sl.id],tg:tg,
+            attr:'data-brunch-slot="'+sl.id+'"',revealAttr:'data-brunch-reveal="'+sl.id+'"',allAttr:'data-brunch-all="'+sl.id+'"'})+'</div></div>'; }).join('')+
       '</div>';
   }).join('')+'</div>';
 }
@@ -623,12 +396,17 @@ function sectionExtras(){
 function subsecVip(){
   return '<section class="subsec" id="sec-vip" data-sec="vip">'+extraVIP()+'</section>';
 }
+/* scope pill with a scope-appropriate 12px icon (group / person / item) */
+function scopeTag(scope){
+  var ico = scope==="Whole booking" ? "pill-group.svg" : (scope==="Per item" ? "pill-item.svg" : "pill-person.svg");
+  return '<span class="scope-tag"><img class="st-ico" src="assets-bbw/'+ico+'" alt="" aria-hidden="true">'+scope+'</span>';
+}
 function extraCard(o){
   var more = o.more ? '<button type="button" class="dc-more-toggle" data-more="x-'+o.id+'">Read more</button><div class="dc-more" id="more-x-'+o.id+'">'+o.more+'</div>' : '';
   return '<div class="card xcard'+(o.added?' is-added':'')+'">'+
-    '<div class="xc-body"><div class="xc-head"><span class="xc-ico" aria-hidden="true">'+o.icon+'</span><h3>'+o.title+'</h3></div>'+
+    '<div class="xc-body"><div class="xc-head"><img class="xc-ico" src="assets-bbw/ico-'+o.id+'.svg" alt="" aria-hidden="true"><h3>'+o.title+'</h3></div>'+
     '<p class="desc">'+o.desc+'</p>'+(o.body||'')+more+'</div>'+
-    '<div class="cbar"><div class="cbar-left"><span class="scope-tag">'+o.scope+'</span><div class="price"><span class="now">'+o.price+'</span>'+(o.priceSub?'<span class="pp">'+o.priceSub+'</span>':'')+'</div></div>'+
+    '<div class="cbar"><div class="cbar-left"><div class="price"><span class="now">'+o.price+'</span>'+(o.priceSub?'<span class="pp">'+o.priceSub+'</span>':'')+'</div>'+scopeTag(o.scope)+'</div>'+
     '<div class="xc-control">'+(o.addall||'')+o.control+'</div></div></div>';
 }
 function extraVIP(){
@@ -639,56 +417,55 @@ function extraVIP(){
      'A dedicated VIP host across the weekend',
      'One pass covers everyone on your booking'
     ].map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ul>';
-  return '<div class="card'+(on?' is-added':'')+'"><h3 class="dc-head">VIP Pass</h3>'+
-    '<div class="brunch-card2">'+phImg("VIP Pass","square")+
+  return '<div class="card'+(on?' is-added':'')+'">'+
+    '<div class="brunch-card2"><div class="ph-img square photo" aria-hidden="true"><img class="ph-photo" src="assets-img/vip1.webp" alt=""></div>'+
     '<div class="brunch-main"><div class="bm-pad">'+
+    '<h3>VIP Pass</h3>'+
     '<p class="desc">Priority access to Silent Disco, Bingo, Soul Stroll and Pool Party, plus a VIP pit with private bar.</p>'+
     incl+'</div>'+
-    '<div class="cbar"><div class="cbar-left"><span class="scope-tag">Whole booking</span><div class="price"><span class="now">'+gbp(total)+'</span><span class="pp">'+gbp(PRICE.vipPP)+' per person</span></div></div>'+
-    addBtn(on,'data-extra="vip"','Add','Added')+'</div>'+
+    '<div class="cbar"><div class="cbar-left"><div class="price"><span class="now">'+gbp(total)+'</span><span class="pp">'+gbp(PRICE.vipPP)+' per person</span></div>'+scopeTag("Whole booking")+'</div>'+
+    addBtn(on,'data-extra="vip"','Add to booking','Added to booking')+'</div>'+
     '</div></div></div>';
 }
 function extraSpa(){
-  var q=state.spaQty, tg=totalGuests(), total=q*PRICE.spaEach;
-  var body=(q>0?'<div class="chosen-line">'+q+' guest'+(q>1?'s':'')+' &middot; '+gbp(total)+'</div>':'');
-  var addall='<button type="button" class="addall" data-spa-all>'+(q>=tg&&tg>0?'Remove for all guests':'Add for all guests ('+tg+')')+'</button>';
+  var q=state.spaQty, tg=totalGuests();
+  var body='';
   return extraCard({ id:"spa", icon:"\u2741", title:"Spa Experience", scope:"Per person", added:q>0,
     desc:"A 2 hour experience at Ocean Spa with full use of the hydrospa, outdoor hot tub, sauna, crystal steam room and relaxation pods.",
     more:"Your 2 hour session covers the hydrospa pool, outdoor hot tub, sauna, crystal steam room and heated relaxation loungers. Bring swimwear and a towel (or add a towel pack below). Treatments such as massages and facials can be booked on arrival at extra cost. Over 16s only.",
-    price:gbp(PRICE.spaEach), priceSub:"per person", body:body, addall:addall,
-    control:stepper(q,'data-spa') });
+    price:gbp(PRICE.spaEach), body:body,
+    control:qtyControl({qty:q,revealed:state.spaRevealed,tg:tg,attr:'data-spa',revealAttr:'data-spa-reveal',allAttr:'data-spa-all'}) });
 }
 function checkinOption(o){
   var total=o.per*curParties().length, pp=total/totalGuests();
   return '<div class="checkin-opt'+(o.on?' is-added':'')+'">'+
-    '<div class="co-info"><b>'+o.title+'</b><span class="row-sub">'+o.desc+'</span></div>'+
-    '<div class="cbar sm"><div class="co-priceblock"><span class="co-price">'+gbp(total)+'</span><span class="co-pp">'+gbp(pp)+' per person</span></div>'+addBtn(o.on,'data-checkin="'+o.key+'"','Add','Added')+'</div></div>';
+    '<div class="co-info"><div class="co-head"><img class="co-ico" src="assets-bbw/'+o.ico+'" alt="" aria-hidden="true"><b>'+o.title+'</b></div><span class="row-sub">'+o.desc+'</span></div>'+
+    '<div class="cbar sm"><div class="co-priceblock"><span class="co-price">'+gbp(total)+'</span><span class="co-pp">'+gbp(pp)+' per person</span></div>'+addBtn(o.on,'data-checkin="'+o.key+'"','Add to booking','Added to booking')+'</div></div>';
 }
 function extraCheckin(){
   var twoUp=state.checkinOpts===2;
   var anyOn=state.earlyCheckin||state.lateCheckout;
-  var early=checkinOption({ key:"early", on:state.earlyCheckin, per:PRICE.earlyCheckin, title:"Early check-in",
-      desc:"Get in from 1pm." });
-  var late=checkinOption({ key:"late", on:state.lateCheckout, per:PRICE.lateCheckout, title:"Late check-out",
-      desc:"Stay until 12pm." });
+  var early=checkinOption({ key:"early", on:state.earlyCheckin, per:PRICE.earlyCheckin, title:"Arrive from 1pm",
+      desc:"Start the party 2 hours earlier, as standard check-in is 3pm.", ico:"ico-early.svg" });
+  var late=checkinOption({ key:"late", on:state.lateCheckout, per:PRICE.lateCheckout, title:"Check out at 12pm",
+      desc:"Get an extra 2 hours kip, as standard check-out is 10am.", ico:"ico-late.svg" });
   var opts='<div class="checkin-opts'+(twoUp?'':' one')+'">'+(twoUp?early+late:late)+'</div>';
   var note=twoUp
     ? "Add one of these, not both. Rooms need a cleaning turnaround between guests."
     : "Give yourselves a little longer at the resort.";
   return '<div class="card xcard'+(anyOn?' is-added':'')+'">'+
-    '<div class="xc-body"><div class="xc-head"><span class="xc-ico" aria-hidden="true">\u25D1</span><h3>Check-in &amp; check-out</h3><span class="scope-tag">Whole booking</span></div>'+
+    '<div class="xc-body"><div class="xc-head"><img class="xc-ico" src="assets-bbw/ico-checkin.svg" alt="" aria-hidden="true"><h3>Extend your stay</h3>'+scopeTag("Whole booking")+'</div>'+
     '<p class="desc">'+note+'</p>'+
     opts+'</div></div>';
 }
 function extraTowels(){
-  var q=state.towelsQty, tg=totalGuests(), total=q*PRICE.towelEach;
-  var body=(q>0?'<div class="chosen-line">'+q+' pack'+(q>1?'s':'')+' &middot; '+gbp(total)+'</div>':'');
-  var addall='<button type="button" class="addall" data-towels-all>'+(q>=tg&&tg>0?'Remove for all guests':'Add for all guests ('+tg+')')+'</button>';
+  var q=state.towelsQty, tg=totalGuests();
+  var body='';
   return extraCard({ id:"towels", icon:"\u25A4", title:"Towel Pack", scope:"Per item", added:q>0,
     desc:"A fresh towel pack per person for your stay.",
     more:"Each pack has a bath towel and a hand towel per person, freshly laundered and waiting in your accommodation on arrival. Saves packing space and comes in handy after the pool or spa.",
-    price:gbp(PRICE.towelEach), priceSub:"each", body:body, addall:addall,
-    control:stepper(q,'data-towels') });
+    price:gbp(PRICE.towelEach), body:body,
+    control:qtyControl({qty:q,revealed:state.towelsRevealed,tg:tg,attr:'data-towels',revealAttr:'data-towels-reveal',allAttr:'data-towels-all'}) });
 }
 function extraDonation(){
   var on=state.donation;
@@ -696,7 +473,7 @@ function extraDonation(){
     desc:"Add a &pound;2 donation to Great Ormond Street Hospital Children's Charity.",
     more:"Great Ormond Street Hospital cares for some of the country's sickest children. Your optional &pound;2 donation goes straight to the charity to help fund pioneering research, equipment and support for families. <a href='#' onclick='return false;'>Find out more</a>",
     price:gbp(PRICE.donation),
-    control:addBtn(on,'data-extra="donation"','Add','Added') });
+    control:addBtn(on,'data-extra="donation"','Add to booking','Added to booking') });
 }
 
 /* ============================================================ DONATION SECTION */
@@ -769,11 +546,11 @@ function ovSummary(){
 /* Desktop keeps the granular per-item anchors; mobile collapses the extras into a single
    "More extras" pill so the 4 anchors fit without horizontal scroll. */
 var NAV_DESKTOP=[
-  {id:"dining",label:"Dining"},
+  {id:"dining",label:"Dining plans"},
   {id:"brunch",label:"Brunch"},
   {id:"vip",label:"VIP Pass"},
   {id:"spa",label:"Spa Experience"},
-  {id:"checkin",label:"Check-in & out"},
+  {id:"checkin",label:"Extend your stay"},
   {id:"towels",label:"Towels"},
   {id:"donation",label:"Donation"},
   {id:"overview",label:"Your booking"}
@@ -816,7 +593,7 @@ function buildNav(){
     var tcls=t==='full'?' added':(t==='partial'?' partial':'');
     var ttl=t==='full'?' title="Added"':(t==='partial'?' title="Some added"':'');
     return '<button type="button" class="nav-item'+(active?' is-active':'')+tcls+'" data-nav="'+n.id+'"'+ttl+'>'+
-      '<span class="nav-tick" aria-hidden="true">'+(t==='full'?'\u2713':'')+'</span>'+n.label+'</button>';
+      '<img class="nav-ico" src="assets-bbw/tab-'+n.id+'.svg" alt="" aria-hidden="true">'+n.label+'</button>';
   }).join('');
   el.querySelectorAll('[data-nav]').forEach(function(b){ b.addEventListener('click',function(){ gotoSec(b.getAttribute('data-nav')); }); });
   updateNavAffordance();
@@ -918,6 +695,10 @@ function wireContent(){
     b.addEventListener('click',function(){ var id=b.getAttribute('data-dining-add'), pid=b.getAttribute('data-party'); var s=pslot(pid);
       var sel=s.plan!==id; s.plan=sel?id:null; announce(diningById(id).name+(sel?" added":" removed")); render(); });
   });
+  content.querySelectorAll('.dc-img .img-nav').forEach(function(btn){
+    btn.addEventListener('click',function(e){ e.stopPropagation();
+      slidePlanImage(btn.closest('.dc-img'), btn.classList.contains('next')?1:-1); });
+  });
   content.querySelectorAll('[data-unit-customise]').forEach(function(b){
     b.addEventListener('click',function(){ var s=pslot(b.getAttribute('data-unit-customise')); s.mode="own"; if(!s.plan) s.plan=pslot(firstPid()).plan; render(); });
   });
@@ -928,10 +709,46 @@ function wireContent(){
     b.addEventListener('click',function(e){ e.stopPropagation(); var d=document.getElementById('more-'+b.getAttribute('data-more')); if(!d) return; var open=d.classList.toggle('open'); b.textContent=open?'Read less':'Read more'; });
   });
   content.querySelectorAll('[data-brunch-toggle]').forEach(function(b){
-    b.addEventListener('click',function(){ state._brunchOpen=!state._brunchOpen; announce(state._brunchOpen?"Bottomless Brunch sittings shown":"Bottomless Brunch sittings hidden"); render(); });
+    b.addEventListener('click',function(){
+      var opening=!state._brunchOpen;
+      var oldCard=document.querySelector('#sec-brunch .card');
+      var h0=oldCard?oldCard.offsetHeight:0;
+      state._brunchOpen=opening;
+      announce(opening?"Bottomless Brunch sittings shown":"Bottomless Brunch sittings hidden");
+      render();
+      /* smooth open/close: FLIP the card height, crossfade brunch4 -> brunch5,
+         and fade the revealed sittings in (skipped for reduced motion) */
+      var card=document.querySelector('#sec-brunch .card');
+      var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if(!card||reduce||!h0) return;
+      var h1=card.offsetHeight;
+      var imgB=card.querySelector('.ph-b');
+      var slots=card.querySelector('.brunch-slots');
+      card.classList.add('brunch-anim');
+      card.style.height=h0+'px';
+      if(imgB) imgB.style.opacity=opening?'0':'1';
+      if(slots){ slots.style.opacity='0'; slots.style.transform='translateY(6px)'; }
+      void card.offsetWidth; /* commit start values before transitioning */
+      card.style.height=h1+'px';
+      if(imgB) imgB.style.opacity=opening?'1':'0';
+      if(slots){ slots.style.opacity='1'; slots.style.transform='none'; }
+      var done=false, fin=function(){ if(done) return; done=true;
+        card.classList.remove('brunch-anim'); card.style.height='';
+        if(imgB) imgB.style.opacity='';
+        if(slots){ slots.style.opacity=''; slots.style.transform=''; } };
+      card.addEventListener('transitionend',function(e){ if(e.target===card) fin(); },{once:true});
+      setTimeout(fin,600);
+    });
+  });
+  content.querySelectorAll('[data-brunch-reveal]').forEach(function(b){
+    b.addEventListener('click',function(){ var sl=b.getAttribute('data-brunch-reveal'); state._brunchReveal[sl]=true; render();
+      var plus=content.querySelector('.stepper[data-brunch-slot="'+sl+'"] .step-btn[data-dir="1"]'); if(plus) plus.focus(); });
   });
   content.querySelectorAll('[data-brunch-all]').forEach(function(b){
-    b.addEventListener('click',function(){ var sl=b.getAttribute('data-brunch-all'), tg=totalGuests(); state.brunch[sl]=((state.brunch[sl]||0)>=tg?0:tg); announce("Bottomless Brunch, "+brunchGuests()+" guest"+(brunchGuests()===1?"":"s")+" booked"); render(); });
+    b.addEventListener('click',function(){ var sl=b.getAttribute('data-brunch-all'), tg=totalGuests();
+      if((state.brunch[sl]||0)>0){ state.brunch[sl]=0; state._brunchReveal[sl]=false; }
+      else { state.brunch[sl]=tg; state._brunchReveal[sl]=true; }
+      announce("Bottomless Brunch, "+brunchGuests()+" guest"+(brunchGuests()===1?"":"s")+" booked"); render(); });
   });
   content.querySelectorAll('.stepper').forEach(function(st){
     var slot=st.getAttribute('data-brunch-slot'), spa=st.hasAttribute('data-spa'), tow=st.hasAttribute('data-towels');
@@ -943,8 +760,16 @@ function wireContent(){
         render(); });
     });
   });
-  content.querySelectorAll('[data-spa-all]').forEach(function(b){ b.addEventListener('click',function(){ var tg=totalGuests(); state.spaQty=(state.spaQty>=tg?0:tg); announce("Spa Experience, "+state.spaQty+" guest"+(state.spaQty===1?"":"s")); render(); }); });
-  content.querySelectorAll('[data-towels-all]').forEach(function(b){ b.addEventListener('click',function(){ var tg=totalGuests(); state.towelsQty=(state.towelsQty>=tg?0:tg); announce("Towel Pack, "+state.towelsQty+" pack"+(state.towelsQty===1?"":"s")); render(); }); });
+  content.querySelectorAll('[data-spa-reveal]').forEach(function(b){ b.addEventListener('click',function(){ state.spaRevealed=true; render();
+    var plus=content.querySelector('.stepper[data-spa] .step-btn[data-dir="1"]'); if(plus) plus.focus(); }); });
+  content.querySelectorAll('[data-towels-reveal]').forEach(function(b){ b.addEventListener('click',function(){ state.towelsRevealed=true; render();
+    var plus=content.querySelector('.stepper[data-towels] .step-btn[data-dir="1"]'); if(plus) plus.focus(); }); });
+  content.querySelectorAll('[data-spa-all]').forEach(function(b){ b.addEventListener('click',function(){ var tg=totalGuests();
+    if(state.spaQty>0){ state.spaQty=0; state.spaRevealed=false; } else { state.spaQty=tg; state.spaRevealed=true; }
+    announce("Spa Experience, "+state.spaQty+" guest"+(state.spaQty===1?"":"s")); render(); }); });
+  content.querySelectorAll('[data-towels-all]').forEach(function(b){ b.addEventListener('click',function(){ var tg=totalGuests();
+    if(state.towelsQty>0){ state.towelsQty=0; state.towelsRevealed=false; } else { state.towelsQty=tg; state.towelsRevealed=true; }
+    announce("Towel Pack, "+state.towelsQty+" pack"+(state.towelsQty===1?"":"s")); render(); }); });
   content.querySelectorAll('[data-checkin]').forEach(function(b){
     b.addEventListener('click',function(){ var k=b.getAttribute('data-checkin');
       if(k==="early"){ state.earlyCheckin=!state.earlyCheckin; if(state.earlyCheckin) state.lateCheckout=false; announce((state.earlyCheckin?"Added ":"Removed ")+"Early check-in"); }
@@ -963,10 +788,24 @@ function wireContent(){
 /* ============================================================ SCROLL-SPY */
 function onScroll(){
   var top=scrollEl.getBoundingClientRect().top, secs=content.querySelectorAll('[data-sec]'), cur=null;
-  secs.forEach(function(s){ if(s.getBoundingClientRect().top-top<=90) cur=s; });
+  /* nav bar shrink is scrubbed by scroll depth, starting only once the bar has
+     stuck to the top: the intro above keeps scrolling while the bar pins, so
+     the distance scrolled past the stick point (overshoot) drives the padding
+     from its resting value down to 12px across the first 48px past the pin. */
+  var nw=document.getElementById('navWrap'), nav=document.getElementById('sectionNav');
+  var intro=document.querySelector('.intro');
+  if(nw&&nav&&intro){
+    var overshoot=top-intro.getBoundingClientRect().bottom; /* px scrolled past the stick point */
+    var base=state.device==="mobile"?14:24, RAMP=48;
+    var t=Math.max(0,Math.min(1,overshoot/RAMP));
+    var pad=(base-(base-12)*t).toFixed(2);
+    nav.style.paddingTop=pad+'px'; nav.style.paddingBottom=pad+'px';
+    nw.classList.toggle('is-stuck', overshoot>=0);
+  }
+  secs.forEach(function(s){ if(s.getBoundingClientRect().top-top<=110) cur=s; });
   if(cur){ var navId=sectionToNav(cur.getAttribute('data-sec')); if(navId) setActiveNav(navId); }
   var ex=document.getElementById('sec-extras');
-  if(ex && !state.extrasReached && ex.getBoundingClientRect().top<=top+90){ state.extrasReached=true; updateContinue(); }
+  if(ex && !state.extrasReached && ex.getBoundingClientRect().top<=top+110){ state.extrasReached=true; updateContinue(); }
   updatePromo();
 }
 scrollEl.addEventListener('scroll',onScroll,{passive:true});
@@ -978,7 +817,7 @@ function setResort(r){ state.resort=r; press('rsBognor',r==="bognor"); press('rs
 function setDiningCount(n){ state.diningCount=n; press('dc1',n===1); press('dc2',n===2); press('dc3',n===3); pruneDining(); render(); }
 function setUnits(u){ state.units=u; state.parties={}; press('un1',u===1); press('un2',u===2); render(); }
 function setCheckinOpts(n){ state.checkinOpts=n; if(n===1){ state.earlyCheckin=false; } press('ci1',n===1); press('ci2',n===2); render(); }
-function setDevice(d){ state.device=d; document.getElementById('rootToggleHost').setAttribute('data-device',d); document.getElementById('deviceHost').setAttribute('data-device',d); press('dvMobile',d==="mobile"); press('dvDesktop',d==="desktop"); buildNav(); updatePromo(); }
+function setDevice(d){ state.device=d; document.getElementById('rootToggleHost').setAttribute('data-device',d); document.getElementById('deviceHost').setAttribute('data-device',d); press('dvMobile',d==="mobile"); press('dvDesktop',d==="desktop"); buildNav(); updatePromo(); onScroll(); }
 document.getElementById('rsBognor').addEventListener('click',function(){ setResort("bognor"); });
 document.getElementById('rsMine').addEventListener('click',function(){ setResort("minehead"); });
 document.getElementById('dc1').addEventListener('click',function(){ setDiningCount(1); });
