@@ -130,7 +130,7 @@ ul{margin:0;padding:0;list-style:none;}
    Gothic H1 (72/62) and Proxima 20/24 sub-copy at 60% opacity, max 760px. */
 .body{padding:16px 18px 48px;}
 .intro{display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center;
-  background:linear-gradient(to top,#181818,#000);margin:-16px -18px 0;padding:24px 64px 0;}
+  background:linear-gradient(to top,#181818,#000);margin:-16px -18px 0;padding:16px 64px 0;}
 .intro h1{font-family:var(--font-display);font-weight:400;font-size:72px;line-height:62px;margin:0;text-transform:uppercase;letter-spacing:0;color:#fff;}
 .intro p{display:none;color:#fff;opacity:.6;font-size:16px;line-height:22px;max-width:760px;}
 .frame-outer[data-device="mobile"] .intro{gap:10px;padding:16px 20px 0;}
@@ -142,7 +142,7 @@ ul{margin:0;padding:0;list-style:none;}
    radius 100 with 24px Phosphor icons (assets-bbw/tab-*.svg), Proxima Bold 14
    uppercase. Inactive: white on 12% white. Active: black on Yellow. */
 .nav-wrap{position:sticky;top:0;z-index:4;background:var(--bg);border-bottom:1px solid rgba(255,255,255,.2);margin:0 -18px;}
-.sectionnav{display:flex;gap:12px;align-items:center;overflow-x:auto;padding:24px 18px;
+.sectionnav{display:flex;gap:12px;align-items:center;overflow-x:auto;padding:16px 18px;
   scrollbar-width:none;-ms-overflow-style:none;}
 /* vertical padding is scrubbed by scroll depth in onScroll (24px -> 12px over
    the last 48px before the bar sticks); no timed transition here by design */
@@ -151,13 +151,14 @@ ul{margin:0;padding:0;list-style:none;}
   background:#262626;border:0;border-radius:100px;
   padding:8px 16px 8px 12px;font-size:14px;font-weight:700;color:rgba(255,255,255,.8);text-transform:uppercase;}
 .nav-item:hover{background:#262626;color:#fff;}
-.nav-item.is-active{background:var(--yellow);color:#000;font-weight:700;}
+.nav-item.is-active{background:var(--ink2);color:#000;font-weight:700;}
 .nav-ico{width:18px;height:18px;display:block;opacity:.8;}
 .nav-item:hover .nav-ico{opacity:1;}
 .nav-item.is-active .nav-ico{filter:brightness(0);opacity:1;}
 .frame-outer[data-device="mobile"] .sectionnav{padding:14px;gap:8px;}
-.frame-outer[data-device="mobile"] .nav-item{font-size:12px;padding:6px 12px 6px 10px;}
-.nav-fade{position:absolute;top:0;bottom:1px;width:24px;pointer-events:none;display:none;z-index:1;}
+.frame-outer[data-device="mobile"] .nav-item{font-size:12px;padding:6px 12px;}
+.frame-outer[data-device="mobile"] .nav-ico{display:none;}
+.nav-fade{position:absolute;top:0;bottom:1px;width:64px;pointer-events:none;display:none;z-index:1;}
 .nav-fade-left{left:0;background:linear-gradient(to right,var(--bg),rgba(24,24,24,0));}
 .nav-fade-right{right:0;background:linear-gradient(to left,var(--bg),rgba(24,24,24,0));}
 .nav-chev{position:absolute;top:50%;transform:translateY(-50%);z-index:2;display:none;width:34px;height:34px;
@@ -167,13 +168,14 @@ ul{margin:0;padding:0;list-style:none;}
 .nav-chev-left{left:6px;}
 .nav-chev-right{right:6px;}
 .nav-wrap.has-left .nav-fade-left,.nav-wrap.has-right .nav-fade-right{display:block;}
-.nav-wrap.has-left .nav-chev-left,.nav-wrap.has-right .nav-chev-right{display:inline-flex;}
+/* chevron scroll buttons hidden for now */
+.nav-chev{display:none !important;}
 
 /* ---------------------------------------------------------------- PROMO BANNER (3-for-2)
    Per Figma 462:18256: dark gradient panel, #999 border, orange "EAT FOR
    3 DAYS" left, pink "BUT PAY FOR 2!" right, centred sub-copy between. */
 .promo-banner{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:24px;text-align:left;
-  border:0;border-radius:3px;color:#fff;padding:24px;margin-bottom:24px;
+  border:0;border-radius:3px;color:#fff;padding:16px 24px;margin-bottom:24px;
   background:linear-gradient(168deg,rgba(38,38,38,.6) 29.4%,rgba(24,24,24,.056) 81.4%);}
 .promo-banner .pb-left,.promo-banner .pb-right{font-family:var(--font-display);font-weight:400;font-size:64px;line-height:62px;text-transform:uppercase;letter-spacing:0;white-space:nowrap;}
 .promo-banner .pb-left{color:#ff9637;}
@@ -183,7 +185,7 @@ ul{margin:0;padding:0;list-style:none;}
 .promo-note{font-size:11.5px;color:var(--muted);margin-top:8px;}
 /* Mobile banner per Figma 474:3758: single combined headline (orange + pink),
    centred, 94deg gradient, 24px padding, 12px gap, no border */
-.frame-outer[data-device="mobile"] .promo-banner{flex-direction:column;gap:12px;padding:24px;text-align:center;
+.frame-outer[data-device="mobile"] .promo-banner{flex-direction:column;gap:12px;padding:16px 24px;text-align:center;
   background:linear-gradient(94deg,rgba(38,38,38,.6) 20.7%,rgba(21,21,21,.6) 55.4%);}
 .frame-outer[data-device="mobile"] .promo-banner .pb-left,.frame-outer[data-device="mobile"] .promo-banner .pb-right{display:none;}
 .frame-outer[data-device="mobile"] .promo-banner .pb-mobile{display:block;width:100%;font-family:var(--font-display);font-weight:400;font-size:32px;line-height:normal;text-transform:uppercase;letter-spacing:0;color:#ff9637;}
@@ -196,7 +198,7 @@ ul{margin:0;padding:0;list-style:none;}
 .sec{scroll-margin-top:104px;margin-bottom:24px;}
 .group-label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;
   border-bottom:1px solid var(--line);padding-bottom:6px;margin-bottom:12px;}
-.sec-head{display:flex;align-items:baseline;gap:10px;margin:0;padding:24px 0;}
+.sec-head{display:flex;align-items:baseline;gap:10px;margin:0;padding:16px 0;}
 /* Type ramp (Figma text styles): H1 72/62 desktop, 32/auto mobile; H2 36/auto
    desktop, 30/auto mobile; H3 28/auto desktop, 24/auto mobile; Body L 20/24
    desktop, 18/24 mobile; Body M 16/22; Body S 14/auto; Button L 18/auto. */
@@ -257,7 +259,7 @@ ul{margin:0;padding:0;list-style:none;}
 .price-row{display:flex;align-items:flex-end;gap:6px;flex-wrap:wrap;}
 .price-unit{font-size:12px;color:var(--muted);}
 /* ---- unified commerce bar (split footer): price bottom-left, control bottom-right ---- */
-.cbar{border-top:1px solid var(--line);padding:24px 0;margin:0 24px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.cbar{border-top:1px solid var(--line);padding:16px 0;margin:0 24px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;}
 .cbar.sm{padding:12px 0;margin:0 12px;}
 .cbar-left{display:flex;flex-direction:row;align-items:center;gap:12px;}
 .cbar .price .pp{font-size:14px;color:rgba(255,255,255,.6);}
@@ -292,7 +294,7 @@ ul{margin:0;padding:0;list-style:none;}
 .dc-save{position:absolute;left:0;bottom:0;display:inline-flex;align-items:baseline;gap:4px;background:var(--yellow);color:#000;
   font-family:var(--font-display);font-weight:400;font-size:14px;padding:10px;border-top-right-radius:20px;text-transform:lowercase;}
 .dc-save b{font-size:24px;font-weight:400;}
-.dc-body{display:flex;flex-direction:column;gap:16px;padding:24px;flex:1;}
+.dc-body{display:flex;flex-direction:column;gap:16px;padding:16px 24px;flex:1;}
 .dc-body .desc{margin:0;}
 .dc-incl{display:flex;flex-direction:column;gap:6px;}
 .dc-incl li{position:relative;padding-left:26px;font-size:14px;line-height:normal;color:#fff;}
@@ -306,7 +308,7 @@ ul{margin:0;padding:0;list-style:none;}
 .dc-more{display:none;font-size:14px;color:rgba(255,255,255,.8);line-height:1.45;}
 .dc-more.open{display:block;}
 .dc-more a{color:#fff;}
-.dc-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:24px;display:flex;flex-direction:column;gap:24px;}
+.dc-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:24px;}
 .dc-cta{position:relative;width:100%;display:flex;align-items:center;justify-content:center;background:transparent;border:1.5px solid #fff;border-radius:3px;padding:16px 24px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:-.01em;color:#fff;}
 .dc-cta:hover{background:rgba(255,255,255,.08);}
 .dc-cta.is-added{background:var(--red);border-color:var(--red);color:#fff;}
@@ -316,11 +318,11 @@ ul{margin:0;padding:0;list-style:none;}
 .dining-grid:not(.one) .dcard .dc-incl{min-height:72px;}
 /* mobile meal card padding/spacing per the phase 1 mobile card (Figma 453:15492);
    text styles and colours stay BBW */
-.frame-outer[data-device="mobile"] .dc-body{padding:24px 12px 12px;gap:24px;}
+.frame-outer[data-device="mobile"] .dc-body{padding:16px 12px 12px;gap:24px;}
 .frame-outer[data-device="mobile"] .dc-incl{gap:8px;}
 .frame-outer[data-device="mobile"] .dc-menulink,
 .frame-outer[data-device="mobile"] .dc-more-toggle{padding:6px 0;}
-.frame-outer[data-device="mobile"] .dc-foot{padding-top:24px;gap:12px;}
+.frame-outer[data-device="mobile"] .dc-foot{padding-top:16px;gap:12px;}
 .frame-outer[data-device="mobile"] .dcard .was-row{margin-bottom:12px;}
 
 /* ---------------------------------------------------------------- UNIT BLOCKS (multi-party) */
@@ -348,13 +350,11 @@ ul{margin:0;padding:0;list-style:none;}
 .btn-add.is-added{background:var(--red);color:#fff;border:1.5px solid var(--red);padding-left:44px;padding-right:44px;}
 .btn-add.is-added:hover{background:var(--red-strong);border-color:var(--red-strong);}
 /* ghost reveal pill (Figma 517:4517): anchor-pill fill, no border, button metrics */
-.btn-reveal{background:#262626;border:1.5px solid transparent;border-radius:3px;padding:16px 24px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:-.01em;color:#fff;white-space:nowrap;}
-.btn-reveal:hover{background:#2e2e2e;}
 
 /* outlined = opens another step (red fill = adds instantly) */
 .btn-step{background:transparent;border:1.5px solid #fff;border-radius:3px;padding:16px 24px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:-.01em;color:#fff;white-space:nowrap;}
 .btn-step:hover{background:rgba(255,255,255,.08);}
-.btn-step[aria-expanded="true"]{background:#262626;border-color:transparent;color:#fff;}
+.btn-step[aria-expanded="true"]{background:#262626;border-color:rgba(255,255,255,.2);color:#fff;}
 .btn-step[aria-expanded="true"]:hover{background:#2e2e2e;}
 
 /* ---------------------------------------------------------------- STEPPERS */
@@ -364,6 +364,9 @@ ul{margin:0;padding:0;list-style:none;}
 .step-btn{width:52px;height:50px;border:0;background:transparent;font-size:18px;line-height:1;color:var(--ink);}
 .step-btn:hover{background:var(--bg-3);color:var(--yellow);}
 .qty{min-width:37px;text-align:center;font-weight:700;font-size:14px;color:var(--ink);}
+/* stepper (client update): no outline, lighter grey fill (matches ghost button) */
+.stepper[data-solid]{background:#262626;border-color:rgba(255,255,255,.2);}
+.stepper[data-solid] .step-btn:hover{background:#2e2e2e;color:#fff;}
 /* add-all: promoted from underlined link to a proper secondary button */
 .addall{background:transparent;border:1.5px solid #fff;border-radius:3px;padding:16px 24px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:-.01em;color:#fff;white-space:nowrap;}
 .addall:hover{border-color:var(--ink);}
@@ -381,9 +384,9 @@ ul{margin:0;padding:0;list-style:none;}
 .brunch-card2{display:flex;align-items:stretch;}
 .brunch-card2 .ph-img.square{width:282px;min-width:282px;flex:none;height:auto;border-bottom:0;border-right:0;}
 .brunch-main{flex:1;display:flex;flex-direction:column;}
-.bm-pad{padding:24px;flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:16px;}
+.bm-pad{padding:16px 24px;flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:16px;}
 .bm-pad .desc{margin:0;}
-.brunch-main .cbar{margin:0 24px;padding:24px 0;}
+.brunch-main .cbar{margin:0 24px;padding:16px 0;}
 .brunch-main h3{font-family:var(--font-display);font-weight:400;font-size:28px;line-height:normal;text-transform:uppercase;letter-spacing:0;margin-bottom:0;}
 .frame-outer[data-device="mobile"] .brunch-main h3{font-size:24px;}
 .bp-day{border:1.5px solid rgba(255,255,255,.2);border-radius:3px;background:#222;overflow:hidden;padding:12px;display:flex;flex-direction:column;gap:12px;}
@@ -409,9 +412,10 @@ ul{margin:0;padding:0;list-style:none;}
 /* extras card icons per Figma 523:4575: 36px accent icons (colour baked into
    assets-bbw/ico-*.svg; spa orange from the design, others assumed) */
 .xc-ico{width:36px;height:36px;flex:none;display:block;}
-.xc-body{padding:24px;display:flex;flex-direction:column;gap:12px;}
+.xc-body{padding:16px 24px;display:flex;flex-direction:column;gap:12px;}
 .xc-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-.xc-head .scope-tag{margin-left:auto;}
+/* pink pill sits directly beside the heading (12px gap, matching other cards) */
+.xc-head .scope-tag{margin-left:0;}
 .xc-head h3{font-family:var(--font-display);font-weight:400;font-size:28px;line-height:normal;text-transform:uppercase;letter-spacing:0;}
 .frame-outer[data-device="mobile"] .xc-head h3{font-size:24px;}
 .xc-body .desc{margin:0;}
@@ -437,6 +441,38 @@ ul{margin:0;padding:0;list-style:none;}
 .checkin-opt .co-price{font-family:var(--font-display);font-weight:400;font-size:36px;line-height:1;}
 .checkin-opts.one .co-price{font-size:36px;}
 .checkin-opt .co-pp{font-size:14px;color:rgba(255,255,255,.6);}
+
+/* ---------------------------------------------------------------- MOBILE: card controls
+   Optimised for the 390px frame. Two controls sit next to each other and fill
+   the row; a single control is full width (like the dining CTA); check-in
+   tiles stack. Desktop is untouched. */
+/* tighter card inner padding to reclaim width */
+.frame-outer[data-device="mobile"] .xc-body{padding:16px;}
+.frame-outer[data-device="mobile"] .bm-pad{padding:16px;}
+.frame-outer[data-device="mobile"] .brunch-slots{margin:0 16px;}
+/* commerce bar stacks: price+pill row, then controls full width (feature/extras cards) */
+.frame-outer[data-device="mobile"] .cbar:not(.sm){flex-direction:column;align-items:stretch;gap:16px;margin:0 16px;padding:16px 0;}
+.frame-outer[data-device="mobile"] .cbar:not(.sm) .cbar-left{justify-content:flex-start;}
+/* single control (VIP / donation / brunch footer) fills the width */
+.frame-outer[data-device="mobile"] .cbar:not(.sm) > .btn-add,
+.frame-outer[data-device="mobile"] .cbar:not(.sm) > .btn-step{width:100%;}
+/* two controls (spa / towels / brunch slots): stepper + add button side by side */
+.frame-outer[data-device="mobile"] .xc-control,
+.frame-outer[data-device="mobile"] .bp-right{width:100%;flex-wrap:nowrap;justify-content:stretch;gap:8px;}
+.frame-outer[data-device="mobile"] .xc-control .btn-add,
+.frame-outer[data-device="mobile"] .bp-right .btn-add{flex:1;min-width:0;padding-left:12px;padding-right:12px;}
+.frame-outer[data-device="mobile"] .xc-control .btn-add.is-added,
+.frame-outer[data-device="mobile"] .bp-right .btn-add.is-added{padding-left:38px;padding-right:12px;}
+/* compact stepper so both controls fit */
+.frame-outer[data-device="mobile"] .stepper .step-btn{width:44px;height:46px;}
+.frame-outer[data-device="mobile"] .stepper .qty{min-width:22px;}
+.frame-outer[data-device="mobile"] .tg-n{display:none;}
+/* brunch slot: time label on its own line, controls beneath */
+.frame-outer[data-device="mobile"] .bp-slot{flex-direction:column;align-items:stretch;gap:12px;}
+/* check-in tiles stack, divider flips to the bottom edge */
+.frame-outer[data-device="mobile"] .checkin-opts:not(.one){grid-template-columns:1fr;gap:16px;border:0;overflow:visible;}
+.frame-outer[data-device="mobile"] .checkin-opts:not(.one) .checkin-opt{border:1.5px solid rgba(255,255,255,.2);border-radius:3px;}
+.frame-outer[data-device="mobile"] .checkin-opt .cbar.sm .btn-add.is-added{padding-left:38px;padding-right:12px;}
 
 /* ---------------------------------------------------------------- ORDER OVERVIEW */
 .ov-block{border:1px solid rgba(255,255,255,.4);border-radius:3px;background:#161616;padding:13px;margin-bottom:24px;}
@@ -508,7 +544,7 @@ ul{margin:0;padding:0;list-style:none;}
 .promo-sub{grid-area:sub;align-self:start;font-size:13px;color:var(--ink2);}
 .promo-x{position:absolute;top:8px;right:8px;width:22px;height:22px;border:0;background:none;font-size:14px;line-height:1;color:var(--ink2);cursor:pointer;}
 .promo-x:hover{color:var(--ink);}
-.frame-outer[data-device="mobile"] .promo-pop{width:190px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:24px 36px 14px 16px;}
+.frame-outer[data-device="mobile"] .promo-pop{width:190px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:16px 36px 14px 16px;}
 .frame-outer[data-device="mobile"] .promo-head,.frame-outer[data-device="mobile"] .promo-img,.frame-outer[data-device="mobile"] .promo-sub{align-self:center;}
 .frame-outer[data-device="mobile"] .promo-img{width:75px;height:72px;}
 

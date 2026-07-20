@@ -174,8 +174,8 @@ var PARTY_SETS={
 var state={
   resort:"bognor", diningCount:1, units:1, device:"desktop",
   parties:{},               /* pid -> {plan, mode, } */
-  brunch:{}, _brunchOpen:false, _brunchReveal:{}, planImg:{},
-  vip:false, spaQty:0, spaRevealed:false, earlyCheckin:false, lateCheckout:false, towelsQty:0, towelsRevealed:false, donation:false,
+  brunch:{}, _brunchOpen:false, planImg:{},
+  vip:false, spaQty:0, earlyCheckin:false, lateCheckout:false, towelsQty:0, donation:false,
   checkinOpts:2,
   _inclOpen:false, _activeSec:"dining", promoDismissed:false, extrasReached:false
 };
@@ -278,17 +278,14 @@ function addBtn(on,attrs,off,onl){ off=off||"Add"; onl=onl||"Added";
   return '<button type="button" class="btn-add'+(on?' is-added':'')+'" aria-pressed="'+(on?'true':'false')+'" '+attrs+'>'+
     (on?('<img class="cta-check" src="assets-bbw/cta-check.svg" alt="" aria-hidden="true">'+onl):off)+'</button>'; }
 function stepper(qty,attrs){ return '<div class="stepper" '+attrs+'><button type="button" class="step-btn" data-dir="-1" aria-label="Decrease">\u2212</button><span class="qty">'+qty+'</span><button type="button" class="step-btn" data-dir="1" aria-label="Increase">+</button></div>'; }
-/* three-state quantity control (Figma 517:4517): ghost reveal pill -> stepper,
-   beside an outlined add-for-all that goes red with a tick once added */
+/* quantity control: always-visible grey stepper (left) beside "add for all"
+   (right). Any quantity (partial or full) flips the button to the red "added"
+   state with a tick and a running "N of X guests added" count. */
 function qtyControl(o){
-  var left=(!o.revealed && o.qty===0)
-    ? '<button type="button" class="btn-reveal" '+o.revealAttr+' aria-expanded="false">Choose how many</button>'
-    : stepper(o.qty,o.attr);
   var on=o.qty>0;
-  var label=on
-    ? o.qty+' of '+o.tg+' added'
-    : 'Add for all '+o.tg+' guests';
-  return left+'<button type="button" class="btn-add'+(on?' is-added':'')+'" aria-pressed="'+(on?'true':'false')+'" '+o.allAttr+'>'+
+  var label=on ? (o.qty+' of '+o.tg+' guests added') : 'Add for all<span class="tg-n"> '+o.tg+'</span> guests';
+  return stepper(o.qty,o.attr+' data-solid')+
+    '<button type="button" class="btn-add'+(on?' is-added':'')+'" aria-pressed="'+(on?'true':'false')+'" '+o.allAttr+'>'+
     (on?'<img class="cta-check" src="assets-bbw/cta-check.svg" alt="" aria-hidden="true">':'')+label+'</button>';
 }
 
@@ -302,7 +299,7 @@ function sectionDining(){
     '<span class="pb-right">but pay for 2!</span></div>' : '';
   var body = state.units===1 ? diningUnit(curParties()[0],true)
                              : curParties().map(function(p,i){ return diningUnit(p,i===0); }).join('');
-  var note = hasPromo ? '<p class="promo-note">*Applies to Premium Dining and Food Court on selected Big Weekenders. Saving shown in your total. New bookings only.</p>' : '';
+  var note = '';
   return '<section class="sec" id="sec-dining" data-sec="dining">'+head+banner+body+note+'</section>';
 }
 function diningUnit(party,isFirst){
@@ -345,8 +342,9 @@ function subsecBrunch(){
   var g=brunchGuests(), total=brunchTotal(), open=state._brunchOpen;
   var lowest=BRUNCH.reduce(function(m,d){ return Math.min(m,d.pp); },Infinity);
   var price = g>0
-    ? '<div class="price"><span class="now">'+gbp(total)+'</span></div>'
+    ? '<div class="price"><span class="now">'+gbp(total)+'</span><span class="pp">from '+gbp(lowest)+' per person</span></div>'
     : '<div class="price"><span class="now">from '+gbp(lowest)+'</span></div>';
+  var pill = g>0 ? scopeTag("Per person",g+' cover'+(g===1?'':'s')) : scopeTag("Per person");
   var btn = open
     ? '<button type="button" class="btn-step" data-brunch-toggle aria-expanded="true">Hide sittings</button>'
     : '<button type="button" class="btn-step" data-brunch-toggle aria-expanded="false">'+(g>0?'Change booking':'Choose a sitting')+'</button>';
@@ -363,7 +361,7 @@ function subsecBrunch(){
     '<p class="desc">The warm up before the big night: a party brunch with a DJ spinning anthems themed to your Weekender.</p>'+
     inclList+'<a class="linklike" href="#" onclick="return false;">Sample menu &amp; allergens<img src="assets-bbw/arrow-up-right.svg" alt="" aria-hidden="true"></a>'+'</div>'+
     (open?brunchPicker():'')+
-    '<div class="cbar"><div class="cbar-left">'+price+scopeTag("Per person")+'</div>'+btn+'</div>'+
+    '<div class="cbar"><div class="cbar-left">'+price+pill+'</div>'+btn+'</div>'+
     '</div></div></div>';
   return '<!-- Product name placeholder pending brand/legal sign-off -->'+
     '<section class="subsec" id="sec-brunch" data-sec="brunch">'+card+'</section>';
@@ -374,8 +372,7 @@ function brunchPicker(){
     return '<div class="bp-day"><div class="bp-day-head"><b>'+d.day+'</b><span class="bp-pp">'+gbp(d.pp)+' per person</span></div>'+
       d.slots.map(function(sl){ var q=state.brunch[sl.id]||0;
         return '<div class="bp-slot"><span class="bp-label">'+sl.label+'</span>'+
-          '<div class="bp-right">'+qtyControl({qty:q,revealed:!!state._brunchReveal[sl.id],tg:tg,
-            attr:'data-brunch-slot="'+sl.id+'"',revealAttr:'data-brunch-reveal="'+sl.id+'"',allAttr:'data-brunch-all="'+sl.id+'"'})+'</div></div>'; }).join('')+
+          '<div class="bp-right">'+qtyControl({qty:q,tg:tg,attr:'data-brunch-slot="'+sl.id+'"',allAttr:'data-brunch-all="'+sl.id+'"'})+'</div></div>'; }).join('')+
       '</div>';
   }).join('')+'</div>';
 }
@@ -396,17 +393,30 @@ function sectionExtras(){
 function subsecVip(){
   return '<section class="subsec" id="sec-vip" data-sec="vip">'+extraVIP()+'</section>';
 }
-/* scope pill with a scope-appropriate 12px icon (group / person / item) */
-function scopeTag(scope){
+/* COST DISPLAY: two archetypes drive every priced extra card. The pill must
+   describe what the hero number represents and never imply a contradicting rate.
+   1. QUANTITY cards (brunch, spa, towels): a stepper multiplies a unit rate.
+      - Nothing added: hero = rate (unit price, or "from £X" where prices vary);
+        pill = scope descriptor ("Per person" / "Per item").
+      - Added (qty>0): hero = running total; add a .pp sub stating the rate; and
+        swap the pill from scope to a count chip of what the total covers
+        (e.g. "3 covers" / "2 guests" / "4 items"). Singular/plural handled.
+   2. WHOLE-BOOKING cards (VIP, check-in, donation): one on/off decision, no
+      units. Hero = total always; .pp sub = "£X per person" (kept, prevents
+      sticker shock); pill = "Whole booking". No added-state transition.
+   scopeTag(scope, label?): the icon is keyed off `scope` (group/person/item);
+   an optional `label` overrides the text so a count chip can replace the scope
+   descriptor without losing the icon variant. */
+function scopeTag(scope, label){
   var ico = scope==="Whole booking" ? "pill-group.svg" : (scope==="Per item" ? "pill-item.svg" : "pill-person.svg");
-  return '<span class="scope-tag"><img class="st-ico" src="assets-bbw/'+ico+'" alt="" aria-hidden="true">'+scope+'</span>';
+  return '<span class="scope-tag"><img class="st-ico" src="assets-bbw/'+ico+'" alt="" aria-hidden="true">'+(label||scope)+'</span>';
 }
 function extraCard(o){
   var more = o.more ? '<button type="button" class="dc-more-toggle" data-more="x-'+o.id+'">Read more</button><div class="dc-more" id="more-x-'+o.id+'">'+o.more+'</div>' : '';
   return '<div class="card xcard'+(o.added?' is-added':'')+'">'+
     '<div class="xc-body"><div class="xc-head"><img class="xc-ico" src="assets-bbw/ico-'+o.id+'.svg" alt="" aria-hidden="true"><h3>'+o.title+'</h3></div>'+
     '<p class="desc">'+o.desc+'</p>'+(o.body||'')+more+'</div>'+
-    '<div class="cbar"><div class="cbar-left"><div class="price"><span class="now">'+o.price+'</span>'+(o.priceSub?'<span class="pp">'+o.priceSub+'</span>':'')+'</div>'+scopeTag(o.scope)+'</div>'+
+    '<div class="cbar"><div class="cbar-left"><div class="price"><span class="now">'+o.price+'</span>'+(o.priceSub?'<span class="pp">'+o.priceSub+'</span>':'')+'</div>'+scopeTag(o.scope,o.scopeLabel)+'</div>'+
     '<div class="xc-control">'+(o.addall||'')+o.control+'</div></div></div>';
 }
 function extraVIP(){
@@ -428,13 +438,14 @@ function extraVIP(){
     '</div></div></div>';
 }
 function extraSpa(){
-  var q=state.spaQty, tg=totalGuests();
-  var body='';
+  var q=state.spaQty, tg=totalGuests(), cost=spaCost();
   return extraCard({ id:"spa", icon:"\u2741", title:"Spa Experience", scope:"Per person", added:q>0,
     desc:"A 2 hour experience at Ocean Spa with full use of the hydrospa, outdoor hot tub, sauna, crystal steam room and relaxation pods.",
     more:"Your 2 hour session covers the hydrospa pool, outdoor hot tub, sauna, crystal steam room and heated relaxation loungers. Bring swimwear and a towel (or add a towel pack below). Treatments such as massages and facials can be booked on arrival at extra cost. Over 16s only.",
-    price:gbp(PRICE.spaEach), body:body,
-    control:qtyControl({qty:q,revealed:state.spaRevealed,tg:tg,attr:'data-spa',revealAttr:'data-spa-reveal',allAttr:'data-spa-all'}) });
+    price: q>0 ? gbp(cost) : gbp(PRICE.spaEach),
+    priceSub: q>0 ? gbp(PRICE.spaEach)+' per person' : '',
+    scopeLabel: q>0 ? (q+' guest'+(q===1?'':'s')) : '',
+    control:qtyControl({qty:q,tg:tg,attr:'data-spa',allAttr:'data-spa-all'}) });
 }
 function checkinOption(o){
   var total=o.per*curParties().length, pp=total/totalGuests();
@@ -459,13 +470,14 @@ function extraCheckin(){
     opts+'</div></div>';
 }
 function extraTowels(){
-  var q=state.towelsQty, tg=totalGuests();
-  var body='';
+  var q=state.towelsQty, tg=totalGuests(), cost=towelsCost();
   return extraCard({ id:"towels", icon:"\u25A4", title:"Towel Pack", scope:"Per item", added:q>0,
     desc:"A fresh towel pack per person for your stay.",
     more:"Each pack has a bath towel and a hand towel per person, freshly laundered and waiting in your accommodation on arrival. Saves packing space and comes in handy after the pool or spa.",
-    price:gbp(PRICE.towelEach), body:body,
-    control:qtyControl({qty:q,revealed:state.towelsRevealed,tg:tg,attr:'data-towels',revealAttr:'data-towels-reveal',allAttr:'data-towels-all'}) });
+    price: q>0 ? gbp(cost) : gbp(PRICE.towelEach),
+    priceSub: q>0 ? gbp(PRICE.towelEach)+' each' : '',
+    scopeLabel: q>0 ? (q+' towel'+(q===1?'':'s')) : '',
+    control:qtyControl({qty:q,tg:tg,attr:'data-towels',allAttr:'data-towels-all'}) });
 }
 function extraDonation(){
   var on=state.donation;
@@ -740,14 +752,9 @@ function wireContent(){
       setTimeout(fin,600);
     });
   });
-  content.querySelectorAll('[data-brunch-reveal]').forEach(function(b){
-    b.addEventListener('click',function(){ var sl=b.getAttribute('data-brunch-reveal'); state._brunchReveal[sl]=true; render();
-      var plus=content.querySelector('.stepper[data-brunch-slot="'+sl+'"] .step-btn[data-dir="1"]'); if(plus) plus.focus(); });
-  });
   content.querySelectorAll('[data-brunch-all]').forEach(function(b){
     b.addEventListener('click',function(){ var sl=b.getAttribute('data-brunch-all'), tg=totalGuests();
-      if((state.brunch[sl]||0)>0){ state.brunch[sl]=0; state._brunchReveal[sl]=false; }
-      else { state.brunch[sl]=tg; state._brunchReveal[sl]=true; }
+      state.brunch[sl]=((state.brunch[sl]||0)>=tg?0:tg);
       announce("Bottomless Brunch, "+brunchGuests()+" guest"+(brunchGuests()===1?"":"s")+" booked"); render(); });
   });
   content.querySelectorAll('.stepper').forEach(function(st){
@@ -760,15 +767,11 @@ function wireContent(){
         render(); });
     });
   });
-  content.querySelectorAll('[data-spa-reveal]').forEach(function(b){ b.addEventListener('click',function(){ state.spaRevealed=true; render();
-    var plus=content.querySelector('.stepper[data-spa] .step-btn[data-dir="1"]'); if(plus) plus.focus(); }); });
-  content.querySelectorAll('[data-towels-reveal]').forEach(function(b){ b.addEventListener('click',function(){ state.towelsRevealed=true; render();
-    var plus=content.querySelector('.stepper[data-towels] .step-btn[data-dir="1"]'); if(plus) plus.focus(); }); });
   content.querySelectorAll('[data-spa-all]').forEach(function(b){ b.addEventListener('click',function(){ var tg=totalGuests();
-    if(state.spaQty>0){ state.spaQty=0; state.spaRevealed=false; } else { state.spaQty=tg; state.spaRevealed=true; }
+    state.spaQty=(state.spaQty>=tg?0:tg);
     announce("Spa Experience, "+state.spaQty+" guest"+(state.spaQty===1?"":"s")); render(); }); });
   content.querySelectorAll('[data-towels-all]').forEach(function(b){ b.addEventListener('click',function(){ var tg=totalGuests();
-    if(state.towelsQty>0){ state.towelsQty=0; state.towelsRevealed=false; } else { state.towelsQty=tg; state.towelsRevealed=true; }
+    state.towelsQty=(state.towelsQty>=tg?0:tg);
     announce("Towel Pack, "+state.towelsQty+" pack"+(state.towelsQty===1?"":"s")); render(); }); });
   content.querySelectorAll('[data-checkin]').forEach(function(b){
     b.addEventListener('click',function(){ var k=b.getAttribute('data-checkin');
@@ -796,7 +799,7 @@ function onScroll(){
   var intro=document.querySelector('.intro');
   if(nw&&nav&&intro){
     var overshoot=top-intro.getBoundingClientRect().bottom; /* px scrolled past the stick point */
-    var base=state.device==="mobile"?14:24, RAMP=48;
+    var base=state.device==="mobile"?14:16, RAMP=48;
     var t=Math.max(0,Math.min(1,overshoot/RAMP));
     var pad=(base-(base-12)*t).toFixed(2);
     nav.style.paddingTop=pad+'px'; nav.style.paddingBottom=pad+'px';
