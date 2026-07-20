@@ -516,18 +516,25 @@ ul{margin:0;padding:0;list-style:none;}
 .ov-changelink:hover{color:var(--ink);}
 /* Your booking: section heading + accommodation cards + included list */
 .ov-h{font-family:var(--font-display);font-weight:400;font-size:28px;line-height:normal;text-transform:uppercase;color:#fff;margin:0 0 24px;}
+/* whole "Your booking" section on a lighter grey panel to separate it from
+   Dining/Extras; inner blocks are transparent groupings within it */
+#sec-overview{background:var(--grey-5);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:24px;margin-bottom:120px;}
+#sec-overview .sec-head{padding:0 0 24px;}
+#sec-overview .ov-block{background:transparent;border:0;border-radius:0;padding:0;margin-bottom:32px;}
+#sec-overview .ov-block:last-child{margin-bottom:0;}
+.frame-outer[data-device="mobile"] #sec-overview{padding:16px;}
 .acc-card{background:var(--grey-3);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:12px;display:flex;flex-direction:column;gap:12px;margin-bottom:12px;}
 .acc-main{display:flex;align-items:center;justify-content:space-between;gap:16px;}
 .acc-id{display:flex;align-items:center;gap:16px;min-width:0;}
-.acc-thumb{flex:none;width:72px;height:72px;border-radius:3px;overflow:hidden;background:repeating-linear-gradient(45deg,rgba(255,255,255,.05),rgba(255,255,255,.05) 8px,transparent 8px,transparent 16px),var(--grey-5);}
+.acc-thumb{flex:none;width:72px;height:72px;border-radius:3px;overflow:hidden;background:var(--grey-5) center/cover no-repeat;}
 .acc-info{display:flex;flex-direction:column;gap:4px;min-width:0;}
 .acc-name{font-family:var(--font-display);font-weight:400;font-size:28px;line-height:normal;text-transform:uppercase;color:#fff;}
 .acc-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
 .acc-party{font-size:16px;line-height:22px;color:rgba(255,255,255,.8);}
 .acc-card .price{align-items:flex-end;text-align:right;}
 .acc-card .price .now{font-size:22px;}
-.acc-room{background:var(--grey-5);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
-.acc-room.picked{cursor:pointer;}
+.acc-room{background:var(--grey-6);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+
 .acc-roomtext{display:flex;flex-direction:column;gap:8px;min-width:0;}
 .acc-roomtext b{font-family:var(--font-display);font-weight:400;font-size:22px;line-height:normal;text-transform:none;color:#fff;}
 .acc-roomtext span{font-size:16px;line-height:22px;color:rgba(255,255,255,.8);}
@@ -558,7 +565,7 @@ ul{margin:0;padding:0;list-style:none;}
 .sum-addlink{background:none;border:0;border-bottom:1.5px solid var(--yellow);padding:3px 0;color:var(--yellow);font-weight:700;font-size:16px;line-height:22px;text-decoration:none;}
 .sum-addlink:hover{color:var(--yellow-strong);border-bottom-color:var(--yellow-strong);}
 .sum-div{border-top:1px solid var(--line);margin:7px 0;}
-.sum-total{display:flex;justify-content:space-between;gap:12px;font-weight:900;font-size:15px;color:var(--yellow);border-top:2px solid var(--yellow);margin-top:8px;padding-top:10px;text-transform:uppercase;}
+.sum-total{display:flex;justify-content:space-between;gap:12px;font-weight:900;font-size:15px;color:#fff;border-top:1px solid var(--line);margin-top:8px;padding-top:10px;text-transform:uppercase;}
 
 /* ---------------------------------------------------------------- FOOTER
    Per Figma 333:711 (Footer_Desktop / Footer_Mobile): yellow TOTAL PRICE tab

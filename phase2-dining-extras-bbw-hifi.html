@@ -138,6 +138,7 @@ var ROOM_NAME="Comfort Room";
 var ROOM_PICK=25.00;         /* optional "choose your exact room" upsell */
 var ROOM_PICK_NAME="Wave 112";
 var ROOM_PICK_LOC="First Floor, Wave Hotel";
+var ROOMS=[{name:"Comfort Room",img:"room-comfort.jpg"},{name:"Wave Hotel Room",img:"room-wave.jpg"}];
 var DINING_FROM=37.50;       /* lead-in "from" price teaser for dining plans */
 var DINING_DAYS=3, DINING_PAY=2;  /* "eat 3 days, pay for 2" promo */
 
@@ -221,7 +222,7 @@ function diningTotals(){
 function computeAll(){
   var accom=ACCOM_UNIT*state.units;
   var accomSave=0, accomDiscount=0;          /* no accommodation-level reductions in this prototype; these lines hide when zero */
-  var rooms=0; for(var rk in state.rooms){ if(state.rooms[rk]) rooms+=ROOM_PICK; }
+  var rooms=(curParties().length-1)*ROOM_PICK;   /* exact room shown selected from party 2 onward */
   var accomTotal=accom-accomSave-accomDiscount+rooms;
   var d=diningTotals();
   var brunch=brunchTotal(),vip=vipCost(),spa=spaCost(),early=earlyCost(),late=lateCost(),tow=towelsCost(),don=donationCost();
@@ -510,16 +511,17 @@ function sectionOverview(){
    a 72px thumbnail, name, party + guests pill and price; a nested inset that is
    either a "choose your exact room" upsell or the selected room (+£25). */
 function ovAccom(){
-  var cards=curParties().map(function(p){
-    var picked=!!state.rooms[p.id];
+  var cards=curParties().map(function(p,i){
+    var room=ROOMS[i]||ROOMS[0];
+    var picked=i>0;                              /* selected exact-room state shows from party 2 */
     var total=ACCOM_UNIT+(picked?ROOM_PICK:0), pp=total/p.guests;
     var inset = picked
-      ? '<div class="acc-room picked" data-room="'+p.id+'"><p class="acc-roomname"><b>'+ROOM_PICK_NAME+'</b>, '+ROOM_PICK_LOC+'</p><span class="acc-roomprice">'+gbp(ROOM_PICK)+'</span></div>'
+      ? '<div class="acc-room picked"><p class="acc-roomname"><b>'+ROOM_PICK_NAME+'</b>, '+ROOM_PICK_LOC+'</p><span class="acc-roomprice">'+gbp(ROOM_PICK)+'</span></div>'
       : '<div class="acc-room"><div class="acc-roomtext"><b>No room selected</b><span>Hand-pick your room, whether that\'s a quiet corner or right next to the action.</span></div>'+
-        '<button type="button" class="linklike acc-choose" data-room="'+p.id+'">Choose from '+gbp(ROOM_PICK)+'</button></div>';
+        '<a class="linklike acc-choose" href="#" onclick="return false;">Choose from '+gbp(ROOM_PICK)+'</a></div>';
     return '<div class="acc-card">'+
-      '<div class="acc-main"><div class="acc-id"><div class="acc-thumb" aria-hidden="true"></div>'+
-      '<div class="acc-info"><h4 class="acc-name">'+ROOM_NAME+'</h4>'+
+      '<div class="acc-main"><div class="acc-id"><div class="acc-thumb" style="background-image:url(assets-bbw/'+room.img+')" aria-hidden="true"></div>'+
+      '<div class="acc-info"><h4 class="acc-name">'+room.name+'</h4>'+
       '<div class="acc-meta"><span class="acc-party">'+p.label+'</span>'+scopeTag("Whole booking",p.guests+' guests')+'</div></div></div>'+
       '<div class="price"><span class="now">'+gbp(total)+'</span><span class="pp">'+gbp(pp)+' per person</span></div></div>'+
       inset+'</div>';
@@ -576,7 +578,7 @@ function ovSummary(){
   }
   h+='<div class="sum-div"></div>';
   h+='<div class="sum-total"><span>TOTAL COST OF YOUR HOLIDAY</span><span>'+gbp(c.grand)+'</span></div>';
-  return '<div class="ov-block summary"><h3 class="ov-head">Booking summary</h3>'+h+'</div>';
+  return '<div class="ov-block summary"><h3 class="ov-h">Booking summary</h3>'+h+'</div>';
 }
 
 /* ============================================================ NAV */
@@ -809,7 +811,6 @@ function wireContent(){
       var names={vip:"VIP Pass",donation:"Donation"};
       announce((state[k]?"Added ":"Removed ")+(names[k]||k)); render(); });
   });
-  content.querySelectorAll('[data-room]').forEach(function(b){ b.addEventListener('click',function(){ var pid=b.getAttribute('data-room'); state.rooms[pid]=!state.rooms[pid]; announce(state.rooms[pid]?"Exact room selected":"Exact room removed"); render(); }); });
   content.querySelectorAll('[data-goto]').forEach(function(b){ b.addEventListener('click',function(){ gotoSec(b.getAttribute('data-goto')); }); });
 }
 
