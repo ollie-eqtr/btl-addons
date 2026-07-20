@@ -515,9 +515,9 @@ function sectionOverview(){
   var open=state._summaryOpen!==false;
   var body=open ? '<div class="ovsum-body">'+ovAccom()+ovIncluded()+ovBreakdown()+'</div>' : '';
   return '<section class="sec" id="sec-overview" data-sec="overview">'+
-    '<button type="button" class="ovsum-head'+(open?'':' collapsed')+'" data-summary-toggle aria-expanded="'+open+'">'+
-      '<span class="ovsum-title">Your booking summary</span>'+
-      '<img class="ovsum-chev" src="assets-bbw/ov-chevron.svg" alt="" aria-hidden="true"></button>'+
+    '<h2 class="sec-label ovsum-head'+(open?'':' collapsed')+'">'+
+      '<button type="button" class="ovsum-toggle" data-summary-toggle aria-expanded="'+open+'">Your booking summary'+
+      '<img class="ovsum-chev" src="assets-bbw/ov-chevron.svg" alt="" aria-hidden="true"></button></h2>'+
     body+'</section>';
 }
 /* panel header: 36px green icon + League Gothic H3 (Figma 566:5817 etc.) */

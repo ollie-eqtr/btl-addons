@@ -525,8 +525,10 @@ ul{margin:0;padding:0;list-style:none;}
 /* full-bleed: break out of the .body 24px gutters so the darker band spans the
    whole frame (mirrors the .intro / .nav-wrap breakout pattern) */
 #sec-overview{background:#131313;border:0;border-radius:0;padding:24px;margin:0 -24px 120px;display:flex;flex-direction:column;gap:24px;}
-.ovsum-head{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;background:none;border:0;padding:0;cursor:pointer;text-align:left;}
-.ovsum-title{font-family:var(--font-display);font-weight:400;font-size:36px;line-height:normal;text-transform:uppercase;color:#fff;}
+/* the heading is a standard h2.sec-label (36px desktop / 30px mobile) with the
+   disclosure button nested inside so it stays accessible */
+.ovsum-head{margin:0;}
+.ovsum-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;background:none;border:0;padding:0;cursor:pointer;text-align:left;font:inherit;text-transform:inherit;letter-spacing:inherit;color:#fff;}
 .ovsum-chev{width:12px;height:12px;flex:none;display:block;transition:transform .2s ease;}
 .ovsum-head.collapsed .ovsum-chev{transform:rotate(180deg);}
 .ovsum-body{display:flex;flex-direction:column;gap:24px;}
