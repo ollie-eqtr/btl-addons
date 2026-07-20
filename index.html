@@ -40,11 +40,14 @@
   .tag-wip{background:#fff8db;color:#8a6d00;border:1px solid #d9b511;}
   .go{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-ink);background:var(--accent);border-radius:var(--radius);padding:10px 16px;align-self:flex-start;}
   .card:hover .go{background:var(--accent-strong);}
-  /* external prototypes: lower-hierarchy list, not full cards */
+  /* external prototypes: lower-hierarchy table, no fill, horizontal rules */
   .ext{margin-top:calc(var(--u)*5);}
-  .links{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1px;}
-  .links a{display:flex;align-items:center;justify-content:space-between;gap:calc(var(--u)*2);padding:calc(var(--u)*1.5) calc(var(--u)*2);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);text-decoration:none;color:var(--ink-2);font-size:14px;transition:color .15s ease,border-color .15s ease;}
-  .links a:hover{color:var(--ink);border-color:var(--ink-3);}
+  .links{list-style:none;margin:0;padding:0;border-top:1px solid var(--line);}
+  .links a{display:flex;align-items:center;gap:calc(var(--u)*1.5);padding:calc(var(--u)*2) 0;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink-2);font-size:14px;transition:color .15s ease;}
+  .links a:hover{color:var(--ink);}
+  .links .li-ico{flex:0 0 auto;width:20px;height:20px;color:var(--ink-3);}
+  .links a:hover .li-ico{color:var(--ink);}
+  .links .li-label{flex:1;}
   .links .go-sm{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent);white-space:nowrap;}
   .foot{margin-top:calc(var(--u)*3);font-size:12px;color:var(--ink-3);}
   @media (max-width:560px){
@@ -103,9 +106,9 @@
     <section class="phase ext">
       <h2 class="phase-h">External prototypes — client supplied</h2>
       <ul class="links">
-        <li><a href="/bbw-homepage">Big Weekenders homepage<span class="go-sm">Open &rarr;</span></a></li>
-        <li><a href="/weekender">90s Reloaded weekender page<span class="go-sm">Open &rarr;</span></a></li>
-        <li><a href="/weekender-lineup">90s Reloaded weekender page (lineup CTA variant)<span class="go-sm">Open &rarr;</span></a></li>
+        <li><a href="/bbw-homepage"><svg class="li-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span class="li-label">Big Weekenders homepage</span><span class="go-sm">Open &rarr;</span></a></li>
+        <li><a href="/weekender"><svg class="li-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21l4.5-12 7.5 7.5L3 21z"/><path d="M7.5 9 15 16.5"/><path d="M16 7l1.5-1.5"/><path d="M18.5 10.5l2-.5"/><path d="M15 4l.5-2"/><path d="M19.5 6.5l1.5-1"/></svg><span class="li-label">90s Reloaded weekender page</span><span class="go-sm">Open &rarr;</span></a></li>
+        <li><a href="/weekender-lineup"><svg class="li-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21l4.5-12 7.5 7.5L3 21z"/><path d="M7.5 9 15 16.5"/><path d="M16 7l1.5-1.5"/><path d="M18.5 10.5l2-.5"/><path d="M15 4l.5-2"/><path d="M19.5 6.5l1.5-1"/></svg><span class="li-label">90s Reloaded weekender page (lineup CTA variant)</span><span class="go-sm">Open &rarr;</span></a></li>
       </ul>
     </section>
 
