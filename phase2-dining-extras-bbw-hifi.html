@@ -135,7 +135,9 @@
 /* ============================================================ DATA */
 var ACCOM_UNIT=299.00;       /* per unit, from previous step */
 var ROOM_NAME="Comfort Room";
-var ROOM_PICK=25.00;         /* optional "choose your exact room" upsell (representational, not added to total) */
+var ROOM_PICK=25.00;         /* optional "choose your exact room" upsell */
+var ROOM_PICK_NAME="Wave 112";
+var ROOM_PICK_LOC="First Floor, Wave Hotel";
 var DINING_FROM=37.50;       /* lead-in "from" price teaser for dining plans */
 var DINING_DAYS=3, DINING_PAY=2;  /* "eat 3 days, pay for 2" promo */
 
@@ -163,7 +165,12 @@ var BRUNCH=[
 ];
 
 var PRICE={ vipPP:49.50, spaEach:30.00, earlyCheckin:20.00, lateCheckout:22.00, towelEach:4.00, donation:2.00 };
-var INCLUDED=["Fairground","Silent Disco","Live Comedy","Singalong Quiz"];
+var INCLUDED=[
+  {name:"Pool Party", desc:"Swap the sequins for swimmers and dive into a proper poolside party."},
+  {name:"Fairground", desc:"Our famous fairground, with rides and thrills for the whole weekend."},
+  {name:"Bingo Bango", desc:"High-energy, laugh-out-loud bingo. Not your nan's version."},
+  {name:"Silent Disco", desc:"Grab headphones, pick from two channels, dance to your own soundtrack."}
+];
 
 var PARTY_SETS={
   1:[ {id:"p1",label:"Your party",sub:"4 guests",guests:4} ],
@@ -177,7 +184,7 @@ var state={
   brunch:{}, _brunchOpen:false, planImg:{},
   vip:false, spaQty:0, earlyCheckin:false, lateCheckout:false, towelsQty:0, donation:false,
   checkinOpts:2,
-  _inclOpen:false, _activeSec:"dining", promoDismissed:false, extrasReached:false
+  _inclOpen:false, rooms:{}, _activeSec:"dining", promoDismissed:false, extrasReached:false
 };
 
 /* ============================================================ HELPERS */
@@ -214,11 +221,12 @@ function diningTotals(){
 function computeAll(){
   var accom=ACCOM_UNIT*state.units;
   var accomSave=0, accomDiscount=0;          /* no accommodation-level reductions in this prototype; these lines hide when zero */
-  var accomTotal=accom-accomSave-accomDiscount;
+  var rooms=0; for(var rk in state.rooms){ if(state.rooms[rk]) rooms+=ROOM_PICK; }
+  var accomTotal=accom-accomSave-accomDiscount+rooms;
   var d=diningTotals();
   var brunch=brunchTotal(),vip=vipCost(),spa=spaCost(),early=earlyCost(),late=lateCost(),tow=towelsCost(),don=donationCost();
   var extras=brunch+vip+spa+early+late+tow+don;
-  return {accom:accom,accomSave:accomSave,accomDiscount:accomDiscount,accomTotal:accomTotal,
+  return {accom:accom,accomSave:accomSave,accomDiscount:accomDiscount,rooms:rooms,accomTotal:accomTotal,
     diningWas:d.was,diningNow:d.now,diningSave:d.save,
     brunch:brunch,vip:vip,spa:spa,early:early,late:late,towels:tow,donation:don,
     extras:extras,grand:accomTotal+d.now+extras};
@@ -498,13 +506,26 @@ function sectionOverview(){
   return '<section class="sec" id="sec-overview" data-sec="overview"><div class="sec-head"><h2 class="sec-label">Your booking</h2></div>'+
     ovAccom()+ovDining()+ovIncluded()+ovSummary()+'</section>';
 }
+/* Your booking > Accommodation (Figma 562:5607): one room card per party with
+   a 72px thumbnail, name, party + guests pill and price; a nested inset that is
+   either a "choose your exact room" upsell or the selected room (+£25). */
 function ovAccom(){
-  var rows=curParties().map(function(p){ var pp=ACCOM_UNIT/p.guests;
-    return '<div class="ov-row"><div><b>'+p.label+'</b><span class="row-sub">'+p.sub+'</span></div><div class="ov-price"><span>'+gbp(ACCOM_UNIT)+'</span><span class="pp">'+gbp(pp)+' per person</span></div></div>'; }).join('');
-  return '<div class="ov-block"><h3 class="ov-head">Accommodation<span class="ov-sub">'+ROOM_NAME+', '+resortName()+'</span></h3>'+rows+
-    '<div class="ov-upsell"><div class="ovu-text"><b>Choose your exact room</b><span class="callout-sub">Make it yours: hand-pick your room and spot, from a quiet corner to steps from the action.</span></div>'+
-    '<button class="btn primary sm" onclick="return false;">Choose your room &middot; '+gbp(ROOM_PICK)+'</button></div>'+
-    '<a class="ov-changelink" href="#" onclick="return false;">Change accommodation</a></div>';
+  var cards=curParties().map(function(p){
+    var picked=!!state.rooms[p.id];
+    var total=ACCOM_UNIT+(picked?ROOM_PICK:0), pp=total/p.guests;
+    var inset = picked
+      ? '<div class="acc-room picked" data-room="'+p.id+'"><p class="acc-roomname"><b>'+ROOM_PICK_NAME+'</b>, '+ROOM_PICK_LOC+'</p><span class="acc-roomprice">'+gbp(ROOM_PICK)+'</span></div>'
+      : '<div class="acc-room"><div class="acc-roomtext"><b>No room selected</b><span>Hand-pick your room, whether that\'s a quiet corner or right next to the action.</span></div>'+
+        '<button type="button" class="linklike acc-choose" data-room="'+p.id+'">Choose from '+gbp(ROOM_PICK)+'</button></div>';
+    return '<div class="acc-card">'+
+      '<div class="acc-main"><div class="acc-id"><div class="acc-thumb" aria-hidden="true"></div>'+
+      '<div class="acc-info"><h4 class="acc-name">'+ROOM_NAME+'</h4>'+
+      '<div class="acc-meta"><span class="acc-party">'+p.label+'</span>'+scopeTag("Whole booking",p.guests+' guests')+'</div></div></div>'+
+      '<div class="price"><span class="now">'+gbp(total)+'</span><span class="pp">'+gbp(pp)+' per person</span></div></div>'+
+      inset+'</div>';
+  }).join('');
+  return '<div class="ov-block"><h3 class="ov-h">Accommodation</h3>'+cards+
+    '<a class="linklike white acc-change" href="#" onclick="return false;">Change accommodation</a></div>';
 }
 function ovDining(){
   var ps=curParties();
@@ -515,10 +536,13 @@ function ovDining(){
     var pl=diningById(id); return '<div class="ov-row"><div><b>'+p.label+'</b><span class="row-sub">'+pl.name+'</span></div><div class="ov-price"><span>'+gbp(diningNow(pl,p.guests))+'</span></div></div>'; }).join('');
   return '<div class="ov-block"><h3 class="ov-head">Dining<button class="btn ghost sm" data-goto="dining">Edit</button></h3>'+rows+'</div>';
 }
+/* Your booking > Extras included (Figma 562:5627): name + description rows with
+   an "Included!" tag, divided by hairlines. Always visible (no accordion). */
 function ovIncluded(){
-  var open=state._inclOpen;
-  return '<div class="ov-block"><button class="ov-head as-toggle" data-incl-toggle aria-expanded="'+(open?'true':'false')+'">Extras included in the price <span class="incl-count">('+INCLUDED.length+')</span><span class="chev">'+(open?'\u25BE':'\u25B8')+'</span></button>'+
-    (open?('<div class="incl-list">'+INCLUDED.map(function(x){ return '<div class="ov-row"><span>'+x+'</span><span class="inc-tag">Included</span></div>'; }).join('')+'</div>'):'')+'</div>';
+  return '<div class="ov-block"><h3 class="ov-h">Extras included in the price</h3>'+
+    '<div class="incl-list">'+INCLUDED.map(function(x){
+      return '<div class="incl-row"><div class="incl-text"><b>'+x.name+'</b><span>'+x.desc+'</span></div><span class="incl-tag">Included!</span></div>';
+    }).join('')+'</div></div>';
 }
 function exLine(label,val){ return '<div class="sum-line"><span>'+label+'</span><span>'+gbp(val)+'</span></div>'; }
 /* Grouped, fully-open breakdown that mirrors the later payment-step summary.
@@ -528,6 +552,7 @@ function ovSummary(){
   var roomLabel=ROOM_NAME+', '+resortName()+(state.units>1?' ('+state.units+' parties)':'');
   h+='<div class="sum-line head"><span>Accommodation</span><span></span></div>';
   h+='<div class="sum-line"><span>'+roomLabel+'</span><span>'+gbp(c.accom)+'</span></div>';
+  if(c.rooms>0) h+='<div class="sum-line"><span>Room selection</span><span>'+gbp(c.rooms)+'</span></div>';
   if(c.accomSave>0) h+='<div class="sum-line"><span>Savings</span><span>-'+gbp(c.accomSave)+'</span></div>';
   if(c.accomDiscount>0) h+='<div class="sum-line"><span>Special discount</span><span>-'+gbp(c.accomDiscount)+'</span></div>';
   h+='<div class="sum-line subtotal"><span>ACCOMMODATION TOTAL</span><span>'+gbp(c.accomTotal)+'</span></div>';
@@ -784,7 +809,7 @@ function wireContent(){
       var names={vip:"VIP Pass",donation:"Donation"};
       announce((state[k]?"Added ":"Removed ")+(names[k]||k)); render(); });
   });
-  content.querySelectorAll('[data-incl-toggle]').forEach(function(b){ b.addEventListener('click',function(){ state._inclOpen=!state._inclOpen; render(); }); });
+  content.querySelectorAll('[data-room]').forEach(function(b){ b.addEventListener('click',function(){ var pid=b.getAttribute('data-room'); state.rooms[pid]=!state.rooms[pid]; announce(state.rooms[pid]?"Exact room selected":"Exact room removed"); render(); }); });
   content.querySelectorAll('[data-goto]').forEach(function(b){ b.addEventListener('click',function(){ gotoSec(b.getAttribute('data-goto')); }); });
 }
 
