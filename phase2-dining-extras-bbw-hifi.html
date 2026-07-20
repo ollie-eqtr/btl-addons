@@ -107,14 +107,18 @@
 
       </div>
 
-      <div class="promo-pop" id="promoPop" role="button" tabindex="0" aria-label="You scrolled past the food. Add a dining plan.">
-        <button type="button" class="promo-x" id="promoX" aria-label="Dismiss">&#10005;</button>
-        <img class="promo-img" src="assets-bbw/promo-food.png" alt="" aria-hidden="true">
-        <span class="promo-head">Wait!</span>
-        <span class="promo-sub">You scrolled past all the food?!</span>
-      </div>
-
       <div class="footer" id="footer">
+        <!-- dining reminder (Figma 562:5454): anchored to the top of the white action
+             bar, left side, so it never collides with the yellow TOTAL PRICE tab.
+             Desktop = landscape card with collage strip left; mobile = centred column
+             with a single dish cutout. -->
+        <div class="promo-pop" id="promoPop" role="button" tabindex="0" aria-label="You scrolled past the food. Add a dining plan.">
+          <button type="button" class="promo-x" id="promoX" aria-label="Dismiss">&#10005;</button>
+          <img class="promo-collage" src="assets-bbw/promo-collage.png" alt="" aria-hidden="true">
+          <span class="promo-head">Wait!</span>
+          <img class="promo-dish" src="assets-bbw/promo-dish.png" alt="" aria-hidden="true">
+          <span class="promo-sub">You scrolled past all the food?!</span>
+        </div>
         <div class="fprice" aria-live="polite"><span class="fprice-label">Total price</span><b id="totalFig">&pound;0.00</b></div>
         <div class="fbar">
           <p class="finstruct" id="footNote">Don't miss the extras below, like the VIP Pass and spa.</p>
@@ -185,7 +189,7 @@ var state={
   brunch:{}, _brunchOpen:false, planImg:{},
   vip:false, spaQty:0, earlyCheckin:false, lateCheckout:false, towelsQty:0, donation:false,
   checkinOpts:2,
-  _inclOpen:false, rooms:{}, _activeSec:"dining", promoDismissed:false, extrasReached:false
+  _inclOpen:false, _summaryOpen:true, rooms:{}, _activeSec:"dining", promoDismissed:false, extrasReached:false
 };
 
 /* ============================================================ HELPERS */
@@ -502,10 +506,23 @@ function sectionDonation(){
   return '<section class="sec" id="sec-donation" data-sec="donation">'+extraDonation()+'</section>';
 }
 
-/* ============================================================ ORDER OVERVIEW */
+/* ============================================================ ORDER OVERVIEW
+   "Your booking summary" (Figma 562:5615): a collapsible container on a darker
+   #131313 panel holding three bordered sub-panels: Accommodation, Extras
+   included in the price, and a grouped Price breakdown. Every figure is driven
+   by computeAll() so the breakdown always agrees with the footer total. */
 function sectionOverview(){
-  return '<section class="sec" id="sec-overview" data-sec="overview"><div class="sec-head"><h2 class="sec-label">Your booking</h2></div>'+
-    ovAccom()+ovDining()+ovIncluded()+ovSummary()+'</section>';
+  var open=state._summaryOpen!==false;
+  var body=open ? '<div class="ovsum-body">'+ovAccom()+ovIncluded()+ovBreakdown()+'</div>' : '';
+  return '<section class="sec" id="sec-overview" data-sec="overview">'+
+    '<button type="button" class="ovsum-head'+(open?'':' collapsed')+'" data-summary-toggle aria-expanded="'+open+'">'+
+      '<span class="ovsum-title">Your booking summary</span>'+
+      '<img class="ovsum-chev" src="assets-bbw/ov-chevron.svg" alt="" aria-hidden="true"></button>'+
+    body+'</section>';
+}
+/* panel header: 36px green icon + League Gothic H3 (Figma 566:5817 etc.) */
+function ovHead(icon,title){
+  return '<div class="ov-blockhead"><img class="ov-icon" src="assets-bbw/'+icon+'" alt="" aria-hidden="true"><h3 class="ov-h">'+title+'</h3></div>';
 }
 /* Your booking > Accommodation (Figma 562:5607): one room card per party with
    a 72px thumbnail, name, party + guests pill and price; a nested inset that is
@@ -526,59 +543,59 @@ function ovAccom(){
       '<div class="price"><span class="now">'+gbp(total)+'</span><span class="pp">'+gbp(pp)+' per person</span></div></div>'+
       inset+'</div>';
   }).join('');
-  return '<div class="ov-block"><h3 class="ov-h">Accommodation</h3>'+cards+
+  return '<div class="ov-block">'+ovHead('ov-accom.svg','Accommodation')+cards+
     '<a class="linklike white acc-change" href="#" onclick="return false;">Change accommodation</a></div>';
 }
-function ovDining(){
-  var ps=curParties();
-  if(!anyDining()){
-    return '';
-  }
-  var rows=ps.map(function(p){ var id=effPlan(p); if(!id) return '<div class="ov-row muted"><span>'+p.label+'</span><span>No plan</span></div>';
-    var pl=diningById(id); return '<div class="ov-row"><div><b>'+p.label+'</b><span class="row-sub">'+pl.name+'</span></div><div class="ov-price"><span>'+gbp(diningNow(pl,p.guests))+'</span></div></div>'; }).join('');
-  return '<div class="ov-block"><h3 class="ov-head">Dining<button class="btn ghost sm" data-goto="dining">Edit</button></h3>'+rows+'</div>';
-}
 /* Your booking > Extras included (Figma 562:5627): name + description rows with
-   an "Included!" tag, divided by hairlines. Always visible (no accordion). */
+   an "Included!" tag inside a bordered list. Always visible (no accordion). */
 function ovIncluded(){
-  return '<div class="ov-block"><h3 class="ov-h">Extras included in the price</h3>'+
+  return '<div class="ov-block">'+ovHead('ov-included.svg','Extras included in the price')+
     '<div class="incl-list">'+INCLUDED.map(function(x){
       return '<div class="incl-row"><div class="incl-text"><b>'+x.name+'</b><span>'+x.desc+'</span></div><span class="incl-tag">Included!</span></div>';
     }).join('')+'</div></div>';
 }
-function exLine(label,val){ return '<div class="sum-line"><span>'+label+'</span><span>'+gbp(val)+'</span></div>'; }
-/* Grouped, fully-open breakdown that mirrors the later payment-step summary.
-   Components show at full price, with reductions on their own lines and a subtotal per group. */
-function ovSummary(){
-  var c=computeAll(), h='';
-  var roomLabel=ROOM_NAME+', '+resortName()+(state.units>1?' ('+state.units+' parties)':'');
-  h+='<div class="sum-line head"><span>Accommodation</span><span></span></div>';
-  h+='<div class="sum-line"><span>'+roomLabel+'</span><span>'+gbp(c.accom)+'</span></div>';
-  if(c.rooms>0) h+='<div class="sum-line"><span>Room selection</span><span>'+gbp(c.rooms)+'</span></div>';
-  if(c.accomSave>0) h+='<div class="sum-line"><span>Savings</span><span>-'+gbp(c.accomSave)+'</span></div>';
-  if(c.accomDiscount>0) h+='<div class="sum-line"><span>Special discount</span><span>-'+gbp(c.accomDiscount)+'</span></div>';
-  h+='<div class="sum-line subtotal"><span>ACCOMMODATION TOTAL</span><span>'+gbp(c.accomTotal)+'</span></div>';
-  h+='<div class="sum-div"></div>';
-  h+='<div class="sum-line head"><span>Dining</span><span>'+(anyDining()?gbp(c.diningWas):'<button type="button" class="sum-addlink" data-goto="dining">Add from '+gbp(DINING_FROM)+'</button>')+'</span></div>';
-  if(c.diningSave>0) h+='<div class="sum-line"><span>3 for 2 deal</span><span>-'+gbp(c.diningSave)+'</span></div>';
-  h+='<div class="sum-div"></div>';
-  var items='';
-  if(c.vip>0) items+=exLine('VIP Pass',c.vip);
-  if(c.spa>0) items+=exLine('Spa Experience',c.spa);
-  if(c.early>0) items+=exLine('Early check-in',c.early);
-  if(c.late>0) items+=exLine('Late check-out',c.late);
-  if(c.towels>0) items+=exLine('Towel Pack',c.towels);
-  if(c.brunch>0) items+=exLine('Bottomless Brunch',c.brunch);
-  if(c.donation>0) items+=exLine('Donation',c.donation);
-  if(items){
-    h+='<div class="sum-line head"><span>Extras</span><span></span></div>'+items+
-       '<div class="sum-line subtotal"><span>EXTRAS TOTAL</span><span>'+gbp(c.extras)+'</span></div>';
+/* one breakdown line: bold group label/value plus optional [label,value] sub-lines
+   rendered as parallel left/right stacks so the sub-rows line up. */
+function bdRow(cls,label,val,subs){
+  var subL='',subV='';
+  (subs||[]).forEach(function(s){ subL+='<span class="bd-sub">'+s[0]+'</span>'; subV+='<span class="bd-sub">'+s[1]+'</span>'; });
+  return '<div class="bd-row'+(cls?' '+cls:'')+'">'+
+    '<div class="bd-l"><span class="bd-main">'+label+'</span>'+subL+'</div>'+
+    '<div class="bd-r"><span class="bd-main">'+val+'</span>'+subV+'</div></div>';
+}
+/* Your booking > Price breakdown (Figma 566:5727): grouped line items with a
+   savings row and grand total, all sourced from computeAll(). */
+function ovBreakdown(){
+  var c=computeAll(),rows='';
+  /* Accommodation: one sub-line per party unit, plus the picker if chosen */
+  var accSubs=curParties().map(function(p,i){ return [(ROOMS[i]||ROOMS[0]).name,gbp(ACCOM_UNIT)]; });
+  if(c.rooms>0) accSubs.push(["Accommodation picker",gbp(c.rooms)]);
+  rows+=bdRow('','Accommodation',gbp(c.accomTotal),accSubs);
+  /* Dining: total with per-party sub-lines, or a yellow "choose" link when empty */
+  if(anyDining()){
+    var dSubs=curParties().map(function(p){ var id=effPlan(p); return id?[diningById(id).name+' ('+p.label+')',gbp(diningNow(diningById(id),p.guests))]:null; }).filter(Boolean);
+    rows+=bdRow('','Dining',gbp(c.diningNow),dSubs);
   } else {
-    h+='<div class="sum-line head"><span>Extras</span><span>-</span></div>';
+    rows+=bdRow('link','Dining','<button type="button" class="sum-addlink" data-goto="dining">Choose from '+gbp(DINING_FROM)+'</button>',null);
   }
-  h+='<div class="sum-div"></div>';
-  h+='<div class="sum-total"><span>TOTAL COST OF YOUR HOLIDAY</span><span>'+gbp(c.grand)+'</span></div>';
-  return '<div class="ov-block summary"><h3 class="ov-h">Booking summary</h3>'+h+'</div>';
+  /* Extras: total with a sub-line per selected item */
+  var exSubs=[];
+  if(c.vip>0) exSubs.push(["VIP Pass",gbp(c.vip)]);
+  if(c.spa>0) exSubs.push(["Spa Experience",gbp(c.spa)]);
+  if(c.early>0) exSubs.push(["Early check-in",gbp(c.early)]);
+  if(c.late>0) exSubs.push(["Late check-out",gbp(c.late)]);
+  if(c.towels>0) exSubs.push(["Towel Pack",gbp(c.towels)]);
+  if(c.brunch>0) exSubs.push(["Bottomless Brunch",gbp(c.brunch)]);
+  if(c.donation>0) exSubs.push(["Donation",gbp(c.donation)]);
+  if(exSubs.length) rows+=bdRow('','Extras',gbp(c.extras),exSubs);
+  else rows+=bdRow('muted','Extras','None added',null);
+  /* Savings: red-tinted row, only when there is something to show */
+  var save=c.diningSave+c.accomSave+c.accomDiscount;
+  if(save>0) rows+=bdRow('savings','Savings',gbp(save),null);
+  /* Grand total */
+  rows+=bdRow('total','Total cost',gbp(c.grand),null);
+  return '<div class="ov-block">'+ovHead('ov-breakdown.svg','Price breakdown')+
+    '<div class="bd-list">'+rows+'</div></div>';
 }
 
 /* ============================================================ NAV */
@@ -662,13 +679,9 @@ function scrollNav(dir){ var nav=document.getElementById('sectionNav'); if(nav) 
 /* ============================================================ DINING PROMPT (Uber-style)
    Pops up from behind the footer once the user has scrolled past the Brunch section without
    a dining plan. Whole card taps through to Dining. Dismiss is permanent for the session. */
-function positionPromo(){
-  /* rest the card just above the bottom bar (the full-width opaque part), so it tucks
-     behind that bar rather than the transparent top-left of the footer. */
-  var pop=document.getElementById('promoPop'), bar=document.querySelector('#footer .fbar');
-  if(pop&&bar) pop.style.bottom=(bar.offsetHeight-12)+'px';
-}
 function updatePromo(){
+  /* anchoring is pure CSS (bottom:100% of the footer, like the price tab), so this
+     only decides visibility */
   var pop=document.getElementById('promoPop');
   if(!pop) return;
   if(state.promoDismissed || anyDining()){ pop.classList.remove('show'); return; }
@@ -676,7 +689,7 @@ function updatePromo(){
   if(!brunch){ pop.classList.remove('show'); return; }
   var br=brunch.getBoundingClientRect();
   var pastBrunch=(br.top+br.height/2) < scrollEl.getBoundingClientRect().top+8;
-  if(pastBrunch){ positionPromo(); pop.classList.add('show'); }
+  if(pastBrunch) pop.classList.add('show');
   else pop.classList.remove('show');
 }
 (function(){
@@ -812,6 +825,10 @@ function wireContent(){
       announce((state[k]?"Added ":"Removed ")+(names[k]||k)); render(); });
   });
   content.querySelectorAll('[data-goto]').forEach(function(b){ b.addEventListener('click',function(){ gotoSec(b.getAttribute('data-goto')); }); });
+  content.querySelectorAll('[data-summary-toggle]').forEach(function(b){
+    b.addEventListener('click',function(){ state._summaryOpen=!(state._summaryOpen!==false);
+      announce(state._summaryOpen?"Booking summary expanded":"Booking summary collapsed"); render(); });
+  });
 }
 
 /* ============================================================ SCROLL-SPY */

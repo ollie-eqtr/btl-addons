@@ -493,7 +493,9 @@ ul{margin:0;padding:0;list-style:none;}
 .frame-outer[data-device="mobile"] .checkin-opt .cbar.sm .btn-add.is-added{padding-left:38px;padding-right:12px;}
 
 /* ---------------------------------------------------------------- ORDER OVERVIEW */
-.ov-block{border:1px solid rgba(255,255,255,.1);border-radius:3px;background:var(--panel);padding:24px;margin-bottom:24px;}
+.ov-block{border:1px solid var(--line);border-radius:3px;background:var(--panel);padding:24px;display:flex;flex-direction:column;gap:24px;margin:0;}
+.ov-blockhead{display:flex;align-items:center;gap:12px;}
+.ov-icon{width:36px;height:36px;flex:none;display:block;}
 .ov-head{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.02em;}
 .ov-head .ov-sub{font-weight:400;font-size:12px;color:var(--muted);text-transform:none;letter-spacing:0;}
 .ov-head .btn{margin-left:auto;}
@@ -515,14 +517,23 @@ ul{margin:0;padding:0;list-style:none;}
 .ov-changelink{display:inline-block;margin-top:10px;background:none;border:0;padding:0;color:var(--ink2);text-decoration:underline;font-size:12.5px;}
 .ov-changelink:hover{color:var(--ink);}
 /* Your booking: section heading + accommodation cards + included list */
-.ov-h{font-family:var(--font-display);font-weight:400;font-size:28px;line-height:normal;text-transform:uppercase;color:#fff;margin:0 0 24px;}
-/* whole "Your booking" section on a lighter grey panel to separate it from
-   Dining/Extras; inner blocks are transparent groupings within it */
-#sec-overview{background:var(--grey-5);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:24px;margin-bottom:120px;}
-#sec-overview .sec-head{padding:0 0 24px;}
-#sec-overview .ov-block{background:transparent;border:0;border-radius:0;padding:0;margin-bottom:32px;}
-#sec-overview .ov-block:last-child{margin-bottom:0;}
-.frame-outer[data-device="mobile"] #sec-overview{padding:16px;}
+.ov-h{font-family:var(--font-display);font-weight:400;font-size:28px;line-height:normal;text-transform:uppercase;color:#fff;margin:0;}
+.frame-outer[data-device="mobile"] .ov-h{font-size:24px;}
+.frame-outer[data-device="mobile"] .acc-name{font-size:24px;}
+/* the whole "Your booking summary" section sits on a darker #131313 panel to
+   separate it from Dining/Extras; a collapsible header sits above the panels */
+/* full-bleed: break out of the .body 24px gutters so the darker band spans the
+   whole frame (mirrors the .intro / .nav-wrap breakout pattern) */
+#sec-overview{background:#131313;border:0;border-radius:0;padding:24px;margin:0 -24px 120px;display:flex;flex-direction:column;gap:24px;}
+.ovsum-head{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;background:none;border:0;padding:0;cursor:pointer;text-align:left;}
+.ovsum-title{font-family:var(--font-display);font-weight:400;font-size:36px;line-height:normal;text-transform:uppercase;color:#fff;}
+.ovsum-chev{width:12px;height:12px;flex:none;display:block;transition:transform .2s ease;}
+.ovsum-head.collapsed .ovsum-chev{transform:rotate(180deg);}
+.ovsum-body{display:flex;flex-direction:column;gap:24px;}
+#sec-overview .ov-block{margin:0;}
+.frame-outer[data-device="mobile"] #sec-overview{padding:16px;gap:16px;margin:0 -16px 165px;}
+.frame-outer[data-device="mobile"] #sec-overview .ov-block{padding:16px;gap:16px;}
+.frame-outer[data-device="mobile"] .ovsum-body{gap:16px;}
 .acc-card{background:var(--grey-3);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:12px;display:flex;flex-direction:column;gap:12px;margin-bottom:12px;}
 .acc-main{display:flex;align-items:center;justify-content:space-between;gap:16px;}
 .acc-id{display:flex;align-items:center;gap:16px;min-width:0;}
@@ -533,15 +544,17 @@ ul{margin:0;padding:0;list-style:none;}
 .acc-party{font-size:16px;line-height:22px;color:rgba(255,255,255,.8);}
 .acc-card .price{align-items:flex-end;text-align:right;}
 .acc-card .price .now{font-size:22px;}
-.acc-room{background:var(--grey-6);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.acc-card .price .pp{font-size:14px;color:rgba(255,255,255,.6);}
+.acc-room{background:var(--grey-5);border:1px solid var(--line);border-radius:3px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.acc-room.picked{background:transparent;}
 
-.acc-roomtext{display:flex;flex-direction:column;gap:8px;min-width:0;}
-.acc-roomtext b{font-family:var(--font-display);font-weight:400;font-size:22px;line-height:normal;text-transform:none;color:#fff;}
-.acc-roomtext span{font-size:16px;line-height:22px;color:rgba(255,255,255,.8);}
+.acc-roomtext{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.acc-roomtext b{font-weight:700;font-size:16px;line-height:22px;text-transform:none;color:#fff;}
+.acc-roomtext span{font-size:14px;line-height:22px;color:rgba(255,255,255,.8);}
 .acc-roomname{font-size:16px;line-height:22px;color:#fff;}
 .acc-roomname b{font-weight:700;}
 .acc-roomprice{font-family:var(--font-display);font-weight:400;font-size:22px;color:#fff;white-space:nowrap;}
-.acc-change{margin-top:0;}
+.acc-change{align-self:flex-start;margin-top:0;}
 .linklike.white{color:#fff;border-bottom-color:#fff;}
 .linklike.white:hover{color:var(--ink2);border-bottom-color:var(--ink2);}
 /* included list */
@@ -558,14 +571,24 @@ ul{margin:0;padding:0;list-style:none;}
 .frame-outer[data-device="mobile"] .acc-room{flex-direction:column;align-items:flex-start;}
 .frame-outer[data-device="mobile"] .ov-upsell{flex-wrap:wrap;}
 .frame-outer[data-device="mobile"] .ov-upsell .btn{width:100%;}
-.ov-block.summary{background:var(--grey-3);border-color:rgba(255,255,255,.1);}
-.sum-line{display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:4px 0;color:var(--ink2);}
-.sum-line.head{color:var(--ink);font-weight:700;padding-top:6px;}
-.sum-line.subtotal{color:var(--ink);font-weight:700;font-size:12.5px;letter-spacing:.02em;}
-.sum-addlink{background:none;border:0;border-bottom:1.5px solid var(--yellow);padding:3px 0;color:var(--yellow);font-weight:700;font-size:16px;line-height:22px;text-decoration:none;}
+/* price breakdown: grouped line items in a bordered list, parallel label/value
+   stacks so the sub-rows align; red-tinted savings row; larger total row */
+/* no outer table border and no horizontal padding, so rows align flush with the
+   Extras-included list above */
+.bd-list{display:flex;flex-direction:column;}
+.bd-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--line);}
+.bd-row:last-child{border-bottom:0;}
+.bd-row.savings{background:rgba(218,41,28,.12);}
+.bd-l{display:flex;flex-direction:column;min-width:0;}
+.bd-r{display:flex;flex-direction:column;align-items:flex-end;text-align:right;flex:none;white-space:nowrap;}
+.bd-main{font-size:16px;line-height:22px;font-weight:700;color:#fff;}
+.bd-sub{font-size:14px;line-height:22px;color:rgba(255,255,255,.8);}
+.bd-row.muted .bd-r .bd-main{font-weight:400;color:rgba(255,255,255,.6);}
+.bd-row.link .bd-r .bd-main{font-weight:400;}
+.bd-row.total{align-items:center;}
+.bd-row.total .bd-main{font-size:20px;line-height:24px;}
+.sum-addlink{background:none;border:0;border-bottom:1.5px solid var(--yellow);padding:3px 0;color:var(--yellow);font-weight:700;font-size:16px;line-height:22px;text-decoration:none;cursor:pointer;}
 .sum-addlink:hover{color:var(--yellow-strong);border-bottom-color:var(--yellow-strong);}
-.sum-div{border-top:1px solid var(--line);margin:7px 0;}
-.sum-total{display:flex;justify-content:space-between;gap:12px;font-weight:900;font-size:15px;color:#fff;border-top:1px solid var(--line);margin-top:8px;padding-top:10px;text-transform:uppercase;}
 
 /* ---------------------------------------------------------------- FOOTER
    Per Figma 333:711 (Footer_Desktop / Footer_Mobile): yellow TOTAL PRICE tab
@@ -591,23 +614,32 @@ ul{margin:0;padding:0;list-style:none;}
 .frame-outer[data-device="mobile"] .factions button{flex:0 0 auto;padding:16px 24px;}
 
 /* ---------------------------------------------------------------- PROMO POPUP */
-/* dining reminder per Figma 562:5454: orange panel, food collage left,
-   "Wait!" (Proxima Bold 36 at 40% black), rounded top + inset bottom shadow */
-.promo-pop{position:absolute;left:14px;bottom:110px;z-index:5;width:360px;box-sizing:border-box;
-  display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:8px;min-height:96px;
+/* dining reminder per Figma 562:5454 (Desktop_Footer_Dining 415:1708 / Mobile 414:1661):
+   orange card anchored to the top of the white action bar, LEFT side, clear of the
+   yellow TOTAL PRICE tab. It slides up from behind the bar. Desktop = 379x96
+   landscape with a collage strip left and left-aligned text on the right; mobile =
+   192x149 centred column with a single dish cutout. */
+.promo-pop{position:absolute;left:20px;bottom:100%;z-index:0;width:379px;height:96px;box-sizing:border-box;
+  display:flex;flex-direction:column;align-items:flex-end;gap:12px;
   background:#ff9e1b;border:0;border-top-left-radius:3px;border-top-right-radius:3px;
-  padding:12px 12px 12px 76px;overflow:hidden;cursor:pointer;text-align:right;
+  padding:29px 12px 12px 72px;overflow:hidden;cursor:pointer;text-align:left;
   box-shadow:inset 0 -6px 12px rgba(70,37,0,.16);
-  transform:translateY(150%);opacity:0;pointer-events:none;transition:transform .35s ease;}
+  transform:translateY(150%);opacity:0;pointer-events:none;transition:transform .35s ease,opacity .35s ease;}
 .promo-pop.show{transform:translateY(0);opacity:1;pointer-events:auto;}
-.promo-img{position:absolute;left:0;bottom:0;width:148px;height:auto;border:0;background:none;pointer-events:none;}
-.promo-head{align-self:flex-end;font-family:var(--font);font-weight:700;font-size:36px;line-height:1;letter-spacing:-.01em;text-transform:none;color:rgba(0,0,0,.4);}
-.promo-sub{align-self:flex-end;font-size:14px;font-weight:400;letter-spacing:-.01em;color:#000;}
-.promo-x{position:absolute;top:10px;right:12px;width:16px;height:16px;border:0;background:none;font-size:14px;line-height:1;color:#000;cursor:pointer;z-index:1;}
+/* the popup slides from behind the opaque bar; the bar and tab sit above it */
+.fbar{position:relative;z-index:1;}
+.fprice{z-index:1;}
+.promo-collage{position:absolute;left:0;top:0;width:164px;height:96px;border:0;background:none;pointer-events:none;}
+.promo-dish{display:none;}
+.promo-head{width:231px;font-family:var(--font);font-weight:700;font-size:36px;line-height:1;letter-spacing:-.36px;text-transform:none;color:rgba(0,0,0,.4);text-box:trim-both cap alphabetic;}
+.promo-sub{width:231px;font-size:14px;font-weight:400;line-height:normal;letter-spacing:-.14px;color:#000;text-box:trim-both cap alphabetic;}
+.promo-x{position:absolute;top:12px;right:12px;width:16px;height:16px;border:0;background:none;padding:0;font-size:14px;line-height:1;color:#000;cursor:pointer;z-index:1;}
 .promo-x:hover{opacity:.7;}
-.frame-outer[data-device="mobile"] .promo-pop{width:200px;flex-direction:column;align-items:center;justify-content:flex-end;text-align:center;gap:6px;padding:12px;min-height:0;}
-.frame-outer[data-device="mobile"] .promo-img{position:static;width:80px;height:auto;}
-.frame-outer[data-device="mobile"] .promo-head,.frame-outer[data-device="mobile"] .promo-sub{align-self:center;}
+.frame-outer[data-device="mobile"] .promo-pop{left:0;width:192px;height:149px;align-items:center;justify-content:flex-end;text-align:center;gap:6px;padding:12px;}
+.frame-outer[data-device="mobile"] .promo-collage{display:none;}
+.frame-outer[data-device="mobile"] .promo-dish{display:block;width:75px;height:72px;pointer-events:none;filter:drop-shadow(2px 4px 9px rgba(0,0,0,.10));}
+.frame-outer[data-device="mobile"] .promo-head{width:auto;margin-bottom:-9px;}
+.frame-outer[data-device="mobile"] .promo-sub{width:124px;}
 
 /* ---------------------------------------------------------------- MOTION PREFERENCES */
 @media (prefers-reduced-motion:reduce){
