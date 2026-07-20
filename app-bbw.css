@@ -128,20 +128,29 @@ ul{margin:0;padding:0;list-style:none;}
 /* ---------------------------------------------------------------- BODY + INTRO
    Intro banner per Figma 333:745: full-bleed black band, centred League
    Gothic H1 (72/62) and Proxima 20/24 sub-copy at 60% opacity, max 760px. */
-.body{padding:16px 18px 48px;}
+.body{padding:16px 24px 48px;}
 .intro{display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center;
-  background:linear-gradient(to top,#181818,#000);margin:-16px -18px 0;padding:16px 64px 0;}
+  background:linear-gradient(to top,#181818,#000);margin:-16px -24px 0;padding:16px 64px 0;}
 .intro h1{font-family:var(--font-display);font-weight:400;font-size:72px;line-height:62px;margin:0;text-transform:uppercase;letter-spacing:0;color:#fff;}
 .intro p{display:none;color:#fff;opacity:.6;font-size:16px;line-height:22px;max-width:760px;}
 .frame-outer[data-device="mobile"] .intro{gap:10px;padding:16px 20px 0;}
 .frame-outer[data-device="mobile"] .intro h1{font-size:32px;line-height:normal;}
 .frame-outer[data-device="mobile"] .intro p{display:none;}
+/* MOBILE spacing: 16px page margins + 16px between cards (desktop stays 24px) */
+.frame-outer[data-device="mobile"] .body{padding:16px 16px 48px;}
+.frame-outer[data-device="mobile"] .nav-wrap{margin:0 -16px;}
+.frame-outer[data-device="mobile"] .intro{margin:-16px -16px 0;}
+.frame-outer[data-device="mobile"] .card,
+.frame-outer[data-device="mobile"] .unit-block,
+.frame-outer[data-device="mobile"] .ov-block,
+.frame-outer[data-device="mobile"] .subsec{margin-bottom:16px;}
+.frame-outer[data-device="mobile"] .dining-grid{gap:16px;}
 
 /* ---------------------------------------------------------------- SECTION NAV (sticky pills)
    Anchor tabs per Figma 333:846: #181818 bar, white bottom border, pills at
    radius 100 with 24px Phosphor icons (assets-bbw/tab-*.svg), Proxima Bold 14
    uppercase. Inactive: white on 12% white. Active: black on Yellow. */
-.nav-wrap{position:sticky;top:0;z-index:4;background:var(--bg);border-bottom:1px solid rgba(255,255,255,.2);margin:0 -18px;}
+.nav-wrap{position:sticky;top:0;z-index:4;background:var(--bg);border-bottom:1px solid rgba(255,255,255,.2);margin:0 -24px;}
 .sectionnav{display:flex;gap:12px;align-items:center;overflow-x:auto;padding:16px 18px;
   scrollbar-width:none;-ms-overflow-style:none;}
 /* vertical padding is scrubbed by scroll depth in onScroll (24px -> 12px over
@@ -156,8 +165,8 @@ ul{margin:0;padding:0;list-style:none;}
 .nav-item:hover .nav-ico{opacity:1;}
 .nav-item.is-active .nav-ico{filter:brightness(0);opacity:1;}
 .frame-outer[data-device="mobile"] .sectionnav{padding:14px;gap:8px;}
-.frame-outer[data-device="mobile"] .nav-item{font-size:12px;padding:6px 12px;}
-.frame-outer[data-device="mobile"] .nav-ico{display:none;}
+.frame-outer[data-device="mobile"] .nav-item{font-size:12px;padding:6px 12px 6px 10px;}
+.frame-outer[data-device="mobile"] .nav-ico{display:block;width:12px;height:12px;}
 .nav-fade{position:absolute;top:0;bottom:1px;width:64px;pointer-events:none;display:none;z-index:1;}
 .nav-fade-left{left:0;background:linear-gradient(to right,var(--bg),rgba(24,24,24,0));}
 .nav-fade-right{right:0;background:linear-gradient(to left,var(--bg),rgba(24,24,24,0));}
@@ -449,7 +458,7 @@ ul{margin:0;padding:0;list-style:none;}
 /* tighter card inner padding to reclaim width */
 .frame-outer[data-device="mobile"] .xc-body{padding:16px;}
 .frame-outer[data-device="mobile"] .bm-pad{padding:16px;}
-.frame-outer[data-device="mobile"] .brunch-slots{margin:0 16px;}
+.frame-outer[data-device="mobile"] .brunch-slots{margin:0 16px;gap:16px;}
 /* commerce bar stacks: price+pill row, then controls full width (feature/extras cards) */
 .frame-outer[data-device="mobile"] .cbar:not(.sm){flex-direction:column;align-items:stretch;gap:16px;margin:0 16px;padding:16px 0;}
 .frame-outer[data-device="mobile"] .cbar:not(.sm) .cbar-left{justify-content:flex-start;}
