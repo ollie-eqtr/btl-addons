@@ -46,6 +46,14 @@ ul{margin:0;padding:0;list-style:none;}
 .seg button:last-child{border-right:0;}
 .seg button[aria-pressed="true"]{background:#eee;color:#1f1f1f;font-weight:700;}
 .seg button[aria-disabled="true"]{color:#5a5a5a;background:#242424;cursor:not-allowed;}
+/* archived variants: superseded controls, collapsed by default, kept for future testing */
+.rail-archive{margin-top:3px;border-top:1px solid #3a3a3a;padding-top:11px;}
+.rail-archive>summary{cursor:pointer;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8a8a8a;list-style:none;display:flex;align-items:center;gap:7px;}
+.rail-archive>summary::-webkit-details-marker{display:none;}
+.rail-archive>summary::before{content:"\25B8";font-size:9px;}
+.rail-archive[open]>summary::before{content:"\25BE";}
+.rail-archive[open]>summary{margin-bottom:13px;}
+.rail-archive .seg-group+.seg-group{margin-top:13px;}
 .main{flex:1;display:flex;min-width:0;}
 .frame-outer{margin:auto;display:flex;justify-content:center;}
 /* prototype is reviewed on desktop; on narrow viewports the rail simply stacks on top */
@@ -117,6 +125,8 @@ ul{margin:0;padding:0;list-style:none;}
 .pfig b{display:block;width:13px;height:9px;border-radius:6px 6px 2px 2px;}
 .pfig.on i,.pfig.on b{background:var(--dark);}
 .pfig.off i,.pfig.off b{background:transparent;border:1.5px solid var(--line3);}
+/* tentatively-placed guests: dashed fill while an arrangement is chosen but not added (BBW) */
+.pfig.tentative i,.pfig.tentative b{background:var(--fill3);border:1.5px dashed var(--ink2);}
 .up-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-top:1px solid var(--line);font-size:13px;flex-wrap:wrap;}
 .up-row:first-of-type{border-top:1px solid var(--line);}
 .up-row.is-next{box-shadow:inset 3px 0 0 var(--dark);padding-left:8px;}
@@ -185,17 +195,27 @@ ul{margin:0;padding:0;list-style:none;}
 .basis-seg button[aria-pressed="true"]{background:var(--dark);color:#fff;}
 
 /* ---- category tiles (single treatment, matches the tested dining pattern) ---- */
-.cat-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px;margin-bottom:8px;}
-.ctile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;
-  border:1px solid var(--line2);border-radius:9px;background:var(--paper);padding:12px;font-size:12px;color:var(--ink2);}
-.ctile b{font-size:14px;color:var(--ink);}
-.ctile .ct-from{font-weight:700;font-size:12.5px;color:var(--ink);}
-.ctile .ct-nofit{font-weight:600;font-size:11.5px;color:var(--ink2);}
-.ctile .ct-count{font-weight:700;font-size:11px;color:var(--ink);}
+/* condensed per client feedback (24 Jul): tighter padding, option count as a distinct
+   number beside the heading, no per-tile unit-count line. Tiles are a multi-select
+   filter now: all on by default, tap to deselect (see selectedCats/categoryUI). */
+.cat-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:7px;margin-bottom:10px;}
+.ctile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;
+  border:1px solid var(--line2);border-radius:9px;background:var(--paper);padding:9px 10px;font-size:11.5px;color:var(--ink2);}
+.ctile b{display:inline-flex;align-items:baseline;gap:6px;font-size:13.5px;color:var(--ink);line-height:1.15;}
+/* option count reads as a distinct number beside the heading, not part of it */
+.ct-num{font-size:10.5px;font-weight:600;color:var(--muted);letter-spacing:.02em;}
+.ctile .ct-from{font-weight:700;font-size:12px;color:var(--ink);}
+.ctile .ct-nofit{font-weight:600;font-size:11px;color:var(--ink2);}
 .ctile[aria-pressed="true"]{border-color:var(--dark);box-shadow:inset 0 0 0 1.5px var(--dark);}
 .ctile[aria-disabled="true"]{opacity:.45;cursor:not-allowed;}
-.ct-tick{position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;background:var(--dark);color:#fff;font-size:11px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;}
+.ct-tick{position:absolute;top:6px;right:6px;width:16px;height:16px;border-radius:50%;background:var(--dark);color:#fff;font-size:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;}
 .cat-lockline{font-size:11.5px;color:var(--ink2);margin:0 0 12px;}
+/* what's included banner: full width above the results heading (client reinstated 24 Jul) */
+.whatsin{display:flex;align-items:center;gap:12px;border:1px solid var(--line2);border-left:4px solid var(--dark);border-radius:9px;background:var(--fill);padding:11px 14px;margin:0 0 14px;}
+.whatsin .wi-ico{width:30px;height:30px;min-width:30px;border-radius:50%;border:1px solid var(--line2);background:var(--paper);display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--ink);}
+.whatsin .wi-main{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.whatsin .wi-main b{font-size:13.5px;}
+.whatsin .wi-sub{font-size:12px;color:var(--ink2);}
 
 /* ---- grouped layout variant: cards contained inside the grey category section ---- */
 .cat-sec{border:1px solid var(--line2);border-radius:10px;background:var(--fill);padding:8px 10px;margin-bottom:14px;}
@@ -271,6 +291,8 @@ ul{margin:0;padding:0;list-style:none;}
    fixed width so the button doesn't resize between its two labels */
 .rooms-btn{display:inline-flex;align-items:center;justify-content:center;width:150px;white-space:nowrap;font-weight:700;}
 .ac-expand{border-top:1px solid var(--line);padding:14px;}
+/* collapse-on-add variant: the expansion animates shut after the added state has shown */
+.ac-expand.collapsing{overflow:hidden;transition:max-height .34s ease,opacity .34s ease,padding-top .34s ease,padding-bottom .34s ease;}
 .xsec{margin-bottom:18px;}
 .xsec>h4{display:flex;align-items:center;gap:8px;font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:9px;}
 .xnum{width:20px;height:20px;min-width:20px;border-radius:50%;background:var(--dark);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
@@ -333,6 +355,12 @@ button.rc-card:hover{background:var(--fill);}
 /* CTA pinned to the card foot at a consistent height, so the pair always lines up */
 .rc-card .addunit{flex:none;width:100%;margin-top:auto;min-height:44px;padding:9px 10px;font-size:13px;}
 .rc-price{font-weight:800;white-space:nowrap;}
+/* client asked (24 Jul) to lean into exact-room pick: give it a subtle tint and a flag
+   so it reads slightly ahead of "let us choose", without stealing the selected-state
+   dark border (aria-pressed) in the bound toggle variant */
+.rc-card.rc-primary{background:var(--fill);border-color:var(--line3);}
+.rc-flag{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;background:var(--dark);color:#fff;border-radius:4px;padding:2px 6px;align-self:flex-start;}
+.rc-card.rc-lesser,.rc-card.rc-lesser b{color:var(--ink2);}
 
 /* ---- bottom utility row ---- */
 .util-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px;}
@@ -385,11 +413,23 @@ button.rc-card:hover{background:var(--fill);}
     <div class="rail-variants">
       <span class="rail-head">Design variants</span>
       <div class="seg-group"><span class="gl">Category UX</span>
-        <div class="seg" role="group" aria-label="Category UX"><button data-catux="tiles" aria-pressed="true">Tiles</button><button data-catux="headings" aria-pressed="false">Headings</button><button data-catux="parties" aria-pressed="false" id="cxParties">Parties</button></div>
+        <div class="seg" role="group" aria-label="Category UX"><button data-catux="tiles" aria-pressed="true">Tiles</button><button data-catux="parties" aria-pressed="false" id="cxParties">Parties</button></div>
       </div>
-      <div class="seg-group"><span class="gl">Room pick</span>
-        <div class="seg" role="group" aria-label="Room pick"><button data-roompick="addon" aria-pressed="true">Add-on</button><button data-roompick="options" aria-pressed="false">Options</button></div>
+      <!-- collapse the card once a unit is added, so a multi-party user never feels stuck -->
+      <div class="seg-group" id="tbAddMode"><span class="gl">On add (multi&#8209;party)</span>
+        <div class="seg" role="group" aria-label="On add"><button data-addmode="stay" aria-pressed="true">Stay open</button><button data-addmode="collapse" aria-pressed="false">Collapse</button></div>
       </div>
+
+      <!-- Archived variants: superseded by client feedback (24 Jul), kept for future testing -->
+      <details class="rail-archive">
+        <summary>Archived variants</summary>
+        <div class="seg-group"><span class="gl">Category UX</span>
+          <div class="seg" role="group" aria-label="Category UX (archived)"><button data-catux="headings" aria-pressed="false">Headings</button></div>
+        </div>
+        <div class="seg-group"><span class="gl">Room pick</span>
+          <div class="seg" role="group" aria-label="Room pick"><button data-roompick="addon" aria-pressed="false">Add-on</button><button data-roompick="options" aria-pressed="true">Options</button></div>
+        </div>
+      </details>
     </div>
   </div>
 
@@ -694,12 +734,14 @@ var state={
   bbwGuests:8,
   bbwUnits:[],                     /* BBW: [{stockId,sleeps,guests,pickRoom,gf}] */
   basis:"unit",
-  catUX:"tiles",                   /* 'tiles', 'headings' (grouped list) or 'parties' (dining-pattern sections, Family multi only) */
+  catUX:"tiles",                   /* 'tiles', 'parties' (dining-pattern sections, Family multi only) or archived 'headings' */
+  addMode:"stay",                  /* multi-party: 'stay' keeps the card open after add, 'collapse' shuts it */
   ledgerOpen:false,                /* ledger panel: show all rows instead of the 3-row window */
-  roomPick:"addon",                /* 'addon' (opt-in extra, no Let us choose) or 'options' (live-style pair) */
-  catTile:null,                    /* tiles view only: selected tile; null means cheapest feasible */
+  roomPick:"options",              /* 'options' (live-style pair, default) or archived 'addon' (opt-in extra) */
+  catOff:{},                       /* tiles view: categories the user has deselected; empty = all shown */
   secOpen:{},                      /* headings view only: per-category manual open/collapse overrides */
   flash:null,                      /* transient add feedback: {stockId,unit,pick}, cleared after 1.5s */
+  pendingCollapse:null,            /* {stockId} awaiting the collapse animation after an add */
   expand:null                      /* open in-card expansion: {stockId,arr,gf,pickRoom,guests,boundUnit}
                                       boundUnit!=null means the expansion edits that unit live (added state) */
 };
@@ -861,23 +903,6 @@ function nofitText(f){
     ? 'Won’t fit Party '+(f.badIdx+1)+' ('+plural(f.bad,'guest')+')'
     : 'Won’t fit your party of '+f.bad;
 }
-function defaultCatTile(){
-  var lock=lockedCategory(); if(lock) return lock;
-  var cats=catList(), best=null, bestV=null, multi=isFam()&&state.parties.length>1;
-  cats.forEach(function(c){
-    var f=catFeasibility(c);
-    if(!f.ok) return;
-    var v=multi?f.total:catLow(c);
-    if(bestV===null||v<bestV){ bestV=v; best=c; }
-  });
-  return best||cats[0];
-}
-function effCat(){
-  var lock=lockedCategory(); if(lock) return lock;
-  var cats=catList();
-  if(state.catTile&&cats.indexOf(state.catTile)>=0&&catFeasibility(state.catTile).ok) return state.catTile;
-  return defaultCatTile();
-}
 function catAllocCount(c){
   if(isFam()) return state.alloc.filter(function(a){ return a&&stockById(a.stockId).cat===c; }).length;
   return state.bbwUnits.filter(function(u){ return stockById(u.stockId).cat===c; }).length;
@@ -895,34 +920,44 @@ function catPriceLine(c,f,multi){
     : '<span class="ct-from">from '+gbp0(catLow(c))+'</span>';
 }
 function categoryUI(){
-  var lock=lockedCategory(), cats=catList(), eff=effCat(), multi=isFam()&&state.parties.length>1;
+  var lock=lockedCategory(), cats=catList(), multi=isFam()&&state.parties.length>1;
+  var sel=selectedCats();
   var tiles=cats.map(function(c){
     var f=catFeasibility(c);
     var lockDis=!!lock&&c!==lock;
+    var on=sel.indexOf(c)>=0;
     var priceLine=catPriceLine(c,f,multi);
     var nofit=f.ok?'':'<span class="ct-nofit">'+nofitText(f)+'</span>';
-    var x=catAllocCount(c);
-    var tick=x>0?'<span class="ct-tick" aria-hidden="true">✓</span>':'';
-    var countLine=x>0?'<span class="ct-count">'+(multi?x+' of '+plural(state.parties.length,'unit'):plural(x,'unit'))+'</span>':'';
+    /* tick marks a shown (selected) category; the old allocated-units line is gone (client) */
+    var tick=on?'<span class="ct-tick" aria-hidden="true">✓</span>':'';
     var attrs=' data-cattile="'+c+'"';
     if(lockDis) attrs+=' data-lockdis aria-disabled="true"';
     else if(!f.ok) attrs+=' data-nofit aria-disabled="true"';
-    return '<button type="button" class="ctile"'+attrs+' aria-pressed="'+(eff===c?'true':'false')+'">'+tick+
-      '<b>'+c+'</b><span>'+plural(catCount(c),'option')+'</span>'+priceLine+nofit+countLine+'</button>';
+    return '<button type="button" class="ctile"'+attrs+' aria-pressed="'+(on?'true':'false')+'">'+tick+
+      '<b>'+c+'<span class="ct-num">'+catCount(c)+'</span></b>'+priceLine+nofit+'</button>';
   }).join('');
   var line=lock?'<p class="cat-lockline">Showing '+lock+' only: all units on one booking must be the same category.</p>':'';
-  return '<div class="cat-tiles" role="group" aria-label="Choose a category">'+tiles+'</div>'+line;
+  return '<div class="cat-tiles" role="group" aria-label="Filter accommodation types">'+tiles+'</div>'+line;
 }
+/* a card the user just added to or has open stays in the list through its confirmation,
+   even if it can no longer serve a remaining party, so the "Added" state and any collapse
+   animation play out before it drops away */
+function engaged(s){ return (state.flash&&state.flash.stockId===s.id)||(state.expand&&state.expand.stockId===s.id); }
 function sortByFit(list){
   if(!isFam()) return list;
-  /* cards that fit no remaining party sort to the bottom */
-  var fit=[], dead=[];
-  list.forEach(function(s){ (cardDead(s)?dead:fit).push(s); });
-  return fit.concat(dead);
+  /* client asked (24 Jul): drop cards too small for any remaining party rather than
+     showing them disabled. dead = fits no available target */
+  return list.filter(function(s){ return !cardDead(s)||engaged(s); });
 }
-function visibleStock(){ /* tiles view: only the selected category's cards */
-  var eff=effCat();
-  return sortByFit(stock().filter(function(s){ return s.cat===eff; }));
+/* tiles are a multi-select filter (client, 24 Jul): every feasible category is shown by
+   default, tapping one hides it. A locked booking forces its single category. */
+function selectedCats(){
+  var lock=lockedCategory(); if(lock) return [lock];
+  return catList().filter(function(c){ return catFeasibility(c).ok&&!state.catOff[c]; });
+}
+function visibleStock(){
+  var sel=selectedCats();
+  return sortByFit(stock().filter(function(s){ return sel.indexOf(s.cat)>=0; }));
 }
 
 /* ============================================================ GROUPED LAYOUT (headings variant)
@@ -1119,6 +1154,10 @@ function expansion(s,exp){
      'addon': opt-in extra with increment framing, Let us choose is the silent default
      'options': live-style side by side pair, the commit CTA lives inside each option */
   var bullets='<ul class="ck-list"><li>Choose your spot on the resort map</li><li>Guaranteed near friends and family</li></ul>';
+  /* client asked (24 Jul) to lean into exact-room pick and make letting us choose sound
+     weaker: a Recommended flag on the pick option and blunter copy on the alternative */
+  var pickFlag='<span class="rc-flag">Recommended</span>';
+  var lesserCopy='<span class="row-sub">We’ll put you in any spare room of this type. You can’t choose the location, and you might not be near the rest of your group.</span>';
   var canCommit=exp.boundUnit!=null?true:(isFam()?(tgt>=0&&exp.arr>=g):(exp.arr!==null&&remaining>0));
   var addLabel=isFam()?((tgt<0&&exp.boundUnit==null)?'All units chosen':'Add this room'):'Add this unit';
   var rcSec, addRow='';
@@ -1131,8 +1170,8 @@ function expansion(s,exp){
   } else if(exp.boundUnit!=null){
     /* bound unit: the pair reads as the unit's current choice; switching writes through */
     rcSec={t:'Room choice',h:'<div class="rc-duo">'+
-      '<button type="button" class="rc-card" data-rc="1" aria-pressed="'+(exp.pickRoom?'true':'false')+'"><b>Pick my exact room</b>'+bullets+'<span class="rc-price">+'+gbp(ROOM_PICK)+'</span></button>'+
-      '<button type="button" class="rc-card" data-rc="0" aria-pressed="'+(!exp.pickRoom?'true':'false')+'"><b>Let us choose</b><span class="row-sub">We’ll allocate a great room in your chosen type</span><span class="rc-price">+£0</span></button></div>'};
+      '<button type="button" class="rc-card rc-primary" data-rc="1" aria-pressed="'+(exp.pickRoom?'true':'false')+'">'+pickFlag+'<b>Pick my exact room</b>'+bullets+'<span class="rc-price">+'+gbp(ROOM_PICK)+'</span></button>'+
+      '<button type="button" class="rc-card rc-lesser" data-rc="0" aria-pressed="'+(!exp.pickRoom?'true':'false')+'"><b>Let us choose</b>'+lesserCopy+'<span class="rc-price">+£0</span></button></div>'};
   } else {
     /* the CTA carries the total for that choice, e.g. "Add Comfort Rooms for £354.00" */
     var optCta=function(pick){
@@ -1143,8 +1182,8 @@ function expansion(s,exp){
       return '<button type="button" class="btn addunit" data-addopt="'+pick+'"'+(canCommit?'':' aria-disabled="true"')+'>'+label+'</button>';
     };
     rcSec={t:'Room choice',h:'<div class="rc-duo">'+
-      '<div class="rc-card"><b>Pick my exact room</b>'+bullets+'<span class="rc-price">+'+gbp(ROOM_PICK)+'</span>'+optCta(1)+'</div>'+
-      '<div class="rc-card"><b>Let us choose</b><span class="row-sub">We’ll allocate a great room in your chosen type</span><span class="rc-price">+£0</span>'+optCta(0)+'</div></div>'};
+      '<div class="rc-card rc-primary">'+pickFlag+'<b>Pick my exact room</b>'+bullets+'<span class="rc-price">+'+gbp(ROOM_PICK)+'</span>'+optCta(1)+'</div>'+
+      '<div class="rc-card rc-lesser"><b>Let us choose</b>'+lesserCopy+'<span class="rc-price">+£0</span>'+optCta(0)+'</div></div>'};
   }
   if(state.roomPick==="addon"||exp.boundUnit!=null){
     if(exp.boundUnit!=null){
@@ -1177,7 +1216,9 @@ function expansion(s,exp){
    reference only; greyed, no expansion, clicks announce the reason */
 function accomCard(s,inertInfo){
   var exp=(!inertInfo&&state.expand&&state.expand.stockId===s.id)?state.expand:null;
-  var dead=cardDead(s);
+  /* while the user is mid-interaction with a card, keep it live (expansion + added state)
+     even if it no longer fits a remaining party; it drops out once the flash clears */
+  var dead=cardDead(s)&&!(!inertInfo&&engaged(s));
 
   var tags='';
   if(isFam()){
@@ -1306,8 +1347,12 @@ function groupPanel(){
   var pool='';
   if(!isFam()){
     var pTotal=state.bbwGuests, pPlaced=placedBBW(-1), un=pTotal-pPlaced, gs='';
-    for(var k=0;k<un;k++) gs+='<span class="pfig off"><i></i><b></b></span>';
-    pool='<div class="gp-pool"><span class="pool-cap">'+pPlaced+' of '+pTotal+' guests have a bed</span>'+
+    /* preview an in-progress placement: mark the chosen guest count as tentative in the
+       pool (client, 24 Jul). Updates live as the arrangement or stepper changes. */
+    var expp=state.expand, tent=(expp&&expp.boundUnit==null&&expp.arr!==null)?Math.min(expp.guests,un):0;
+    for(var k=0;k<un;k++) gs+='<span class="pfig '+(k<tent?'tentative':'off')+'"><i></i><b></b></span>';
+    var cap=tent>0?pPlaced+' of '+pTotal+' guests have a bed &middot; '+tent+' being added':pPlaced+' of '+pTotal+' guests have a bed';
+    pool='<div class="gp-pool"><span class="pool-cap">'+cap+'</span>'+
       (un>0?'<div class="pg-row" aria-hidden="true">'+gs+'</div>':'')+'</div>';
   }
   var panel='<div class="gpanel" id="gpanel">'+head+pool+'<div class="ledger">'+shown.join('')+'</div>'+expander+'</div>';
@@ -1321,6 +1366,14 @@ function utilityRow(){
     '<button type="button" class="btn util-btn" onclick="return false;"><span class="mglyph" aria-hidden="true">'+GL.access+'</span>Accessible accommodation</button>'+
     '<button type="button" class="btn util-btn" onclick="return false;"><span class="mglyph" aria-hidden="true">'+GL.map+'</span>Download resort map</button></div>'+
     '<p class="group-note">Booking alongside friends or family on a separate booking? Call 0330 100 6649 and we’ll link you up.</p>';
+}
+
+/* what's included banner: reinstated on client feedback (24 Jul, separate testing proved
+   its value). Full width above the results heading on every layout. */
+function whatsIncludedBanner(){
+  return '<div class="whatsin"><span class="wi-ico" aria-hidden="true">&#10003;</span>'+
+    '<div class="wi-main"><b>What’s included in every break</b>'+
+    '<span class="wi-sub">Live entertainment, funfair rides, swimming pools and loads of activities are all part of the price.</span></div></div>';
 }
 
 /* ============================================================ RENDER
@@ -1365,13 +1418,13 @@ function render(){
      single-party bookings have no panel and no sections */
   document.querySelector('.intro').classList.toggle('no-rule',!(isFam()&&state.parties.length===1));
   if(view==="parties"){
-    content.innerHTML=resultsHead(false)+partiesUI()+utilityRow();
+    content.innerHTML=whatsIncludedBanner()+resultsHead(false)+partiesUI()+utilityRow();
   } else {
     var panel=groupPanel();
     var results=view==="tiles"
       ? visibleStock().map(function(s){ return accomCard(s); }).join('')
       : groupedUI();
-    content.innerHTML=(mob?panel:'')+resultsHead(view==="tiles")+(view==="tiles"?categoryUI():'')+
+    content.innerHTML=whatsIncludedBanner()+(mob?panel:'')+resultsHead(view==="tiles")+(view==="tiles"?categoryUI():'')+
       '<div class="layout">'+(mob?'':panel)+
       '<div class="results">'+results+utilityRow()+'</div>'+
       '</div>';
@@ -1464,22 +1517,33 @@ function wire(){
 
   q('[data-cattile]',function(b){
     b.addEventListener('click',function(){
+      var c=b.getAttribute('data-cattile');
       if(b.hasAttribute('data-lockdis')){ announce('Unavailable. All units on one booking must be the same category.'); return; }
-      if(b.hasAttribute('data-nofit')){ announce(nofitText(catFeasibility(b.getAttribute('data-cattile')))+'. Choose another category.'); return; }
-      state.catTile=b.getAttribute('data-cattile'); state.expand=null; render();
+      if(b.hasAttribute('data-nofit')){ announce(nofitText(catFeasibility(c))+'. Choose another category.'); return; }
+      /* multi-select filter: toggle this category's visibility */
+      var nowOff=!state.catOff[c];
+      if(nowOff) state.catOff[c]=true; else delete state.catOff[c];
+      state.expand=null;
+      announce(nowOff?c+' hidden from the list.':c+' shown.');
+      render();
     });
   });
 
   q('[data-expander]',function(b){
     b.addEventListener('click',function(){
       var id=b.getAttribute('data-expander');
-      state.flash=null; /* a user-initiated open supersedes any lingering add flash */
+      state.flash=null; state.pendingCollapse=null; /* a user-initiated open supersedes any lingering add flash/collapse */
       if(state.expand&&state.expand.stockId===id){ state.expand=null; render(); return; }
       /* re-opening a card that already holds this booking's only unit resumes editing it */
       var bound=null;
       if(isFam()&&state.parties.length===1&&state.alloc[0]&&state.alloc[0].stockId===id) bound=0;
       openExpand(stockById(id),bound);
       render();
+      /* mobile: glide down to the sleeping arrangements so the expansion isn't missed (client) */
+      if(state.device==="mobile"){
+        var ex=document.getElementById('exp-'+id);
+        if(ex&&ex.scrollIntoView) ex.scrollIntoView({behavior:'smooth',block:'start'});
+      }
     });
   });
 
@@ -1550,7 +1614,27 @@ function wire(){
   function flashAdd(stockId,unit,pick){
     var f={stockId:stockId,unit:unit,pick:pick};
     state.flash=f;
-    setTimeout(function(){ if(state.flash===f){ state.flash=null; render(); } },1500);
+    setTimeout(function(){
+      if(state.flash!==f) return;
+      state.flash=null;
+      /* collapse-on-add variant: the added state has now been shown, so shut the card */
+      if(state.pendingCollapse&&state.pendingCollapse.stockId===stockId){ collapseCard(stockId); return; }
+      render();
+    },1500);
+  }
+  /* animate the expansion shut, then drop it from state on the next render */
+  function collapseCard(id){
+    state.pendingCollapse=null;
+    var ex=document.getElementById('exp-'+id);
+    if(!ex){ state.expand=null; render(); return; }
+    ex.style.maxHeight=ex.scrollHeight+'px';
+    ex.classList.add('collapsing');
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      ex.style.maxHeight='0px'; ex.style.opacity='0'; ex.style.paddingTop='0'; ex.style.paddingBottom='0';
+    }); });
+    var done=false, finish=function(){ if(done) return; done=true; state.expand=null; render(); };
+    ex.addEventListener('transitionend',finish,{once:true});
+    setTimeout(finish,500);
   }
   /* the one commit action, shared by the add row and the options-variant CTAs */
   function commitAdd(){
@@ -1566,9 +1650,16 @@ function wire(){
       if(state.parties.length===1) exp.boundUnit=t;
       else {
         flashAdd(s.id,t,pickAtCommit);
-        /* parties mode moves to a fresh section, so the expansion always closes */
-        if(state.catUX!=="parties"&&cardTarget(s)>=0) openExpand(s,null);
-        else state.expand=null;
+        if(state.catUX!=="parties"&&state.addMode==="collapse"){
+          /* collapse variant: leave the expansion open so the added state shows, then let
+             flashAdd shut the card once the flash clears */
+          state.pendingCollapse={stockId:s.id};
+        } else if(state.catUX!=="parties"&&cardTarget(s)>=0){
+          openExpand(s,null);
+        } else {
+          /* parties mode moves to a fresh section, so the expansion always closes */
+          state.expand=null;
+        }
       }
     } else {
       state.bbwUnits.push({stockId:exp.stockId,sleeps:exp.arr,guests:exp.guests,pickRoom:exp.pickRoom,gf:exp.gf,pet:exp.pet});
@@ -1662,13 +1753,15 @@ function pressGroup(sel,val,attr){
 function press(id,on){ document.getElementById(id).setAttribute('aria-pressed',on?'true':'false'); }
 function resetChoices(){
   state.alloc=state.parties.map(function(){ return null; });
-  state.bbwUnits=[]; state.expand=null; state.catTile=null; state.secOpen={}; state.flash=null;
-  state.ledgerOpen=false;
+  state.bbwUnits=[]; state.expand=null; state.catOff={}; state.secOpen={}; state.flash=null;
+  state.pendingCollapse=null; state.ledgerOpen=false;
 }
 function toolbarVis(){
   document.getElementById('tbResort').hidden=!isFam();
   document.getElementById('tbPreset').hidden=!isFam();
   document.getElementById('tbGroup').hidden=isFam();
+  /* the collapse-on-add variant only applies to multi-party Family flows */
+  document.getElementById('tbAddMode').hidden=!(isFam()&&state.parties.length>1);
   /* Parties view needs pre-defined parties (not BBW) and more than one of them */
   document.getElementById('cxParties').setAttribute('aria-disabled',(isFam()&&state.parties.length>1)?'false':'true');
 }
@@ -1717,6 +1810,15 @@ document.querySelectorAll('[data-roompick]').forEach(function(b){
     pressGroup('[data-roompick]',state.roomPick,'data-roompick');
     announce(state.roomPick==="addon"?'Room pick as an add-on.':'Room pick as side by side options.');
     render();
+  });
+});
+/* On add: collapse the card after a unit is added, or keep it open. Pure view setting,
+   applied on the next add, so no re-render is needed here. */
+document.querySelectorAll('[data-addmode]').forEach(function(b){
+  b.addEventListener('click',function(){
+    state.addMode=b.getAttribute('data-addmode');
+    pressGroup('[data-addmode]',state.addMode,'data-addmode');
+    announce(state.addMode==="collapse"?'Cards will collapse after adding a unit.':'Cards will stay open after adding a unit.');
   });
 });
 document.querySelectorAll('[data-resortbtn]').forEach(function(b){
