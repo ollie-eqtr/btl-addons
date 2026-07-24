@@ -5,6 +5,7 @@
     { "source": "/phase1-lofi", "destination": "/phase1-dining-fam-lofi" },
     { "source": "/phase2-lofi", "destination": "/phase2-dining-extras-bbw-lofi" },
     { "source": "/phase2-hifi", "destination": "/phase2-dining-extras-bbw-hifi" },
+    { "source": "/phase3-lofi", "destination": "/phase3-search-accom-lofi" },
     { "source": "/bbw-homepage", "destination": "/external-prototypes/bbw-homepage-prototype" },
     { "source": "/weekender", "destination": "/external-prototypes/90s-weekender-prototype" },
     { "source": "/weekender-lineup", "destination": "/external-prototypes/90s-weekender-prototype-lineup-cta" }

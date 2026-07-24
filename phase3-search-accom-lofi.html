@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 3 Search and Accommodation (lo-fi)</title>
+<style>
+/* ============================================================ WIREFRAME TOKENS (inherited from Phase 2) */
+:root{
+  --ink:#2b2b2b; --ink2:#555; --muted:#7a7a7a;
+  --line:#cfcfcf; --line2:#a9a9a9; --line3:#8a8a8a;
+  --fill:#f2f2f2; --fill2:#e7e7e7; --fill3:#dcdcdc;
+  --paper:#fff; --bg:#9a9a9a;
+  --dark:#2b2b2b; --radius:10px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+/* A11Y NOTE: --muted (#7a7a7a) on white is ~3.7:1. Passes AA for large text only; darken for small body text at hi-fi. */
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:var(--font);color:var(--ink);background:var(--bg);line-height:1.45;-webkit-font-smoothing:antialiased;}
+button{font-family:inherit;cursor:pointer;}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:3px;}
+.rail :focus-visible{outline-color:#fff;}
+h1,h2,h3,h4{margin:0;font-weight:700;color:var(--ink);}
+p{margin:0;}
+ul{margin:0;padding:0;list-style:none;}
+[hidden]{display:none!important;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;}
+
+/* ============================================================ STAGE: left toolbar rail + centred frame */
+.stage{display:flex;align-items:stretch;gap:18px;padding:18px;min-height:100vh;}
+.rail{width:200px;min-width:200px;align-self:flex-start;position:sticky;top:18px;
+  background:#1f1f1f;color:#eee;border-radius:10px;padding:14px 12px;font-size:12px;
+  display:flex;flex-direction:column;gap:14px;}
+.rail .tlabel{font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:11px;line-height:1.35;}
+.rail-head{display:flex;align-items:center;gap:8px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#7d7d7d;}
+.rail-head::after{content:"";flex:1;height:1px;background:#3a3a3a;}
+/* the two design iterations under test, boxed off from the scenario controls */
+.rail-variants{background:#262626;border:1px solid #3a3a3a;border-radius:9px;padding:12px 11px;display:flex;flex-direction:column;gap:13px;}
+.rail-variants .rail-head{color:#c9c9c9;}
+.rail-variants .rail-head::after{background:#4a4a4a;}
+.seg-group{display:flex;flex-direction:column;align-items:stretch;gap:5px;}
+.seg-group .gl{color:#aaa;text-transform:uppercase;letter-spacing:.05em;font-size:10px;}
+.seg{display:flex;border:1px solid #555;border-radius:7px;overflow:hidden;}
+.seg button{flex:1;background:#2b2b2b;color:#ddd;border:0;padding:6px 6px;font-size:11px;border-right:1px solid #555;}
+.seg button:last-child{border-right:0;}
+.seg button[aria-pressed="true"]{background:#eee;color:#1f1f1f;font-weight:700;}
+.seg button[aria-disabled="true"]{color:#5a5a5a;background:#242424;cursor:not-allowed;}
+.main{flex:1;display:flex;min-width:0;}
+.frame-outer{margin:auto;display:flex;justify-content:center;}
+/* prototype is reviewed on desktop; on narrow viewports the rail simply stacks on top */
+@media (max-width:860px){
+  .stage{flex-direction:column;}
+  .rail{width:100%;min-width:0;position:static;flex-direction:row;flex-wrap:wrap;align-items:center;}
+  .seg-group{flex-direction:row;align-items:center;gap:7px;}
+}
+
+/* ============================================================ DEVICE FRAME */
+.frame{position:relative;display:flex;flex-direction:column;width:1080px;height:880px;
+  background:var(--paper);border:1px solid #6f6f6f;border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.25);}
+.frame-outer[data-device="mobile"] .frame{width:390px;height:780px;}
+.scroll{flex:1;overflow:auto;scroll-behavior:smooth;}
+
+/* ============================================================ APP CHROME */
+.appbar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--line);background:var(--paper);}
+.appbar .ico{width:26px;height:26px;border:1px solid var(--line2);border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:var(--ink2);}
+.appbar .brand{font-weight:800;letter-spacing:.02em;font-size:17px;}
+.appbar .brand small{display:block;font-weight:600;font-size:8px;letter-spacing:.18em;color:var(--muted);}
+.appbar .icons{margin-left:auto;display:flex;gap:7px;}
+.chrome-mid{padding:12px 18px;border-bottom:1px solid var(--line);background:var(--fill);}
+.backlink{color:var(--ink2);text-decoration:none;font-size:13px;font-weight:600;white-space:nowrap;}
+.step-title{text-align:center;font-size:13.5px;font-weight:800;letter-spacing:.02em;color:var(--ink);margin-bottom:10px;}
+.step-row{position:relative;display:flex;align-items:center;justify-content:center;min-height:30px;}
+.step-row .backlink{position:absolute;left:0;top:50%;transform:translateY(-50%);}
+.dots{display:flex;align-items:center;gap:10px;}
+.dotstep{width:22px;height:22px;border-radius:50%;border:1px solid var(--line2);background:var(--paper);display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);}
+.dotstep.current{background:var(--dark);border-color:var(--dark);color:#fff;box-shadow:0 0 0 3px var(--fill3);}
+.frame-outer[data-device="mobile"] .step-row{justify-content:flex-start;gap:14px;}
+.frame-outer[data-device="mobile"] .step-row .backlink{position:static;transform:none;}
+/* Static search summary. Search editing is out of scope for this prototype; party and
+   date definition happens upstream on both platforms, so this line is representational only. */
+.searchsum{display:flex;align-items:center;gap:12px;margin-top:12px;font-size:12.5px;color:var(--ink2);flex-wrap:wrap;}
+
+/* ============================================================ BODY */
+.body{padding:16px 18px 22px;}
+/* hairline under the heading, equal 16px breathing space above and below the rule;
+   dropped whenever a panel or party sections break up the page instead */
+.intro{margin-bottom:16px;padding:6px 0 16px;border-bottom:1px solid var(--line);}
+.intro.no-rule{border-bottom:0;padding-bottom:4px;}
+.intro h1{font-size:31px;line-height:1.06;text-transform:uppercase;letter-spacing:.035em;font-weight:800;text-align:center;}
+.frame-outer[data-device="mobile"] .intro h1{font-size:23px;}
+.btn{background:var(--paper);border:1px solid var(--line2);border-radius:8px;padding:8px 13px;font-size:13px;font-weight:600;color:var(--ink);}
+.btn:hover{background:var(--fill);}
+.btn.primary{background:var(--dark);color:#fff;border-color:var(--dark);}
+.btn[aria-disabled="true"]{opacity:.45;cursor:not-allowed;}
+.row-sub{font-size:12px;color:var(--muted);}
+.group-note{font-size:11.5px;color:var(--muted);margin-top:9px;}
+
+/* ---- two-column layout: results + Your group panel ---- */
+.layout{display:flex;align-items:flex-start;gap:14px;}
+.results{flex:1;min-width:0;}
+.side{width:300px;min-width:300px;position:sticky;top:12px;order:2;} /* panel sits right of the results on desktop */
+.frame-outer[data-device="mobile"] .layout{flex-direction:column;}
+.frame-outer[data-device="mobile"] .side{width:100%;min-width:0;top:0;z-index:7;order:0;}
+
+/* Your group panel (shared by BBW and multi-unit Family) */
+.gpanel{border:1px solid var(--line);border-left:4px solid var(--dark);border-radius:8px;background:var(--paper);padding:12px 13px;}
+.gpanel h3{font-size:16px;font-weight:800;margin-bottom:4px;}
+.gp-eyebrow{display:block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+.gp-pool{margin:2px 0 8px;}
+.pool-cap{display:block;font-size:11.5px;font-weight:600;color:var(--ink2);margin-bottom:3px;}
+.ab-rule{font-size:11.5px;color:var(--ink2);margin-top:9px;}
+/* person and bed glyphs, CSS-drawn so they stay greyscale */
+.pg-row{display:flex;align-items:flex-end;gap:5px;flex-wrap:wrap;margin:3px 0 6px;}
+.pfig{display:inline-block;width:13px;}
+.pfig i{display:block;width:7px;height:7px;border-radius:50%;margin:0 auto 1px;}
+.pfig b{display:block;width:13px;height:9px;border-radius:6px 6px 2px 2px;}
+.pfig.on i,.pfig.on b{background:var(--dark);}
+.pfig.off i,.pfig.off b{background:transparent;border:1.5px solid var(--line3);}
+.up-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-top:1px solid var(--line);font-size:13px;flex-wrap:wrap;}
+.up-row:first-of-type{border-top:1px solid var(--line);}
+.up-row.is-next{box-shadow:inset 3px 0 0 var(--dark);padding-left:8px;}
+/* pulse the row or section header that just gained a unit */
+@keyframes rowflash{0%{background:var(--fill3);}100%{background:transparent;}}
+.up-row.flash,.lrow.flash,.party-head.flash{animation:rowflash 1.2s ease-out;}
+
+/* ---- ledger rows (record grammar, ported from the explorations page) ---- */
+.ledger{border:1px solid var(--line2);border-radius:9px;overflow:hidden;margin-top:4px;}
+.lrow{display:flex;align-items:center;gap:9px;padding:9px 11px;border-top:1px solid var(--line);font-size:12px;background:var(--paper);flex-wrap:wrap;}
+.lrow:first-child{border-top:0;}
+.lrow.active{background:var(--fill);box-shadow:inset 3px 0 0 var(--dark);}
+.lrow.todo{color:var(--muted);}
+.ltick{width:20px;height:20px;min-width:20px;border-radius:50%;border:1.5px solid var(--line2);color:var(--muted);
+  display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;background:var(--paper);}
+.ltick.done{background:var(--dark);border-color:var(--dark);color:#fff;}
+.ltick.cur{border-color:var(--dark);color:var(--ink);}
+.lmain{flex:1;min-width:0;}
+.lmain b{display:block;font-size:12.5px;}
+.lmain span{display:block;font-size:11px;color:var(--muted);}
+.lmain .strong{color:var(--ink);font-weight:700;}
+.lmain .pg-row{margin:5px 0 0;}
+.lshow{display:block;margin-top:8px;}
+
+/* ---- parties layout (dining-pattern sections) ---- */
+.party-sec{border:1px solid var(--line2);border-radius:10px;background:var(--paper);margin-bottom:12px;overflow:hidden;}
+.party-sec.is-current{border-color:var(--dark);box-shadow:inset 0 0 0 1px var(--dark);}
+.party-sec.is-upcoming{opacity:.55;}
+.party-head{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--fill);flex-wrap:wrap;}
+.ph-main{flex:1;min-width:150px;}
+.ph-main b{display:block;font-size:13px;text-transform:uppercase;letter-spacing:.05em;}
+.ph-sub{display:block;font-size:11px;color:var(--muted);}
+.ph-choice{font-weight:800;font-size:12.5px;}
+.ph-choice.now{font-size:12px;}
+.ph-choice.dim{color:var(--muted);font-weight:600;}
+.party-body{padding:13px;border-top:1px solid var(--line);}
+.party-body .cat-tiles{margin-bottom:2px;}
+.pc-heading{font-size:15px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;}
+.pc-headrow{display:flex;align-items:center;gap:7px;margin-bottom:10px;}
+.pc-headrow .pc-heading{margin-bottom:0;}
+/* lo-fi info tooltip: hover or keyboard focus reveals the note */
+.infotip{position:relative;display:inline-flex;}
+.infotip-btn{width:17px;height:17px;border-radius:50%;border:1px solid var(--line2);background:var(--paper);color:var(--ink2);font:italic 700 11px Georgia,serif;line-height:1;display:inline-flex;align-items:center;justify-content:center;cursor:help;padding:0;}
+.infotip-pop{position:absolute;left:-4px;top:calc(100% + 8px);z-index:30;width:236px;background:var(--dark);color:#fff;font:500 11.5px/1.45 inherit;text-transform:none;letter-spacing:normal;padding:9px 11px;border-radius:8px;box-shadow:0 5px 16px rgba(0,0,0,.24);opacity:0;visibility:hidden;transform:translateY(-3px);transition:opacity .12s,transform .12s,visibility .12s;text-align:left;}
+.infotip-pop::before{content:"";position:absolute;left:9px;top:-4px;width:9px;height:9px;background:var(--dark);transform:rotate(45deg);}
+.infotip:hover .infotip-pop,.infotip:focus-within .infotip-pop{opacity:1;visibility:visible;transform:translateY(0);}
+.up-main{flex:1;min-width:130px;}
+.up-main b{display:block;font-size:12.5px;}
+.up-main .row-sub{display:block;}
+.next-flag{font-weight:700;color:var(--ink);}
+.up-tags{display:flex;gap:5px;flex-wrap:wrap;width:100%;}
+.up-tag{font-size:10.5px;font-weight:700;border:1px solid var(--line2);border-radius:20px;padding:2px 8px;background:var(--fill);color:var(--ink2);white-space:nowrap;}
+.up-price{font-weight:800;min-width:60px;text-align:right;}
+.up-edit,.up-remove{background:none;border:0;padding:0;color:var(--ink2);text-decoration:underline;font-size:12px;}
+/* mobile: panel always open, full-bleed and sticky, matching the dining anchor bar treatment */
+.frame-outer[data-device="mobile"] .side{width:calc(100% + 36px);margin:0 -18px;}
+.frame-outer[data-device="mobile"] .gpanel{border-radius:0;border-left:0;border-right:0;}
+
+/* ---- list tools bar: price basis; in tiles view it shares a row with the heading ---- */
+.res-tools{display:flex;align-items:center;justify-content:flex-start;gap:10px;flex-wrap:wrap;margin:14px 0 10px;}
+.res-tools.with-head{justify-content:space-between;}
+.rt-head{font-size:15px;text-transform:uppercase;letter-spacing:.04em;font-weight:800;}
+.basis-seg{display:inline-flex;border:1px solid var(--line2);border-radius:8px;overflow:hidden;}
+.basis-seg button{background:var(--paper);border:0;padding:7px 11px;font-size:12px;font-weight:600;color:var(--ink2);border-right:1px solid var(--line2);}
+.basis-seg button:last-child{border-right:0;}
+.basis-seg button[aria-pressed="true"]{background:var(--dark);color:#fff;}
+
+/* ---- category tiles (single treatment, matches the tested dining pattern) ---- */
+.cat-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px;margin-bottom:8px;}
+.ctile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;
+  border:1px solid var(--line2);border-radius:9px;background:var(--paper);padding:12px;font-size:12px;color:var(--ink2);}
+.ctile b{font-size:14px;color:var(--ink);}
+.ctile .ct-from{font-weight:700;font-size:12.5px;color:var(--ink);}
+.ctile .ct-nofit{font-weight:600;font-size:11.5px;color:var(--ink2);}
+.ctile .ct-count{font-weight:700;font-size:11px;color:var(--ink);}
+.ctile[aria-pressed="true"]{border-color:var(--dark);box-shadow:inset 0 0 0 1.5px var(--dark);}
+.ctile[aria-disabled="true"]{opacity:.45;cursor:not-allowed;}
+.ct-tick{position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;background:var(--dark);color:#fff;font-size:11px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;}
+.cat-lockline{font-size:11.5px;color:var(--ink2);margin:0 0 12px;}
+
+/* ---- grouped layout variant: cards contained inside the grey category section ---- */
+.cat-sec{border:1px solid var(--line2);border-radius:10px;background:var(--fill);padding:8px 10px;margin-bottom:14px;}
+.sec-head{display:flex;align-items:center;gap:8px 12px;width:100%;min-height:44px;text-align:left;flex-wrap:wrap;
+  border:0;border-radius:6px;background:none;padding:4px 6px;font-size:12.5px;color:var(--ink2);}
+.sec-head:hover{background:var(--fill2);}
+.sec-head.static{cursor:default;}
+.sec-head.static:hover{background:none;}
+.sec-head b{font-size:15px;color:var(--ink);text-transform:uppercase;letter-spacing:.03em;}
+.sec-main{display:flex;align-items:baseline;gap:9px;flex:1;min-width:130px;}
+.sec-sub{font-size:11.5px;color:var(--muted);font-weight:600;}
+.sec-head .ct-from{font-weight:700;font-size:12.5px;color:var(--ink);}
+.sec-head .ct-nofit{font-weight:600;font-size:11.5px;color:var(--ink2);}
+.sec-head .ct-count{font-weight:700;font-size:11px;color:var(--ink);}
+.sec-head .chev{width:8px;height:8px;min-width:8px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg);transition:transform .15s;}
+.sec-head[aria-expanded="true"] .chev{transform:rotate(225deg);}
+.cat-sec.is-dim>.sec-head{opacity:.7;}
+.sec-body{padding:8px 2px 2px;}
+.sec-body .acard{margin-bottom:10px;}
+.sec-body .acard:last-child{margin-bottom:0;}
+
+/* ---- accommodation cards: long-wide, icon-led ---- */
+.acard{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);margin-bottom:12px;overflow:hidden;position:relative;}
+.acard.is-locked{opacity:.55;}
+.acard.has-alloc{border-color:var(--line3);box-shadow:inset 3px 0 0 var(--dark);}
+/* unavailability reads as a banner strip across the top of the card */
+.card-banner{background:var(--fill2);border-bottom:1px solid var(--line);padding:7px 13px;font-size:11.5px;font-weight:600;color:var(--ink);}
+.ac-top{display:flex;align-items:stretch;}
+/* photo is a full-height pane flush to the card's edges on desktop */
+.ph-sq{width:150px;min-width:150px;align-self:stretch;border-right:1px solid var(--line);
+  background:repeating-linear-gradient(45deg,#ededed,#ededed 7px,#e3e3e3 7px,#e3e3e3 14px);
+  display:flex;align-items:center;justify-content:center;}
+.ph-sq span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;background:rgba(255,255,255,.7);padding:1px 5px;border-radius:4px;}
+.ac-body{flex:1;padding:13px;display:flex;flex-direction:column;gap:7px;min-width:0;}
+.ac-headrow{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.ac-headrow h3{font-size:16px;}
+.rec-badge{font-size:10px;text-transform:uppercase;letter-spacing:.05em;background:var(--dark);color:#fff;border-radius:4px;padding:3px 7px;font-weight:700;}
+.desc{color:var(--ink2);font-size:13px;margin:0;}
+/* icon glyphs are decorative squares with a character; grayscale filter keeps emoji fallbacks lo-fi */
+.mglyph{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;min-width:20px;border:1px solid var(--line2);border-radius:5px;background:var(--paper);font-size:11px;filter:grayscale(1);}
+.meta-row{display:flex;gap:6px 14px;flex-wrap:wrap;}
+.meta-row .mitem{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ink2);}
+/* the title spans the full body width; beneath it two columns run side by side so
+   the features top-align with the meta row. Fixed feature width keeps one shared
+   left edge across cards; glyphs lose their boxes here (meta-row glyphs keep them) */
+.ac-cols{display:flex;align-items:flex-start;gap:12px;}
+.ac-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px;}
+.ac-feats{width:200px;min-width:200px;}
+.feat-row{display:flex;flex-direction:column;gap:7px;}
+.feat-row li{display:inline-flex;align-items:flex-start;gap:7px;font-size:12px;color:var(--ink2);}
+.feat-row .mglyph{border:0;background:none;width:auto;min-width:0;height:auto;font-size:12px;}
+/* allocation pills sit at the top right of the card */
+.alloc-tags{position:absolute;top:10px;right:10px;z-index:2;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:55%;}
+.alloc-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;background:var(--dark);color:#fff;border-radius:20px;padding:3px 10px;}
+/* right rail of the card holds the price block only; the expansion is the single way in */
+/* bottom-aligned so the content holds position across button state changes and
+   clears the unit pill pinned to the card's top right */
+.ac-foot{display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-end;gap:8px;padding:13px;border-left:1px solid var(--line);min-width:165px;}
+.price{display:flex;flex-direction:column;line-height:1.25;align-items:flex-end;}
+.price .from{font-size:11px;color:var(--muted);}
+.price .now{font-size:20px;font-weight:800;}
+.price .pp{font-size:11px;color:var(--muted);text-align:right;}
+/* mobile: photo moves above all copy, full width; features fall back to a wrap row */
+.frame-outer[data-device="mobile"] .ac-top{flex-wrap:wrap;}
+.frame-outer[data-device="mobile"] .ph-sq{width:100%;min-width:0;height:120px;align-self:auto;border-right:0;border-bottom:1px solid var(--line);}
+.frame-outer[data-device="mobile"] .ac-body{padding:12px;}
+.frame-outer[data-device="mobile"] .ac-cols{flex-direction:column;}
+.frame-outer[data-device="mobile"] .ac-feats{width:100%;min-width:0;}
+.frame-outer[data-device="mobile"] .feat-row{flex-direction:row;flex-wrap:wrap;gap:6px 14px;}
+.frame-outer[data-device="mobile"] .ac-foot{border-left:0;border-top:1px solid var(--line);width:100%;flex-direction:row;justify-content:space-between;align-items:center;min-width:0;}
+
+/* ---- in-card expansion (client-approved pattern); opened from the card foot ----
+   fixed width so the button doesn't resize between its two labels */
+.rooms-btn{display:inline-flex;align-items:center;justify-content:center;width:150px;white-space:nowrap;font-weight:700;}
+.ac-expand{border-top:1px solid var(--line);padding:14px;}
+.xsec{margin-bottom:18px;}
+.xsec>h4{display:flex;align-items:center;gap:8px;font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:9px;}
+.xnum{width:20px;height:20px;min-width:20px;border-radius:50%;background:var(--dark);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+/* arrangement tiles */
+.arr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:9px;}
+.arr-tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;
+  border:1px solid var(--line2);border-radius:9px;background:var(--paper);padding:11px;font-size:12px;color:var(--ink);}
+.arr-tile:hover{background:var(--fill);}
+.arr-tile[aria-pressed="true"]{border-color:var(--dark);box-shadow:inset 0 0 0 1.5px var(--dark),0 0 0 2px var(--fill3);}
+.arr-tile[aria-disabled="true"]{opacity:.5;cursor:not-allowed;}
+.arr-occ{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:13px;}
+.arr-bed{font-size:13px;font-weight:700;}
+.ck-list li{position:relative;padding-left:16px;font-size:11.5px;color:var(--ink2);}
+.ck-list li:before{content:"\2713";position:absolute;left:0;top:0;font-weight:800;color:var(--ink);}
+.arr-price{font-weight:800;font-size:14px;margin-top:auto;}
+.arr-small{font-size:11px;font-weight:600;color:var(--ink2);}
+/* BBW assignment: the selected arrangement tile carries the guests stepper */
+.linkbtn{background:none;border:0;padding:0;margin-top:7px;color:var(--ink);text-decoration:underline;font-size:12.5px;font-weight:600;}
+.arr-tile.sel{border-color:var(--dark);box-shadow:inset 0 0 0 1.5px var(--dark),0 0 0 2px var(--fill3);cursor:default;}
+.arr-clear{display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:100%;background:none;border:0;padding:0;text-align:left;cursor:pointer;font:inherit;color:inherit;}
+.tile-step{width:100%;margin-top:8px;padding-top:9px;border-top:1px dashed var(--line2);display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.tile-step .who-label{flex:1;font-size:12px;font-weight:600;min-width:90px;}
+.stepper{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line2);border-radius:8px;overflow:hidden;background:var(--paper);}
+.step-btn{width:44px;height:44px;border:0;background:var(--paper);font-size:18px;line-height:1;color:var(--ink);}
+.step-btn:hover{background:var(--fill);}
+.step-btn[aria-disabled="true"]{color:var(--line2);cursor:not-allowed;}
+.qty{min-width:28px;text-align:center;font-weight:700;font-size:14px;}
+/* add row at the bottom of the expansion: the one action.
+   Add CTAs are outline by default and fill dark when added (hi-fi uses red fills);
+   the transient flash fades back to the outline state so the confirmation reads
+   as a transition, not a swap */
+.addrow{display:flex;align-items:center;gap:14px;margin-top:2px;}
+/* true black 1.5px outline so the CTA stands out from the grey container hairlines */
+.addunit{flex:1;padding:12px;font-size:13.5px;font-weight:700;border-radius:8px;border:1.5px solid #000;color:#000;}
+.addunit.is-added{opacity:1;}
+@keyframes addfade{0%,55%{background:var(--dark);color:#fff;border-color:var(--dark);}
+  100%{background:var(--paper);color:#000;border-color:#000;}}
+.addunit.is-flash{animation:addfade 1.5s ease forwards;}
+.addrow .linkbtn{margin-top:0;}
+/* add-on rows (ground floor, pet, room pick): toggle top right, price bottom left */
+.gf-row{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:9px;padding:8px 12px;}
+.fglyph{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;min-width:26px;border:1px solid var(--line2);border-radius:6px;background:var(--paper);font-size:14px;filter:grayscale(1);}
+.gf-main{flex:1;min-width:0;}
+.gf-main b{display:block;font-size:13px;padding-top:4px;}
+.gf-price{display:block;font-weight:800;font-size:13px;margin-top:5px;}
+.gf-row .tswitch{margin-left:auto;}
+.tswitch{position:relative;display:inline-flex;align-items:center;width:58px;height:44px;background:none;border:0;padding:0 3px;}
+.tswitch .track{width:52px;height:28px;border-radius:16px;border:1.5px solid var(--line3);background:var(--paper);transition:background .12s;}
+.tswitch .knob{position:absolute;top:50%;transform:translateY(-50%);left:8px;width:19px;height:19px;border-radius:50%;background:var(--line3);transition:left .12s;}
+.tswitch[aria-pressed="true"] .track{background:var(--dark);border-color:var(--dark);}
+.tswitch[aria-pressed="true"] .knob{left:31px;background:#fff;}
+.gf-row+.gf-row{margin-top:8px;}
+/* room pick, options variant: side by side pair, commit CTA inside each option */
+.rc-duo{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.frame-outer[data-device="mobile"] .rc-duo{grid-template-columns:1fr;}
+.rc-card{display:flex;flex-direction:column;align-items:flex-start;gap:7px;text-align:left;border:1px solid var(--line2);border-radius:9px;background:var(--paper);padding:12px;font-size:13px;color:var(--ink);}
+.rc-card b{font-size:13.5px;}
+button.rc-card:hover{background:var(--fill);}
+.rc-card[aria-pressed="true"]{border-color:var(--dark);box-shadow:inset 0 0 0 1.5px var(--dark);}
+/* CTA pinned to the card foot at a consistent height, so the pair always lines up */
+.rc-card .addunit{flex:none;width:100%;margin-top:auto;min-height:44px;padding:9px 10px;font-size:13px;}
+.rc-price{font-weight:800;white-space:nowrap;}
+
+/* ---- bottom utility row ---- */
+.util-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px;}
+.util-btn{display:inline-flex;align-items:center;gap:8px;}
+
+/* ============================================================ FOOTER */
+.footer{border-top:1px solid var(--line2);background:var(--paper);position:relative;z-index:8;}
+.ftop{display:flex;align-items:center;gap:18px;padding:12px 18px;}
+.ftot{display:flex;flex-direction:column;line-height:1.12;}
+.ftot-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+.ftot b{font-size:21px;color:var(--ink);}
+.finstruct{flex:1;font-size:12px;color:var(--ink2);min-width:0;}
+.factions{display:flex;gap:9px;}
+.savebtn{background:var(--paper);border:1px solid var(--line2);border-radius:8px;padding:10px 15px;font-weight:600;font-size:13px;color:var(--ink);}
+.savebtn:hover{background:var(--fill);}
+.continue{background:var(--dark);color:#fff;border:1px solid var(--dark);border-radius:8px;padding:10px 18px;font-weight:700;font-size:13px;}
+.continue[aria-disabled="true"]{opacity:.45;cursor:not-allowed;}
+.frame-outer[data-device="mobile"] .ftop{flex-wrap:wrap;gap:8px 12px;}
+.frame-outer[data-device="mobile"] .finstruct{order:3;width:100%;flex:0 0 100%;}
+.frame-outer[data-device="mobile"] .factions{order:2;margin-left:auto;}
+.frame-outer[data-device="mobile"] .continue{flex:1;}
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- DEV RAIL: every test variable lives here; the screen itself has no search editing -->
+  <div class="rail">
+    <span class="tlabel">Phase 3 &middot; Search &amp; Accommodation</span>
+
+    <!-- Scenario controls: set up who is booking and where -->
+    <span class="rail-head">Test setup</span>
+    <div class="seg-group"><span class="gl">Platform</span>
+      <div class="seg" role="group" aria-label="Platform"><button id="pfFam" aria-pressed="true">Family</button><button id="pfBBW" aria-pressed="false">BBW</button></div>
+    </div>
+    <div class="seg-group"><span class="gl">Device</span>
+      <div class="seg" role="group" aria-label="Device"><button id="dvMobile" aria-pressed="false">Mobile</button><button id="dvDesktop" aria-pressed="true">Desktop</button></div>
+    </div>
+    <div class="seg-group" id="tbResort"><span class="gl">Resort</span>
+      <div class="seg" role="group" aria-label="Resort"><button data-resortbtn="Minehead" aria-pressed="true">Minehead</button><button data-resortbtn="Bognor Regis" aria-pressed="false">Bognor</button><button data-resortbtn="Skegness" aria-pressed="false">Skegness</button></div>
+    </div>
+    <div class="seg-group" id="tbPreset"><span class="gl">Party preset</span>
+      <div class="seg" role="group" aria-label="Party preset"><button data-presetbtn="p1" aria-pressed="true">4</button><button data-presetbtn="p4" aria-pressed="false">2+8</button><button data-presetbtn="p3" aria-pressed="false">5 parties</button></div>
+    </div>
+    <div class="seg-group" id="tbGroup" hidden><span class="gl">Group size</span>
+      <div class="seg" role="group" aria-label="Group size"><button data-groupbtn="4" aria-pressed="false">4</button><button data-groupbtn="8" aria-pressed="true">8</button><button data-groupbtn="14" aria-pressed="false">14</button><button data-groupbtn="19" aria-pressed="false">19</button></div>
+    </div>
+
+    <!-- Design iterations under test: switch the pattern being reviewed -->
+    <div class="rail-variants">
+      <span class="rail-head">Design variants</span>
+      <div class="seg-group"><span class="gl">Category UX</span>
+        <div class="seg" role="group" aria-label="Category UX"><button data-catux="tiles" aria-pressed="true">Tiles</button><button data-catux="headings" aria-pressed="false">Headings</button><button data-catux="parties" aria-pressed="false" id="cxParties">Parties</button></div>
+      </div>
+      <div class="seg-group"><span class="gl">Room pick</span>
+        <div class="seg" role="group" aria-label="Room pick"><button data-roompick="addon" aria-pressed="true">Add-on</button><button data-roompick="options" aria-pressed="false">Options</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEVICE FRAME -->
+  <div class="main">
+  <div class="frame-outer" id="deviceHost" data-device="desktop">
+    <div class="frame">
+
+      <div class="scroll" id="scroll">
+
+        <div class="appbar">
+          <span class="ico" aria-hidden="true">&#9776;</span>
+          <span class="brand">Butlin's<small>90 YEARS</small></span>
+          <span class="icons" aria-hidden="true"><span class="ico">&#128100;</span><span class="ico">?</span><span class="ico">&#8942;</span></span>
+        </div>
+
+        <div class="chrome-mid">
+          <p class="step-title" id="stepTitle">Step 1 of 6: Accommodation</p>
+          <div class="step-row">
+            <a href="#" class="backlink" onclick="return false;">&lsaquo; Back</a>
+            <div class="dots" id="dots" role="list" aria-label="Booking progress, step 1"></div>
+          </div>
+          <div class="searchsum">
+            <span class="summ" id="searchSumm"></span>
+          </div>
+        </div>
+
+        <div class="body">
+          <div class="intro">
+            <h1 id="pageH1">Make yourself at home</h1>
+          </div>
+          <div class="content" id="content"></div>
+        </div>
+
+      </div>
+
+      <div class="footer" id="footer">
+        <div class="ftop">
+          <div class="ftot" aria-live="polite"><span class="ftot-label">Total price</span><b id="totalFig">&pound;0.00</b></div>
+          <p class="finstruct" id="footNote"></p>
+          <div class="factions">
+            <button class="savebtn" onclick="return false;">Save quote</button>
+            <button class="continue" id="continueBtn" aria-disabled="true">Continue</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </div>
+
+  <div class="sr-only" role="status" aria-live="polite" id="liveAnnounce"></div>
+</div>
+
+<script>
+/* ============================================================ DATA
+   Stock names, categories, sleeps and from-prices from the September 2026 BBW live
+   captures (Minehead, Bognor Regis and Skegness screenshots, 22 Jul). From-prices
+   are 3-night weekender per-unit figures; family-break pricing will differ, treat
+   as placeholder levels. Each item's smallest arrangement takes the capture
+   from-price; each size up adds roughly 35 percent, rounded to whole pounds
+   (derived, not live). Sleeps lists are trimmed to at most three arrangements.
+   Gold Caravans sleep up to 10 on live, which conflicts with the 8 per unit cap;
+   capped at 8 here, client asked.
+   Option rules from Sarah's example (22 Jul), single capture: ground floor (+25)
+   only confirmed on Comfort Rooms and Comfort Apartments, with the accessibility
+   note in the row body text; Gold Apartments have none, presumably all ground
+   floor; caravans have a pet friendly option (+60); lodges and studios have
+   neither. Ground floor availability on other room, hotel and apartment types is
+   unknown, client asked.
+   Rooms and Hotels are separate categories; what counts as a "room" is ambiguous,
+   client asked to define.
+   Open cot questions, build no behaviour until the client answers: do infants count
+   toward unit occupancy; which room types can take a cot; is bed sharing allowed
+   and for what ages. The only cot UI this iteration is the party-row infant note. */
+var MAX_BOOKING=19, MAX_UNIT=8, ROOM_PICK=25.00, GF_FEE=25.00, PET_FEE=60.00;
+
+/* glyph characters, decorative only (aria-hidden), rendered greyscale via CSS filter */
+var GL={person:"&#128100;",bed:"&#128719;",tag:"&#127991;",kitchen:"&#127859;",shower:"&#128703;",
+  lake:"&#127754;",wifi:"&#128246;",tv:"&#128250;",tree:"&#127794;",tea:"&#9749;",sofa:"&#128715;",pin:"&#128205;",house:"&#8962;",
+  access:"&#9855;",map:"&#128506;",paw:"&#128062;"};
+
+/* item ids only need to be unique within the active stock list */
+var FAMILY_STOCK={
+  "Minehead":[
+    { id:"sroom", name:"Standard Rooms", cat:"Rooms", rec:false, beds:"1 bedroom",
+      desc:"Great value base for your break.",
+      feats:[{g:GL.pin,t:"3 to 4 minutes from the Skyline Pavilion"},{g:GL.tea,t:"Tea and coffee making"}],
+      sleeps:[
+        {sleeps:2,bed:"Double",price:241,feats:["Great value base","Tea and coffee making"]},
+        {sleeps:4,bed:"Double + Bunk beds",price:325,feats:["Bunk beds for the kids"]},
+        {sleeps:5,bed:"Double + Bunk beds + Single",price:439,feats:["Bunk beds and a single bed"]}
+      ]},
+    { id:"crooms", name:"Comfort Rooms", cat:"Rooms", rec:false, beds:"1 bedroom", gfOpt:true,
+      desc:"Our comfy base in Ocean Point Village.",
+      feats:[{g:GL.pin,t:"Ocean Point Village"},{g:GL.shower,t:"Ensuite shower"},{g:GL.tea,t:"Tea and coffee making"}],
+      sleeps:[
+        {sleeps:2,bed:"Double",price:244,feats:["Ensuite shower","Tea and coffee making"]},
+        {sleeps:4,bed:"Double + Bunk beds",price:329,feats:["Bunk beds for the kids","Ensuite shower"]},
+        {sleeps:6,bed:"Double + 2 Bunk beds",price:444,feats:["Two sets of bunk beds","Ensuite shower"]}
+      ]},
+    { id:"cproom", name:"Comfort Plus Rooms", cat:"Rooms", rec:false, beds:"1 bedroom",
+      desc:"A touch more comfort, with housekeeping included.",
+      feats:[{g:GL.bed,t:"Towels and housekeeping included"},{g:GL.pin,t:"Early check-in from 3pm"}],
+      sleeps:[
+        {sleeps:2,bed:"Double",price:320,feats:["Towels and housekeeping","Ensuite shower"]},
+        {sleeps:4,bed:"Double + Bunk beds",price:432,feats:["Bunk beds for the kids","Towels and housekeeping"]},
+        {sleeps:6,bed:"Double + 2 Bunk beds",price:583,feats:["Two sets of bunk beds","Towels and housekeeping"]}
+      ]},
+    { id:"capts", name:"Comfort Apartments", cat:"Apartments", rec:false, beds:"2 bedrooms", gfOpt:true,
+      desc:"More space to spread out, with a separate living area.",
+      feats:[{g:GL.sofa,t:"Separate living area"},{g:GL.kitchen,t:"Kitchen with oven and microwave"},{g:GL.pin,t:"Oyster Bay and Atlantic Bay villages"}],
+      sleeps:[
+        {sleeps:4,bed:"Double + Twin",price:357,feats:["Twin room in second bedroom","Kitchen with oven and microwave"]},
+        {sleeps:6,bed:"Double + Twin + Sofa bed",price:482,feats:["Twin room in second bedroom","Sofa bed in living area"]},
+        {sleeps:7,bed:"Double + 2 Twin + Single",price:651,feats:["Two twin rooms","Single bed in living area"]}
+      ]},
+    { id:"cpapts", name:"Comfort Plus Apartments", cat:"Apartments", rec:true, beds:"2 to 3 bedrooms",
+      desc:"Our most popular pick, upgraded interiors and extra touches.",
+      feats:[{g:GL.bed,t:"Towels and housekeeping included"},{g:GL.tv,t:"Smart TV"},{g:GL.kitchen,t:"Kitchenette"}],
+      sleeps:[
+        {sleeps:4,bed:"Double + Twin",price:410,feats:["Twin room in second bedroom","Towels and housekeeping"]},
+        {sleeps:6,bed:"Double + 2 Twin",price:554,feats:["Two twin rooms","Towels and housekeeping"]},
+        {sleeps:8,bed:"Double + 2 Twin + Sofa bed",price:748,feats:["Two twin rooms","Sofa bed in living area"]}
+      ]},
+    { id:"chalet", name:"West Lakes Chalets", cat:"Chalets", rec:false, beds:"2 to 3 bedrooms",
+      desc:"Lakeside chalets away from the bustle, our premium stay.",
+      feats:[{g:GL.lake,t:"Lakeside setting"},{g:GL.tree,t:"Outdoor space"},{g:GL.pin,t:"6 to 7 minutes from the Skyline Pavilion"}],
+      sleeps:[
+        {sleeps:4,bed:"Double + Twin",price:500,feats:["Twin room in second bedroom","Lakeside terrace"]},
+        {sleeps:6,bed:"Double + 2 Twin",price:675,feats:["Two twin rooms","Lakeside terrace"]},
+        {sleeps:8,bed:"Double + 2 Twin + Sofa bed",price:911,feats:["Two twin rooms","Sofa bed in living area"]}
+      ]},
+    { id:"cpcarav", name:"Comfort Plus Caravans", cat:"Caravans", rec:false, beds:"2 to 3 bedrooms", petOpt:true,
+      desc:"Caravan Village stays with your own front door.",
+      feats:[{g:GL.kitchen,t:"Kitchen"},{g:GL.pin,t:"Located in our Caravan Village"},{g:GL.wifi,t:"Wifi"}],
+      sleeps:[
+        {sleeps:8,bed:"Double + 2 Twin + Sofa bed",price:529,feats:["Two twin rooms","Kitchen and dining space"]}
+      ]},
+    { id:"bayside", name:"Bayside Apartments", cat:"Apartments", rec:false, beds:"2 bedrooms",
+      desc:"Premium apartments right by the Skyline Pavilion.",
+      feats:[{g:GL.pin,t:"1 to 2 minutes from the Skyline Pavilion"},{g:GL.tv,t:"Smart TV"},{g:GL.wifi,t:"Wifi"}],
+      sleeps:[
+        {sleeps:4,bed:"Double + Twin",price:735,feats:["Twin room in second bedroom","Steps from the Skyline"]},
+        {sleeps:6,bed:"Double + Twin + Sofa bed",price:992,feats:["Twin room in second bedroom","Sofa bed in living area"]}
+      ]}
+  ],
+  "Bognor Regis":[
+    /* cotOk:false = no room for a cot; compatibility placeholder, client asked */
+    { id:"wave", name:"Wave Hotel Rooms", cat:"Hotels", rec:false, beds:"1 bedroom", cotOk:false,
+      desc:"Bold, bright hotel rooms in the Wave.",
+      feats:[{g:GL.pin,t:"2 to 4 minutes from the Skyline Pavilion"},{g:GL.shower,t:"Ensuite bathroom"},{g:GL.wifi,t:"Wifi"}],
+      sleeps:[
+        {sleeps:4,bed:"Double + Sofa bed",price:415,feats:["Sofa bed for the kids","Ensuite bathroom"]},
+        {sleeps:6,bed:"Double + Sofa bed + Bunk beds",price:560,feats:["Sleeps a family of six","Ensuite bathroom"]}
+      ]},
+    { id:"ocean", name:"Ocean Hotel Rooms", cat:"Hotels", rec:false, beds:"1 bedroom", cotOk:false,
+      desc:"Our smartest hotel stay, sleek and central.",
+      feats:[{g:GL.pin,t:"2 to 4 minutes from the Skyline Pavilion"},{g:GL.shower,t:"Ensuite bathroom"},{g:GL.bed,t:"Early check-in from 3pm"}],
+      sleeps:[
+        {sleeps:2,bed:"Double",price:536,feats:["Ensuite bathroom","Early check-in from 3pm"]},
+        {sleeps:4,bed:"Double + Sofa bed",price:724,feats:["Sofa bed for the kids","Ensuite bathroom"]}
+      ]},
+    { id:"studio", name:"Comfort Studios", cat:"Studios", rec:false, beds:"Open plan", cotOk:false,
+      desc:"A compact open plan stay with a proper kitchen.",
+      feats:[{g:GL.kitchen,t:"Kitchen with oven, fridge and toaster"},{g:GL.pin,t:"2 to 4 minutes from the Skyline Pavilion"}],
+      sleeps:[
+        {sleeps:4,bed:"Double + Sofa bed",price:435,feats:["Open plan living space","Kitchen with oven and fridge"]},
+        {sleeps:6,bed:"Double + Sofa bed + Bunk beds",price:587,feats:["Sleeps six in one space","Kitchen with oven and fridge"]}
+      ]},
+    { id:"cproom", name:"Comfort Plus Rooms", cat:"Rooms", rec:false, beds:"1 bedroom",
+      desc:"A touch more comfort, with housekeeping included.",
+      feats:[{g:GL.bed,t:"Towels and housekeeping included"},{g:GL.pin,t:"Early check-in from 3pm"}],
+      sleeps:[
+        {sleeps:2,bed:"Double",price:396,feats:["Towels and housekeeping","Ensuite shower"]},
+        {sleeps:4,bed:"Double + Bunk beds",price:535,feats:["Bunk beds for the kids","Towels and housekeeping"]},
+        {sleeps:6,bed:"Double + 2 Bunk beds",price:722,feats:["Two sets of bunk beds","Towels and housekeeping"]}
+      ]},
+    { id:"crooms", name:"Comfort Rooms", cat:"Rooms", rec:false, beds:"1 bedroom", gfOpt:true,
+      desc:"Our comfy base close to the action.",
+      feats:[{g:GL.pin,t:"2 to 4 minutes from the Skyline Pavilion"},{g:GL.shower,t:"Ensuite shower"},{g:GL.tea,t:"Tea and coffee making"}],
+      sleeps:[
+        {sleeps:2,bed:"Double",price:425,feats:["Ensuite shower","Tea and coffee making"]},
+        {sleeps:4,bed:"Double + Bunk beds",price:574,feats:["Bunk beds for the kids","Ensuite shower"]},
+        {sleeps:6,bed:"Double + 2 Bunk beds",price:775,feats:["Two sets of bunk beds","Ensuite shower"]}
+      ]},
+    { id:"capts", name:"Comfort Apartments", cat:"Apartments", rec:false, beds:"2 bedrooms", gfOpt:true,
+      desc:"More space to spread out, with a separate living area.",
+      feats:[{g:GL.sofa,t:"Separate living area"},{g:GL.kitchen,t:"Kitchen with oven and microwave"},{g:GL.wifi,t:"Wifi"}],
+      sleeps:[
+        {sleeps:4,bed:"Double + Twin",price:476,feats:["Twin room in second bedroom","Kitchen with oven and microwave"]},
+        {sleeps:6,bed:"Double + Twin + Sofa bed",price:643,feats:["Twin room in second bedroom","Sofa bed in living area"]},
+        {sleeps:7,bed:"Double + 2 Twin + Single",price:868,feats:["Two twin rooms","Single bed in living area"]}
+      ]},
+    { id:"cpapts", name:"Comfort Plus Apartments", cat:"Apartments", rec:false, beds:"2 bedrooms",
+      desc:"Upgraded interiors and extra touches.",
+      feats:[{g:GL.bed,t:"Towels and housekeeping included"},{g:GL.tv,t:"Smart TV"},{g:GL.kitchen,t:"Kitchenette"}],
+      sleeps:[
+        {sleeps:4,bed:"Double + Twin",price:493,feats:["Twin room in second bedroom","Towels and housekeeping"]},
+        {sleeps:6,bed:"Double + Twin + Sofa bed",price:666,feats:["Twin room in second bedroom","Sofa bed in living area"]}
+      ]}
+  ],
+  "Skegness":[
+    { id:"crooms", name:"Comfort Rooms", cat:"Rooms", rec:false, beds:"1 bedroom", gfOpt:true,
+      desc:"Our budget conscious base for your break.",
+      feats:[{g:GL.pin,t:"5 to 10 minutes from the Skyline Pavilion"},{g:GL.shower,t:"Ensuite shower"},{g:GL.tea,t:"Tea and coffee making"}],
+      sleeps:[
+        {sleeps:2,bed:"Double",price:213,feats:["Ensuite shower","Tea and coffee making"]},
+        {sleeps:4,bed:"Double + Bunk beds",price:288,feats:["Bunk beds for the kids","Ensuite shower"]},
+        {sleeps:7,bed:"Double + 2 Bunk beds + Single",price:389,feats:["Two sets of bunk beds","Single bed"]}
+      ]},
+    { id:"capts", name:"Comfort Apartments", cat:"Apartments", rec:false, beds:"2 bedrooms", gfOpt:true,
+      desc:"More space to spread out, with a separate living area.",
+      feats:[{g:GL.sofa,t:"Separate living area"},{g:GL.kitchen,t:"Kitchen with oven and microwave"},{g:GL.pin,t:"5 to 10 minutes from the Skyline Pavilion"}],
+      sleeps:[
+        {sleeps:4,bed:"Double + Twin",price:306,feats:["Twin room in second bedroom","Kitchen with oven and microwave"]},
+        {sleeps:6,bed:"Double + Twin + Sofa bed",price:413,feats:["Twin room in second bedroom","Sofa bed in living area"]}
+      ]},
+    { id:"goldapts", name:"Gold Apartments", cat:"Apartments", rec:false, beds:"2 bedrooms",
+      /* no ground floor option, presumably all ground floor (Sarah's example, unconfirmed) */
+      desc:"Upgraded apartments with extra touches.",
+      feats:[{g:GL.bed,t:"Upgraded beds"},{g:GL.pin,t:"Early check-in from 3pm"},{g:GL.wifi,t:"Wifi"}],
+      sleeps:[
+        {sleeps:4,bed:"Double + Twin",price:472,feats:["Twin room in second bedroom","Upgraded beds"]},
+        {sleeps:6,bed:"Double + Twin + Sofa bed",price:637,feats:["Twin room in second bedroom","Sofa bed in living area"]}
+      ]},
+    { id:"goldcarav", name:"Gold Caravans", cat:"Caravans", rec:false, beds:"2 to 3 bedrooms", petOpt:true,
+      /* live shows sleeps 6, 8 or 10; the 10 conflicts with the 8 per unit cap, capped here, client asked */
+      desc:"Caravan Village stays with room for the whole crew.",
+      feats:[{g:GL.kitchen,t:"Kitchen"},{g:GL.pin,t:"Located in our Caravan Village"},{g:GL.wifi,t:"Wifi"}],
+      sleeps:[
+        {sleeps:6,bed:"Double + 2 Twin",price:655,feats:["Two twin rooms","Kitchen and dining space"]},
+        {sleeps:8,bed:"Double + 2 Twin + Sofa bed",price:884,feats:["Two twin rooms","Sofa bed in living area"]}
+      ]},
+    { id:"platcarav", name:"Platinum Caravans", cat:"Caravans", rec:false, beds:"2 to 3 bedrooms", petOpt:true,
+      desc:"Our upgraded caravans in the Caravan Village.",
+      feats:[{g:GL.kitchen,t:"Kitchen"},{g:GL.pin,t:"Located in our Caravan Village"},{g:GL.tv,t:"Smart TV"}],
+      sleeps:[
+        {sleeps:6,bed:"Double + 2 Twin",price:673,feats:["Two twin rooms","Kitchen and dining space"]},
+        {sleeps:8,bed:"Double + 2 Twin + Sofa bed",price:909,feats:["Two twin rooms","Sofa bed in living area"]}
+      ]},
+    { id:"platplus", name:"Platinum Plus Caravans", cat:"Caravans", rec:false, beds:"2 to 3 bedrooms", petOpt:true,
+      desc:"Top of the range, with a veranda to unwind on.",
+      feats:[{g:GL.tree,t:"Veranda with outdoor furniture"},{g:GL.kitchen,t:"Kitchen"},{g:GL.tv,t:"Smart TV"}],
+      sleeps:[
+        {sleeps:6,bed:"Double + 2 Twin",price:910,feats:["Two twin rooms","Veranda with outdoor furniture"]},
+        {sleeps:8,bed:"Double + 2 Twin + Sofa bed",price:1229,feats:["Two twin rooms","Sofa bed in living area"]}
+      ]},
+    { id:"lodge", name:"Premium Lodges (Maple Walk)", cat:"Lodges", rec:false, beds:"2 to 3 bedrooms",
+      desc:"Premium lodges with space inside and out.",
+      feats:[{g:GL.kitchen,t:"Full kitchen"},{g:GL.tree,t:"Private deck"},{g:GL.pin,t:"5 minutes from the Skyline Pavilion"}],
+      sleeps:[
+        {sleeps:4,bed:"Double + Twin",price:631,feats:["Twin room","Private deck"]},
+        {sleeps:6,bed:"Double + 2 Twin",price:852,feats:["Two twin rooms","Kitchen and dining space"]}
+      ]}
+  ]
+};
+
+/* BBW runs the Minehead event, so it sells the Minehead line-up. BBW Comfort Rooms
+   keep the sleeps-2 price at 299 because Phase 2 chains from it (the Sept capture
+   shows 244 for this event; prices vary by event). */
+var BBW_CROOMS={ id:"crooms", name:"Comfort Rooms", cat:"Rooms", rec:true, beds:"1 bedroom", gfOpt:true,
+  desc:"A comfy base for the weekend, close to the venues.",
+  feats:[{g:GL.pin,t:"Late-night friendly location"},{g:GL.shower,t:"Ensuite shower"},{g:GL.tea,t:"Tea and coffee making"}],
+  sleeps:[
+    {sleeps:2,bed:"Double",price:299,feats:["Ensuite shower","Shortest walk to the venues"]},
+    {sleeps:4,bed:"Double + Bunk beds",price:404,feats:["Bunk beds","Ensuite shower"]},
+    {sleeps:6,bed:"Double + 2 Bunk beds",price:545,feats:["Two sets of bunk beds","Ensuite shower"]}
+  ]};
+var BBW_STOCK=FAMILY_STOCK["Minehead"].map(function(s){ return s.id==="crooms"?BBW_CROOMS:s; });
+
+var EVENT={ name:"Back To The 2000s", sub:"Minehead &middot; 19 to 22 Jun 2026 &middot; 3 nights" };
+
+/* Family party presets; parties are defined upstream of this screen, the toolbar stands in for that.
+   The 4-guest party includes 1 infant so the cot flag renders; 8+6+5 is the 19 guest booking cap. */
+/* cot type comes from the search step; presets carry it so the labels render */
+var PRESETS={
+  p1:{ label:"1 party of 4", parties:[{adults:2,children:1,toddlers:0,infants:1,cot:"Hired cot"}] },
+  /* 5 parties, 5+4+4+3+3 = 19: hits the booking cap and exercises the ledger window */
+  p3:{ label:"5 parties", parties:[
+    {adults:2,children:2,toddlers:1,infants:0},
+    {adults:2,children:1,toddlers:0,infants:1,cot:"Own cot"},
+    {adults:2,children:2,toddlers:0,infants:0},
+    {adults:2,children:1,toddlers:0,infants:0},
+    {adults:1,children:2,toddlers:0,infants:0}
+  ] },
+  /* small party first, big party second: the ordering scenario the live site handles
+     with a post-hoc popup; here it must resolve upfront via booking-level feasibility */
+  p4:{ label:"2 parties, 2+8", parties:[{adults:2,children:0,toddlers:0,infants:0},{adults:2,children:4,toddlers:1,infants:1,cot:"Own cot"}] }
+};
+
+/* singular nouns for "Choose your {noun}" headings in the parties layout */
+var CAT_NOUN={Rooms:"room",Hotels:"hotel room",Apartments:"apartment",Studios:"studio",Chalets:"chalet",Caravans:"caravan",Lodges:"lodge"};
+
+/* ============================================================ STATE */
+function presetParties(id){ return JSON.parse(JSON.stringify(PRESETS[id].parties)); }
+var state={
+  platform:"family", device:"desktop",
+  resort:"Minehead", presetId:"p1",
+  parties:presetParties("p1"),
+  alloc:[null],                    /* Family, per party: {stockId,sleeps,guests,pickRoom,gf} or null */
+  bbwGuests:8,
+  bbwUnits:[],                     /* BBW: [{stockId,sleeps,guests,pickRoom,gf}] */
+  basis:"unit",
+  catUX:"tiles",                   /* 'tiles', 'headings' (grouped list) or 'parties' (dining-pattern sections, Family multi only) */
+  ledgerOpen:false,                /* ledger panel: show all rows instead of the 3-row window */
+  roomPick:"addon",                /* 'addon' (opt-in extra, no Let us choose) or 'options' (live-style pair) */
+  catTile:null,                    /* tiles view only: selected tile; null means cheapest feasible */
+  secOpen:{},                      /* headings view only: per-category manual open/collapse overrides */
+  flash:null,                      /* transient add feedback: {stockId,unit,pick}, cleared after 1.5s */
+  expand:null                      /* open in-card expansion: {stockId,arr,gf,pickRoom,guests,boundUnit}
+                                      boundUnit!=null means the expansion edits that unit live (added state) */
+};
+
+/* ============================================================ HELPERS */
+function gbp(n){ return "£"+n.toFixed(2); }
+function gbp0(n){ return "£"+n; }
+function isFam(){ return state.platform==="family"; }
+function stock(){ return isFam()?FAMILY_STOCK[state.resort]:BBW_STOCK; }
+function stockById(id){ var s=stock(); for(var i=0;i<s.length;i++) if(s[i].id===id) return s[i]; return null; }
+function arrBy(s,sl){ for(var i=0;i<s.sleeps.length;i++) if(s.sleeps[i].sleeps===sl) return s.sleeps[i]; return s.sleeps[0]; }
+function minS(s){ return s.sleeps[0].sleeps; }
+function maxS(s){ return s.sleeps[s.sleeps.length-1].sleeps; }
+function lowPrice(s){ var m=s.sleeps[0].price; for(var i=1;i<s.sleeps.length;i++) if(s.sleeps[i].price<m) m=s.sleeps[i].price; return m; }
+function partyGuests(p){ return p.adults+p.children+p.toddlers+p.infants; }
+function totalGuests(){ if(!isFam()) return state.bbwGuests; var n=0; state.parties.forEach(function(p){ n+=partyGuests(p); }); return n; }
+function stepsTotal(){ return isFam()?6:5; }
+function announce(t){ document.getElementById('liveAnnounce').textContent=t; }
+function plural(n,w){ return n+" "+w+(n===1?"":"s"); }
+function allAllocated(){ return state.alloc.every(function(a){ return !!a; }); }
+function firstUnallocated(){ for(var i=0;i<state.alloc.length;i++) if(!state.alloc[i]) return i; return -1; }
+function placedBBW(exclIdx){
+  var n=0; state.bbwUnits.forEach(function(u,i){ if(i!==exclIdx) n+=u.guests; }); return n;
+}
+function spareBedsBBW(){
+  var n=0; state.bbwUnits.forEach(function(u){ if(u.sleeps>u.guests) n+=u.sleeps-u.guests; }); return n;
+}
+function lockedCategory(){
+  if(isFam()){
+    /* the same-category rule stops units MIXING; a single-unit booking has nothing to
+       mix, so it never locks (replacing the one unit across categories stays legal) */
+    if(state.parties.length<2) return null;
+    for(var i=0;i<state.alloc.length;i++){ if(state.alloc[i]) return stockById(state.alloc[i].stockId).cat; }
+    return null;
+  }
+  return state.bbwUnits.length?stockById(state.bbwUnits[0].stockId).cat:null;
+}
+/* allocation changes reset manual view overrides so lock defaults apply cleanly */
+function allocChanged(){ state.secOpen={}; }
+function unitPrice(u){
+  var a=arrBy(stockById(u.stockId),u.sleeps);
+  return a.price+(u.pickRoom?ROOM_PICK:0)+(u.gf?GF_FEE:0)+(u.pet?PET_FEE:0);
+}
+function grandTotal(){
+  var t=0;
+  if(isFam()) state.alloc.forEach(function(a){ if(a) t+=unitPrice(a); });
+  else state.bbwUnits.forEach(function(u){ t+=unitPrice(u); });
+  return t;
+}
+function isDone(){
+  return isFam()?allAllocated():(state.bbwUnits.length>0&&placedBBW(-1)>=state.bbwGuests);
+}
+function summText(){
+  if(isFam()){
+    var n=totalGuests(), pn=state.parties.length;
+    /* a booking of one party does not need the party mentioned */
+    return '<b>'+state.resort+'</b> | 20 to 24 Jul 2026 (4 nights) | <b>'+plural(n,'guest')+(pn>1?', '+pn+' parties':'')+'</b>';
+  }
+  return '<b>'+EVENT.name+'</b> | '+EVENT.sub+' | <b>'+plural(state.bbwGuests,'guest')+'</b>';
+}
+
+/* Family targeting: a card targets the first unallocated party it can actually sleep.
+   Single-unit Family always targets the one party (adding elsewhere replaces the choice).
+   Parties mode is strictly ordered: the current section's party is the only target. */
+function cardTarget(s){
+  if(state.parties.length===1) return itemFits(s,state.parties[0])?0:-1;
+  if(state.catUX==="parties"){
+    var cur=firstUnallocated();
+    return (cur>=0&&itemFits(s,state.parties[cur]))?cur:-1;
+  }
+  for(var i=0;i<state.alloc.length;i++){
+    if(!state.alloc[i]&&itemFits(s,state.parties[i])) return i;
+  }
+  return -1;
+}
+function cardDead(s){ /* fits no available target: banner + sort to the bottom */
+  if(!isFam()) return false;
+  if(state.parties.length===1) return !itemFits(s,state.parties[0]);
+  if(state.catUX==="parties"){
+    var cur=firstUnallocated();
+    return cur>=0&&!itemFits(s,state.parties[cur]);
+  }
+  var un=[]; state.alloc.forEach(function(a,i){ if(!a) un.push(i); });
+  if(!un.length) return false;
+  return !un.some(function(i){ return itemFits(s,state.parties[i]); });
+}
+/* why is this card unavailable? Used for the banner strip across the card top. */
+function deadReason(s){
+  var tp=null; /* the party the message should reference */
+  if(state.parties.length===1) tp=state.parties[0];
+  else if(state.catUX==="parties"){ var cur=firstUnallocated(); tp=cur>=0?state.parties[cur]:null; }
+  if(tp){
+    if(tp.infants>0&&s.cotOk===false&&partyGuests(tp)<=maxS(s)) return 'No room for cot';
+    return 'Sleeps up to '+maxS(s)+', your party is '+partyGuests(tp)+'. Choose larger accommodation.';
+  }
+  /* multi-unit tiles/headings: no single party to name */
+  var sizeOk=false;
+  state.alloc.forEach(function(a,i){ if(!a&&partyGuests(state.parties[i])<=maxS(s)) sizeOk=true; });
+  if(sizeOk&&s.cotOk===false) return 'No room for cot';
+  return 'Sleeps up to '+maxS(s)+'. Choose larger accommodation.';
+}
+
+/* ============================================================ CATEGORY TILES
+   Single treatment on both platforms, matching the tested dining pattern: tiles first,
+   options for the selected category revealed below. No All tile, cheapest preselected.
+   Bognor renders two tiles; watch in testing whether the step feels thin there.
+   NOTE: the live site's detail-page copy says multi-party bookings CAN mix accommodation
+   types, which contradicts the same-category rule; flagged with client, treat
+   single-category as correct until they answer. */
+function catList(){
+  var out=[]; stock().forEach(function(s){ if(out.indexOf(s.cat)<0) out.push(s.cat); }); return out;
+}
+function catCount(c){ return stock().filter(function(s){ return s.cat===c; }).length; }
+function catLow(c){
+  var m=null; stock().forEach(function(s){ if(s.cat===c&&(m===null||lowPrice(s)<m)) m=lowPrice(s); }); return m;
+}
+function catLowPP(c){ /* cheapest per-person figure in the category (price over sleeps, BBW) */
+  var m=null;
+  stock().forEach(function(s){
+    if(s.cat!==c) return;
+    s.sleeps.forEach(function(a){ var v=a.price/a.sleeps; if(m===null||v<m) m=v; });
+  });
+  return m;
+}
+/* a party with an infant also needs an item that can take a cot */
+function itemFits(s,p){
+  return partyGuests(p)<=maxS(s)&&(p.infants===0||s.cotOk!==false);
+}
+function famFitPrice(c,p){ /* cheapest arrangement in category c that fits party p; null if none */
+  var g=partyGuests(p), best=null;
+  stock().forEach(function(s){
+    if(s.cat!==c) return;
+    if(p.infants>0&&s.cotOk===false) return;
+    s.sleeps.forEach(function(a){ if(a.sleeps>=g&&(best===null||a.price<best)) best=a.price; });
+  });
+  return best;
+}
+/* booking-level feasibility, evaluated upfront so users never discover dead ends card
+   by card (the live site's post-hoc "allocate all parties" popup is the anti-pattern) */
+function catFeasibility(c){
+  if(!isFam()) return {ok:true};
+  var total=0;
+  for(var i=0;i<state.parties.length;i++){
+    var p=state.parties[i], b=famFitPrice(c,p);
+    if(b===null){
+      /* distinguish a cot problem from a size problem: the copy differs */
+      var sizeFit=stock().some(function(s){ return s.cat===c&&partyGuests(p)<=maxS(s); });
+      return {ok:false,bad:partyGuests(p),badIdx:i,reason:sizeFit?'cot':'size'};
+    }
+    total+=b;
+  }
+  return {ok:true,total:total};
+}
+/* personalised: name the party that does not fit, since it may not be the one choosing */
+function nofitText(f){
+  if(f.reason==='cot')
+    return state.parties.length>1?'No cot for Party '+(f.badIdx+1):'No room for a cot';
+  return state.parties.length>1
+    ? 'Won’t fit Party '+(f.badIdx+1)+' ('+plural(f.bad,'guest')+')'
+    : 'Won’t fit your party of '+f.bad;
+}
+function defaultCatTile(){
+  var lock=lockedCategory(); if(lock) return lock;
+  var cats=catList(), best=null, bestV=null, multi=isFam()&&state.parties.length>1;
+  cats.forEach(function(c){
+    var f=catFeasibility(c);
+    if(!f.ok) return;
+    var v=multi?f.total:catLow(c);
+    if(bestV===null||v<bestV){ bestV=v; best=c; }
+  });
+  return best||cats[0];
+}
+function effCat(){
+  var lock=lockedCategory(); if(lock) return lock;
+  var cats=catList();
+  if(state.catTile&&cats.indexOf(state.catTile)>=0&&catFeasibility(state.catTile).ok) return state.catTile;
+  return defaultCatTile();
+}
+function catAllocCount(c){
+  if(isFam()) return state.alloc.filter(function(a){ return a&&stockById(a.stockId).cat===c; }).length;
+  return state.bbwUnits.filter(function(u){ return stockById(u.stockId).cat===c; }).length;
+}
+/* basis-aware category from-price, shared by tiles and section headings so the
+   price basis toggle drives both and never disagrees with the cards */
+function catPriceLine(c,f,multi){
+  if(!f.ok) return '';
+  if(state.basis==="pp"){
+    var ppv=multi?f.total/totalGuests():(isFam()?catLow(c)/partyGuests(state.parties[0]):catLowPP(c));
+    return '<span class="ct-from">'+(multi?state.parties.length+' units from ':'from ')+gbp(ppv)+' pp</span>';
+  }
+  return multi
+    ? '<span class="ct-from">'+state.parties.length+' units from '+gbp0(f.total)+'</span>'
+    : '<span class="ct-from">from '+gbp0(catLow(c))+'</span>';
+}
+function categoryUI(){
+  var lock=lockedCategory(), cats=catList(), eff=effCat(), multi=isFam()&&state.parties.length>1;
+  var tiles=cats.map(function(c){
+    var f=catFeasibility(c);
+    var lockDis=!!lock&&c!==lock;
+    var priceLine=catPriceLine(c,f,multi);
+    var nofit=f.ok?'':'<span class="ct-nofit">'+nofitText(f)+'</span>';
+    var x=catAllocCount(c);
+    var tick=x>0?'<span class="ct-tick" aria-hidden="true">✓</span>':'';
+    var countLine=x>0?'<span class="ct-count">'+(multi?x+' of '+plural(state.parties.length,'unit'):plural(x,'unit'))+'</span>':'';
+    var attrs=' data-cattile="'+c+'"';
+    if(lockDis) attrs+=' data-lockdis aria-disabled="true"';
+    else if(!f.ok) attrs+=' data-nofit aria-disabled="true"';
+    return '<button type="button" class="ctile"'+attrs+' aria-pressed="'+(eff===c?'true':'false')+'">'+tick+
+      '<b>'+c+'</b><span>'+plural(catCount(c),'option')+'</span>'+priceLine+nofit+countLine+'</button>';
+  }).join('');
+  var line=lock?'<p class="cat-lockline">Showing '+lock+' only: all units on one booking must be the same category.</p>':'';
+  return '<div class="cat-tiles" role="group" aria-label="Choose a category">'+tiles+'</div>'+line;
+}
+function sortByFit(list){
+  if(!isFam()) return list;
+  /* cards that fit no remaining party sort to the bottom */
+  var fit=[], dead=[];
+  list.forEach(function(s){ (cardDead(s)?dead:fit).push(s); });
+  return fit.concat(dead);
+}
+function visibleStock(){ /* tiles view: only the selected category's cards */
+  var eff=effCat();
+  return sortByFit(stock().filter(function(s){ return s.cat===eff; }));
+}
+
+/* ============================================================ GROUPED LAYOUT (headings variant)
+   All categories in one scrollable list, cards under collapsible category headings.
+   Default: everything expanded. Locked-out and no-fit sections auto-collapse into
+   their heading (name, option count, from-price, reason) but stay peekable: expanding
+   shows greyed, non-interactive cards for reference. */
+function secDefaultOpen(inert){ return !inert; }
+function secIsOpen(c,inert){
+  return state.secOpen.hasOwnProperty(c)?state.secOpen[c]:secDefaultOpen(inert);
+}
+function groupedUI(){
+  var lock=lockedCategory(), multi=isFam()&&state.parties.length>1;
+  /* single-party bookings can never lock, so the accordion controls add nothing:
+     headings render static and every section stays open */
+  var single=isFam()&&state.parties.length===1;
+  return catList().map(function(c){
+    var f=catFeasibility(c);
+    var lockDis=!!lock&&c!==lock;
+    var inert=lockDis||!f.ok;
+    var open=single?true:secIsOpen(c,inert);
+    /* headings show the single-unit from-price (booking-level totals proved noisy
+       here; they remain on the tiles view). Per-person basis keeps its booking-level
+       maths, since a per-person figure off one arbitrary unit would mislead. */
+    var priceLine=state.basis==="unit"
+      ? '<span class="ct-from">from '+gbp0(catLow(c))+'</span>'
+      : catPriceLine(c,f,multi);
+    var nofit=f.ok?'':'<span class="ct-nofit">'+nofitText(f)+'</span>';
+    var lockNote=lockDis?'<span class="ct-nofit">Same category only</span>':'';
+    var x=catAllocCount(c);
+    var count=x>0?'<span class="ct-count">✓ '+(multi?x+' of '+plural(state.parties.length,'unit'):plural(x,'unit'))+'</span>':'';
+    var body='<div class="sec-body" id="sec-'+c+'"'+(open?'':' hidden')+'>'+
+      (open?sortByFit(stock().filter(function(s){ return s.cat===c; })).map(function(s){
+        return accomCard(s,inert?(lockDis?{lock:true}:{lock:false,text:nofitText(f)}):null);
+      }).join(''):'')+'</div>';
+    var headInner='<span class="sec-main"><b>'+c+'</b><span class="sec-sub">'+plural(catCount(c),'option')+'</span></span>'+
+      count+nofit+lockNote+priceLine;
+    var headEl=single
+      ? '<div class="sec-head static">'+headInner+'</div>'
+      : '<button type="button" class="sec-head" data-sec="'+c+'" aria-expanded="'+(open?'true':'false')+'" aria-controls="sec-'+c+'">'+headInner+'<span class="chev" aria-hidden="true"></span></button>';
+    return '<section class="cat-sec'+(inert?' is-dim':'')+'">'+headEl+body+'</section>';
+  }).join('');
+}
+
+/* ============================================================ PARTIES LAYOUT (Family only)
+   Third Category UX treatment following the tested dining pattern: one section per
+   party in fixed order. Party 1 carries the category tiles and its selection defines
+   the group category; later parties choose within it ("Choose your {noun}"). No
+   group panel: structure is status. NOTE for testing: the dining pattern signals
+   independent per-party choices, which the same-category rule inverts; watch whether
+   constrained parties read the missing tiles as broken. */
+function partyLabel(p){
+  var b=[];
+  if(p.adults) b.push(p.adults+' adult'+(p.adults===1?'':'s'));
+  if(p.children) b.push(p.children+' '+(p.children===1?'child':'children'));
+  if(p.toddlers) b.push(p.toddlers+' toddler'+(p.toddlers===1?'':'s'));
+  if(p.infants) b.push(p.infants+' infant'+(p.infants===1?'':'s'));
+  return b.join(', ');
+}
+function partyChoiceBody(i,lock){
+  if(!lock){
+    /* this party defines the category for the whole group */
+    return categoryUI()+
+      visibleStock().map(function(s){ return accomCard(s); }).join('');
+  }
+  var noun=CAT_NOUN[lock]||lock.toLowerCase();
+  var tip='<span class="infotip"><button type="button" class="infotip-btn" aria-label="Why can only I choose this type?">i</button>'+
+    '<span class="infotip-pop" role="tooltip">Everyone in your group books the same accommodation type. To choose a different type, reset your choices and start again.</span></span>';
+  return '<div class="pc-headrow"><h3 class="pc-heading">Choose your '+noun+'</h3>'+tip+'</div>'+
+    visibleStock().map(function(s){ return accomCard(s); }).join('');
+}
+function partiesUI(){
+  var lock=lockedCategory(), cur=firstUnallocated();
+  return state.parties.map(function(p,i){
+    var a=state.alloc[i], cls='', body='';
+    /* cot visibility only; the type comes from the search step */
+    var sub=partyLabel(p)+(p.infants>0?' &middot; '+(p.cot||'Cot needed'):'');
+    var main='<span class="ph-main"><b>Party '+(i+1)+'</b><span class="ph-sub">'+sub+'</span></span>';
+    var head;
+    if(a){
+      cls=' is-done';
+      var s=stockById(a.stockId);
+      var pulse=(state.flash&&state.flash.unit===i)?' flash':'';
+      head='<div class="party-head'+pulse+'"><span class="ltick done" aria-hidden="true">✓</span>'+main+
+        '<span class="ph-choice">'+s.name+' &middot; '+gbp(unitPrice(a))+'</span>'+
+        '<button type="button" class="up-edit" data-edit="'+i+'">Edit</button>'+
+        '<button type="button" class="up-remove" data-unalloc="'+i+'">Remove</button></div>';
+      /* editing this party reopens its card, bound, inside the section */
+      if(state.expand&&state.expand.boundUnit===i&&stockById(state.expand.stockId))
+        body='<div class="party-body">'+accomCard(stockById(state.expand.stockId))+'</div>';
+    } else if(i===cur){
+      cls=' is-current';
+      head='<div class="party-head"><span class="ltick cur" aria-hidden="true">'+(i+1)+'</span>'+main+
+        '<span class="ph-choice now">Choosing now</span></div>';
+      body='<div class="party-body">'+partyChoiceBody(i,lock)+'</div>';
+    } else {
+      cls=' is-upcoming';
+      head='<div class="party-head"><span class="ltick" aria-hidden="true">'+(i+1)+'</span>'+main+
+        '<span class="ph-choice dim">Up next</span></div>';
+    }
+    return '<section class="party-sec'+cls+'">'+head+body+'</section>';
+  }).join('');
+}
+
+/* ============================================================ RESULTS */
+/* the price-basis toggle drives tile from-prices as well as card prices. In tiles
+   view it shares a header row with the "Accommodation types" heading. */
+function resultsHead(withHead){
+  return '<div class="res-tools'+(withHead?' with-head':'')+'">'+
+    (withHead?'<h2 class="rt-head">Accommodation types</h2>':'')+
+    '<div class="basis-seg" role="group" aria-label="Price basis"><button type="button" data-basis="unit" aria-pressed="'+(state.basis==="unit"?'true':'false')+'">Price per unit</button><button type="button" data-basis="pp" aria-pressed="'+(state.basis==="pp"?'true':'false')+'">Price per person</button></div></div>';
+}
+
+function cardPrice(s,exp){
+  var val, from=true, arrSl=null;
+  if(exp&&exp.arr){
+    var a=arrBy(s,exp.arr);
+    val=a.price+(exp.gf?GF_FEE:0)+(exp.pet?PET_FEE:0)+(exp.pickRoom?ROOM_PICK:0); from=false; arrSl=a.sleeps;
+  } else if(isFam()&&state.parties.length===1&&state.alloc[0]&&state.alloc[0].stockId===s.id){
+    val=unitPrice(state.alloc[0]); from=false; arrSl=state.alloc[0].sleeps;
+  } else {
+    val=lowPrice(s); arrSl=minS(s);
+  }
+  var n;
+  if(isFam()){
+    var t=(exp&&exp.boundUnit!=null)?exp.boundUnit:cardTarget(s);
+    n=partyGuests(state.parties[t>=0?t:0]);
+  } else n=arrSl;
+  if(state.basis==="pp")
+    return '<div class="price">'+(from?'<span class="from">from</span>':'')+'<span class="now">'+gbp(val/n)+'</span><span class="pp">per person, based on '+n+' guests</span></div>';
+  return '<div class="price">'+(from?'<span class="from">from</span>':'')+'<span class="now">'+gbp(val)+'</span><span class="pp">per unit, whole break</span></div>';
+}
+
+/* in-card expansion: arrangements, then location preferences, then room choice, then the
+   one action: Add this room (Family) / Add this unit (BBW), with an added state per unit */
+function expansion(s,exp){
+  var g=null, tgt=-1;
+  if(isFam()){
+    tgt=exp.boundUnit!=null?exp.boundUnit:cardTarget(s);
+    g=tgt>=0?partyGuests(state.parties[tgt]):null;
+  }
+  var remaining=isFam()?null:state.bbwGuests-placedBBW(exp.boundUnit!=null?exp.boundUnit:-1);
+
+  /* BBW tiles are not preselected; the SELECTED tile becomes a second state carrying
+     the guests stepper (rendered as a div, not a button: no nested controls) */
+  var tiles=s.sleeps.map(function(a){
+    var dis=isFam()&&g!==null&&a.sleeps<g;
+    var sel=exp.arr===a.sleeps;
+    var inner='<span class="arr-occ"><span class="mglyph" aria-hidden="true">'+GL.person+'</span>'+a.sleeps+'</span>'+
+      '<b class="arr-bed">'+a.bed+'</b>'+
+      '<span class="arr-price">'+gbp(a.price)+'</span>'+
+      (dis?'<span class="arr-small">Too small for this party</span>':'');
+    if(!isFam()&&sel){
+      var maxG=Math.min(a.sleeps,exp.boundUnit!=null?remaining:Math.max(remaining,1),MAX_UNIT);
+      /* in-progress choice: the summary is a button that unselects; a bound unit keeps it static */
+      var head=exp.boundUnit==null
+        ? '<button type="button" class="arr-clear" data-arrclear aria-label="Selected, sleeps '+a.sleeps+'. Tap to unselect">'+inner+'</button>'
+        : inner;
+      return '<div class="arr-tile sel" role="group" aria-label="Selected arrangement, sleeps '+a.sleeps+'">'+head+
+        '<div class="tile-step"><span class="who-label">Guests in this unit</span>'+
+        '<div class="stepper"><button type="button" class="step-btn" data-gstep="-1"'+(exp.guests<=1?' aria-disabled="true"':'')+' aria-label="Decrease guests in this unit">−</button>'+
+        '<span class="qty">'+exp.guests+'</span>'+
+        '<button type="button" class="step-btn" data-gstep="1"'+(exp.guests>=maxG?' aria-disabled="true"':'')+' aria-label="Increase guests in this unit">+</button></div></div>'+
+        '</div>';
+    }
+    return '<button type="button" class="arr-tile" data-arr="'+s.id+':'+a.sleeps+'" aria-pressed="'+(sel?'true':'false')+'"'+(dis?' aria-disabled="true"':'')+'>'+inner+'</button>';
+  }).join('');
+
+  var assign='';
+  if(!isFam()&&exp.boundUnit==null&&remaining<=0){
+    assign='<p class="row-sub" style="margin-top:9px;">Everyone in your group already has a bed. Remove a unit to make changes.</p>';
+  }
+
+  /* preferences build from the stock item's option flags; the section only renders
+     when the item actually offers something (see the option-rules data comment) */
+  /* one add-on anatomy everywhere: glyph, title with the toggle top right,
+     sub copy or bullets, price bottom left */
+  var prefs='';
+  if(s.gfOpt){
+    prefs+='<div class="gf-row"><span class="fglyph" aria-hidden="true">'+GL.house+'</span>'+
+      '<span class="gf-main"><b>Ground floor access</b><span class="row-sub">For accessibility or pushchairs. Call us about access needs.</span>'+
+      '<span class="gf-price">+'+gbp(GF_FEE)+'</span></span>'+
+      '<button type="button" class="tswitch" data-gf aria-pressed="'+(exp.gf?'true':'false')+'" aria-label="Ground floor access, adds '+gbp(GF_FEE)+'"><span class="track"></span><span class="knob"></span></button></div>';
+  }
+  if(s.petOpt){
+    prefs+='<div class="gf-row"><span class="fglyph" aria-hidden="true">'+GL.paw+'</span>'+
+      '<span class="gf-main"><b>Pet friendly</b><span class="row-sub">Bring your dog along for the break</span>'+
+      '<span class="gf-price">+'+gbp(PET_FEE)+'</span></span>'+
+      '<button type="button" class="tswitch" data-pet aria-pressed="'+(exp.pet?'true':'false')+'" aria-label="Pet friendly, adds '+gbp(PET_FEE)+'"><span class="track"></span><span class="knob"></span></button></div>';
+  }
+
+  /* room pick, two testable treatments behind the rail Room pick seg. No was-prices,
+     no preselection, no savings line; delta is the flat fee only.
+     'addon': opt-in extra with increment framing, Let us choose is the silent default
+     'options': live-style side by side pair, the commit CTA lives inside each option */
+  var bullets='<ul class="ck-list"><li>Choose your spot on the resort map</li><li>Guaranteed near friends and family</li></ul>';
+  var canCommit=exp.boundUnit!=null?true:(isFam()?(tgt>=0&&exp.arr>=g):(exp.arr!==null&&remaining>0));
+  var addLabel=isFam()?((tgt<0&&exp.boundUnit==null)?'All units chosen':'Add this room'):'Add this unit';
+  var rcSec, addRow='';
+  if(state.roomPick==="addon"){
+    rcSec={t:'Pick your exact room',h:
+      '<div class="gf-row"><span class="fglyph" aria-hidden="true">'+GL.map+'</span>'+
+      '<span class="gf-main"><b>Pick my exact room</b>'+bullets+
+      '<span class="gf-price">+'+gbp(ROOM_PICK)+'</span></span>'+
+      '<button type="button" class="tswitch" data-rcpick aria-pressed="'+(exp.pickRoom?'true':'false')+'" aria-label="Pick my exact room, adds '+gbp(ROOM_PICK)+'"><span class="track"></span><span class="knob"></span></button></div>'};
+  } else if(exp.boundUnit!=null){
+    /* bound unit: the pair reads as the unit's current choice; switching writes through */
+    rcSec={t:'Room choice',h:'<div class="rc-duo">'+
+      '<button type="button" class="rc-card" data-rc="1" aria-pressed="'+(exp.pickRoom?'true':'false')+'"><b>Pick my exact room</b>'+bullets+'<span class="rc-price">+'+gbp(ROOM_PICK)+'</span></button>'+
+      '<button type="button" class="rc-card" data-rc="0" aria-pressed="'+(!exp.pickRoom?'true':'false')+'"><b>Let us choose</b><span class="row-sub">We’ll allocate a great room in your chosen type</span><span class="rc-price">+£0</span></button></div>'};
+  } else {
+    /* the CTA carries the total for that choice, e.g. "Add Comfort Rooms for £354.00" */
+    var optCta=function(pick){
+      if(state.flash&&state.flash.stockId===s.id&&state.flash.pick===(pick===1))
+        return '<button type="button" class="btn primary addunit is-added is-flash" aria-pressed="true" aria-disabled="true">✓ Added for '+(isFam()?'Party':'Unit')+' '+(state.flash.unit+1)+'</button>';
+      var val=arrBy(s,exp.arr).price+(exp.gf?GF_FEE:0)+(exp.pet?PET_FEE:0)+(pick?ROOM_PICK:0);
+      var label=canCommit?'Add '+s.name+' for '+gbp(val):addLabel;
+      return '<button type="button" class="btn addunit" data-addopt="'+pick+'"'+(canCommit?'':' aria-disabled="true"')+'>'+label+'</button>';
+    };
+    rcSec={t:'Room choice',h:'<div class="rc-duo">'+
+      '<div class="rc-card"><b>Pick my exact room</b>'+bullets+'<span class="rc-price">+'+gbp(ROOM_PICK)+'</span>'+optCta(1)+'</div>'+
+      '<div class="rc-card"><b>Let us choose</b><span class="row-sub">We’ll allocate a great room in your chosen type</span><span class="rc-price">+£0</span>'+optCta(0)+'</div></div>'};
+  }
+  if(state.roomPick==="addon"||exp.boundUnit!=null){
+    if(exp.boundUnit!=null){
+      if(isFam()&&state.parties.length===1){
+        /* single party: the added button IS the deselect, matching toggle behaviour */
+        addRow='<div class="addrow"><button type="button" class="btn primary addunit is-added" aria-pressed="true" data-unalloc="0">✓ Added to booking</button></div>';
+      } else {
+        var lbl=isFam()?'Added for Party '+(exp.boundUnit+1):'Added for Unit '+(exp.boundUnit+1);
+        addRow='<div class="addrow"><button type="button" class="btn primary addunit is-added" aria-pressed="true" data-added>✓ '+lbl+'</button>'+
+          '<button type="button" class="linkbtn" data-unalloc="'+exp.boundUnit+'">Remove</button></div>';
+      }
+    } else if(state.flash&&state.flash.stockId===s.id){
+      /* transient success state: the click is acknowledged where it happened */
+      addRow='<div class="addrow"><button type="button" class="btn primary addunit is-added is-flash" aria-pressed="true" aria-disabled="true">✓ Added for '+(isFam()?'Party':'Unit')+' '+(state.flash.unit+1)+'</button></div>';
+    } else {
+      addRow='<div class="addrow"><button type="button" class="btn addunit" '+(isFam()?'data-addroom':'data-addunit')+(canCommit?'':' aria-disabled="true"')+'>'+addLabel+'</button></div>';
+    }
+  }
+
+  /* section numbers run over whatever this item actually offers */
+  var secs=[{t:'Sleeping arrangements',h:'<div class="arr-grid">'+tiles+'</div>'+assign}];
+  if(prefs) secs.push({t:s.gfOpt?'Location preferences':'Preferences',h:prefs});
+  secs.push(rcSec);
+  return secs.map(function(sec,i){
+    return '<div class="xsec"><h4><span class="xnum" aria-hidden="true">'+(i+1)+'</span>'+sec.t+'</h4>'+sec.h+'</div>';
+  }).join('')+addRow;
+}
+
+/* inertInfo (headings view): card sits in a locked-out or no-fit section, shown for
+   reference only; greyed, no expansion, clicks announce the reason */
+function accomCard(s,inertInfo){
+  var exp=(!inertInfo&&state.expand&&state.expand.stockId===s.id)?state.expand:null;
+  var dead=cardDead(s);
+
+  var tags='';
+  if(isFam()){
+    var here=[]; state.alloc.forEach(function(a,i){ if(a&&a.stockId===s.id) here.push(i); });
+    if(here.length) tags='<div class="alloc-tags">'+here.map(function(i){ return '<span class="alloc-tag">✓ Party '+(i+1)+'</span>'; }).join('')+'</div>';
+  } else {
+    var uh=[]; state.bbwUnits.forEach(function(u,i){ if(u.stockId===s.id) uh.push('<span class="alloc-tag">Unit '+(i+1)+' &middot; '+plural(u.guests,'guest')+'</span>'); });
+    if(uh.length) tags='<div class="alloc-tags">'+uh.join('')+'</div>';
+  }
+
+  /* no category chip on cards: the tiles already filter to one category */
+  var occ=minS(s)===maxS(s)?'Sleeps '+maxS(s):'Sleeps '+minS(s)+' to '+maxS(s);
+  var meta='<div class="meta-row">'+
+    '<span class="mitem"><span class="mglyph" aria-hidden="true">'+GL.person+'</span>'+occ+'</span>'+
+    '<span class="mitem"><span class="mglyph" aria-hidden="true">'+GL.bed+'</span>'+s.beds+'</span></div>';
+  var featRow='<ul class="feat-row">'+s.feats.map(function(f){ return '<li><span class="mglyph" aria-hidden="true">'+f.g+'</span>'+f.t+'</li>'; }).join('')+'</ul>';
+
+  /* unavailable cards carry a banner strip across the card top, not an in-body note;
+     inert no-fit cards prefer their own per-card reason when they have one */
+  var banner='';
+  if(inertInfo) banner='<div class="card-banner">'+(inertInfo.lock?'All parties must be in the same accommodation category.':(dead?deadReason(s):inertInfo.text))+'</div>';
+  else if(dead) banner='<div class="card-banner">'+deadReason(s)+'</div>';
+
+  /* the trigger is an outline button in the card's right panel; the expansion itself
+     still opens full width below the card */
+  var trigger='', expander='';
+  if(!dead){
+    if(inertInfo){
+      trigger='<button type="button" class="btn rooms-btn" aria-disabled="true" data-inertexp="'+(inertInfo.lock?'lock':'fit')+'">Choose your room</button>';
+    } else {
+      var open=!!exp;
+      trigger='<button type="button" class="btn rooms-btn" data-expander="'+s.id+'" aria-expanded="'+(open?'true':'false')+'" aria-controls="exp-'+s.id+'">'+(open?'Hide rooms':'Choose your room')+'</button>';
+      expander='<div class="ac-expand" id="exp-'+s.id+'"'+(open?'':' hidden')+'>'+(open?expansion(s,exp):'')+'</div>';
+    }
+  }
+  var foot='<div class="ac-foot">'+cardPrice(s,exp)+trigger+'</div>';
+
+  var hasAlloc=isFam()
+    ? state.alloc.some(function(a){ return a&&a.stockId===s.id; })
+    : state.bbwUnits.some(function(u){ return u.stockId===s.id; });
+
+  return '<div class="acard'+((dead||inertInfo)?' is-locked':'')+(hasAlloc?' has-alloc':'')+'">'+banner+
+    '<div class="ac-top">'+
+    '<div class="ph-sq" aria-hidden="true"><span>Photo</span></div>'+
+    '<div class="ac-body"><div class="ac-headrow"><h3>'+s.name+'</h3>'+(s.rec?'<span class="rec-badge">Recommended</span>':'')+'</div>'+
+    '<div class="ac-cols"><div class="ac-main">'+meta+'<p class="desc">'+s.desc+'</p>'+tags+'</div>'+
+    '<div class="ac-feats">'+featRow+'</div></div></div>'+
+    foot+'</div>'+expander+'</div>';
+}
+
+/* ============================================================ LEDGER PANEL (Tiles and Headings modes)
+   Replaces the old Your group panel with record grammar, not card grammar: one row
+   per party (Family) or unit (BBW), windowed to previous / current / next with a
+   Show all expander. Desktop: sticky right column. Mobile: full-bleed sticky below
+   the intro. Parties mode renders no panel: its sections carry the status. The
+   always-on rule sentence is gone; only the locked state shows a caption. */
+function ledgerTags(u){
+  var t=[];
+  if(u.pickRoom) t.push('exact room');
+  if(u.gf) t.push('ground floor');
+  if(u.pet) t.push('pet friendly');
+  return t.length?' &middot; '+t.join(', '):'';
+}
+function groupPanel(){
+  if(isFam()&&(state.parties.length<2||state.catUX==="parties")) return '';
+  var lock=lockedCategory(), rows=[], curIdx=-1, noun=isFam()?'parties':'units';
+  if(isFam()){
+    var firstUn=firstUnallocated();
+    state.parties.forEach(function(p,i){
+      var a=state.alloc[i];
+      /* cot visibility only; the type comes from the search step */
+      var inf=p.infants>0?' &middot; '+(p.cot||'Cot needed'):'';
+      var pulse=(state.flash&&state.flash.unit===i)?' flash':'';
+      var label='Party '+(i+1)+' &middot; '+plural(partyGuests(p),'guest');
+      if(a){
+        var s=stockById(a.stockId);
+        rows.push('<div class="lrow done'+pulse+'"><span class="ltick done" aria-hidden="true">✓</span>'+
+          '<div class="lmain"><b>'+label+'</b><span>'+s.name+' &middot; '+gbp(unitPrice(a))+ledgerTags(a)+inf+'</span></div>'+
+          '<button type="button" class="up-remove" data-unalloc="'+i+'">Remove</button></div>');
+      } else if(i===firstUn){
+        curIdx=rows.length;
+        rows.push('<div class="lrow active"><span class="ltick cur" aria-hidden="true">'+(i+1)+'</span>'+
+          '<div class="lmain"><b>'+label+'</b><span class="strong">Choosing now'+inf+'</span></div></div>');
+      } else {
+        rows.push('<div class="lrow todo"><span class="ltick" aria-hidden="true">'+(i+1)+'</span>'+
+          '<div class="lmain"><b>'+label+'</b><span>Up next'+inf+'</span></div></div>');
+      }
+    });
+  } else {
+    /* assigned guests render as filled glyphs inside their unit row; the unassigned
+       pool lives at panel level (see pool below), not inside a unit card */
+    state.bbwUnits.forEach(function(u,i){
+      var s=stockById(u.stockId);
+      var pulse=(state.flash&&state.flash.unit===i)?' flash':'';
+      var spare=u.sleeps-u.guests;
+      var ug=''; for(var m=0;m<u.guests;m++) ug+='<span class="pfig on"><i></i><b></b></span>';
+      rows.push('<div class="lrow done'+pulse+'"><span class="ltick done" aria-hidden="true">✓</span>'+
+        '<div class="lmain"><b>Unit '+(i+1)+'</b>'+
+        '<div class="pg-row" aria-hidden="true">'+ug+'</div>'+
+        '<span>'+s.name+' &middot; '+gbp(unitPrice(u))+ledgerTags(u)+(spare>0?' &middot; '+plural(spare,'spare bed'):'')+'</span></div>'+
+        '<button type="button" class="up-remove" data-unalloc="'+i+'">Remove</button></div>');
+    });
+    var total=state.bbwGuests, placed=placedBBW(-1);
+    if(placed<total){
+      curIdx=rows.length;
+      rows.push('<div class="lrow active"><span class="ltick cur" aria-hidden="true">'+(state.bbwUnits.length+1)+'</span>'+
+        '<div class="lmain"><b>Unit '+(state.bbwUnits.length+1)+' &middot; Assigning now</b></div></div>');
+    }
+  }
+  /* 3-row window: previous done, current, next */
+  var shown=rows;
+  if(!state.ledgerOpen&&rows.length>3){
+    var c=curIdx>=0?curIdx:rows.length-1;
+    var start=Math.max(0,Math.min(c-1,rows.length-3));
+    shown=rows.slice(start,start+3);
+  }
+  var expander='';
+  if(rows.length>3){
+    expander='<button type="button" class="linkbtn lshow" data-ledger>'+
+      (state.ledgerOpen?'Show fewer':'Show all '+rows.length+' '+noun)+'</button>';
+  }
+  /* the header itself carries the group category; no rule caption, no release link
+     (removing the units via Remove reopens every category) */
+  var head='<span class="gp-eyebrow">Group accommodation type</span>'+
+    '<h3 id="gpHead">'+(lock?lock:'Not chosen yet')+'</h3>';
+  var pool='';
+  if(!isFam()){
+    var pTotal=state.bbwGuests, pPlaced=placedBBW(-1), un=pTotal-pPlaced, gs='';
+    for(var k=0;k<un;k++) gs+='<span class="pfig off"><i></i><b></b></span>';
+    pool='<div class="gp-pool"><span class="pool-cap">'+pPlaced+' of '+pTotal+' guests have a bed</span>'+
+      (un>0?'<div class="pg-row" aria-hidden="true">'+gs+'</div>':'')+'</div>';
+  }
+  var panel='<div class="gpanel" id="gpanel">'+head+pool+'<div class="ledger">'+shown.join('')+'</div>'+expander+'</div>';
+  return '<aside class="side" aria-labelledby="gpHead">'+panel+'</aside>';
+}
+
+/* bottom utility row; the phone linkage line is carried from the June live capture
+   (group linkage is phone-only on live); flag to client whether it stays */
+function utilityRow(){
+  return '<div class="util-row">'+
+    '<button type="button" class="btn util-btn" onclick="return false;"><span class="mglyph" aria-hidden="true">'+GL.access+'</span>Accessible accommodation</button>'+
+    '<button type="button" class="btn util-btn" onclick="return false;"><span class="mglyph" aria-hidden="true">'+GL.map+'</span>Download resort map</button></div>'+
+    '<p class="group-note">Booking alongside friends or family on a separate booking? Call 0330 100 6649 and we’ll link you up.</p>';
+}
+
+/* ============================================================ RENDER
+   Full re-render on every interaction is an accepted lo-fi limitation; do not carry
+   this pattern to build. */
+var content=document.getElementById('content');
+var scrollEl=document.getElementById('scroll');
+function normaliseExpand(){
+  var exp=state.expand; if(!exp) return;
+  var s=stockById(exp.stockId);
+  if(!s){ state.expand=null; return; }
+  if(isFam()){
+    if(exp.boundUnit==null){
+      var t=cardTarget(s);
+      if(t>=0){
+        var g=partyGuests(state.parties[t]);
+        /* only re-fit a chosen-but-too-small arrangement; leave an unchosen (null) one alone */
+        if(exp.arr!==null&&exp.arr<g){ for(var i=0;i<s.sleeps.length;i++){ if(s.sleeps[i].sleeps>=g){ exp.arr=s.sleeps[i].sleeps; break; } } }
+      }
+    }
+  } else if(exp.boundUnit==null&&exp.arr!==null){
+    var rem=state.bbwGuests-placedBBW(-1);
+    exp.guests=Math.max(1,Math.min(exp.guests,exp.arr,Math.max(rem,1),MAX_UNIT));
+  }
+}
+function render(){
+  var keep=scrollEl.scrollTop;
+  normaliseExpand();
+  document.getElementById('searchSumm').innerHTML=summText();
+  document.getElementById('pageH1').textContent=isFam()?'Make yourself at home':'Your weekend starts here';
+  document.getElementById('stepTitle').textContent='Step 1 of '+stepsTotal()+': Accommodation';
+  var dots='';
+  for(var i=0;i<stepsTotal();i++) dots+='<span class="dotstep'+(i===0?' current':'')+'" role="listitem" aria-label="Step '+(i+1)+(i===0?', current':'')+'"'+(i===0?' aria-current="step"':'')+'></span>';
+  document.getElementById('dots').innerHTML=dots;
+  /* toggle (and tiles, in tiles view) span full width; the two-column row starts at
+     the results, so the group panel top-aligns with them on desktop. On mobile the
+     panel moves up to sit directly below the intro (sticky, full bleed).
+     Parties mode: full-width sections, no columns and no panel. */
+  var mob=state.device==="mobile";
+  var view=(state.catUX==="parties"&&(!isFam()||state.parties.length===1))?"tiles":state.catUX;
+  /* the hairline under the H1 only earns its keep when nothing else breaks the page:
+     single-party bookings have no panel and no sections */
+  document.querySelector('.intro').classList.toggle('no-rule',!(isFam()&&state.parties.length===1));
+  if(view==="parties"){
+    content.innerHTML=resultsHead(false)+partiesUI()+utilityRow();
+  } else {
+    var panel=groupPanel();
+    var results=view==="tiles"
+      ? visibleStock().map(function(s){ return accomCard(s); }).join('')
+      : groupedUI();
+    content.innerHTML=(mob?panel:'')+resultsHead(view==="tiles")+(view==="tiles"?categoryUI():'')+
+      '<div class="layout">'+(mob?'':panel)+
+      '<div class="results">'+results+utilityRow()+'</div>'+
+      '</div>';
+  }
+  wire();
+  recompute();
+  scrollEl.scrollTop=keep;
+}
+function recompute(){
+  document.getElementById('totalFig').innerHTML=gbp(grandTotal());
+  var note, done=isDone();
+  if(done){
+    note=isFam()?'Nice one. Next, sort your dining.':'Nice one. Next, dining and extras for your weekender.';
+  } else if(isFam()){
+    if(state.parties.length>1){
+      var n=state.alloc.filter(function(a){ return !a; }).length;
+      note='You need to choose accommodation for '+plural(n,'more unit')+' to continue.';
+    } else {
+      note='Choose your accommodation to continue.';
+    }
+  } else {
+    var m=state.bbwGuests-placedBBW(-1);
+    note='You need to place '+m+' more guest'+(m===1?'':'s')+' to continue.';
+  }
+  document.getElementById('footNote').textContent=note;
+  document.getElementById('continueBtn').setAttribute('aria-disabled',done?'false':'true');
+}
+
+/* ============================================================ EXPANSION STATE */
+function openExpand(s,bound){
+  var arr, gf=false, pet=false, pickRoom=false, guests=null;
+  if(bound!=null){
+    var u=isFam()?state.alloc[bound]:state.bbwUnits[bound];
+    arr=u.sleeps; gf=u.gf; pet=!!u.pet; pickRoom=u.pickRoom; guests=isFam()?null:u.guests;
+  } else {
+    /* fresh card, Family or BBW: no preselected arrangement; picking one is the first action */
+    arr=null;
+    guests=null;
+  }
+  state.expand={stockId:s.id,arr:arr,gf:gf,pet:pet,pickRoom:pickRoom,guests:guests,boundUnit:(bound!=null?bound:null)};
+}
+/* when the expansion is bound to a unit (added state), option changes write through live */
+function writeThrough(){
+  var exp=state.expand; if(!exp||exp.boundUnit==null) return;
+  var u={stockId:exp.stockId,sleeps:exp.arr,pickRoom:exp.pickRoom,gf:exp.gf,pet:exp.pet};
+  if(isFam()){
+    u.guests=partyGuests(state.parties[exp.boundUnit]);
+    state.alloc[exp.boundUnit]=u;
+  } else {
+    var avail=state.bbwGuests-placedBBW(exp.boundUnit);
+    exp.guests=Math.max(1,Math.min(exp.guests,exp.arr,Math.max(avail,1),MAX_UNIT));
+    u.guests=exp.guests;
+    state.bbwUnits[exp.boundUnit]=u;
+  }
+}
+function bbwPlaceAnnounce(g,name){
+  var placed=placedBBW(-1), total=state.bbwGuests, spare=spareBedsBBW();
+  announce(plural(g,'guest')+' placed in '+name+'. '+placed+' of '+total+' guests now have a bed.'+(spare>0?' '+plural(spare,'spare bed')+'.':''));
+}
+
+/* ============================================================ WIRING */
+function q(sel,fn){ content.querySelectorAll(sel).forEach(fn); }
+function wire(){
+  q('[data-basis]',function(b){ b.addEventListener('click',function(){ state.basis=b.getAttribute('data-basis'); render(); }); });
+
+  /* headings view: collapse/expand sections; opening an inert section is a peek */
+  q('[data-sec]',function(b){
+    b.addEventListener('click',function(){
+      var c=b.getAttribute('data-sec');
+      var lock=lockedCategory(), f=catFeasibility(c);
+      var inert=(!!lock&&c!==lock)||!f.ok;
+      var cur=secIsOpen(c,inert);
+      state.secOpen[c]=!cur;
+      if(!cur&&inert) announce(!f.ok
+        ? nofitText(f)+'. Shown for reference only.'
+        : 'Same category only: your booking already has '+lock+'. Shown for reference only.');
+      render();
+    });
+  });
+  q('[data-inertexp]',function(b){
+    b.addEventListener('click',function(){
+      announce(b.getAttribute('data-inertexp')==='lock'
+        ? 'Unavailable. All units on one booking must be the same category.'
+        : 'Too small for your booking. Choose another category.');
+    });
+  });
+  q('[data-ledger]',function(b){
+    b.addEventListener('click',function(){ state.ledgerOpen=!state.ledgerOpen; render(); });
+  });
+
+  q('[data-cattile]',function(b){
+    b.addEventListener('click',function(){
+      if(b.hasAttribute('data-lockdis')){ announce('Unavailable. All units on one booking must be the same category.'); return; }
+      if(b.hasAttribute('data-nofit')){ announce(nofitText(catFeasibility(b.getAttribute('data-cattile')))+'. Choose another category.'); return; }
+      state.catTile=b.getAttribute('data-cattile'); state.expand=null; render();
+    });
+  });
+
+  q('[data-expander]',function(b){
+    b.addEventListener('click',function(){
+      var id=b.getAttribute('data-expander');
+      state.flash=null; /* a user-initiated open supersedes any lingering add flash */
+      if(state.expand&&state.expand.stockId===id){ state.expand=null; render(); return; }
+      /* re-opening a card that already holds this booking's only unit resumes editing it */
+      var bound=null;
+      if(isFam()&&state.parties.length===1&&state.alloc[0]&&state.alloc[0].stockId===id) bound=0;
+      openExpand(stockById(id),bound);
+      render();
+    });
+  });
+
+  q('[data-arr]',function(b){
+    b.addEventListener('click',function(){
+      if(b.getAttribute('aria-disabled')==='true'){ announce('Too small for this party.'); return; }
+      var bits=b.getAttribute('data-arr').split(':'), s=stockById(bits[0]), sl=+bits[1];
+      var exp=state.expand; if(!exp||exp.stockId!==s.id) return;
+      /* click the selected arrangement again to unselect it (in-progress choices only;
+         an already-added unit switches arrangement rather than clearing to none) */
+      if(exp.arr===sl&&exp.boundUnit==null){
+        exp.arr=null;
+        writeThrough();
+        announce('Arrangement cleared.');
+        render();
+        return;
+      }
+      exp.arr=sl;
+      if(!isFam()&&exp.boundUnit==null){
+        var rem=state.bbwGuests-placedBBW(-1);
+        exp.guests=Math.max(1,Math.min(sl,Math.max(rem,1),MAX_UNIT));
+      }
+      writeThrough();
+      var a=arrBy(s,sl);
+      announce('Sleeps '+sl+', '+a.bed+' selected, '+gbp(a.price)+'.');
+      render();
+    });
+  });
+  q('[data-arrclear]',function(b){
+    b.addEventListener('click',function(){
+      var exp=state.expand; if(!exp||exp.boundUnit!=null) return;
+      exp.arr=null; writeThrough(); announce('Arrangement cleared.'); render();
+    });
+  });
+  q('[data-gstep]',function(b){
+    b.addEventListener('click',function(){
+      if(b.getAttribute('aria-disabled')==='true') return;
+      var exp=state.expand; if(!exp) return;
+      var rem=state.bbwGuests-placedBBW(exp.boundUnit!=null?exp.boundUnit:-1);
+      var maxG=Math.min(exp.arr,rem,MAX_UNIT);
+      exp.guests=Math.max(1,Math.min(maxG,exp.guests+(+b.getAttribute('data-gstep'))));
+      writeThrough();
+      if(exp.boundUnit!=null) bbwPlaceAnnounce(exp.guests,stockById(exp.stockId).name);
+      render();
+    });
+  });
+  q('[data-gf]',function(b){
+    b.addEventListener('click',function(){
+      if(state.expand){ state.expand.gf=!state.expand.gf; writeThrough();
+        announce(state.expand.gf?'Ground floor access added, '+gbp(GF_FEE)+'.':'Ground floor access removed.'); render(); }
+    });
+  });
+  q('[data-pet]',function(b){
+    b.addEventListener('click',function(){
+      if(state.expand){ state.expand.pet=!state.expand.pet; writeThrough();
+        announce(state.expand.pet?'Pet friendly added, '+gbp(PET_FEE)+'.':'Pet friendly removed.'); render(); }
+    });
+  });
+  q('[data-rc]',function(b){
+    b.addEventListener('click',function(){
+      if(state.expand){ state.expand.pickRoom=b.getAttribute('data-rc')==='1'; writeThrough();
+        announce(state.expand.pickRoom?'Exact room pick added, '+gbp(ROOM_PICK)+'.':'We’ll choose your room, included.'); render(); }
+    });
+  });
+
+  /* transient add feedback (multi-unit): success state on the button plus a pulse on
+     the panel row, driven by one shared flash so the two always agree */
+  function flashAdd(stockId,unit,pick){
+    var f={stockId:stockId,unit:unit,pick:pick};
+    state.flash=f;
+    setTimeout(function(){ if(state.flash===f){ state.flash=null; render(); } },1500);
+  }
+  /* the one commit action, shared by the add row and the options-variant CTAs */
+  function commitAdd(){
+    var exp=state.expand; if(!exp) return;
+    var s=stockById(exp.stockId), pickAtCommit=exp.pickRoom;
+    if(isFam()){
+      var t=cardTarget(s); if(t<0) return;
+      state.alloc[t]={stockId:exp.stockId,sleeps:exp.arr,guests:partyGuests(state.parties[t]),pickRoom:exp.pickRoom,gf:exp.gf,pet:exp.pet};
+      allocChanged();
+      announce(state.parties.length===1?s.name+' added to your booking.':s.name+' added for Unit '+(t+1)+'.');
+      /* single unit keeps the added state; multi-unit resets the button to its default
+         so the same card can take the next unit without closing and reopening */
+      if(state.parties.length===1) exp.boundUnit=t;
+      else {
+        flashAdd(s.id,t,pickAtCommit);
+        /* parties mode moves to a fresh section, so the expansion always closes */
+        if(state.catUX!=="parties"&&cardTarget(s)>=0) openExpand(s,null);
+        else state.expand=null;
+      }
+    } else {
+      state.bbwUnits.push({stockId:exp.stockId,sleeps:exp.arr,guests:exp.guests,pickRoom:exp.pickRoom,gf:exp.gf,pet:exp.pet});
+      allocChanged();
+      bbwPlaceAnnounce(exp.guests,s.name);
+      flashAdd(s.id,state.bbwUnits.length-1,pickAtCommit);
+      /* reset to a fresh add for the next unit; close when everyone has a bed */
+      if(state.bbwGuests-placedBBW(-1)>0) openExpand(s,null);
+      else state.expand=null;
+    }
+    render();
+    /* parties mode: glide down to the next party's section rather than jumping */
+    if(isFam()&&state.catUX==="parties"){
+      var nxt=document.querySelector('.party-sec.is-current');
+      if(nxt&&nxt.scrollIntoView) nxt.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  }
+  q('[data-addroom],[data-addunit]',function(b){
+    b.addEventListener('click',function(){
+      if(b.getAttribute('aria-disabled')==='true') return;
+      commitAdd();
+    });
+  });
+  /* options variant: the CTA inside each option sets the room choice, then commits */
+  q('[data-addopt]',function(b){
+    b.addEventListener('click',function(){
+      if(b.getAttribute('aria-disabled')==='true') return;
+      if(state.expand) state.expand.pickRoom=b.getAttribute('data-addopt')==='1';
+      commitAdd();
+    });
+  });
+  /* add-on variant: the picker is a toggle like ground floor and pet friendly */
+  q('[data-rcpick]',function(b){
+    b.addEventListener('click',function(){
+      if(state.expand){ state.expand.pickRoom=!state.expand.pickRoom; writeThrough();
+        announce(state.expand.pickRoom?'Exact room pick added, '+gbp(ROOM_PICK)+'.':'Exact room pick removed.'); render(); }
+    });
+  });
+  q('[data-added]',function(b){
+    b.addEventListener('click',function(){ announce('Already added. Use Remove to take it off the booking.'); });
+  });
+
+  q('[data-unalloc]',function(b){
+    b.addEventListener('click',function(){
+      var i=+b.getAttribute('data-unalloc');
+      if(isFam()){
+        state.alloc[i]=null;
+        if(state.expand&&state.expand.boundUnit===i) state.expand.boundUnit=null;
+        announce(state.parties.length===1?'Removed from your booking.':'Party '+(i+1)+' choice removed.');
+      } else {
+        state.bbwUnits.splice(i,1);
+        if(state.expand){
+          if(state.expand.boundUnit===i) state.expand.boundUnit=null;
+          else if(state.expand.boundUnit!=null&&state.expand.boundUnit>i) state.expand.boundUnit--;
+        }
+        announce('Unit '+(i+1)+' removed. '+placedBBW(-1)+' of '+state.bbwGuests+' guests have a bed.');
+      }
+      allocChanged();
+      render();
+    });
+  });
+  q('[data-edit]',function(b){
+    b.addEventListener('click',function(){
+      var i=+b.getAttribute('data-edit');
+      var u=isFam()?state.alloc[i]:state.bbwUnits[i];
+      if(!u) return;
+      state.flash=null;
+      openExpand(stockById(u.stockId),i);
+      announce('Editing Unit '+(i+1)+'.');
+      render();
+      var el=document.getElementById('exp-'+u.stockId);
+      if(el&&el.scrollIntoView) el.scrollIntoView({block:'nearest'});
+    });
+  });
+}
+
+document.getElementById('continueBtn').addEventListener('click',function(e){
+  if(this.getAttribute('aria-disabled')==='true'){
+    e.preventDefault();
+    announce(isFam()?'Choose accommodation for every unit to continue.':'Place every guest to continue.');
+  }
+});
+
+/* ============================================================ DEV CONTROLS
+   Every test variable lives in the left rail. Toolbar changes reset choices and
+   re-render; the device toggle only reframes and keeps state so responsive checks
+   stay easy. */
+function pressGroup(sel,val,attr){
+  document.querySelectorAll(sel).forEach(function(b){ b.setAttribute('aria-pressed',b.getAttribute(attr)===String(val)?'true':'false'); });
+}
+function press(id,on){ document.getElementById(id).setAttribute('aria-pressed',on?'true':'false'); }
+function resetChoices(){
+  state.alloc=state.parties.map(function(){ return null; });
+  state.bbwUnits=[]; state.expand=null; state.catTile=null; state.secOpen={}; state.flash=null;
+  state.ledgerOpen=false;
+}
+function toolbarVis(){
+  document.getElementById('tbResort').hidden=!isFam();
+  document.getElementById('tbPreset').hidden=!isFam();
+  document.getElementById('tbGroup').hidden=isFam();
+  /* Parties view needs pre-defined parties (not BBW) and more than one of them */
+  document.getElementById('cxParties').setAttribute('aria-disabled',(isFam()&&state.parties.length>1)?'false':'true');
+}
+function setPlatform(pf){
+  state.platform=pf; state.basis="unit";
+  if(pf==="family") state.parties=presetParties(state.presetId);
+  if(pf==="bbw"&&state.catUX==="parties"){
+    state.catUX="tiles";
+    pressGroup('[data-catux]','tiles','data-catux');
+    announce('Parties view needs pre-defined parties, so BBW shows tiles.');
+  }
+  resetChoices();
+  press('pfFam',pf==="family"); press('pfBBW',pf==="bbw");
+  toolbarVis(); render();
+}
+function setDevice(d){
+  state.device=d;
+  document.getElementById('deviceHost').setAttribute('data-device',d);
+  press('dvMobile',d==="mobile"); press('dvDesktop',d==="desktop");
+  render(); /* panel DOM position differs per device; state is preserved */
+}
+document.getElementById('pfFam').addEventListener('click',function(){ setPlatform("family"); });
+document.getElementById('pfBBW').addEventListener('click',function(){ setPlatform("bbw"); });
+document.getElementById('dvMobile').addEventListener('click',function(){ setDevice("mobile"); });
+document.getElementById('dvDesktop').addEventListener('click',function(){ setDevice("desktop"); });
+
+/* Category UX is a pure view change: state is deliberately NOT reset, so the two
+   layouts can be compared mid-booking */
+document.querySelectorAll('[data-catux]').forEach(function(b){
+  b.addEventListener('click',function(){
+    if(b.getAttribute('aria-disabled')==='true'){
+      announce(isFam()?'Parties view needs more than one party.':'Parties view needs pre-defined parties. BBW builds units as you go.');
+      return;
+    }
+    state.catUX=b.getAttribute('data-catux');
+    state.expand=null;
+    pressGroup('[data-catux]',state.catUX,'data-catux');
+    announce(state.catUX==="tiles"?'Category tiles view.':(state.catUX==="headings"?'Category headings view.':'Party sections view.'));
+    render();
+  });
+});
+/* Room pick is a pure view change too: state is deliberately NOT reset */
+document.querySelectorAll('[data-roompick]').forEach(function(b){
+  b.addEventListener('click',function(){
+    state.roomPick=b.getAttribute('data-roompick');
+    pressGroup('[data-roompick]',state.roomPick,'data-roompick');
+    announce(state.roomPick==="addon"?'Room pick as an add-on.':'Room pick as side by side options.');
+    render();
+  });
+});
+document.querySelectorAll('[data-resortbtn]').forEach(function(b){
+  b.addEventListener('click',function(){
+    state.resort=b.getAttribute('data-resortbtn');
+    resetChoices();
+    pressGroup('[data-resortbtn]',state.resort,'data-resortbtn');
+    announce('Resort changed to '+state.resort+'. Accommodation updated and choices cleared.');
+    render();
+  });
+});
+document.querySelectorAll('[data-presetbtn]').forEach(function(b){
+  b.addEventListener('click',function(){
+    state.presetId=b.getAttribute('data-presetbtn');
+    state.parties=presetParties(state.presetId);
+    resetChoices();
+    if(state.catUX==="parties"&&state.parties.length===1){
+      state.catUX="tiles";
+      pressGroup('[data-catux]','tiles','data-catux');
+    }
+    pressGroup('[data-presetbtn]',state.presetId,'data-presetbtn');
+    toolbarVis();
+    announce('Party preset applied: '+PRESETS[state.presetId].label+'. Choices cleared.');
+    render();
+  });
+});
+/* Group size keeps units that still fit; reducing below the placed count drops units
+   from the end (announced) rather than silently clearing everything. */
+document.querySelectorAll('[data-groupbtn]').forEach(function(b){
+  b.addEventListener('click',function(){
+    var n=+b.getAttribute('data-groupbtn');
+    state.bbwGuests=n; state.expand=null;
+    var dropped=0;
+    while(state.bbwUnits.length&&placedBBW(-1)>n){ state.bbwUnits.pop(); dropped++; }
+    pressGroup('[data-groupbtn]',n,'data-groupbtn');
+    announce('Group size set to '+n+'.'+(dropped?' '+plural(dropped,'unit')+' removed to fit.':''));
+    render();
+  });
+});
+
+toolbarVis();
+render();
+</script>
+</body>
+</html>

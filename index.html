@@ -38,6 +38,14 @@
   .tag{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-radius:999px;padding:3px 10px;margin:0 0 10px;align-self:flex-start;}
   .tag-ok{background:#eef6ed;color:#2a7c27;border:1px solid #32912f;}
   .tag-wip{background:#fff8db;color:#8a6d00;border:1px solid #d9b511;}
+  .tag-off{background:#f0f0f0;color:#6f6f6e;border:1px solid #cfcfce;}
+  /* disabled card: not yet started, non-interactive */
+  .card.is-disabled{cursor:default;box-shadow:none;background:var(--paper-2);border:1px dashed var(--line);}
+  .card.is-disabled:hover{transform:none;box-shadow:none;}
+  .card.is-disabled h3{color:var(--ink-3);}
+  .card.is-disabled p{color:var(--ink-3);}
+  .go.go-off{background:#e4e4e3;color:var(--ink-3);}
+  .card.is-disabled:hover .go{background:#e4e4e3;}
   .go{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-ink);background:var(--accent);border-radius:var(--radius);padding:10px 16px;align-self:flex-start;}
   .card:hover .go{background:var(--accent-strong);}
   /* external prototypes: lower-hierarchy table, no fill, horizontal rules */
@@ -99,6 +107,26 @@
           <p>Lightweight wireframe for the dining extras (Bar, Brew &amp; Wine) flow, focused on structure and content.</p>
           <span class="go">Open &rarr;</span>
           <span class="meta"><span class="ver">v1.1</span> · last updated 16/07/26</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="phase">
+      <h2 class="phase-h">Phase 03 — FAM/BBW Accommodation</h2>
+      <div class="cards">
+        <div class="card is-disabled" aria-disabled="true">
+          <h3>High-fidelity</h3>
+          <span class="tag tag-off">Not started</span>
+          <p>Fully branded accommodation search and booking journey. Not yet started.</p>
+          <span class="go go-off">Coming soon</span>
+        </div>
+
+        <a class="card" href="/phase3-lofi">
+          <h3>Low-fidelity</h3>
+          <span class="tag tag-wip">In progress</span>
+          <p>Lightweight wireframe for the accommodation search flow, focused on structure and content.</p>
+          <span class="go">Open &rarr;</span>
+          <span class="meta"><span class="ver">v0.1</span> · last updated 24/07/26</span>
         </a>
       </div>
     </section>
