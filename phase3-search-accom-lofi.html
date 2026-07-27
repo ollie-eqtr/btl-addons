@@ -1656,46 +1656,44 @@ function wire(){
     ex.addEventListener('transitionend',finish,{once:true});
     setTimeout(finish,500);
   }
-  /* parties layout: fade the finished party's expanded content out (not collapse), then
-     advance and smoothly scroll up to the next party (client, 27 Jul) */
+  /* parties layout: fade the finished party's expanded content out (the old content is
+     being removed, so fading it hides the swap), then advance and do a single smooth
+     scroll to the new party — no manual pinning, which fought the CSS smooth scroll and
+     ran the wrong way on mobile (client, 27 Jul) */
   function animatePartiesAdvance(doneIdx){
     var secs=document.querySelectorAll('.party-sec');
     var body=secs[doneIdx]?secs[doneIdx].querySelector('.party-body'):null;
-    var nextSec=secs[doneIdx+1]||null;
-    if(!body){ render(); openNextParty(nextSec?nextSec.getBoundingClientRect().top:null); return; }
+    if(!body){ render(); openNextParty(); return; }
     body.classList.add('party-fading');
     requestAnimationFrame(function(){ body.style.opacity='0'; });
-    var done=false, finish=function(){ if(done) return; done=true;
-      /* reference position of the next party BEFORE the finished body is removed */
-      var ns=document.querySelectorAll('.party-sec')[doneIdx+1];
-      var refTop=ns?ns.getBoundingClientRect().top:null;
-      render(); openNextParty(refTop);
-    };
+    var done=false, finish=function(){ if(done) return; done=true; render(); openNextParty(); };
     body.addEventListener('transitionend',finish,{once:true});
-    setTimeout(finish,240);
+    setTimeout(finish,200);
   }
-  function openNextParty(refTop){
+  function openNextParty(){
     var cur=document.querySelector('.party-sec.is-current');
     if(!cur) return;
+    /* start the new body hidden so the content swap at render isn't visible */
+    var body=cur.querySelector('.party-body');
+    if(body){
+      body.style.opacity='0'; body.style.transform='translateY(8px)'; body.offsetHeight;
+      body.classList.add('party-opening');
+    }
+    /* one smooth scroll to bring the new party to the top; from a scrolled-down position
+       (the usual case on mobile) this scrolls up, as expected */
     var scroll=document.getElementById('scroll');
     if(scroll){
-      /* first pin the new party where it visually was, so removing the finished body
-         doesn't snap the page; then smoothly scroll it up to the top */
-      if(refTop!=null) scroll.scrollTop+=cur.getBoundingClientRect().top-refTop;
       var off=cur.getBoundingClientRect().top-scroll.getBoundingClientRect().top+scroll.scrollTop-6;
       off=Math.max(0,Math.min(off,scroll.scrollHeight-scroll.clientHeight));
       if(scroll.scrollTo) scroll.scrollTo({top:off,behavior:'smooth'}); else scroll.scrollTop=off;
     }
-    var body=cur.querySelector('.party-body');
-    if(!body) return;
-    /* slide + fade the new body in, no height animation, so it stays smooth */
-    body.style.opacity='0'; body.style.transform='translateY(10px)'; body.offsetHeight;
-    body.classList.add('party-opening');
-    requestAnimationFrame(function(){ body.style.opacity=''; body.style.transform=''; });
-    var done=false, clr=function(){ if(done) return; done=true;
-      body.classList.remove('party-opening'); body.style.opacity=''; body.style.transform=''; };
-    body.addEventListener('transitionend',clr,{once:true});
-    setTimeout(clr,560);
+    if(body){
+      requestAnimationFrame(function(){ body.style.opacity=''; body.style.transform=''; });
+      var done=false, clr=function(){ if(done) return; done=true;
+        body.classList.remove('party-opening'); body.style.opacity=''; body.style.transform=''; };
+      body.addEventListener('transitionend',clr,{once:true});
+      setTimeout(clr,520);
+    }
   }
   /* the one commit action, shared by the add row and the options-variant CTAs */
   function commitAdd(){
