@@ -204,18 +204,21 @@ ul{margin:0;padding:0;list-style:none;}
 .ctile b{display:inline-flex;align-items:baseline;gap:6px;font-size:13.5px;color:var(--ink);line-height:1.15;}
 /* option count reads as a distinct number beside the heading, not part of it */
 .ct-num{font-size:10.5px;font-weight:600;color:var(--muted);letter-spacing:.02em;}
-.ctile .ct-from{font-weight:700;font-size:12px;color:var(--ink);}
+/* from-price is a lighter weight than the heading (client, 27 Jul) */
+.ctile .ct-from{font-weight:500;font-size:12px;color:var(--ink);}
 .ctile .ct-nofit{font-weight:600;font-size:11px;color:var(--ink2);}
 .ctile[aria-pressed="true"]{border-color:var(--dark);box-shadow:inset 0 0 0 1.5px var(--dark);}
 .ctile[aria-disabled="true"]{opacity:.45;cursor:not-allowed;}
-.ct-tick{position:absolute;top:6px;right:6px;width:16px;height:16px;border-radius:50%;background:var(--dark);color:#fff;font-size:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;}
 .cat-lockline{font-size:11.5px;color:var(--ink2);margin:0 0 12px;}
-/* what's included banner: full width above the results heading (client reinstated 24 Jul) */
-.whatsin{display:flex;align-items:center;gap:12px;border:1px solid var(--line2);border-left:4px solid var(--dark);border-radius:9px;background:var(--fill);padding:11px 14px;margin:0 0 14px;}
-.whatsin .wi-ico{width:30px;height:30px;min-width:30px;border-radius:50%;border:1px solid var(--line2);background:var(--paper);display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--ink);}
-.whatsin .wi-main{display:flex;flex-direction:column;gap:2px;min-width:0;}
-.whatsin .wi-main b{font-size:13.5px;}
-.whatsin .wi-sub{font-size:12px;color:var(--ink2);}
+/* promo strip: full-bleed banner above the intro, flush with the header (client, 27 Jul) */
+.promo-banner{background:var(--dark);color:#fff;padding:13px 18px;text-align:center;}
+.promo-banner h2{font-size:14px;text-transform:uppercase;letter-spacing:.05em;font-weight:800;margin:0 0 9px;}
+.promo-list{display:flex;align-items:center;justify-content:center;gap:8px 22px;flex-wrap:wrap;}
+.promo-list li{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;}
+.promo-tick{width:17px;height:17px;min-width:17px;border-radius:50%;border:1.5px solid #fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;}
+.frame-outer[data-device="mobile"] .promo-banner h2{font-size:12.5px;}
+.frame-outer[data-device="mobile"] .promo-list{gap:6px 16px;}
+.frame-outer[data-device="mobile"] .promo-list li{font-size:11.5px;}
 
 /* ---- grouped layout variant: cards contained inside the grey category section ---- */
 .cat-sec{border:1px solid var(--line2);border-radius:10px;background:var(--fill);padding:8px 10px;margin-bottom:14px;}
@@ -455,6 +458,18 @@ button.rc-card:hover{background:var(--fill);}
           <div class="searchsum">
             <span class="summ" id="searchSumm"></span>
           </div>
+        </div>
+
+        <!-- promo strip: full-bleed above the intro, flush with the header (client, 27 Jul) -->
+        <div class="promo-banner">
+          <h2>There’s so much included in the price</h2>
+          <ul class="promo-list">
+            <li><span class="promo-tick" aria-hidden="true">&#10003;</span>Splash Waterworld</li>
+            <li><span class="promo-tick" aria-hidden="true">&#10003;</span>Fairground Thrills</li>
+            <li><span class="promo-tick" aria-hidden="true">&#10003;</span>West End Quality Shows</li>
+            <li><span class="promo-tick" aria-hidden="true">&#10003;</span>Daytime Activities</li>
+            <li><span class="promo-tick" aria-hidden="true">&#10003;</span>Comfy Accommodation</li>
+          </ul>
         </div>
 
         <div class="body">
@@ -928,26 +943,24 @@ function categoryUI(){
     var on=sel.indexOf(c)>=0;
     var priceLine=catPriceLine(c,f,multi);
     var nofit=f.ok?'':'<span class="ct-nofit">'+nofitText(f)+'</span>';
-    /* tick marks a shown (selected) category; the old allocated-units line is gone (client) */
-    var tick=on?'<span class="ct-tick" aria-hidden="true">✓</span>':'';
+    /* selected/deselected is shown by the border alone now; check circles removed (client) */
     var attrs=' data-cattile="'+c+'"';
     if(lockDis) attrs+=' data-lockdis aria-disabled="true"';
     else if(!f.ok) attrs+=' data-nofit aria-disabled="true"';
-    return '<button type="button" class="ctile"'+attrs+' aria-pressed="'+(on?'true':'false')+'">'+tick+
+    return '<button type="button" class="ctile"'+attrs+' aria-pressed="'+(on?'true':'false')+'">'+
       '<b>'+c+'<span class="ct-num">'+catCount(c)+'</span></b>'+priceLine+nofit+'</button>';
   }).join('');
   var line=lock?'<p class="cat-lockline">Showing '+lock+' only: all units on one booking must be the same category.</p>':'';
   return '<div class="cat-tiles" role="group" aria-label="Filter accommodation types">'+tiles+'</div>'+line;
 }
-/* a card the user just added to or has open stays in the list through its confirmation,
-   even if it can no longer serve a remaining party, so the "Added" state and any collapse
-   animation play out before it drops away */
-function engaged(s){ return (state.flash&&state.flash.stockId===s.id)||(state.expand&&state.expand.stockId===s.id); }
 function sortByFit(list){
   if(!isFam()) return list;
-  /* client asked (24 Jul): drop cards too small for any remaining party rather than
-     showing them disabled. dead = fits no available target */
-  return list.filter(function(s){ return !cardDead(s)||engaged(s); });
+  /* cards too small for a remaining party sort to the bottom but stay visible, shown
+     disabled with their reason; the category filter is the only thing that hides cards
+     (client reverted the hide-on-too-small behaviour, 27 Jul) */
+  var fit=[], dead=[];
+  list.forEach(function(s){ (cardDead(s)?dead:fit).push(s); });
+  return fit.concat(dead);
 }
 /* tiles are a multi-select filter (client, 24 Jul): every feasible category is shown by
    default, tapping one hides it. A locked booking forces its single category. */
@@ -1167,28 +1180,30 @@ function expansion(s,exp){
       '<span class="gf-main"><b>Pick my exact room</b>'+bullets+
       '<span class="gf-price">+'+gbp(ROOM_PICK)+'</span></span>'+
       '<button type="button" class="tswitch" data-rcpick aria-pressed="'+(exp.pickRoom?'true':'false')+'" aria-label="Pick my exact room, adds '+gbp(ROOM_PICK)+'"><span class="track"></span><span class="knob"></span></button></div>'};
-  } else if(exp.boundUnit!=null){
-    /* bound unit: the pair reads as the unit's current choice; switching writes through */
-    rcSec={t:'Room choice',h:'<div class="rc-duo">'+
-      '<button type="button" class="rc-card rc-primary" data-rc="1" aria-pressed="'+(exp.pickRoom?'true':'false')+'">'+pickFlag+'<b>Pick my exact room</b>'+bullets+'<span class="rc-price">+'+gbp(ROOM_PICK)+'</span></button>'+
-      '<button type="button" class="rc-card rc-lesser" data-rc="0" aria-pressed="'+(!exp.pickRoom?'true':'false')+'"><b>Let us choose</b>'+lesserCopy+'<span class="rc-price">+£0</span></button></div>'};
   } else {
-    /* the CTA carries the total for that choice, e.g. "Add Comfort Rooms for £354.00" */
-    var optCta=function(pick){
-      if(state.flash&&state.flash.stockId===s.id&&state.flash.pick===(pick===1))
-        return '<button type="button" class="btn primary addunit is-added is-flash" aria-pressed="true" aria-disabled="true">✓ Added for '+(isFam()?'Party':'Unit')+' '+(state.flash.unit+1)+'</button>';
-      var val=arrBy(s,exp.arr).price+(exp.gf?GF_FEE:0)+(exp.pet?PET_FEE:0)+(pick?ROOM_PICK:0);
-      var label=canCommit?'Add '+s.name+' for '+gbp(val):addLabel;
-      return '<button type="button" class="btn addunit" data-addopt="'+pick+'"'+(canCommit?'':' aria-disabled="true"')+'>'+label+'</button>';
+    /* options variant (default): the room choice IS the commit. Clicking an option adds
+       the unit (or switches the choice on the added unit). The chosen button fills dark as
+       the added state and stays put; the other keeps its label. Only one can be added, and
+       no separate button appears below (client, 27 Jul). */
+    var added=exp.boundUnit!=null, selPick=added?(exp.pickRoom?1:0):-1;
+    var optBtn=function(pick){
+      if(selPick===pick)
+        return '<button type="button" class="btn primary addunit is-added" data-rcopt="'+pick+'" aria-pressed="true">✓ Added</button>';
+      var can=added||canCommit; /* an arrangement must be chosen before the first add */
+      var val=arrBy(s,exp.arr||minS(s)).price+(exp.gf?GF_FEE:0)+(exp.pet?PET_FEE:0)+(pick?ROOM_PICK:0);
+      var label=pick?(exp.arr?'Choose my room for '+gbp(val):'Choose my room'):'Give me any spare room';
+      return '<button type="button" class="btn addunit" data-rcopt="'+pick+'"'+(can?'':' aria-disabled="true"')+'>'+label+'</button>';
     };
     rcSec={t:'Room choice',h:'<div class="rc-duo">'+
-      '<div class="rc-card rc-primary">'+pickFlag+'<b>Pick my exact room</b>'+bullets+'<span class="rc-price">+'+gbp(ROOM_PICK)+'</span>'+optCta(1)+'</div>'+
-      '<div class="rc-card rc-lesser"><b>Let us choose</b>'+lesserCopy+'<span class="rc-price">+£0</span>'+optCta(0)+'</div></div>'};
+      '<div class="rc-card rc-primary">'+pickFlag+'<b>Pick my exact room</b>'+bullets+'<span class="rc-price">+'+gbp(ROOM_PICK)+'</span>'+optBtn(1)+'</div>'+
+      '<div class="rc-card rc-lesser"><b>Let us choose</b>'+lesserCopy+'<span class="rc-price">+£0</span>'+optBtn(0)+'</div></div>'};
+    /* once the unit is on the booking, a low-key remove link only, no add button below */
+    if(added) addRow='<div class="addrow"><button type="button" class="linkbtn" data-unalloc="'+exp.boundUnit+'">Remove from booking</button></div>';
   }
-  if(state.roomPick==="addon"||exp.boundUnit!=null){
+  if(state.roomPick==="addon"){
+    /* archived add-on variant keeps its single add button below */
     if(exp.boundUnit!=null){
       if(isFam()&&state.parties.length===1){
-        /* single party: the added button IS the deselect, matching toggle behaviour */
         addRow='<div class="addrow"><button type="button" class="btn primary addunit is-added" aria-pressed="true" data-unalloc="0">✓ Added to booking</button></div>';
       } else {
         var lbl=isFam()?'Added for Party '+(exp.boundUnit+1):'Added for Unit '+(exp.boundUnit+1);
@@ -1196,7 +1211,6 @@ function expansion(s,exp){
           '<button type="button" class="linkbtn" data-unalloc="'+exp.boundUnit+'">Remove</button></div>';
       }
     } else if(state.flash&&state.flash.stockId===s.id){
-      /* transient success state: the click is acknowledged where it happened */
       addRow='<div class="addrow"><button type="button" class="btn primary addunit is-added is-flash" aria-pressed="true" aria-disabled="true">✓ Added for '+(isFam()?'Party':'Unit')+' '+(state.flash.unit+1)+'</button></div>';
     } else {
       addRow='<div class="addrow"><button type="button" class="btn addunit" '+(isFam()?'data-addroom':'data-addunit')+(canCommit?'':' aria-disabled="true"')+'>'+addLabel+'</button></div>';
@@ -1216,9 +1230,9 @@ function expansion(s,exp){
    reference only; greyed, no expansion, clicks announce the reason */
 function accomCard(s,inertInfo){
   var exp=(!inertInfo&&state.expand&&state.expand.stockId===s.id)?state.expand:null;
-  /* while the user is mid-interaction with a card, keep it live (expansion + added state)
-     even if it no longer fits a remaining party; it drops out once the flash clears */
-  var dead=cardDead(s)&&!(!inertInfo&&engaged(s));
+  /* an open card (fresh or bound/added) stays interactive even if it no longer fits a
+     remaining party; otherwise a too-small card shows disabled with its reason */
+  var dead=cardDead(s)&&!exp;
 
   var tags='';
   if(isFam()){
@@ -1328,15 +1342,17 @@ function groupPanel(){
         '<div class="lmain"><b>Unit '+(state.bbwUnits.length+1)+' &middot; Assigning now</b></div></div>');
     }
   }
-  /* 3-row window: previous done, current, next */
+  /* the panel is fully open on desktop; only mobile windows to 3 rows with a Show all
+     link, where vertical space is tight (client, 27 Jul) */
+  var mob=state.device==="mobile";
   var shown=rows;
-  if(!state.ledgerOpen&&rows.length>3){
+  if(mob&&!state.ledgerOpen&&rows.length>3){
     var c=curIdx>=0?curIdx:rows.length-1;
     var start=Math.max(0,Math.min(c-1,rows.length-3));
     shown=rows.slice(start,start+3);
   }
   var expander='';
-  if(rows.length>3){
+  if(mob&&rows.length>3){
     expander='<button type="button" class="linkbtn lshow" data-ledger>'+
       (state.ledgerOpen?'Show fewer':'Show all '+rows.length+' '+noun)+'</button>';
   }
@@ -1366,14 +1382,6 @@ function utilityRow(){
     '<button type="button" class="btn util-btn" onclick="return false;"><span class="mglyph" aria-hidden="true">'+GL.access+'</span>Accessible accommodation</button>'+
     '<button type="button" class="btn util-btn" onclick="return false;"><span class="mglyph" aria-hidden="true">'+GL.map+'</span>Download resort map</button></div>'+
     '<p class="group-note">Booking alongside friends or family on a separate booking? Call 0330 100 6649 and we’ll link you up.</p>';
-}
-
-/* what's included banner: reinstated on client feedback (24 Jul, separate testing proved
-   its value). Full width above the results heading on every layout. */
-function whatsIncludedBanner(){
-  return '<div class="whatsin"><span class="wi-ico" aria-hidden="true">&#10003;</span>'+
-    '<div class="wi-main"><b>What’s included in every break</b>'+
-    '<span class="wi-sub">Live entertainment, funfair rides, swimming pools and loads of activities are all part of the price.</span></div></div>';
 }
 
 /* ============================================================ RENDER
@@ -1418,13 +1426,13 @@ function render(){
      single-party bookings have no panel and no sections */
   document.querySelector('.intro').classList.toggle('no-rule',!(isFam()&&state.parties.length===1));
   if(view==="parties"){
-    content.innerHTML=whatsIncludedBanner()+resultsHead(false)+partiesUI()+utilityRow();
+    content.innerHTML=resultsHead(false)+partiesUI()+utilityRow();
   } else {
     var panel=groupPanel();
     var results=view==="tiles"
       ? visibleStock().map(function(s){ return accomCard(s); }).join('')
       : groupedUI();
-    content.innerHTML=whatsIncludedBanner()+(mob?panel:'')+resultsHead(view==="tiles")+(view==="tiles"?categoryUI():'')+
+    content.innerHTML=(mob?panel:'')+resultsHead(view==="tiles")+(view==="tiles"?categoryUI():'')+
       '<div class="layout">'+(mob?'':panel)+
       '<div class="results">'+results+utilityRow()+'</div>'+
       '</div>';
@@ -1602,12 +1610,6 @@ function wire(){
         announce(state.expand.pet?'Pet friendly added, '+gbp(PET_FEE)+'.':'Pet friendly removed.'); render(); }
     });
   });
-  q('[data-rc]',function(b){
-    b.addEventListener('click',function(){
-      if(state.expand){ state.expand.pickRoom=b.getAttribute('data-rc')==='1'; writeThrough();
-        announce(state.expand.pickRoom?'Exact room pick added, '+gbp(ROOM_PICK)+'.':'We’ll choose your room, included.'); render(); }
-    });
-  });
 
   /* transient add feedback (multi-unit): success state on the button plus a pulse on
      the panel row, driven by one shared flash so the two always agree */
@@ -1677,18 +1679,57 @@ function wire(){
       if(nxt&&nxt.scrollIntoView) nxt.scrollIntoView({behavior:'smooth',block:'start'});
     }
   }
+  /* options-variant commit: adds the unit and keeps the expansion bound, so the chosen
+     option shows the added state and stays. Honours the On-add collapse tool. */
+  function commitBound(){
+    var exp=state.expand; if(!exp) return;
+    var s=stockById(exp.stockId);
+    if(isFam()){
+      var t=cardTarget(s); if(t<0) return;
+      state.alloc[t]={stockId:exp.stockId,sleeps:exp.arr,guests:partyGuests(state.parties[t]),pickRoom:exp.pickRoom,gf:exp.gf,pet:exp.pet};
+      allocChanged();
+      announce(state.parties.length===1?s.name+' added to your booking.':s.name+' added for Party '+(t+1)+'.');
+      /* parties mode keeps its section flow (close and advance); other layouts stay bound */
+      if(state.catUX==="parties") state.expand=null; else exp.boundUnit=t;
+    } else {
+      state.bbwUnits.push({stockId:exp.stockId,sleeps:exp.arr,guests:exp.guests,pickRoom:exp.pickRoom,gf:exp.gf,pet:exp.pet});
+      exp.boundUnit=state.bbwUnits.length-1;
+      allocChanged();
+      bbwPlaceAnnounce(exp.guests,s.name);
+    }
+    render();
+    /* multi-party family collapse tool: show the added state briefly, then shut the card */
+    if(isFam()&&state.parties.length>1&&state.catUX!=="parties"&&state.addMode==="collapse"){
+      var id=s.id; state.pendingCollapse={stockId:id};
+      setTimeout(function(){ if(state.pendingCollapse&&state.pendingCollapse.stockId===id) collapseCard(id); },1200);
+    }
+    /* parties mode: glide down to the next party's section */
+    if(isFam()&&state.catUX==="parties"){
+      var nxt=document.querySelector('.party-sec.is-current');
+      if(nxt&&nxt.scrollIntoView) nxt.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  }
   q('[data-addroom],[data-addunit]',function(b){
     b.addEventListener('click',function(){
       if(b.getAttribute('aria-disabled')==='true') return;
       commitAdd();
     });
   });
-  /* options variant: the CTA inside each option sets the room choice, then commits */
-  q('[data-addopt]',function(b){
+  /* options variant: choosing a room commits the unit on the first pick, or switches the
+     choice on the added unit; the chosen button becomes the added state and stays */
+  q('[data-rcopt]',function(b){
     b.addEventListener('click',function(){
       if(b.getAttribute('aria-disabled')==='true') return;
-      if(state.expand) state.expand.pickRoom=b.getAttribute('data-addopt')==='1';
-      commitAdd();
+      var exp=state.expand; if(!exp) return;
+      var pick=b.getAttribute('data-rcopt')==='1';
+      if(exp.boundUnit!=null){
+        exp.pickRoom=pick; writeThrough();
+        announce(pick?'Exact room pick selected, '+gbp(ROOM_PICK)+'.':'We’ll choose your room, included.');
+        render();
+      } else {
+        exp.pickRoom=pick;
+        commitBound();
+      }
     });
   });
   /* add-on variant: the picker is a toggle like ground floor and pet friendly */
