@@ -297,8 +297,10 @@ ul{margin:0;padding:0;list-style:none;}
 .ac-expand{border-top:1px solid var(--line);padding:14px;}
 /* collapse-on-add variant: the expansion animates shut after the added state has shown */
 .ac-expand.collapsing{overflow:hidden;transition:max-height .34s ease,opacity .34s ease,padding-top .34s ease,padding-bottom .34s ease;}
-/* parties variant: the party body animates open/closed as the flow advances (client, 27 Jul) */
-.party-body.party-animating{overflow:hidden;transition:max-height .32s ease,opacity .3s ease;}
+/* parties variant: the finished party fades out, the new party slides+fades in (no height
+   reflow, so it stays smooth); the new party is anchored to the top (client, 27 Jul) */
+.party-body.party-fading{transition:opacity .2s ease;}
+.party-body.party-opening{transition:opacity .34s ease,transform .34s ease;will-change:opacity,transform;}
 .xsec{margin-bottom:18px;}
 .xsec>h4{display:flex;align-items:center;gap:8px;font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:9px;}
 .xnum{width:20px;height:20px;min-width:20px;border-radius:50%;background:var(--dark);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
@@ -1277,8 +1279,11 @@ function accomCard(s,inertInfo){
   var hasAlloc=isFam()
     ? state.alloc.some(function(a){ return a&&a.stockId===s.id; })
     : state.bbwUnits.some(function(u){ return u.stockId===s.id; });
+  /* parties layout: each party's cards are a separate instance, so the grey added state
+     reads as confusing; keep only the black party pill there (client, 27 Jul) */
+  var showAdded=hasAlloc&&state.catUX!=="parties";
 
-  return '<div class="acard'+((dead||inertInfo)?' is-locked':'')+(hasAlloc?' has-alloc':'')+'">'+banner+
+  return '<div class="acard'+((dead||inertInfo)?' is-locked':'')+(showAdded?' has-alloc':'')+'">'+banner+
     '<div class="ac-top">'+
     '<div class="ph-sq" aria-hidden="true"><span>Photo</span></div>'+
     '<div class="ac-body"><div class="ac-headrow"><h3>'+s.name+'</h3>'+(s.rec?'<span class="rec-badge">Recommended</span>':'')+'</div>'+
@@ -1651,34 +1656,37 @@ function wire(){
     ex.addEventListener('transitionend',finish,{once:true});
     setTimeout(finish,500);
   }
-  /* parties layout: close the finished party's body, advance the flow, then open the next
-     party's body, so the sections animate rather than jump (client, 27 Jul) */
+  /* parties layout: fade the finished party's expanded content out (not collapse), then
+     advance and open the next party, keeping focus on the new one (client, 27 Jul) */
   function animatePartiesAdvance(doneIdx){
     var secs=document.querySelectorAll('.party-sec');
     var body=secs[doneIdx]?secs[doneIdx].querySelector('.party-body'):null;
     if(!body){ render(); openNextParty(); return; }
-    body.style.maxHeight=body.scrollHeight+'px'; body.offsetHeight;
-    body.classList.add('party-animating');
-    requestAnimationFrame(function(){ body.style.maxHeight='0px'; body.style.opacity='0'; });
+    body.classList.add('party-fading');
+    requestAnimationFrame(function(){ body.style.opacity='0'; });
     var done=false, finish=function(){ if(done) return; done=true; render(); openNextParty(); };
     body.addEventListener('transitionend',finish,{once:true});
-    setTimeout(finish,420);
+    setTimeout(finish,240);
   }
   function openNextParty(){
     var cur=document.querySelector('.party-sec.is-current');
     if(!cur) return;
-    var body=cur.querySelector('.party-body');
-    if(body){
-      var h=body.scrollHeight;
-      body.style.maxHeight='0px'; body.style.opacity='0'; body.offsetHeight;
-      body.classList.add('party-animating');
-      requestAnimationFrame(function(){ body.style.maxHeight=h+'px'; body.style.opacity='1'; });
-      var done=false, clr=function(){ if(done) return; done=true;
-        body.style.maxHeight=''; body.style.opacity=''; body.classList.remove('party-animating'); };
-      body.addEventListener('transitionend',clr,{once:true});
-      setTimeout(clr,480);
+    /* anchor the newly-opened party to the top of the scroll area as much as possible */
+    var scroll=document.getElementById('scroll');
+    if(scroll){
+      var off=cur.getBoundingClientRect().top-scroll.getBoundingClientRect().top+scroll.scrollTop-6;
+      scroll.scrollTop=Math.max(0,Math.min(off,scroll.scrollHeight-scroll.clientHeight));
     }
-    if(cur.scrollIntoView) cur.scrollIntoView({behavior:'smooth',block:'start'});
+    var body=cur.querySelector('.party-body');
+    if(!body) return;
+    /* slide + fade the new body in, no height animation, so it stays smooth */
+    body.style.opacity='0'; body.style.transform='translateY(10px)'; body.offsetHeight;
+    body.classList.add('party-opening');
+    requestAnimationFrame(function(){ body.style.opacity=''; body.style.transform=''; });
+    var done=false, clr=function(){ if(done) return; done=true;
+      body.classList.remove('party-opening'); body.style.opacity=''; body.style.transform=''; };
+    body.addEventListener('transitionend',clr,{once:true});
+    setTimeout(clr,560);
   }
   /* the one commit action, shared by the add row and the options-variant CTAs */
   function commitAdd(){
