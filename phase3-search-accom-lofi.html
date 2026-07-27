@@ -1657,25 +1657,34 @@ function wire(){
     setTimeout(finish,500);
   }
   /* parties layout: fade the finished party's expanded content out (not collapse), then
-     advance and open the next party, keeping focus on the new one (client, 27 Jul) */
+     advance and smoothly scroll up to the next party (client, 27 Jul) */
   function animatePartiesAdvance(doneIdx){
     var secs=document.querySelectorAll('.party-sec');
     var body=secs[doneIdx]?secs[doneIdx].querySelector('.party-body'):null;
-    if(!body){ render(); openNextParty(); return; }
+    var nextSec=secs[doneIdx+1]||null;
+    if(!body){ render(); openNextParty(nextSec?nextSec.getBoundingClientRect().top:null); return; }
     body.classList.add('party-fading');
     requestAnimationFrame(function(){ body.style.opacity='0'; });
-    var done=false, finish=function(){ if(done) return; done=true; render(); openNextParty(); };
+    var done=false, finish=function(){ if(done) return; done=true;
+      /* reference position of the next party BEFORE the finished body is removed */
+      var ns=document.querySelectorAll('.party-sec')[doneIdx+1];
+      var refTop=ns?ns.getBoundingClientRect().top:null;
+      render(); openNextParty(refTop);
+    };
     body.addEventListener('transitionend',finish,{once:true});
     setTimeout(finish,240);
   }
-  function openNextParty(){
+  function openNextParty(refTop){
     var cur=document.querySelector('.party-sec.is-current');
     if(!cur) return;
-    /* anchor the newly-opened party to the top of the scroll area as much as possible */
     var scroll=document.getElementById('scroll');
     if(scroll){
+      /* first pin the new party where it visually was, so removing the finished body
+         doesn't snap the page; then smoothly scroll it up to the top */
+      if(refTop!=null) scroll.scrollTop+=cur.getBoundingClientRect().top-refTop;
       var off=cur.getBoundingClientRect().top-scroll.getBoundingClientRect().top+scroll.scrollTop-6;
-      scroll.scrollTop=Math.max(0,Math.min(off,scroll.scrollHeight-scroll.clientHeight));
+      off=Math.max(0,Math.min(off,scroll.scrollHeight-scroll.clientHeight));
+      if(scroll.scrollTo) scroll.scrollTo({top:off,behavior:'smooth'}); else scroll.scrollTop=off;
     }
     var body=cur.querySelector('.party-body');
     if(!body) return;
