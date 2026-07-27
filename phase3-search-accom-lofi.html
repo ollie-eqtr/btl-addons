@@ -954,13 +954,10 @@ function categoryUI(){
   return '<div class="cat-tiles" role="group" aria-label="Filter accommodation types">'+tiles+'</div>'+line;
 }
 function sortByFit(list){
-  if(!isFam()) return list;
-  /* cards too small for a remaining party sort to the bottom but stay visible, shown
-     disabled with their reason; the category filter is the only thing that hides cards
-     (client reverted the hide-on-too-small behaviour, 27 Jul) */
-  var fit=[], dead=[];
-  list.forEach(function(s){ (cardDead(s)?dead:fit).push(s); });
-  return fit.concat(dead);
+  /* cards always keep their natural order (client, 27 Jul): a card going out of range for a
+     later party must never change position. Too-small cards show disabled in place, and the
+     category filter is the only thing that hides cards. */
+  return list;
 }
 /* tiles are a multi-select filter (client, 24 Jul): every feasible category is shown by
    default, tapping one hides it. A locked booking forces its single category. */
