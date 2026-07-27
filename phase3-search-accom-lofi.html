@@ -243,7 +243,8 @@ ul{margin:0;padding:0;list-style:none;}
 /* ---- accommodation cards: long-wide, icon-led ---- */
 .acard{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);margin-bottom:12px;overflow:hidden;position:relative;}
 .acard.is-locked{opacity:.55;}
-.acard.has-alloc{border-color:var(--line3);box-shadow:inset 3px 0 0 var(--dark);}
+/* a card that has a unit on the booking: lighter grey fill and a slightly heavier border (client, 27 Jul) */
+.acard.has-alloc{background:var(--fill);border-color:var(--line3);box-shadow:inset 0 0 0 1.5px var(--line3);}
 /* unavailability reads as a banner strip across the top of the card */
 .card-banner{background:var(--fill2);border-bottom:1px solid var(--line);padding:7px 13px;font-size:11.5px;font-weight:600;color:var(--ink);}
 .ac-top{display:flex;align-items:stretch;}
@@ -296,6 +297,8 @@ ul{margin:0;padding:0;list-style:none;}
 .ac-expand{border-top:1px solid var(--line);padding:14px;}
 /* collapse-on-add variant: the expansion animates shut after the added state has shown */
 .ac-expand.collapsing{overflow:hidden;transition:max-height .34s ease,opacity .34s ease,padding-top .34s ease,padding-bottom .34s ease;}
+/* parties variant: the party body animates open/closed as the flow advances (client, 27 Jul) */
+.party-body.party-animating{overflow:hidden;transition:max-height .32s ease,opacity .3s ease;}
 .xsec{margin-bottom:18px;}
 .xsec>h4{display:flex;align-items:center;gap:8px;font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:9px;}
 .xnum{width:20px;height:20px;min-width:20px;border-radius:50%;background:var(--dark);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
@@ -420,7 +423,7 @@ button.rc-card:hover{background:var(--fill);}
       </div>
       <!-- collapse the card once a unit is added, so a multi-party user never feels stuck -->
       <div class="seg-group" id="tbAddMode"><span class="gl">On add (multi&#8209;party)</span>
-        <div class="seg" role="group" aria-label="On add"><button data-addmode="stay" aria-pressed="true">Stay open</button><button data-addmode="collapse" aria-pressed="false">Collapse</button></div>
+        <div class="seg" role="group" aria-label="On add"><button data-addmode="stay" aria-pressed="false">Stay open</button><button data-addmode="collapse" aria-pressed="true">Collapse</button></div>
       </div>
 
       <!-- Archived variants: superseded by client feedback (24 Jul), kept for future testing -->
@@ -750,7 +753,7 @@ var state={
   bbwUnits:[],                     /* BBW: [{stockId,sleeps,guests,pickRoom,gf}] */
   basis:"unit",
   catUX:"tiles",                   /* 'tiles', 'parties' (dining-pattern sections, Family multi only) or archived 'headings' */
-  addMode:"stay",                  /* multi-party: 'stay' keeps the card open after add, 'collapse' shuts it */
+  addMode:"collapse",              /* multi-party: 'collapse' shuts the card after add (default), 'stay' keeps it open */
   ledgerOpen:false,                /* ledger panel: show all rows instead of the 3-row window */
   roomPick:"options",              /* 'options' (live-style pair, default) or archived 'addon' (opt-in extra) */
   catOff:{},                       /* tiles view: categories the user has deselected; empty = all shown */
@@ -1644,6 +1647,35 @@ function wire(){
     ex.addEventListener('transitionend',finish,{once:true});
     setTimeout(finish,500);
   }
+  /* parties layout: close the finished party's body, advance the flow, then open the next
+     party's body, so the sections animate rather than jump (client, 27 Jul) */
+  function animatePartiesAdvance(doneIdx){
+    var secs=document.querySelectorAll('.party-sec');
+    var body=secs[doneIdx]?secs[doneIdx].querySelector('.party-body'):null;
+    if(!body){ render(); openNextParty(); return; }
+    body.style.maxHeight=body.scrollHeight+'px'; body.offsetHeight;
+    body.classList.add('party-animating');
+    requestAnimationFrame(function(){ body.style.maxHeight='0px'; body.style.opacity='0'; });
+    var done=false, finish=function(){ if(done) return; done=true; render(); openNextParty(); };
+    body.addEventListener('transitionend',finish,{once:true});
+    setTimeout(finish,420);
+  }
+  function openNextParty(){
+    var cur=document.querySelector('.party-sec.is-current');
+    if(!cur) return;
+    var body=cur.querySelector('.party-body');
+    if(body){
+      var h=body.scrollHeight;
+      body.style.maxHeight='0px'; body.style.opacity='0'; body.offsetHeight;
+      body.classList.add('party-animating');
+      requestAnimationFrame(function(){ body.style.maxHeight=h+'px'; body.style.opacity='1'; });
+      var done=false, clr=function(){ if(done) return; done=true;
+        body.style.maxHeight=''; body.style.opacity=''; body.classList.remove('party-animating'); };
+      body.addEventListener('transitionend',clr,{once:true});
+      setTimeout(clr,480);
+    }
+    if(cur.scrollIntoView) cur.scrollIntoView({behavior:'smooth',block:'start'});
+  }
   /* the one commit action, shared by the add row and the options-variant CTAs */
   function commitAdd(){
     var exp=state.expand; if(!exp) return;
@@ -1695,8 +1727,13 @@ function wire(){
       state.alloc[t]={stockId:exp.stockId,sleeps:exp.arr,guests:partyGuests(state.parties[t]),pickRoom:exp.pickRoom,gf:exp.gf,pet:exp.pet};
       allocChanged();
       announce(state.parties.length===1?s.name+' added to your booking.':s.name+' added for Party '+(t+1)+'.');
-      /* parties mode keeps its section flow (close and advance); other layouts stay bound */
-      if(state.catUX==="parties") state.expand=null; else exp.boundUnit=t;
+      if(state.catUX==="parties"){
+        /* parties layout: animate this party's body shut, then advance and open the next */
+        state.expand=null;
+        animatePartiesAdvance(t);
+        return;
+      }
+      exp.boundUnit=t;
     } else {
       state.bbwUnits.push({stockId:exp.stockId,sleeps:exp.arr,guests:exp.guests,pickRoom:exp.pickRoom,gf:exp.gf,pet:exp.pet});
       exp.boundUnit=state.bbwUnits.length-1;
@@ -1708,11 +1745,6 @@ function wire(){
     if(isFam()&&state.parties.length>1&&state.catUX!=="parties"&&state.addMode==="collapse"){
       var id=s.id; state.pendingCollapse={stockId:id};
       setTimeout(function(){ if(state.pendingCollapse&&state.pendingCollapse.stockId===id) collapseCard(id); },1200);
-    }
-    /* parties mode: glide down to the next party's section */
-    if(isFam()&&state.catUX==="parties"){
-      var nxt=document.querySelector('.party-sec.is-current');
-      if(nxt&&nxt.scrollIntoView) nxt.scrollIntoView({behavior:'smooth',block:'start'});
     }
   }
   q('[data-addroom],[data-addunit]',function(b){
@@ -1803,12 +1835,21 @@ function resetChoices(){
   state.bbwUnits=[]; state.expand=null; state.catOff={}; state.secOpen={}; state.flash=null;
   state.pendingCollapse=null; state.ledgerOpen=false;
 }
+/* On add has no effect in the Parties layout (that flow advances section by section), so
+   disable it there rather than imply it does something (client, 27 Jul) */
+function syncAddModeControl(){
+  var na=state.catUX==="parties";
+  document.querySelectorAll('#tbAddMode [data-addmode]').forEach(function(b){
+    b.setAttribute('aria-disabled',na?'true':'false');
+  });
+}
 function toolbarVis(){
   document.getElementById('tbResort').hidden=!isFam();
   document.getElementById('tbPreset').hidden=!isFam();
   document.getElementById('tbGroup').hidden=isFam();
   /* the collapse-on-add variant only applies to multi-party Family flows */
   document.getElementById('tbAddMode').hidden=!(isFam()&&state.parties.length>1);
+  syncAddModeControl();
   /* Parties view needs pre-defined parties (not BBW) and more than one of them */
   document.getElementById('cxParties').setAttribute('aria-disabled',(isFam()&&state.parties.length>1)?'false':'true');
 }
@@ -1846,6 +1887,7 @@ document.querySelectorAll('[data-catux]').forEach(function(b){
     state.catUX=b.getAttribute('data-catux');
     state.expand=null;
     pressGroup('[data-catux]',state.catUX,'data-catux');
+    syncAddModeControl();
     announce(state.catUX==="tiles"?'Category tiles view.':(state.catUX==="headings"?'Category headings view.':'Party sections view.'));
     render();
   });
@@ -1863,6 +1905,7 @@ document.querySelectorAll('[data-roompick]').forEach(function(b){
    applied on the next add, so no re-render is needed here. */
 document.querySelectorAll('[data-addmode]').forEach(function(b){
   b.addEventListener('click',function(){
+    if(b.getAttribute('aria-disabled')==='true'){ announce('On add doesn’t apply to the Parties layout.'); return; }
     state.addMode=b.getAttribute('data-addmode');
     pressGroup('[data-addmode]',state.addMode,'data-addmode');
     announce(state.addMode==="collapse"?'Cards will collapse after adding a unit.':'Cards will stay open after adding a unit.');
