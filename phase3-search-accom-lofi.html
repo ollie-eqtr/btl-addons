@@ -1468,9 +1468,18 @@ function openExpand(s,bound){
     var u=isFam()?state.alloc[bound]:state.bbwUnits[bound];
     arr=u.sleeps; gf=u.gf; pet=!!u.pet; pickRoom=u.pickRoom; guests=isFam()?null:u.guests;
   } else {
-    /* fresh card, Family or BBW: no preselected arrangement; picking one is the first action */
-    arr=null;
-    guests=null;
+    /* fresh card: preselect the smallest arrangement that sleeps the target party (client
+       reverted the no-preselection change, 27 Jul). BBW stays unselected: its arrangement
+       tile carries the guests stepper, so the guest count is the first choice there. */
+    arr=null; guests=null;
+    if(isFam()){
+      var t=cardTarget(s);
+      if(t>=0){
+        var g=partyGuests(state.parties[t]);
+        for(var i=0;i<s.sleeps.length;i++){ if(s.sleeps[i].sleeps>=g){ arr=s.sleeps[i].sleeps; break; } }
+        if(arr===null) arr=maxS(s);
+      }
+    }
   }
   state.expand={stockId:s.id,arr:arr,gf:gf,pet:pet,pickRoom:pickRoom,guests:guests,boundUnit:(bound!=null?bound:null)};
 }
