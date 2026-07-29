@@ -46,8 +46,8 @@ ul{margin:0;padding:0;list-style:none;}
 .seg button:last-child{border-right:0;}
 .seg button[aria-pressed="true"]{background:#eee;color:#1f1f1f;font-weight:700;}
 .seg button[aria-disabled="true"]{color:#5a5a5a;background:#242424;cursor:not-allowed;}
-/* archived variants: superseded controls, collapsed by default, kept for future testing */
-.rail-archive{margin-top:3px;border-top:1px solid #3a3a3a;padding-top:11px;}
+/* archived variants: the variants box is now just this, collapsed by default (no top divider
+   needed since there's no live section above it) */
 .rail-archive>summary{cursor:pointer;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8a8a8a;list-style:none;display:flex;align-items:center;gap:7px;}
 .rail-archive>summary::-webkit-details-marker{display:none;}
 .rail-archive>summary::before{content:"\25B8";font-size:9px;}
@@ -394,6 +394,37 @@ button.rc-card:hover{background:var(--fill);}
 .frame-outer[data-device="mobile"] .finstruct{order:3;width:100%;flex:0 0 100%;}
 .frame-outer[data-device="mobile"] .factions{order:2;margin-left:auto;}
 .frame-outer[data-device="mobile"] .continue{flex:1;}
+
+/* ---- Room pick modal (desktop) / bottom drawer (mobile) ---- */
+.rp-modal{position:absolute;inset:0;z-index:60;}
+.rp-scrim{position:absolute;inset:0;background:rgba(20,20,20,.55);display:flex;align-items:center;justify-content:center;padding:22px;opacity:0;transition:opacity .2s;}
+.rp-modal.open .rp-scrim{opacity:1;}
+.rp-card{position:relative;background:var(--paper);border-radius:14px;width:min(430px,100%);max-height:calc(100% - 44px);overflow:auto;padding:26px 24px 22px;box-shadow:0 18px 50px rgba(0,0,0,.35);transform:translateY(10px) scale(.98);transition:transform .2s;}
+.rp-modal.open .rp-card{transform:none;}
+.rp-x{position:absolute;top:11px;right:11px;width:30px;height:30px;border:0;background:transparent;font-size:22px;line-height:1;color:var(--ink2);cursor:pointer;border-radius:6px;}
+.rp-x:hover{background:var(--fill);}
+.rp-eyebrow{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+.rp-card h3{font-size:20px;font-weight:800;margin:2px 0 7px;}
+.rp-lead{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:16px;}
+.rp-breakdown{background:var(--fill);border-radius:10px;padding:15px 16px;margin-bottom:18px;}
+.rp-breakdown h4{font-size:13.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:13px;}
+.rp-rows{display:flex;flex-direction:column;gap:14px;}
+.rp-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.rp-row-l b{display:block;font-size:14px;}
+.rp-row-l span{font-size:13px;color:var(--muted);}
+.rp-row-r{text-align:right;white-space:nowrap;}
+.rp-fee{display:block;font-size:14px;}
+.rp-fee b{font-weight:800;}
+.rp-per{color:var(--muted);font-size:13px;}
+.rp-perg{display:block;font-size:12px;color:var(--muted);margin-top:2px;}
+.rp-actions{display:flex;flex-direction:column;gap:6px;}
+.rp-cta{width:100%;padding:13px;font-size:14px;border-radius:9px;}
+.rp-secondary{width:100%;background:var(--paper);border:1px solid var(--line2);border-radius:9px;padding:12px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;}
+.rp-secondary:hover{background:var(--fill);}
+/* mobile: full-width sheet anchored to the bottom, sliding up */
+.frame-outer[data-device="mobile"] .rp-scrim{align-items:flex-end;padding:0;}
+.frame-outer[data-device="mobile"] .rp-card{width:100%;max-height:90%;border-radius:16px 16px 0 0;padding-bottom:24px;transform:translateY(100%);}
+.frame-outer[data-device="mobile"] .rp-modal.open .rp-card{transform:none;}
 </style>
 </head>
 <body>
@@ -415,7 +446,8 @@ button.rc-card:hover{background:var(--fill);}
       <div class="seg" role="group" aria-label="Resort"><button data-resortbtn="Minehead" aria-pressed="true">Minehead</button><button data-resortbtn="Bognor Regis" aria-pressed="false">Bognor</button><button data-resortbtn="Skegness" aria-pressed="false">Skegness</button></div>
     </div>
     <div class="seg-group" id="tbPreset"><span class="gl">Party preset</span>
-      <div class="seg" role="group" aria-label="Party preset"><button data-presetbtn="p1" aria-pressed="true">4</button><button data-presetbtn="p4" aria-pressed="false">2+8</button><button data-presetbtn="p3" aria-pressed="false">5 parties</button></div>
+      <!-- labels are the party count for consistency (1, 2, 5); the party makeup per preset is unchanged -->
+      <div class="seg" role="group" aria-label="Party preset (number of parties)"><button data-presetbtn="p1" aria-pressed="true" aria-label="1 party">1</button><button data-presetbtn="p4" aria-pressed="false" aria-label="2 parties">2</button><button data-presetbtn="p3" aria-pressed="false" aria-label="5 parties">5</button></div>
     </div>
     <div class="seg-group" id="tbGroup" hidden><span class="gl">Group size</span>
       <div class="seg" role="group" aria-label="Group size"><button data-groupbtn="4" aria-pressed="false">4</button><button data-groupbtn="8" aria-pressed="true">8</button><button data-groupbtn="14" aria-pressed="false">14</button><button data-groupbtn="19" aria-pressed="false">19</button></div>
@@ -423,20 +455,17 @@ button.rc-card:hover{background:var(--fill);}
 
     <!-- Design iterations under test: switch the pattern being reviewed -->
     <div class="rail-variants">
-      <span class="rail-head">Design variants</span>
-      <div class="seg-group"><span class="gl">Category UX</span>
-        <div class="seg" role="group" aria-label="Category UX"><button data-catux="tiles" aria-pressed="true">Tiles</button><button data-catux="parties" aria-pressed="false" id="cxParties">Parties</button></div>
-      </div>
-      <!-- collapse the card once a unit is added, so a multi-party user never feels stuck -->
-      <div class="seg-group" id="tbAddMode"><span class="gl">On add (multi&#8209;party)</span>
-        <div class="seg" role="group" aria-label="On add"><button data-addmode="stay" aria-pressed="false">Stay open</button><button data-addmode="collapse" aria-pressed="true">Collapse</button></div>
-      </div>
-
-      <!-- Archived variants: superseded by client feedback (24 Jul), kept for future testing -->
+      <!-- Every design variant is settled (Parties category UX approved), so the panel is just
+           the archived controls: collapsed by default, kept for future testing -->
       <details class="rail-archive">
         <summary>Archived variants</summary>
+        <!-- On add is superseded now the Parties layout is approved (its flow advances section
+             by section, so collapse-on-add has no effect) -->
+        <div class="seg-group" id="tbAddMode"><span class="gl">On add (multi&#8209;party)</span>
+          <div class="seg" role="group" aria-label="On add"><button data-addmode="stay" aria-pressed="false">Stay open</button><button data-addmode="collapse" aria-pressed="true">Collapse</button></div>
+        </div>
         <div class="seg-group"><span class="gl">Category UX</span>
-          <div class="seg" role="group" aria-label="Category UX (archived)"><button data-catux="headings" aria-pressed="false">Headings</button></div>
+          <div class="seg" role="group" aria-label="Category UX (archived)"><button data-catux="parties" aria-pressed="true" id="cxParties">Parties</button><button data-catux="tiles" aria-pressed="false">Tiles</button><button data-catux="headings" aria-pressed="false">Headings</button></div>
         </div>
         <div class="seg-group"><span class="gl">Room pick</span>
           <div class="seg" role="group" aria-label="Room pick"><button data-roompick="addon" aria-pressed="false">Add-on</button><button data-roompick="options" aria-pressed="true">Options</button></div>
@@ -497,6 +526,27 @@ button.rc-card:hover{background:var(--fill);}
           <div class="factions">
             <button class="savebtn" onclick="return false;">Save quote</button>
             <button class="continue" id="continueBtn" aria-disabled="true">Continue</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Multi-unit room-pick decision, shown once at Continue. Desktop: centred dialog.
+           Mobile: drawer sliding up from the bottom (see .rp-* styles). -->
+      <div class="rp-modal" id="rpModal" hidden>
+        <div class="rp-scrim" id="rpScrim">
+          <div class="rp-card" role="dialog" aria-modal="true" aria-labelledby="rpTitle">
+            <button type="button" class="rp-x" id="rpClose" aria-label="Close">&times;</button>
+            <span class="rp-eyebrow">Accommodation Picker</span>
+            <h3 id="rpTitle">Keep your parties together</h3>
+            <p class="rp-lead" id="rpLead"></p>
+            <div class="rp-breakdown">
+              <h4>Cost breakdown</h4>
+              <div class="rp-rows" id="rpRows"></div>
+            </div>
+            <div class="rp-actions">
+              <button type="button" class="rp-secondary" id="rpLetCta">Continue to dining</button>
+              <button type="button" class="btn primary rp-cta" id="rpPickCta">Pick my exact rooms</button>
+            </div>
           </div>
         </div>
       </div>
@@ -758,7 +808,7 @@ var state={
   bbwGuests:8,
   bbwUnits:[],                     /* BBW: [{stockId,sleeps,guests,pickRoom,gf}] */
   basis:"unit",
-  catUX:"tiles",                   /* 'tiles', 'parties' (dining-pattern sections, Family multi only) or archived 'headings' */
+  catUX:"parties",                 /* 'parties' (dining-pattern sections, Family multi only; the chosen variant) or archived 'tiles'/'headings'. Single-party and BBW fall back to the tiles renderer. */
   addMode:"collapse",              /* multi-party: 'collapse' shuts the card after add (default), 'stay' keeps it open */
   ledgerOpen:false,                /* ledger panel: show all rows instead of the 3-row window */
   roomPick:"options",              /* 'options' (live-style pair, default) or archived 'addon' (opt-in extra) */
@@ -815,6 +865,11 @@ function grandTotal(){
   else state.bbwUnits.forEach(function(u){ t+=unitPrice(u); });
   return t;
 }
+/* Room pick is decided once, in the Continue modal, rather than per unit (revealed 28 Jul).
+   Applies to multi-party Family (the approved Parties layout) and to all BBW bookings, which
+   build units as you go. Single-party Family keeps the inline choice. */
+function roomPickAtContinue(){ return isFam()?state.parties.length>1:true; }
+function bookingUnitCount(){ return isFam()?state.parties.length:state.bbwUnits.length; }
 function isDone(){
   return isFam()?allAllocated():(state.bbwUnits.length>0&&placedBBW(-1)>=state.bbwGuests);
 }
@@ -963,9 +1018,9 @@ function categoryUI(){
   return '<div class="cat-tiles" role="group" aria-label="Filter accommodation types">'+tiles+'</div>'+line;
 }
 function sortByFit(list){
-  /* cards always keep their natural order (client, 27 Jul): a card going out of range for a
-     later party must never change position. Too-small cards show disabled in place, and the
-     category filter is the only thing that hides cards. */
+  /* cards keep their natural order (client, 27 Jul): a card going out of range for a later
+     party must never change position. Cards that fit no remaining party are now removed in
+     visibleStock (client, 28 Jul) rather than shown disabled in place. */
   return list;
 }
 /* tiles are a multi-select filter (client, 24 Jul): every feasible category is shown by
@@ -976,7 +1031,10 @@ function selectedCats(){
 }
 function visibleStock(){
   var sel=selectedCats();
-  return sortByFit(stock().filter(function(s){ return sel.indexOf(s.cat)>=0; }));
+  /* hide cards that are too small / can't fit the target party rather than greying them out
+     (client, 28 Jul). Booking-level feasibility (catFeasibility) still guarantees at least one
+     fitting card per shown category, so this never empties the list in a valid flow. */
+  return sortByFit(stock().filter(function(s){ return sel.indexOf(s.cat)>=0&&!cardDead(s); }));
 }
 
 /* ============================================================ GROUPED LAYOUT (headings variant)
@@ -1178,9 +1236,28 @@ function expansion(s,exp){
   var pickFlag='<span class="rc-flag">Recommended</span>';
   var lesserCopy='<span class="row-sub">We’ll put you in any spare room of this type. You can’t choose the location, and you might not be near the rest of your group.</span>';
   var canCommit=exp.boundUnit!=null?true:(isFam()?(tgt>=0&&exp.arr>=g):(exp.arr!==null&&remaining>0));
-  var addLabel=isFam()?((tgt<0&&exp.boundUnit==null)?'All units chosen':'Add this room'):'Add this unit';
+  /* fresh card with nothing picked: the commit is blocked, so the button says the next step */
+  var needArr=exp.boundUnit==null&&exp.arr==null;
+  var addLabel=isFam()
+    ? ((tgt<0&&exp.boundUnit==null)?'All units chosen':(needArr?'Choose a sleeping arrangement first':'Add this room'))
+    : (needArr?'Choose a sleeping arrangement first':'Add this unit');
   var rcSec, addRow='';
-  if(state.roomPick==="addon"){
+  if(roomPickAtContinue()){
+    /* multi-party: no per-unit room pick. A plain Add commits the unit (pickRoom stays off);
+       the exact-room vs let-us-choose decision is made once for the whole booking in the
+       Continue modal, so the customer isn't asked the same question for every unit. */
+    if(exp.boundUnit!=null){
+      addRow='<div class="addrow"><button type="button" class="btn primary addunit is-added" aria-pressed="true" data-added>✓ Added</button>'+
+        '<button type="button" class="linkbtn" data-unalloc="'+exp.boundUnit+'">Remove</button></div>';
+    } else {
+      /* single Add button; label stays put in the disabled state too (client). Family commits
+         through the parties/options flow (data-rcopt); BBW uses the add-and-continue flow
+         (data-addunit) so the next unit opens automatically until everyone has a bed. */
+      var addAttr=isFam()?'data-rcopt="0"':'data-addunit';
+      var addTxt=isFam()?'Add this room':'Add this unit';
+      addRow='<div class="addrow"><button type="button" class="btn primary addunit" '+addAttr+(canCommit?'':' aria-disabled="true"')+'>'+addTxt+'</button></div>';
+    }
+  } else if(state.roomPick==="addon"){
     rcSec={t:'Pick your exact room',h:
       '<div class="gf-row"><span class="fglyph" aria-hidden="true">'+GL.map+'</span>'+
       '<span class="gf-main"><b>Pick my exact room</b>'+bullets+
@@ -1197,7 +1274,10 @@ function expansion(s,exp){
         return '<button type="button" class="btn primary addunit is-added" data-rcopt="'+pick+'" aria-pressed="true">✓ Added</button>';
       var can=added||canCommit; /* an arrangement must be chosen before the first add */
       var val=arrBy(s,exp.arr||minS(s)).price+(exp.gf?GF_FEE:0)+(exp.pet?PET_FEE:0)+(pick?ROOM_PICK:0);
-      var label=pick?(exp.arr?'Choose my room for '+gbp(val):'Choose my room'):'Give me any spare room';
+      /* both buttons share the disabled text until an arrangement is picked; once picked each
+         carries its own committing label with the running total */
+      var label=needArr?'Choose a sleeping arrangement first'
+        :pick?'Pick my exact room for '+gbp(val):'Let us choose for '+gbp(val);
       return '<button type="button" class="btn addunit" data-rcopt="'+pick+'"'+(can?'':' aria-disabled="true"')+'>'+label+'</button>';
     };
     rcSec={t:'Room choice',h:'<div class="rc-duo">'+
@@ -1206,7 +1286,7 @@ function expansion(s,exp){
     /* once the unit is on the booking, a low-key remove link only, no add button below */
     if(added) addRow='<div class="addrow"><button type="button" class="linkbtn" data-unalloc="'+exp.boundUnit+'">Remove from booking</button></div>';
   }
-  if(state.roomPick==="addon"){
+  if(!roomPickAtContinue()&&state.roomPick==="addon"){
     /* archived add-on variant keeps its single add button below */
     if(exp.boundUnit!=null){
       if(isFam()&&state.parties.length===1){
@@ -1226,7 +1306,7 @@ function expansion(s,exp){
   /* section numbers run over whatever this item actually offers */
   var secs=[{t:'Sleeping arrangements',h:'<div class="arr-grid">'+tiles+'</div>'+assign}];
   if(prefs) secs.push({t:s.gfOpt?'Location preferences':'Preferences',h:prefs});
-  secs.push(rcSec);
+  if(rcSec) secs.push(rcSec);
   return secs.map(function(sec,i){
     return '<div class="xsec"><h4><span class="xnum" aria-hidden="true">'+(i+1)+'</span>'+sec.t+'</h4>'+sec.h+'</div>';
   }).join('')+addRow;
@@ -1243,7 +1323,8 @@ function accomCard(s,inertInfo){
   var tags='';
   if(isFam()){
     var here=[]; state.alloc.forEach(function(a,i){ if(a&&a.stockId===s.id) here.push(i); });
-    if(here.length) tags='<div class="alloc-tags">'+here.map(function(i){ return '<span class="alloc-tag">✓ Party '+(i+1)+'</span>'; }).join('')+'</div>';
+    /* the Party pill only earns its place in a multi-party booking; with one party it's redundant */
+    if(here.length&&state.parties.length>1) tags='<div class="alloc-tags">'+here.map(function(i){ return '<span class="alloc-tag">✓ Party '+(i+1)+'</span>'; }).join('')+'</div>';
   } else {
     var uh=[]; state.bbwUnits.forEach(function(u,i){ if(u.stockId===s.id) uh.push('<span class="alloc-tag">Unit '+(i+1)+' &middot; '+plural(u.guests,'guest')+'</span>'); });
     if(uh.length) tags='<div class="alloc-tags">'+uh.join('')+'</div>';
@@ -1304,6 +1385,59 @@ function ledgerTags(u){
   if(u.gf) t.push('ground floor');
   if(u.pet) t.push('pet friendly');
   return t.length?' &middot; '+t.join(', '):'';
+}
+/* BBW builds units as it goes, so it uses the parties section pattern with a live
+   "current unit" section instead of a fixed list. A guest progress bar lives in the side
+   panel (bbwPanel); unit headers show a plain guest count. */
+function bbwPanel(){
+  if(isFam()) return '';
+  var total=state.bbwGuests, placed=placedBBW(-1), lock=lockedCategory();
+  var exp=state.expand, tent=(exp&&exp.boundUnit==null&&exp.arr!==null)?Math.min(exp.guests,total-placed):0;
+  /* progress bar: every guest lives here and stays here; filled once placed, dashed while
+     being added. Unit headers carry a plain count instead. Same right-panel / mobile-sticky
+     treatment as the family group panel. */
+  var gs='';
+  for(var k=0;k<total;k++){
+    var cls=k<placed?'on':(k<placed+tent?'tentative':'off');
+    gs+='<span class="pfig '+cls+'"><i></i><b></b></span>';
+  }
+  var done=placed>=total;
+  var cap=done?'Everyone has a bed'
+    :(tent>0?placed+' of '+total+' guests have a bed &middot; '+tent+' being added'
+            :placed+' of '+total+' guests have a bed');
+  var panel='<div class="gpanel" id="gpanel">'+
+    '<span class="gp-eyebrow">Group accommodation type</span>'+
+    '<h3 id="gpHead">'+(lock?lock:'Not chosen yet')+'</h3>'+
+    '<div class="gp-pool"><span class="pool-cap">'+cap+'</span><div class="pg-row" aria-hidden="true">'+gs+'</div></div>'+
+    '</div>';
+  return '<aside class="side" aria-labelledby="gpHead">'+panel+'</aside>';
+}
+function unitBuilderUI(){
+  var lock=lockedCategory(), out='';
+  /* committed units: collapsed summary sections carrying their locked guest icons */
+  state.bbwUnits.forEach(function(u,i){
+    var s=stockById(u.stockId), pulse=(state.flash&&state.flash.unit===i)?' flash':'', spare=u.sleeps-u.guests;
+    var head='<div class="party-head'+pulse+'"><span class="ltick done" aria-hidden="true">✓</span>'+
+      '<span class="ph-main"><b>Unit '+(i+1)+' &middot; '+plural(u.guests,'guest')+'</b>'+
+      '<span class="ph-sub">'+s.name+' &middot; '+gbp(unitPrice(u))+ledgerTags(u)+(spare>0?' &middot; '+plural(spare,'spare bed'):'')+'</span></span>'+
+      '<button type="button" class="up-edit" data-edit="'+i+'">Edit</button>'+
+      '<button type="button" class="up-remove" data-unalloc="'+i+'">Remove</button></div>';
+    var body=(state.expand&&state.expand.boundUnit===i&&stockById(state.expand.stockId))
+      ? '<div class="party-body">'+accomCard(stockById(state.expand.stockId))+'</div>':'';
+    out+='<section class="party-sec is-done">'+head+body+'</section>';
+  });
+  /* the unit being assigned now: header shows the in-progress guest count; its body holds the
+     cards for THIS unit only, so the list never reorders or gets reused across units */
+  var total=state.bbwGuests, placed=placedBBW(-1);
+  if(placed<total){
+    var n=state.bbwUnits.length+1, exp=state.expand;
+    var tent=(exp&&exp.boundUnit==null&&exp.arr!==null)?Math.min(exp.guests,total-placed):0;
+    var cnt=tent>0?' &middot; '+plural(tent,'guest'):'';
+    var head='<div class="party-head"><span class="ltick cur" aria-hidden="true">'+n+'</span>'+
+      '<span class="ph-main"><b>Unit '+n+cnt+'</b><span class="ph-sub">Assigning now</span></span></div>';
+    out+='<section class="party-sec is-current">'+head+'<div class="party-body">'+partyChoiceBody(null,lock)+'</div></section>';
+  }
+  return out;
 }
 function groupPanel(){
   if(isFam()&&(state.parties.length<2||state.catUX==="parties")) return '';
@@ -1436,6 +1570,15 @@ function render(){
   document.querySelector('.intro').classList.toggle('no-rule',!(isFam()&&state.parties.length===1));
   if(view==="parties"){
     content.innerHTML=resultsHead(false)+partiesUI()+utilityRow();
+  } else if(!isFam()){
+    /* BBW: sectioned unit builder in the results column (one section per unit, cards live only
+       inside the current unit's section). The guest progress bar sits in the right-hand panel
+       on desktop and full-bleed sticky at the top on mobile — same as the family group panel. */
+    var bpanel=bbwPanel();
+    content.innerHTML=(mob?bpanel:'')+resultsHead(false)+
+      '<div class="layout">'+(mob?'':bpanel)+
+      '<div class="results">'+unitBuilderUI()+utilityRow()+'</div>'+
+      '</div>';
   } else {
     var panel=groupPanel();
     var results=view==="tiles"
@@ -1477,18 +1620,12 @@ function openExpand(s,bound){
     var u=isFam()?state.alloc[bound]:state.bbwUnits[bound];
     arr=u.sleeps; gf=u.gf; pet=!!u.pet; pickRoom=u.pickRoom; guests=isFam()?null:u.guests;
   } else {
-    /* fresh card: preselect the smallest arrangement that sleeps the target party (client
-       reverted the no-preselection change, 27 Jul). BBW stays unselected: its arrangement
-       tile carries the guests stepper, so the guest count is the first choice there. */
+    /* fresh card: no preselection. The client removed the fam preselect (28 Jul) because a
+       server-side default arrangement caused back-end issues; the arrangement is now an
+       explicit choice for everyone. BBW was already unselected: its arrangement tile carries
+       the guests stepper, so the guest count is the first choice there. The current-step
+       accent (see expansion()) and the disabled room-choice label keep it from being skipped. */
     arr=null; guests=null;
-    if(isFam()){
-      var t=cardTarget(s);
-      if(t>=0){
-        var g=partyGuests(state.parties[t]);
-        for(var i=0;i<s.sleeps.length;i++){ if(s.sleeps[i].sleeps>=g){ arr=s.sleeps[i].sleeps; break; } }
-        if(arr===null) arr=maxS(s);
-      }
-    }
   }
   state.expand={stockId:s.id,arr:arr,gf:gf,pet:pet,pickRoom:pickRoom,guests:guests,boundUnit:(bound!=null?bound:null)};
 }
@@ -1565,10 +1702,17 @@ function wire(){
       if(isFam()&&state.parties.length===1&&state.alloc[0]&&state.alloc[0].stockId===id) bound=0;
       openExpand(stockById(id),bound);
       render();
-      /* mobile: glide down to the sleeping arrangements so the expansion isn't missed (client) */
+      /* mobile: glide down to the sleeping arrangements so the expansion isn't missed (client).
+         Manual scroll (not scrollIntoView) so we can drop the target below the sticky group
+         panel — otherwise it overshoots and hides the top of the arrangements (BBW). */
       if(state.device==="mobile"){
-        var ex=document.getElementById('exp-'+id);
-        if(ex&&ex.scrollIntoView) ex.scrollIntoView({behavior:'smooth',block:'start'});
+        var ex=document.getElementById('exp-'+id), sc=document.getElementById('scroll');
+        if(ex&&sc){
+          var off=ex.getBoundingClientRect().top-sc.getBoundingClientRect().top+sc.scrollTop-6;
+          var sp=document.querySelector('.side'); if(sp) off-=sp.getBoundingClientRect().height+14;
+          off=Math.max(0,Math.min(off,sc.scrollHeight-sc.clientHeight));
+          if(sc.scrollTo) sc.scrollTo({top:off,behavior:'smooth'}); else sc.scrollTop=off;
+        }
       }
     });
   });
@@ -1684,6 +1828,9 @@ function wire(){
     var scroll=document.getElementById('scroll');
     if(scroll){
       var off=cur.getBoundingClientRect().top-scroll.getBoundingClientRect().top+scroll.scrollTop-6;
+      /* on mobile the group panel is sticky at the top of the scroll, so drop the target below
+         it — otherwise it hides the unit's section heading (BBW) */
+      if(state.device==="mobile"){ var sp=document.querySelector('.side'); if(sp) off-=sp.getBoundingClientRect().height+14; }
       off=Math.max(0,Math.min(off,scroll.scrollHeight-scroll.clientHeight));
       if(scroll.scrollTo) scroll.scrollTo({top:off,behavior:'smooth'}); else scroll.scrollTop=off;
     }
@@ -1721,13 +1868,18 @@ function wire(){
         }
       }
     } else {
+      /* DOM index of the current unit section (before the push) so we can collapse it */
+      var doneIdx=state.bbwUnits.length;
       state.bbwUnits.push({stockId:exp.stockId,sleeps:exp.arr,guests:exp.guests,pickRoom:exp.pickRoom,gf:exp.gf,pet:exp.pet});
       allocChanged();
       bbwPlaceAnnounce(exp.guests,s.name);
       flashAdd(s.id,state.bbwUnits.length-1,pickAtCommit);
-      /* reset to a fresh add for the next unit; close when everyone has a bed */
-      if(state.bbwGuests-placedBBW(-1)>0) openExpand(s,null);
-      else state.expand=null;
+      /* the next unit's section opens with its accommodation card collapsed — the customer
+         picks one fresh rather than landing on the previous card already expanded */
+      state.expand=null;
+      /* sectioned builder: collapse the finished unit and glide to the next, like parties */
+      animatePartiesAdvance(doneIdx);
+      return;
     }
     render();
     /* parties mode: glide down to the next party's section rather than jumping */
@@ -1747,6 +1899,16 @@ function wire(){
       allocChanged();
       announce(state.parties.length===1?s.name+' added to your booking.':s.name+' added for Party '+(t+1)+'.');
       if(state.catUX==="parties"){
+        /* desktop: after the final party, keep its panel open (bound) so the page isn't left
+           bare with every section collapsed. Mobile stays fully collapsed after the last add
+           (client). Before the final party, advance to the next section as normal. */
+        if(allAllocated()&&state.device!=="mobile"){
+          openExpand(s,t);
+          render();
+          var lastSec=document.querySelectorAll('.party-sec')[t];
+          if(lastSec&&lastSec.scrollIntoView) lastSec.scrollIntoView({behavior:'smooth',block:'start'});
+          return;
+        }
         /* parties layout: animate this party's body shut, then advance and open the next */
         state.expand=null;
         animatePartiesAdvance(t);
@@ -1835,11 +1997,68 @@ function wire(){
 }
 
 document.getElementById('continueBtn').addEventListener('click',function(e){
+  e.preventDefault();
   if(this.getAttribute('aria-disabled')==='true'){
-    e.preventDefault();
     announce(isFam()?'Choose accommodation for every unit to continue.':'Place every guest to continue.');
+    return;
   }
+  /* multi-unit: make the one room-pick decision before moving on; single-unit already
+     chose inline, so it proceeds straight through */
+  if(roomPickAtContinue()) openRoomPickModal();
+  else announce('Continuing to dining.');
 });
+
+/* ============================================================ ROOM PICK MODAL
+   Multi-unit only. Framed as a per-unit upgrade (£25 each); the running total already lives
+   on the main screen, so no totals are repeated here. */
+var rpLastFocus=null;
+function openRoomPickModal(){
+  var fam=isFam(), word=fam?'party':'unit';
+  /* one row per placed party/unit; the fee is a flat £25 each (no per-guest split — it would
+     imply the price scales per head and make small parties look dearer) */
+  var units=fam
+    ? state.parties.map(function(p,i){ return state.alloc[i]?{label:'Party '+(i+1),guests:partyGuests(p)}:null; }).filter(Boolean)
+    : state.bbwUnits.map(function(u,i){ return {label:'Unit '+(i+1),guests:u.guests}; });
+  var n=units.length;
+  document.getElementById('rpTitle').textContent=fam?'Ensure your parties stick together!':'Ensure your group sticks together!';
+  document.getElementById('rpLead').textContent=fam
+    ? 'Choose exactly where you stay on the resort map, and we’ll guarantee you’re next to the rest of your group.'
+    : 'Choose exactly where you stay on the resort map, and we’ll keep your group close together.';
+  document.getElementById('rpRows').innerHTML=units.map(function(u){
+    /* per-guest shown for BBW only (all adults, so it divides cleanly); family's mix of ages
+       would make a per-guest split misleading */
+    var perg=fam?'':'<span class="rp-perg">'+gbp(ROOM_PICK/u.guests)+'/guest</span>';
+    return '<div class="rp-row"><div class="rp-row-l"><b>'+u.label+'</b><span>'+plural(u.guests,'guest')+'</span></div>'+
+      '<div class="rp-row-r"><span class="rp-fee"><b>'+gbp0(ROOM_PICK)+'</b><span class="rp-per">/'+word+'</span></span>'+perg+'</div></div>';
+  }).join('');
+  document.getElementById('rpPickCta').textContent='Pick my exact rooms for '+gbp0(ROOM_PICK*n);
+  var m=document.getElementById('rpModal'); m.hidden=false;
+  requestAnimationFrame(function(){ m.classList.add('open'); });
+  rpLastFocus=document.activeElement;
+  /* preventScroll so opening the modal doesn't jump the page behind back to the top */
+  document.getElementById('rpPickCta').focus({preventScroll:true});
+  document.addEventListener('keydown',rpKey);
+}
+function closeRoomPickModal(){
+  var m=document.getElementById('rpModal'); m.classList.remove('open');
+  document.removeEventListener('keydown',rpKey);
+  setTimeout(function(){ m.hidden=true; },220);
+  if(rpLastFocus&&rpLastFocus.focus) rpLastFocus.focus({preventScroll:true});
+}
+function rpKey(e){ if(e.key==='Escape') closeRoomPickModal(); }
+function rpDecide(pick){
+  if(isFam()) state.alloc.forEach(function(a){ if(a) a.pickRoom=pick; });
+  else state.bbwUnits.forEach(function(u){ u.pickRoom=pick; });
+  allocChanged(); render();
+  closeRoomPickModal();
+  announce(pick
+    ? 'Exact room pick added for all '+plural(bookingUnitCount(),'unit')+'. Continuing to dining.'
+    : 'We’ll choose your rooms, included. Continuing to dining.');
+}
+document.getElementById('rpPickCta').addEventListener('click',function(){ rpDecide(true); });
+document.getElementById('rpLetCta').addEventListener('click',function(){ rpDecide(false); });
+document.getElementById('rpClose').addEventListener('click',closeRoomPickModal);
+document.getElementById('rpScrim').addEventListener('click',function(e){ if(e.target===this) closeRoomPickModal(); });
 
 /* ============================================================ DEV CONTROLS
    Every test variable lives in the left rail. Toolbar changes reset choices and
@@ -1857,7 +2076,9 @@ function resetChoices(){
 /* On add has no effect in the Parties layout (that flow advances section by section), so
    disable it there rather than imply it does something (client, 27 Jul) */
 function syncAddModeControl(){
-  var na=state.catUX==="parties";
+  /* On add only applies to multi-party Family flows outside the Parties layout; everywhere
+     else it stays visible but disabled */
+  var na=!(isFam()&&state.parties.length>1&&state.catUX!=="parties");
   document.querySelectorAll('#tbAddMode [data-addmode]').forEach(function(b){
     b.setAttribute('aria-disabled',na?'true':'false');
   });
@@ -1866,8 +2087,7 @@ function toolbarVis(){
   document.getElementById('tbResort').hidden=!isFam();
   document.getElementById('tbPreset').hidden=!isFam();
   document.getElementById('tbGroup').hidden=isFam();
-  /* the collapse-on-add variant only applies to multi-party Family flows */
-  document.getElementById('tbAddMode').hidden=!(isFam()&&state.parties.length>1);
+  /* On add now lives in the archive; keep its enabled/disabled state in sync */
   syncAddModeControl();
   /* Parties view needs pre-defined parties (not BBW) and more than one of them */
   document.getElementById('cxParties').setAttribute('aria-disabled',(isFam()&&state.parties.length>1)?'false':'true');
@@ -1924,7 +2144,7 @@ document.querySelectorAll('[data-roompick]').forEach(function(b){
    applied on the next add, so no re-render is needed here. */
 document.querySelectorAll('[data-addmode]').forEach(function(b){
   b.addEventListener('click',function(){
-    if(b.getAttribute('aria-disabled')==='true'){ announce('On add doesn’t apply to the Parties layout.'); return; }
+    if(b.getAttribute('aria-disabled')==='true'){ announce('On add only applies to a multi-party Family booking outside the Parties layout.'); return; }
     state.addMode=b.getAttribute('data-addmode');
     pressGroup('[data-addmode]',state.addMode,'data-addmode');
     announce(state.addMode==="collapse"?'Cards will collapse after adding a unit.':'Cards will stay open after adding a unit.');
