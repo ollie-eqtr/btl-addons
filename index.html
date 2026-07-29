@@ -33,7 +33,8 @@
   .card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.14);}
   .card h3{font-size:22px;margin:0 0 6px;}
   .card p{font-size:14px;color:var(--ink-2);margin:0 0 calc(var(--u)*2);flex:1;}
-  .meta{position:absolute;right:calc(var(--u)*3);bottom:calc(var(--u)*2);margin:0;font-size:9px;font-weight:600;text-transform:none;letter-spacing:.01em;color:var(--ink-3);}
+  /* version label sits top right, aligned to the card title */
+  .meta{position:absolute;right:calc(var(--u)*3);top:calc(var(--u)*4);margin:0;font-size:9px;font-weight:600;text-transform:none;letter-spacing:.01em;color:var(--ink-3);}
   .meta .ver{color:var(--accent);font-weight:700;}
   .tag{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-radius:999px;padding:3px 10px;margin:0 0 10px;align-self:flex-start;}
   .tag-ok{background:#eef6ed;color:#2a7c27;border:1px solid #32912f;}
@@ -46,12 +47,11 @@
   .card.is-disabled p{color:var(--ink-3);}
   .go.go-off{background:#e4e4e3;color:var(--ink-3);}
   .card.is-disabled:hover .go{background:#e4e4e3;}
-  .go{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-ink);background:var(--accent);border-radius:var(--radius);padding:10px 16px;align-self:flex-start;}
+  /* text-decoration:none matters now the CTAs are real anchors inside the card, not spans */
+  .go{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-ink);background:var(--accent);border-radius:var(--radius);padding:10px 16px;align-self:flex-start;text-decoration:none;}
   .card:hover .go{background:var(--accent-strong);}
-  /* a card carrying two CTAs: the row of buttons replaces the single .go, and the version
-     meta needs extra bottom room so it clears the wider row */
+  /* a card carrying two CTAs: the row of buttons replaces the single .go */
   .card-actions{display:flex;flex-wrap:wrap;align-items:center;gap:calc(var(--u)*1.5);}
-  .card-2up{padding-bottom:calc(var(--u)*5.5);}
   /* secondary CTA: inset box-shadow rather than a border, so it matches the primary's height */
   .go-2,.card:hover .go-2{color:var(--accent);background:transparent;box-shadow:inset 0 0 0 1.5px var(--accent);}
   .go-2:hover,.card:hover .go-2:hover{color:var(--accent-strong);background:rgba(218,41,28,.06);box-shadow:inset 0 0 0 1.5px var(--accent-strong);}
@@ -130,7 +130,7 @@
 
         <!-- two prototypes live under this card, so it is a div with explicit links rather
              than a whole-card anchor (no nested interactives) -->
-        <div class="card card-2up">
+        <div class="card">
           <h3>Low-fidelity</h3>
           <span class="tag tag-wip">In progress</span>
           <p>Lightweight wireframe for the accommodation search flow, focused on structure and content.</p>
