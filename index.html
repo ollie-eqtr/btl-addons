@@ -48,6 +48,13 @@
   .card.is-disabled:hover .go{background:#e4e4e3;}
   .go{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-ink);background:var(--accent);border-radius:var(--radius);padding:10px 16px;align-self:flex-start;}
   .card:hover .go{background:var(--accent-strong);}
+  /* a card carrying two CTAs: the row of buttons replaces the single .go, and the version
+     meta needs extra bottom room so it clears the wider row */
+  .card-actions{display:flex;flex-wrap:wrap;align-items:center;gap:calc(var(--u)*1.5);}
+  .card-2up{padding-bottom:calc(var(--u)*5.5);}
+  /* secondary CTA: inset box-shadow rather than a border, so it matches the primary's height */
+  .go-2,.card:hover .go-2{color:var(--accent);background:transparent;box-shadow:inset 0 0 0 1.5px var(--accent);}
+  .go-2:hover,.card:hover .go-2:hover{color:var(--accent-strong);background:rgba(218,41,28,.06);box-shadow:inset 0 0 0 1.5px var(--accent-strong);}
   /* external prototypes: lower-hierarchy table, no fill, horizontal rules */
   .ext{margin-top:calc(var(--u)*5);}
   .links{list-style:none;margin:0;padding:0;border-top:1px solid rgba(0,0,0,.4);}
@@ -121,13 +128,18 @@
           <span class="go go-off">Coming soon</span>
         </div>
 
-        <a class="card" href="/phase3-lofi">
+        <!-- two prototypes live under this card, so it is a div with explicit links rather
+             than a whole-card anchor (no nested interactives) -->
+        <div class="card card-2up">
           <h3>Low-fidelity</h3>
           <span class="tag tag-wip">In progress</span>
           <p>Lightweight wireframe for the accommodation search flow, focused on structure and content.</p>
-          <span class="go">Open &rarr;</span>
+          <div class="card-actions">
+            <a class="go" href="/phase3-lofi">Open &rarr;</a>
+            <a class="go go-2" href="/phase3-bbw-variant">BBW Variant</a>
+          </div>
           <span class="meta"><span class="ver">v0.2</span> · last updated 27/07/26</span>
-        </a>
+        </div>
       </div>
     </section>
 

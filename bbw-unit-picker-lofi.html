@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Step 1 of 5: Accommodation</title>
+<style>
+/* ============================================================ WIREFRAME TOKENS (inherited from Phase 2 via the Phase 3 lofi) */
+:root{
+  --ink:#2b2b2b; --ink2:#555; --muted:#7a7a7a;
+  --line:#cfcfcf; --line2:#a9a9a9; --line3:#8a8a8a;
+  --fill:#f2f2f2; --fill2:#e7e7e7; --fill3:#dcdcdc;
+  --paper:#fff; --bg:#9a9a9a;
+  --dark:#2b2b2b; --radius:10px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+/* A11Y NOTE: --muted (#7a7a7a) on white is ~3.7:1. Passes AA for large text only; darken for small body text at hi-fi. */
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:var(--font);color:var(--ink);background:var(--bg);line-height:1.45;-webkit-font-smoothing:antialiased;}
+button{font-family:inherit;cursor:pointer;}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:3px;}
+.rail :focus-visible{outline-color:#fff;}
+h1,h2,h3,h4{margin:0;font-weight:700;color:var(--ink);}
+p{margin:0;}
+ul{margin:0;padding:0;list-style:none;}
+[hidden]{display:none!important;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;}
+
+/* ============================================================ STAGE: left toolbar rail + centred frame */
+.stage{display:flex;align-items:stretch;gap:18px;padding:18px;min-height:100vh;}
+.rail{width:200px;min-width:200px;align-self:flex-start;position:sticky;top:18px;
+  background:#1f1f1f;color:#eee;border-radius:10px;padding:14px 12px;font-size:12px;
+  display:flex;flex-direction:column;gap:14px;}
+.rail .tlabel{font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:11px;line-height:1.35;}
+.rail-head{display:flex;align-items:center;gap:8px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#7d7d7d;}
+.rail-head::after{content:"";flex:1;height:1px;background:#3a3a3a;}
+/* the one design variable still under test, boxed off from the scenario controls */
+.rail-variants{background:#262626;border:1px solid #3a3a3a;border-radius:9px;padding:12px 11px;display:flex;flex-direction:column;gap:13px;}
+.rail-variants .rail-head{color:#c9c9c9;}
+.rail-variants .rail-head::after{background:#4a4a4a;}
+.seg-group{display:flex;flex-direction:column;align-items:stretch;gap:5px;}
+.seg-group .gl{color:#aaa;text-transform:uppercase;letter-spacing:.05em;font-size:10px;}
+.seg{display:flex;border:1px solid #555;border-radius:7px;overflow:hidden;}
+.seg button{flex:1;background:#2b2b2b;color:#ddd;border:0;padding:6px 6px;font-size:11px;border-right:1px solid #555;}
+.seg button:last-child{border-right:0;}
+.seg button[aria-pressed="true"]{background:#eee;color:#1f1f1f;font-weight:700;}
+.main{flex:1;display:flex;min-width:0;}
+.frame-outer{margin:auto;display:flex;justify-content:center;}
+/* prototype is reviewed on desktop; on narrow viewports the rail simply stacks on top */
+@media (max-width:860px){
+  .stage{flex-direction:column;}
+  .rail{width:100%;min-width:0;position:static;flex-direction:row;flex-wrap:wrap;align-items:center;}
+  .seg-group{flex-direction:row;align-items:center;gap:7px;}
+}
+
+/* ============================================================ DEVICE FRAME */
+.frame{position:relative;display:flex;flex-direction:column;width:1080px;height:880px;
+  background:var(--paper);border:1px solid #6f6f6f;border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.25);}
+.frame-outer[data-device="mobile"] .frame{width:390px;height:780px;}
+.scroll{flex:1;overflow:auto;scroll-behavior:smooth;}
+
+/* ============================================================ APP CHROME */
+.appbar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--line);background:var(--paper);}
+.appbar .ico{width:26px;height:26px;border:1px solid var(--line2);border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:var(--ink2);}
+.appbar .brand{font-weight:800;letter-spacing:.02em;font-size:17px;}
+.appbar .brand small{display:block;font-weight:600;font-size:8px;letter-spacing:.18em;color:var(--muted);}
+.appbar .icons{margin-left:auto;display:flex;gap:7px;}
+.chrome-mid{padding:12px 18px;border-bottom:1px solid var(--line);background:var(--fill);}
+.backlink{color:var(--ink2);text-decoration:none;font-size:13px;font-weight:600;white-space:nowrap;}
+.step-title{text-align:center;font-size:13.5px;font-weight:800;letter-spacing:.02em;color:var(--ink);margin-bottom:10px;}
+.step-row{position:relative;display:flex;align-items:center;justify-content:center;min-height:30px;}
+.step-row .backlink{position:absolute;left:0;top:50%;transform:translateY(-50%);}
+.dots{display:flex;align-items:center;gap:10px;}
+.dotstep{width:22px;height:22px;border-radius:50%;border:1px solid var(--line2);background:var(--paper);display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);}
+.dotstep.current{background:var(--dark);border-color:var(--dark);color:#fff;box-shadow:0 0 0 3px var(--fill3);}
+.frame-outer[data-device="mobile"] .step-row{justify-content:flex-start;gap:14px;}
+.frame-outer[data-device="mobile"] .step-row .backlink{position:static;transform:none;}
+/* Static search summary. Search editing is out of scope for this prototype; party and
+   date definition happens upstream, so this line is representational only. */
+.searchsum{display:flex;align-items:center;gap:12px;margin-top:12px;font-size:12.5px;color:var(--ink2);flex-wrap:wrap;}
+
+/* ============================================================ BODY */
+.body{padding:16px 18px 22px;}
+/* the panel always breaks up this page, so the hairline under the H1 never earns its keep here */
+.intro{margin-bottom:16px;padding:6px 0 4px;}
+.intro h1{font-size:31px;line-height:1.06;text-transform:uppercase;letter-spacing:.035em;font-weight:800;text-align:center;}
+.frame-outer[data-device="mobile"] .intro h1{font-size:23px;}
+.btn{background:var(--paper);border:1px solid var(--line2);border-radius:8px;padding:8px 13px;font-size:13px;font-weight:600;color:var(--ink);}
+.btn:hover{background:var(--fill);}
+.btn.primary{background:var(--dark);color:#fff;border-color:var(--dark);}
+.btn[aria-disabled="true"]{opacity:.45;cursor:not-allowed;}
+.row-sub{font-size:12px;color:var(--muted);}
+.group-note{font-size:11.5px;color:var(--muted);margin-top:9px;}
+.linkbtn{background:none;border:0;padding:0;color:var(--ink);text-decoration:underline;font-size:12.5px;font-weight:600;}
+
+/* ---- two-column layout: results + Your stay panel ---- */
+.layout{display:flex;align-items:flex-start;gap:14px;}
+.results{flex:1;min-width:0;}
+.side{width:300px;min-width:300px;position:sticky;top:12px;order:2;} /* panel sits right of the results on desktop */
+.frame-outer[data-device="mobile"] .layout{flex-direction:column;}
+.frame-outer[data-device="mobile"] .side{width:100%;min-width:0;top:0;z-index:7;order:0;}
+
+/* ---- Your stay panel: merges the client prototype's guest tracker and basket with the
+       lofi's group panel and ledger rows ---- */
+.gpanel{border:1px solid var(--line);border-left:4px solid var(--dark);border-radius:8px;background:var(--paper);padding:12px 13px;}
+.gpanel h3{font-size:16px;font-weight:800;margin-bottom:4px;}
+.gp-eyebrow{display:block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+.gp-pool{margin:2px 0 8px;}
+.pool-cap{display:block;font-size:11.5px;font-weight:600;color:var(--ink2);margin-bottom:3px;}
+/* person and bed glyphs, CSS-drawn so they stay greyscale */
+.pg-row{display:flex;align-items:flex-end;gap:5px;flex-wrap:wrap;margin:3px 0 6px;}
+.pfig{display:inline-block;width:13px;}
+.pfig i{display:block;width:7px;height:7px;border-radius:50%;margin:0 auto 1px;}
+.pfig b{display:block;width:13px;height:9px;border-radius:6px 6px 2px 2px;}
+.pfig.on i,.pfig.on b{background:var(--dark);}
+.pfig.off i,.pfig.off b{background:transparent;border:1.5px solid var(--line3);}
+/* no tentative/dashed glyph state in this prototype: adds are instant, so a guest is
+   either placed or in the pool, never mid-arrangement */
+
+/* ---- unit cards: one anatomy shared by the desktop ledger and the mobile rail, from the
+   client's 29 Jul mockup. Title carries the unit number and the accommodation name, the
+   bed makeup and capacity sit under it, and a single action row runs along the bottom:
+   the guests pill, the add-on pills, then the price hard right. ---- */
+.ledger{border:1px solid var(--line2);border-radius:9px;overflow:hidden;margin-top:4px;}
+.lrow{display:block;padding:10px 12px;border-top:1px solid var(--line);font-size:12px;background:var(--paper);}
+.lrow:first-child{border-top:0;}
+/* pulse the row that just gained a unit (desktop ledger; the mobile rail slides instead) */
+@keyframes rowflash{0%{background:var(--fill3);}100%{background:transparent;}}
+.lrow.flash{animation:rowflash 1.2s ease-out;}
+.uhead{display:flex;align-items:baseline;gap:9px;}
+.uhead b{font-size:13.5px;}
+.uhead .up-remove{margin-left:auto;}
+.ubed{display:block;font-size:12px;color:var(--ink2);margin-top:1px;}
+.usleeps{display:block;font-size:11px;color:var(--muted);}
+/* the action row: pills left, price right. Wraps on the narrow desktop panel. */
+.uact{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:11px;}
+.uprice{margin-left:auto;font-weight:800;font-size:15px;white-space:nowrap;}
+
+/* occupancy behind progressive disclosure (client, 29 Jul): the stepper was too prominent
+   sitting open in every row, so the count reads as a pill and the control is one tap away.
+   The figure stays visible either way. The pill is filled where the add-on pills are
+   outlined, so the two kinds of control stay distinguishable. */
+.gpill{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line3);background:var(--fill2);
+  border-radius:20px;padding:5px 11px;font-size:11.5px;font-weight:700;color:var(--ink);white-space:nowrap;min-height:32px;}
+.gpill:hover{background:var(--fill3);}
+.gpill .mglyph{border:0;background:none;width:15px;min-width:15px;height:15px;font-size:11px;}
+.gpill .chev{width:6px;height:6px;border-right:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);
+  transform:rotate(45deg) translate(-1px,-1px);transition:transform .15s;}
+.gpill[aria-expanded="true"] .chev{transform:rotate(225deg) translate(-1px,-1px);}
+.up-step{display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%;margin-top:8px;}
+.up-step .who-label{font-size:11.5px;font-weight:600;}
+.up-tag{font-size:11px;font-weight:600;border:1px solid var(--line2);border-radius:20px;padding:5px 11px;
+  background:var(--paper);color:var(--ink2);white-space:nowrap;min-height:32px;}
+button.up-tag:hover{background:var(--fill);}
+.up-tag[aria-pressed="true"]{background:var(--dark);border-color:var(--dark);color:#fff;font-weight:700;}
+.up-remove{background:none;border:0;padding:0;color:var(--ink2);text-decoration:underline;font-size:12px;}
+.stepper{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line2);border-radius:8px;overflow:hidden;background:var(--paper);}
+.step-btn{width:44px;height:44px;border:0;background:var(--paper);font-size:18px;line-height:1;color:var(--ink);}
+.step-btn:hover{background:var(--fill);}
+.step-btn[aria-disabled="true"]{color:var(--line2);cursor:not-allowed;}
+.qty{min-width:28px;text-align:center;font-weight:700;font-size:14px;}
+/* mobile: panel always open, full-bleed and sticky, matching the dining anchor bar treatment.
+   Pared back hard because the sticky panel was eating the screen (client, 29 Jul): the
+   eyebrow goes, the type heading and the progress caption share a line, and the vertical
+   ledger becomes the horizontal unit-card rail below. */
+.frame-outer[data-device="mobile"] .side{width:calc(100% + 36px);margin:0 -18px;}
+.frame-outer[data-device="mobile"] .gpanel{border-radius:0;border-left:0;border-right:0;padding:8px 12px 9px;}
+.frame-outer[data-device="mobile"] .gp-eyebrow{display:none;}
+.frame-outer[data-device="mobile"] .gpanel h3{font-size:13.5px;margin-bottom:0;}
+.frame-outer[data-device="mobile"] .gp-head{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;}
+.frame-outer[data-device="mobile"] .gp-pool{margin:3px 0 6px;}
+.frame-outer[data-device="mobile"] .pg-row{margin:0;gap:4px;}
+
+/* ---- mobile unit rail: one card per unit, scrolled horizontally, the last added focused.
+   Add-ons and the occupancy control live inside the card (client, 29 Jul).
+   The rail is full-bleed: it cancels the panel's side padding so a card runs to the screen
+   edge with the next one peeking in, rather than stopping short (client, 29 Jul). ---- */
+.ucards{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  margin:0 -12px;padding:2px 12px 7px;scroll-padding-left:12px;}
+.ucard{flex:0 0 calc(100% - 26px);scroll-snap-align:start;border:1px solid var(--line2);border-radius:9px;
+  background:var(--paper);padding:8px 11px 10px;transition:opacity .34s ease,transform .34s ease;}
+.ucard.focused{border-color:var(--dark);box-shadow:inset 0 0 0 1.5px var(--dark);}
+/* add animation start state: the new card fades and slides in from the right while the rail
+   smooth-scrolls to it, which carries every existing card leftwards */
+.ucard.slide-in,.lrow.slide-in{opacity:0;transform:translateX(20px);}
+.lrow{transition:opacity .34s ease,transform .34s ease;}
+.ucard .uhead b{font-size:13px;}
+.ucard .up-remove{font-size:11.5px;}
+
+/* lo-fi info tooltip: hover or keyboard focus reveals the note */
+.infotip{position:relative;display:inline-flex;}
+.infotip-btn{width:17px;height:17px;border-radius:50%;border:1px solid var(--line2);background:var(--paper);color:var(--ink2);font:italic 700 11px Georgia,serif;line-height:1;display:inline-flex;align-items:center;justify-content:center;cursor:help;padding:0;}
+.infotip-pop{position:absolute;left:-4px;top:calc(100% + 8px);z-index:30;width:236px;background:var(--dark);color:#fff;font:500 11.5px/1.45 inherit;text-transform:none;letter-spacing:normal;padding:9px 11px;border-radius:8px;box-shadow:0 5px 16px rgba(0,0,0,.24);opacity:0;visibility:hidden;transform:translateY(-3px);transition:opacity .12s,transform .12s,visibility .12s;text-align:left;}
+.infotip-pop::before{content:"";position:absolute;left:9px;top:-4px;width:9px;height:9px;background:var(--dark);transform:rotate(45deg);}
+.infotip:hover .infotip-pop,.infotip:focus-within .infotip-pop{opacity:1;visibility:visible;transform:translateY(0);}
+
+/* ---- list tools bar: heading, rule infotip, price basis ---- */
+.res-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:14px 0 10px;}
+.rt-headrow{display:flex;align-items:center;gap:7px;}
+.rt-head{font-size:15px;text-transform:uppercase;letter-spacing:.04em;font-weight:800;}
+.basis-seg{display:inline-flex;border:1px solid var(--line2);border-radius:8px;overflow:hidden;}
+.basis-seg button{background:var(--paper);border:0;padding:7px 11px;font-size:12px;font-weight:600;color:var(--ink2);border-right:1px solid var(--line2);}
+.basis-seg button:last-child{border-right:0;}
+.basis-seg button[aria-pressed="true"]{background:var(--dark);color:#fff;}
+
+/* ---- category tiles: single-select browse (was a multi-select filter in the lofi) ---- */
+.cat-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:7px;margin-bottom:10px;}
+.ctile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;
+  border:1px solid var(--line2);border-radius:9px;background:var(--paper);padding:9px 10px;font-size:11.5px;color:var(--ink2);}
+.ctile b{display:inline-flex;align-items:baseline;gap:6px;font-size:13.5px;color:var(--ink);line-height:1.15;}
+/* option count reads as a distinct number beside the heading, not part of it */
+.ct-num{font-size:10.5px;font-weight:600;color:var(--muted);letter-spacing:.02em;}
+/* from-price is a lighter weight than the heading (client, 27 Jul) */
+.ctile .ct-from{font-weight:500;font-size:12px;color:var(--ink);}
+/* "your booking lives here" signal; independent of which tile is being browsed */
+.ctile .ct-booked{font-weight:700;font-size:11px;color:var(--ink);}
+.ctile[aria-pressed="true"]{border-color:var(--dark);box-shadow:inset 0 0 0 1.5px var(--dark);}
+.ctile[aria-disabled="true"]{opacity:.45;cursor:not-allowed;}
+.cat-lockline{font-size:11.5px;color:var(--ink2);margin:0 0 12px;}
+.cat-lockline .linkbtn{font-size:11.5px;}
+/* promo strip: full-bleed banner above the intro, flush with the header (client, 27 Jul) */
+.promo-banner{background:var(--dark);color:#fff;padding:13px 18px;text-align:center;}
+.promo-banner h2{color:#fff;font-size:14px;text-transform:uppercase;letter-spacing:.05em;font-weight:800;margin:0 0 9px;}
+.promo-list{display:flex;align-items:center;justify-content:center;gap:8px 22px;flex-wrap:wrap;}
+.promo-list li{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;}
+.promo-tick{width:17px;height:17px;min-width:17px;border-radius:50%;border:1.5px solid #fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;}
+.frame-outer[data-device="mobile"] .promo-banner h2{font-size:12.5px;}
+.frame-outer[data-device="mobile"] .promo-list{gap:6px 16px;}
+.frame-outer[data-device="mobile"] .promo-list li{font-size:11.5px;}
+
+/* ---- accommodation cards: long-wide, icon-led, and compressed hard (client, 29 Jul).
+   The meta items now sit on the title row and the features run as one wrapped line, so a
+   collapsed card is three lines of body instead of a three-item column beside them. The
+   two-column .ac-cols split is gone for the same reason. */
+.acard{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);margin-bottom:9px;overflow:hidden;position:relative;}
+/* a card holding units keeps a heavier border so it reads as chosen while collapsed */
+.acard.has-units{border-color:var(--line3);box-shadow:inset 0 0 0 1px var(--line3);}
+.ac-top{display:flex;align-items:stretch;}
+/* photo is a full-height pane flush to the card's edges on desktop */
+.ph-sq{width:112px;min-width:112px;align-self:stretch;border-right:1px solid var(--line);
+  background:repeating-linear-gradient(45deg,#ededed,#ededed 7px,#e3e3e3 7px,#e3e3e3 14px);
+  display:flex;align-items:center;justify-content:center;}
+.ph-sq span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;background:rgba(255,255,255,.7);padding:1px 5px;border-radius:4px;}
+.ac-body{flex:1;padding:9px 12px;display:flex;flex-direction:column;gap:4px;min-width:0;justify-content:center;}
+.ac-headrow{display:flex;align-items:center;gap:5px 10px;flex-wrap:wrap;}
+.ac-headrow h3{font-size:15px;}
+.rec-badge{font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;background:var(--dark);color:#fff;border-radius:4px;padding:2px 6px;font-weight:700;}
+.desc{color:var(--ink2);font-size:12.5px;margin:0;}
+/* icon glyphs are decorative squares with a character; grayscale filter keeps emoji fallbacks lo-fi */
+.mglyph{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;min-width:20px;border:1px solid var(--line2);border-radius:5px;background:var(--paper);font-size:11px;filter:grayscale(1);}
+/* meta items ride the title row rather than owning a line of their own */
+.meta-row{display:inline-flex;gap:4px 12px;flex-wrap:wrap;}
+.meta-row .mitem{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:var(--ink2);}
+.meta-row .mglyph{width:17px;height:17px;min-width:17px;font-size:10px;}
+/* features wrap as one line; glyphs lose their boxes here (meta-row glyphs keep them) */
+.feat-row{display:flex;flex-wrap:wrap;gap:2px 14px;}
+.feat-row li{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink2);}
+.feat-row .mglyph{border:0;background:none;width:auto;min-width:0;height:auto;font-size:12px;}
+/* right rail: the from-price and the one way in */
+.ac-foot{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:7px;padding:9px 12px;border-left:1px solid var(--line);min-width:158px;}
+.price{display:flex;flex-direction:column;line-height:1.2;align-items:flex-end;}
+.price .from{font-size:10.5px;color:var(--muted);}
+.price .now{font-size:18px;font-weight:800;}
+.price .pp{font-size:10.5px;color:var(--muted);text-align:right;}
+/* fixed width so the button doesn't resize between its two labels */
+.rooms-btn{display:inline-flex;align-items:center;justify-content:center;width:140px;white-space:nowrap;font-weight:700;padding:8px 10px;font-size:12.5px;}
+/* mobile: photo moves above all copy, full width and shallow */
+.frame-outer[data-device="mobile"] .ac-top{flex-wrap:wrap;}
+.frame-outer[data-device="mobile"] .ph-sq{width:100%;min-width:0;height:76px;align-self:auto;border-right:0;border-bottom:1px solid var(--line);}
+.frame-outer[data-device="mobile"] .ac-body{padding:9px 11px;}
+.frame-outer[data-device="mobile"] .ac-foot{border-left:0;border-top:1px solid var(--line);width:100%;flex-direction:row;justify-content:space-between;align-items:center;min-width:0;padding:8px 11px;}
+.frame-outer[data-device="mobile"] .rooms-btn{width:auto;}
+
+/* ---- in-card expansion: the client-approved pattern, restored in place of the chips row
+   (client, 29 Jul: "the pills within the cards are messy"). One card open at a time. Each
+   sleeping-arrangement tile carries its own Add button, which becomes a unit-quantity
+   stepper once the booking holds units of that arrangement. Occupancy is not asked for
+   here: it defaults on add and is edited in the Your stay panel. */
+.ac-expand{border-top:1px solid var(--line);padding:11px 12px;background:var(--fill);}
+.arr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(216px,1fr));gap:8px;}
+.arr-tile{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;
+  border:1px solid var(--line2);border-radius:9px;background:var(--paper);padding:9px 11px;font-size:12px;color:var(--ink);}
+.arr-tile.has-units{border-color:var(--dark);box-shadow:inset 0 0 0 1.5px var(--dark);}
+.arr-occ{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:13px;}
+.arr-bed{font-size:12px;font-weight:700;}
+/* the price shares the action row with the control rather than sitting above the rule, and
+   the control is pushed to the right edge (client, 29 Jul) */
+.arr-act{display:flex;align-items:center;gap:9px;width:100%;margin-top:5px;padding-top:8px;border-top:1px dashed var(--line2);}
+.arr-price{font-weight:800;font-size:13.5px;}
+.arr-act .arr-add,.arr-act .stepper{margin-left:auto;}
+/* true black outline so the Reserve CTA stands out from the container hairlines */
+.arr-add{padding:8px 18px;font-weight:700;font-size:12.5px;border:1.5px solid #000;color:#000;background:var(--paper);border-radius:8px;min-height:44px;}
+.arr-add:hover{background:var(--fill);}
+.arr-add[aria-disabled="true"]{opacity:.45;cursor:not-allowed;}
+.arr-add[aria-disabled="true"]:hover{background:var(--paper);}
+
+/* ---- bottom utility row ---- */
+.util-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px;}
+.util-btn{display:inline-flex;align-items:center;gap:8px;}
+
+/* ============================================================ FOOTER */
+.footer{border-top:1px solid var(--line2);background:var(--paper);position:relative;z-index:8;}
+.ftop{display:flex;align-items:center;gap:18px;padding:12px 18px;}
+.ftot{display:flex;flex-direction:column;line-height:1.12;}
+.ftot-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+.ftot b{font-size:21px;color:var(--ink);}
+.ftot-pp{font-size:11px;color:var(--muted);margin-top:2px;}
+.finstruct{flex:1;font-size:12px;color:var(--ink2);min-width:0;}
+.factions{display:flex;gap:9px;}
+.savebtn{background:var(--paper);border:1px solid var(--line2);border-radius:8px;padding:10px 15px;font-weight:600;font-size:13px;color:var(--ink);}
+.savebtn:hover{background:var(--fill);}
+.continue{background:var(--dark);color:#fff;border:1px solid var(--dark);border-radius:8px;padding:10px 18px;font-weight:700;font-size:13px;}
+.continue[aria-disabled="true"]{opacity:.45;cursor:not-allowed;}
+.frame-outer[data-device="mobile"] .ftop{flex-wrap:wrap;gap:8px 12px;}
+.frame-outer[data-device="mobile"] .finstruct{order:3;width:100%;flex:0 0 100%;}
+.frame-outer[data-device="mobile"] .factions{order:2;margin-left:auto;}
+.frame-outer[data-device="mobile"] .continue{flex:1;}
+
+/* ---- modal shell (desktop) / bottom drawer (mobile); shared by the room pick and the
+       Confirm-variant type switch ---- */
+.rp-modal{position:absolute;inset:0;z-index:60;}
+.rp-scrim{position:absolute;inset:0;background:rgba(20,20,20,.55);display:flex;align-items:center;justify-content:center;padding:22px;opacity:0;transition:opacity .2s;}
+.rp-modal.open .rp-scrim{opacity:1;}
+.rp-card{position:relative;background:var(--paper);border-radius:14px;width:min(430px,100%);max-height:calc(100% - 44px);overflow:auto;padding:26px 24px 22px;box-shadow:0 18px 50px rgba(0,0,0,.35);transform:translateY(10px) scale(.98);transition:transform .2s;}
+.rp-modal.open .rp-card{transform:none;}
+.rp-x{position:absolute;top:11px;right:11px;width:30px;height:30px;border:0;background:transparent;font-size:22px;line-height:1;color:var(--ink2);cursor:pointer;border-radius:6px;}
+.rp-x:hover{background:var(--fill);}
+.rp-eyebrow{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+.rp-card h3{font-size:20px;font-weight:800;margin:2px 0 7px;}
+.rp-lead{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:16px;}
+.rp-breakdown{background:var(--fill);border-radius:10px;padding:15px 16px;margin-bottom:18px;}
+.rp-breakdown h4{font-size:13.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:13px;}
+.rp-rows{display:flex;flex-direction:column;gap:14px;}
+.rp-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.rp-row-l b{display:block;font-size:14px;}
+.rp-row-l span{font-size:13px;color:var(--muted);}
+.rp-row-r{text-align:right;white-space:nowrap;}
+.rp-fee{display:block;font-size:14px;}
+.rp-fee b{font-weight:800;}
+.rp-per{color:var(--muted);font-size:13px;}
+.rp-perg{display:block;font-size:12px;color:var(--muted);margin-top:2px;}
+.rp-actions{display:flex;flex-direction:column;gap:6px;}
+.rp-cta{width:100%;padding:13px;font-size:14px;border-radius:9px;}
+.rp-secondary{width:100%;background:var(--paper);border:1px solid var(--line2);border-radius:9px;padding:12px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;}
+.rp-secondary:hover{background:var(--fill);}
+/* mobile: full-width sheet anchored to the bottom, sliding up */
+.frame-outer[data-device="mobile"] .rp-scrim{align-items:flex-end;padding:0;}
+.frame-outer[data-device="mobile"] .rp-card{width:100%;max-height:90%;border-radius:16px 16px 0 0;padding-bottom:24px;transform:translateY(100%);}
+.frame-outer[data-device="mobile"] .rp-modal.open .rp-card{transform:none;}
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- DEV RAIL: every test variable lives here; the screen itself has no search editing.
+       Platform, resort, party preset, category UX, room pick and add mode are all settled
+       or out of scope for this prototype, so the rail is down to three controls. -->
+  <div class="rail">
+    <span class="tlabel">Phase 3 &middot; BBW unit picker</span>
+
+    <span class="rail-head">Test setup</span>
+    <div class="seg-group"><span class="gl">Device</span>
+      <div class="seg" role="group" aria-label="Device"><button id="dvMobile" aria-pressed="false">Mobile</button><button id="dvDesktop" aria-pressed="true">Desktop</button></div>
+    </div>
+    <!-- 19 is MAX_BOOKING, the booking cap -->
+    <div class="seg-group"><span class="gl">Group size</span>
+      <div class="seg" role="group" aria-label="Group size"><button data-groupbtn="4" aria-pressed="false">4</button><button data-groupbtn="8" aria-pressed="true">8</button><button data-groupbtn="14" aria-pressed="false">14</button><button data-groupbtn="19" aria-pressed="false">19</button></div>
+    </div>
+
+    <!-- The design variable under test: how the same-type rule behaves once units exist -->
+    <div class="rail-variants">
+      <span class="rail-head">Variant</span>
+      <div class="seg-group"><span class="gl">Type switch</span>
+        <div class="seg" role="group" aria-label="Type switch"><button data-tsw="confirm" aria-pressed="true">Confirm</button><button data-tsw="lock" aria-pressed="false">Lock</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEVICE FRAME -->
+  <div class="main">
+  <div class="frame-outer" id="deviceHost" data-device="desktop">
+    <div class="frame">
+
+      <div class="scroll" id="scroll">
+
+        <div class="appbar">
+          <span class="ico" aria-hidden="true">&#9776;</span>
+          <span class="brand">Butlin's<small>90 YEARS</small></span>
+          <span class="icons" aria-hidden="true"><span class="ico">&#128100;</span><span class="ico">?</span><span class="ico">&#8942;</span></span>
+        </div>
+
+        <div class="chrome-mid">
+          <p class="step-title">Step 1 of 5: Accommodation</p>
+          <div class="step-row">
+            <a href="#" class="backlink" onclick="return false;">&lsaquo; Back</a>
+            <div class="dots" id="dots" role="list" aria-label="Booking progress, step 1"></div>
+          </div>
+          <div class="searchsum">
+            <span class="summ" id="searchSumm"></span>
+          </div>
+        </div>
+
+        <!-- promo strip: full-bleed above the intro, flush with the header (client, 27 Jul) -->
+        <div class="promo-banner">
+          <h2>There’s so much included in the price</h2>
+          <ul class="promo-list">
+            <li><span class="promo-tick" aria-hidden="true">&#10003;</span>Splash Waterworld</li>
+            <li><span class="promo-tick" aria-hidden="true">&#10003;</span>Fairground Thrills</li>
+            <li><span class="promo-tick" aria-hidden="true">&#10003;</span>West End Quality Shows</li>
+            <li><span class="promo-tick" aria-hidden="true">&#10003;</span>Daytime Activities</li>
+            <li><span class="promo-tick" aria-hidden="true">&#10003;</span>Comfy Accommodation</li>
+          </ul>
+        </div>
+
+        <div class="body">
+          <div class="intro">
+            <h1>Your weekend starts here</h1>
+          </div>
+          <div class="content" id="content"></div>
+        </div>
+
+      </div>
+
+      <div class="footer" id="footer">
+        <div class="ftop">
+          <div class="ftot" aria-live="polite"><span class="ftot-label">Total price</span><b id="totalFig">&pound;0.00</b><span class="ftot-pp" id="totalPP"></span></div>
+          <p class="finstruct" id="footNote"></p>
+          <div class="factions">
+            <button class="savebtn" onclick="return false;">Save quote</button>
+            <button class="continue" id="continueBtn" aria-disabled="true">Continue</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Multi-unit room-pick decision, shown once at Continue. Unchanged from the lofi.
+           Desktop: centred dialog. Mobile: drawer sliding up from the bottom. -->
+      <div class="rp-modal" id="rpModal" hidden>
+        <div class="rp-scrim" id="rpScrim">
+          <div class="rp-card" role="dialog" aria-modal="true" aria-labelledby="rpTitle">
+            <button type="button" class="rp-x" id="rpClose" aria-label="Close">&times;</button>
+            <span class="rp-eyebrow">Accommodation Picker</span>
+            <h3 id="rpTitle">Ensure your group sticks together!</h3>
+            <p class="rp-lead" id="rpLead"></p>
+            <div class="rp-breakdown">
+              <h4>Cost breakdown</h4>
+              <div class="rp-rows" id="rpRows"></div>
+            </div>
+            <div class="rp-actions">
+              <button type="button" class="rp-secondary" id="rpLetCta">Continue to dining</button>
+              <button type="button" class="btn primary rp-cta" id="rpPickCta">Pick my exact rooms</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm variant only: tapping an add chip in a category the booking isn't in asks
+           before it replaces the existing units. Reuses the room pick modal shell. -->
+      <div class="rp-modal" id="swModal" hidden>
+        <div class="rp-scrim" id="swScrim">
+          <div class="rp-card" role="dialog" aria-modal="true" aria-labelledby="swTitle">
+            <button type="button" class="rp-x" id="swClose" aria-label="Close">&times;</button>
+            <span class="rp-eyebrow">Accommodation type</span>
+            <h3 id="swTitle">Switch type?</h3>
+            <p class="rp-lead" id="swLead"></p>
+            <div class="rp-actions">
+              <button type="button" class="btn primary rp-cta" id="swGo">Switch and add this unit</button>
+              <button type="button" class="rp-secondary" id="swKeep">Keep my units</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </div>
+
+  <div class="sr-only" role="status" aria-live="polite" id="liveAnnounce"></div>
+</div>
+
+<script>
+/* ============================================================ DATA
+   Stock names, categories, sleeps and from-prices from the September 2026 BBW live
+   captures (Minehead screenshots, 22 Jul). From-prices are 3-night weekender per-unit
+   figures. Each item's smallest arrangement takes the capture from-price; each size up
+   adds roughly 35 percent, rounded to whole pounds (derived, not live). Sleeps lists are
+   trimmed to at most three arrangements. Gold Caravans sleep up to 10 on live, which
+   conflicts with the 8 per unit cap; capped at 8 here, client asked.
+   BBW Comfort Rooms keep the sleeps-2 price at 299 because Phase 2 chains from it (the
+   Sept capture shows 244 for this event; prices vary by event).
+   Option rules from Sarah's example (22 Jul), single capture: ground floor (+25) only
+   confirmed on Comfort Rooms and Comfort Apartments, with the accessibility note in the
+   row body text; Gold Apartments have none, presumably all ground floor; caravans have a
+   pet friendly option (+60); lodges and studios have neither. Ground floor availability on
+   other room and apartment types is unknown, client asked.
+   What counts as a "room" is still ambiguous, client asked to define.
+   BBW runs the Minehead event, so it sells the Minehead line-up. Family stock, other
+   resorts, parties and presets are out of scope for this prototype and stripped. */
+var MAX_BOOKING=19, MAX_UNIT=8, ROOM_PICK=25.00, GF_FEE=25.00, PET_FEE=60.00;
+
+/* glyph characters, decorative only (aria-hidden), rendered greyscale via CSS filter */
+var GL={person:"&#128100;",bed:"&#128719;",kitchen:"&#127859;",shower:"&#128703;",
+  lake:"&#127754;",wifi:"&#128246;",tv:"&#128250;",tree:"&#127794;",tea:"&#9749;",sofa:"&#128715;",pin:"&#128205;",house:"&#8962;",
+  access:"&#9855;",map:"&#128506;",paw:"&#128062;"};
+
+var BBW_STOCK=[
+  { id:"sroom", name:"Standard Rooms", cat:"Rooms", rec:false, beds:"1 bedroom",
+    desc:"Great value base for your break.",
+    feats:[{g:GL.pin,t:"3 to 4 minutes from the Skyline Pavilion"},{g:GL.tea,t:"Tea and coffee making"}],
+    sleeps:[
+      {sleeps:2,bed:"Double",price:241},
+      {sleeps:4,bed:"Double + Bunk beds",price:325},
+      {sleeps:5,bed:"Double + Bunk beds + Single",price:439}
+    ]},
+  { id:"crooms", name:"Comfort Rooms", cat:"Rooms", rec:true, beds:"1 bedroom", gfOpt:true,
+    desc:"A comfy base for the weekend, close to the venues.",
+    feats:[{g:GL.pin,t:"Late-night friendly location"},{g:GL.shower,t:"Ensuite shower"},{g:GL.tea,t:"Tea and coffee making"}],
+    sleeps:[
+      {sleeps:2,bed:"Double",price:299},
+      {sleeps:4,bed:"Double + Bunk beds",price:404},
+      {sleeps:6,bed:"Double + 2 Bunk beds",price:545}
+    ]},
+  { id:"cproom", name:"Comfort Plus Rooms", cat:"Rooms", rec:false, beds:"1 bedroom",
+    desc:"A touch more comfort, with housekeeping included.",
+    feats:[{g:GL.bed,t:"Towels and housekeeping included"},{g:GL.pin,t:"Early check-in from 3pm"}],
+    sleeps:[
+      {sleeps:2,bed:"Double",price:320},
+      {sleeps:4,bed:"Double + Bunk beds",price:432},
+      {sleeps:6,bed:"Double + 2 Bunk beds",price:583}
+    ]},
+  { id:"capts", name:"Comfort Apartments", cat:"Apartments", rec:false, beds:"2 bedrooms", gfOpt:true,
+    desc:"More space to spread out, with a separate living area.",
+    feats:[{g:GL.sofa,t:"Separate living area"},{g:GL.kitchen,t:"Kitchen with oven and microwave"},{g:GL.pin,t:"Oyster Bay and Atlantic Bay villages"}],
+    sleeps:[
+      {sleeps:4,bed:"Double + Twin",price:357},
+      {sleeps:6,bed:"Double + Twin + Sofa bed",price:482},
+      {sleeps:7,bed:"Double + 2 Twin + Single",price:651}
+    ]},
+  /* the family line-up also flags Comfort Plus Apartments as Recommended. BBW's single
+     recommendation is the Comfort Rooms (brief, 29 Jul), so only one badge shows here and
+     the default browse category is the one holding it. */
+  { id:"cpapts", name:"Comfort Plus Apartments", cat:"Apartments", rec:false, beds:"2 to 3 bedrooms",
+    desc:"Upgraded interiors and extra touches.",
+    feats:[{g:GL.bed,t:"Towels and housekeeping included"},{g:GL.tv,t:"Smart TV"},{g:GL.kitchen,t:"Kitchenette"}],
+    sleeps:[
+      {sleeps:4,bed:"Double + Twin",price:410},
+      {sleeps:6,bed:"Double + 2 Twin",price:554},
+      {sleeps:8,bed:"Double + 2 Twin + Sofa bed",price:748}
+    ]},
+  { id:"chalet", name:"West Lakes Chalets", cat:"Chalets", rec:false, beds:"2 to 3 bedrooms",
+    desc:"Lakeside chalets away from the bustle, our premium stay.",
+    feats:[{g:GL.lake,t:"Lakeside setting"},{g:GL.tree,t:"Outdoor space"},{g:GL.pin,t:"6 to 7 minutes from the Skyline Pavilion"}],
+    sleeps:[
+      {sleeps:4,bed:"Double + Twin",price:500},
+      {sleeps:6,bed:"Double + 2 Twin",price:675},
+      {sleeps:8,bed:"Double + 2 Twin + Sofa bed",price:911}
+    ]},
+  { id:"cpcarav", name:"Comfort Plus Caravans", cat:"Caravans", rec:false, beds:"2 to 3 bedrooms", petOpt:true,
+    desc:"Caravan Village stays with your own front door.",
+    feats:[{g:GL.kitchen,t:"Kitchen"},{g:GL.pin,t:"Located in our Caravan Village"},{g:GL.wifi,t:"Wifi"}],
+    sleeps:[
+      {sleeps:8,bed:"Double + 2 Twin + Sofa bed",price:529}
+    ]},
+  { id:"bayside", name:"Bayside Apartments", cat:"Apartments", rec:false, beds:"2 bedrooms",
+    desc:"Premium apartments right by the Skyline Pavilion.",
+    feats:[{g:GL.pin,t:"1 to 2 minutes from the Skyline Pavilion"},{g:GL.tv,t:"Smart TV"},{g:GL.wifi,t:"Wifi"}],
+    sleeps:[
+      {sleeps:4,bed:"Double + Twin",price:735},
+      {sleeps:6,bed:"Double + Twin + Sofa bed",price:992}
+    ]}
+];
+
+var EVENT={ name:"Back To The 2000s", sub:"Minehead &middot; 19 to 22 Jun 2026 &middot; 3 nights" };
+
+/* ============================================================ STATE
+   The locked accommodation type is DERIVED from units[0], never stored. Keeping it out of
+   state is what lets the Confirm variant browse one category while the booking sits in
+   another: browseCat is a view concern, the lock is a data concern. */
+var state={
+  device:"desktop",
+  guests:8,                  /* group size, set in the rail */
+  basis:"unit",              /* 'unit' or 'pp'; display only, never touches committed prices */
+  browseCat:"Rooms",         /* single-select tile; Rooms holds the recommended item */
+  units:[],                  /* [{stockId,sleeps,guests,gf,pet,pickRoom}] in add order */
+  typeSwitch:"confirm",      /* 'confirm' (default) or 'lock' (the control) */
+  expand:null,               /* stockId of the one open card, or null */
+  focusUnit:null,            /* mobile rail: index of the focused unit card */
+  openGuests:null,           /* index of the unit whose occupancy stepper is disclosed */
+  flash:null,                /* index of the row that just gained a unit, cleared after 1.2s */
+  pendingSwap:null           /* {stockId,sleeps} awaiting the Confirm dialog */
+};
+
+/* ============================================================ HELPERS */
+function gbp(n){ return "£"+n.toFixed(2); }
+function gbp0(n){ return "£"+n; }
+function plural(n,w){ return n+" "+w+(n===1?"":"s"); }
+function announce(t){ document.getElementById('liveAnnounce').textContent=t; }
+function stockById(id){ for(var i=0;i<BBW_STOCK.length;i++) if(BBW_STOCK[i].id===id) return BBW_STOCK[i]; return null; }
+function arrBy(s,sl){ for(var i=0;i<s.sleeps.length;i++) if(s.sleeps[i].sleeps===sl) return s.sleeps[i]; return s.sleeps[0]; }
+function minS(s){ return s.sleeps[0].sleeps; }
+function maxS(s){ return s.sleeps[s.sleeps.length-1].sleeps; }
+/* cheapest arrangement, taken by price rather than assuming the smallest is the cheapest,
+   so the card's from-price and its "based on N guests" line can never disagree */
+function lowArr(s){ var b=s.sleeps[0]; s.sleeps.forEach(function(a){ if(a.price<b.price) b=a; }); return b; }
+function lowPrice(s){ return lowArr(s).price; }
+
+function placed(exclIdx){ var n=0; state.units.forEach(function(u,i){ if(i!==exclIdx) n+=u.guests; }); return n; }
+function unplaced(){ return state.guests-placed(-1); }
+function spareBeds(){ var n=0; state.units.forEach(function(u){ if(u.sleeps>u.guests) n+=u.sleeps-u.guests; }); return n; }
+function lockedCategory(){ return state.units.length?stockById(state.units[0].stockId).cat:null; }
+function unitPrice(u){
+  var a=arrBy(stockById(u.stockId),u.sleeps);
+  return a.price+(u.pickRoom?ROOM_PICK:0)+(u.gf?GF_FEE:0)+(u.pet?PET_FEE:0);
+}
+function grandTotal(){ var t=0; state.units.forEach(function(u){ t+=unitPrice(u); }); return t; }
+function isDone(){ return state.units.length>0&&placed(-1)>=state.guests; }
+function summText(){
+  return '<b>'+EVENT.name+'</b> | '+EVENT.sub+' | <b>'+plural(state.guests,'guest')+'</b>';
+}
+
+/* Smart default occupancy: the whole point of the chip mechanic is that one tap adds a
+   unit without asking anything. A "sleeps 6 but only 4 staying" unit resolves itself
+   whenever the unplaced pool is the constraint. MAX_UNIT already bounds every arrangement
+   in stock, but the clamp stays in case the line-up changes. */
+function defaultGuests(sl){ return Math.min(sl,unplaced(),MAX_UNIT); }
+/* indices of the units matching this arrangement, in add order: length drives the chip
+   stepper count, the last entry is what minus removes */
+function unitIdxOf(id,sl){
+  var out=[]; state.units.forEach(function(u,i){ if(u.stockId===id&&u.sleeps===sl) out.push(i); }); return out;
+}
+function maxGuests(i){ var u=state.units[i]; return Math.min(u.sleeps,unplaced()+u.guests); }
+/* ground floor and pet friendly used to be listed as text here; they are pressed pills on
+   the unit card's action row now, so only the booking-level room pick needs saying */
+/* how the booking reads in the swap notice and dialog. All units are one category by
+   definition, but they can span stock items within it (Comfort Rooms plus Standard Rooms
+   is legal), so name the item only when there is a single one to name. */
+function bookingDesc(){
+  var ids={}; state.units.forEach(function(u){ ids[u.stockId]=1; });
+  var keys=Object.keys(ids);
+  if(keys.length===1) return state.units.length+' &times; '+stockById(keys[0]).name;
+  return plural(state.units.length,'unit')+' in '+lockedCategory();
+}
+
+/* ============================================================ CATEGORY TILES
+   Single-select browse, changed from the lofi's multi-select filter (client, 29 Jul):
+   exactly one tile is selected at all times and the list below shows only that category.
+   Selecting a tile never destroys anything, it only changes what is listed.
+   NOTE: the live site's detail-page copy says multi-party bookings CAN mix accommodation
+   types, which contradicts the same-type rule; flagged with client, treat single-type as
+   correct until they answer. */
+var RULE_SENTENCE='Everything on one booking stays in one accommodation type. Everyone in your group stays in the same kind of place.';
+function catList(){
+  var out=[]; BBW_STOCK.forEach(function(s){ if(out.indexOf(s.cat)<0) out.push(s.cat); }); return out;
+}
+function catCount(c){ return BBW_STOCK.filter(function(s){ return s.cat===c; }).length; }
+function catLow(c){
+  var m=null; BBW_STOCK.forEach(function(s){ if(s.cat===c&&(m===null||lowPrice(s)<m)) m=lowPrice(s); }); return m;
+}
+function catLowPP(c){ /* cheapest per-person figure in the category (price over sleeps) */
+  var m=null;
+  BBW_STOCK.forEach(function(s){
+    if(s.cat!==c) return;
+    s.sleeps.forEach(function(a){ var v=a.price/a.sleeps; if(m===null||v<m) m=v; });
+  });
+  return m;
+}
+function catUnitCount(c){
+  return state.units.filter(function(u){ return stockById(u.stockId).cat===c; }).length;
+}
+/* basis-aware category from-price, shared with the cards so the toggle drives both and
+   they never disagree */
+function catPriceLine(c){
+  if(state.basis==="pp") return '<span class="ct-from">from '+gbp(catLowPP(c))+' pp</span>';
+  return '<span class="ct-from">from '+gbp0(catLow(c))+'</span>';
+}
+function categoryUI(){
+  var lock=lockedCategory(), locking=(!!lock&&state.typeSwitch==="lock");
+  var tiles=catList().map(function(c){
+    var dis=locking&&c!==lock;
+    var n=catUnitCount(c);
+    /* the booked line is independent of which tile is selected for browsing */
+    var booked=n?'<span class="ct-booked">&#10003; '+plural(n,'unit')+'</span>':'';
+    var attrs=' data-cattile="'+c+'"';
+    if(dis) attrs+=' data-lockdis aria-disabled="true"';
+    return '<button type="button" class="ctile"'+attrs+' aria-pressed="'+(state.browseCat===c?'true':'false')+'">'+
+      '<b>'+c+'<span class="ct-num">'+catCount(c)+'</span></b>'+catPriceLine(c)+booked+'</button>';
+  }).join('');
+
+  var line='';
+  if(locking){
+    /* Lock variant (the control): the lofi's lock line, plus the one thing the brief adds
+       over it — a release link. It clears every unit with no confirm step, which is
+       deliberate: the Lock variant exists to show what the friction costs. Flag with the
+       client whether a real build would confirm first. */
+    line='<p class="cat-lockline">Showing '+lock+' only: all units on one booking must be the same accommodation type. '+
+      '<button type="button" class="linkbtn" data-clearall>Want a different type? Remove your units to choose again.</button></p>';
+  } else if(lock&&state.browseCat!==lock){
+    /* Confirm variant, browsing a foreign category: warn before the tap, don't block it */
+    line='<p class="cat-lockline">Your booking has '+bookingDesc()+'. Everything on one booking stays in one accommodation type, so adding here will replace them.</p>';
+  }
+  return '<div class="cat-tiles" role="group" aria-label="Accommodation type">'+tiles+'</div>'+line;
+}
+
+/* ============================================================ RESULTS */
+/* the rule is discoverable before any unit is added via the infotip, rather than sitting
+   on screen as always-on copy */
+function resultsHead(){
+  return '<div class="res-tools">'+
+    '<div class="rt-headrow"><h2 class="rt-head">Accommodation types</h2>'+
+    '<span class="infotip"><button type="button" class="infotip-btn" aria-label="Why one accommodation type?">i</button>'+
+    '<span class="infotip-pop" role="tooltip">'+RULE_SENTENCE+'</span></span></div>'+
+    '<div class="basis-seg" role="group" aria-label="Price basis"><button type="button" data-basis="unit" aria-pressed="'+(state.basis==="unit"?'true':'false')+'">Price per unit</button><button type="button" data-basis="pp" aria-pressed="'+(state.basis==="pp"?'true':'false')+'">Price per person</button></div></div>';
+}
+
+/* the card's right rail keeps the from-price only; the expansion trigger is gone. Per
+   person divides by the cheapest arrangement's sleeps, since no guests are assigned yet. */
+function cardPrice(s){
+  var a=lowArr(s);
+  if(state.basis==="pp")
+    return '<div class="price"><span class="from">from</span><span class="now">'+gbp(a.price/a.sleeps)+'</span><span class="pp">per person, based on '+a.sleeps+' guests</span></div>';
+  return '<div class="price"><span class="from">from</span><span class="now">'+gbp(a.price)+'</span><span class="pp">per unit, whole break</span></div>';
+}
+
+/* in-card expansion, opened from the card foot. The sleeping-arrangement tiles are the
+   whole add: one Reserve button each, which becomes a unit-quantity stepper once the
+   booking holds units of that arrangement. Occupancy is never asked for here (it defaults
+   on add and is edited in the panel), so a tile is one tap from a unit on the booking.
+   The action row carries the price on the left and the control on the right, and the
+   stepper is the same rectangular component the panel uses (client, 29 Jul).
+   Tiles render as divs, not buttons: they contain controls, so nesting is out. */
+function arrangementsUI(s){
+  var full=unplaced()<=0;
+  var tiles=s.sleeps.map(function(a){
+    var price=state.basis==="pp"?gbp(a.price/a.sleeps)+' pp':gbp(a.price);
+    var n=unitIdxOf(s.id,a.sleeps).length;
+    var ctrl;
+    if(n){
+      /* disabled, never hidden: the tap still explains why it will not go up */
+      ctrl='<div class="stepper" role="group" aria-label="Units of '+s.name+' sleeps '+a.sleeps+'">'+
+        '<button type="button" class="step-btn" data-chipminus="'+s.id+':'+a.sleeps+'" aria-label="Remove one '+s.name+', sleeps '+a.sleeps+'">&minus;</button>'+
+        '<span class="qty">'+n+'</span>'+
+        '<button type="button" class="step-btn" data-chipadd="'+s.id+':'+a.sleeps+'"'+(full?' aria-disabled="true"':'')+' aria-label="Reserve another '+s.name+', sleeps '+a.sleeps+'">+</button></div>';
+    } else {
+      ctrl='<button type="button" class="btn arr-add" data-chipadd="'+s.id+':'+a.sleeps+'"'+(full?' aria-disabled="true"':'')+
+        ' aria-label="Reserve '+s.name+', sleeps '+a.sleeps+', '+a.bed+', '+price+'">Reserve</button>';
+    }
+    return '<div class="arr-tile'+(n?' has-units':'')+'">'+
+      '<span class="arr-occ"><span class="mglyph" aria-hidden="true">'+GL.person+'</span>Sleeps '+a.sleeps+'</span>'+
+      '<b class="arr-bed">'+a.bed+'</b>'+
+      '<div class="arr-act"><span class="arr-price">'+price+'</span>'+ctrl+'</div></div>';
+  }).join('');
+  return '<div class="arr-grid">'+tiles+'</div>';
+}
+function cardUnitCount(id){ return state.units.filter(function(u){ return u.stockId===id; }).length; }
+
+function accomCard(s){
+  var open=state.expand===s.id, n=cardUnitCount(s.id);
+  var occ=minS(s)===maxS(s)?'Sleeps '+maxS(s):'Sleeps '+minS(s)+' to '+maxS(s);
+  /* meta rides the title row to keep the collapsed card short */
+  var meta='<span class="meta-row">'+
+    '<span class="mitem"><span class="mglyph" aria-hidden="true">'+GL.person+'</span>'+occ+'</span>'+
+    '<span class="mitem"><span class="mglyph" aria-hidden="true">'+GL.bed+'</span>'+s.beds+'</span></span>';
+  var featRow='<ul class="feat-row">'+s.feats.map(function(f){ return '<li><span class="mglyph" aria-hidden="true">'+f.g+'</span>'+f.t+'</li>'; }).join('')+'</ul>';
+  /* the visible label stays clean, no unit count (client, 29 Jul): a card holding units is
+     signalled by its heavier border instead. The count survives in the aria-label only, so
+     a screen reader user still gets the signal the border gives everyone else. */
+  var trigger='<button type="button" class="btn rooms-btn" data-expander="'+s.id+'" aria-expanded="'+(open?'true':'false')+'" aria-controls="exp-'+s.id+'"'+
+    (n&&!open?' aria-label="Show options for '+s.name+', '+plural(n,'unit')+' on your booking"':'')+'>'+
+    (open?'Hide options':'Show options')+'</button>';
+  return '<div class="acard'+(n?' has-units':'')+'">'+
+    '<div class="ac-top">'+
+    '<div class="ph-sq" aria-hidden="true"><span>Photo</span></div>'+
+    '<div class="ac-body">'+
+    '<div class="ac-headrow"><h3>'+s.name+'</h3>'+(s.rec?'<span class="rec-badge">Recommended</span>':'')+meta+'</div>'+
+    '<p class="desc">'+s.desc+'</p>'+featRow+'</div>'+
+    '<div class="ac-foot">'+cardPrice(s)+trigger+'</div></div>'+
+    '<div class="ac-expand" id="exp-'+s.id+'"'+(open?'':' hidden')+'>'+(open?arrangementsUI(s):'')+'</div></div>';
+}
+function visibleStock(){
+  return BBW_STOCK.filter(function(s){ return s.cat===state.browseCat; });
+}
+
+/* ============================================================ YOUR STAY PANEL
+   One panel doing the work of the client prototype's guest tracker and basket and the
+   lofi's group panel: type heading, guest progress glyphs, then one ledger row per unit
+   carrying an always-visible occupancy stepper. Desktop: sticky right column. Mobile:
+   full-bleed sticky at the top, windowed to 3 rows. */
+/* Occupancy: this is where guests per unit go up and down on both devices (client, 29 Jul),
+   the arrangement tiles only ever change how many units there are. The stepper sits behind
+   progressive disclosure because open in every row it dominated the panel (client, 29 Jul):
+   the count and any spare beds read as a line of text, and one tap reveals the control.
+   One unit's stepper is open at a time. */
+function guestPill(i,u){
+  var open=state.openGuests===i;
+  return '<button type="button" class="gpill" data-gdisc="'+i+'" aria-expanded="'+(open?'true':'false')+'" aria-controls="gst-'+i+'"'+
+    ' aria-label="'+plural(u.guests,'guest')+' in unit '+(i+1)+', change">'+
+    '<span class="mglyph" aria-hidden="true">'+GL.person+'</span>'+plural(u.guests,'guest')+
+    '<span class="chev" aria-hidden="true"></span></button>';
+}
+function guestStepper(i,u){
+  var open=state.openGuests===i, mx=maxGuests(i);
+  return '<div class="up-step" id="gst-'+i+'"'+(open?'':' hidden')+'><span class="who-label">Guests in this unit</span>'+
+    '<div class="stepper"><button type="button" class="step-btn" data-gstep="'+i+':-1"'+(u.guests<=1?' aria-disabled="true"':'')+' aria-label="Fewer guests in unit '+(i+1)+'">&minus;</button>'+
+    '<span class="qty">'+u.guests+'</span>'+
+    '<button type="button" class="step-btn" data-gstep="'+i+':1"'+(u.guests>=mx?' aria-disabled="true"':'')+' aria-label="More guests in unit '+(i+1)+'">+</button></div></div>';
+}
+/* per-unit add-ons, as pills on the action row. Room pick is booking-level, decided once at
+   Continue, so it is not a toggle here; it shows in the capacity line once applied. */
+function optionPills(i,s,u){
+  var o='';
+  if(s.gfOpt) o+='<button type="button" class="up-tag" data-opt="'+i+':gf" aria-pressed="'+(u.gf?'true':'false')+'">Ground floor +'+gbp0(GF_FEE)+'</button>';
+  if(s.petOpt) o+='<button type="button" class="up-tag" data-opt="'+i+':pet" aria-pressed="'+(u.pet?'true':'false')+'">Pet friendly +'+gbp0(PET_FEE)+'</button>';
+  return o;
+}
+/* the mockup separates the bed makeup with middots, where the data uses plus signs */
+function bedLine(bed){ return bed.replace(/ \+ /g,' &middot; '); }
+
+/* one unit card body, used by the desktop ledger row and the mobile rail card alike */
+function unitBody(i,u){
+  var s=stockById(u.stockId), a=arrBy(s,u.sleeps), sp=u.sleeps-u.guests;
+  return '<div class="uhead"><b>Unit '+(i+1)+' &middot; '+s.name+'</b>'+
+    '<button type="button" class="up-remove" data-unalloc="'+i+'">Remove</button></div>'+
+    '<span class="ubed">'+bedLine(a.bed)+'</span>'+
+    '<span class="usleeps">Sleeps '+u.sleeps+(sp>0?' &middot; '+plural(sp,'spare bed'):'')+(u.pickRoom?' &middot; exact room':'')+'</span>'+
+    '<div class="uact">'+guestPill(i,u)+optionPills(i,s,u)+'<span class="uprice">'+unitMoney(u)+'</span></div>'+
+    guestStepper(i,u);
+}
+/* per person on a committed unit divides by that unit's GUESTS, not its sleeps: the guests
+   are known by now, so this is what each staying guest actually pays. It deliberately
+   disagrees with the arrangement tile (which divides by sleeps) whenever there are spare
+   beds; watch in testing whether that reads as honest or as a bug. */
+function unitMoney(u){
+  return state.basis==="pp"?gbp(unitPrice(u)/u.guests)+' pp':gbp(unitPrice(u));
+}
+
+/* desktop: the vertical ledger, one row per unit in add order */
+function unitLedger(){
+  /* no empty state: with no units the panel is just the type heading and the progress row
+     (client, 29 Jul) */
+  if(!state.units.length) return '';
+  return '<div class="ledger">'+state.units.map(function(u,i){
+    return '<div class="lrow'+(state.flash===i?' flash':'')+'" data-urow="'+i+'">'+unitBody(i,u)+'</div>';
+  }).join('')+'</div>';
+}
+/* mobile: the same units as a horizontally scrolled rail, the focused one snapped into
+   view. The sticky panel was taking too much of the screen as a vertical list
+   (client, 29 Jul), and the rail keeps the add-ons and the stepper with their unit. */
+function unitCarousel(){
+  /* no empty state: with no units the panel is just the type heading and the progress row
+     (client, 29 Jul) */
+  if(!state.units.length) return '';
+  return '<div class="ucards" id="ucards" role="group" aria-label="Your units">'+state.units.map(function(u,i){
+    return '<div class="ucard'+(state.focusUnit===i?' focused':'')+'" data-ucard="'+i+'">'+unitBody(i,u)+'</div>';
+  }).join('')+'</div>';
+}
+
+function stayPanel(){
+  var total=state.guests, pl=placed(-1), lock=lockedCategory(), spare=spareBeds(), mob=state.device==="mobile";
+
+  var gs='';
+  for(var k=0;k<total;k++) gs+='<span class="pfig '+(k<pl?'on':'off')+'"><i></i><b></b></span>';
+  /* spare beds are fine, never an error: the tone follows the client prototype */
+  var cap=(pl>=total?'Everyone has a bed':pl+' of '+total+' guests have a bed')+
+    (spare>0?' &middot; '+plural(spare,'spare bed'):'');
+
+  /* mobile drops the eyebrow and puts the type beside the caption to save two lines */
+  var head=mob
+    ? '<div class="gp-head"><h3 id="gpHead">'+(lock?lock:'Not chosen yet')+'</h3><span class="pool-cap">'+cap+'</span></div>'+
+      '<div class="gp-pool"><div class="pg-row" aria-hidden="true">'+gs+'</div></div>'
+    : '<span class="gp-eyebrow">Group accommodation type</span>'+
+      '<h3 id="gpHead">'+(lock?lock:'Not chosen yet')+'</h3>'+
+      '<div class="gp-pool"><span class="pool-cap">'+cap+'</span><div class="pg-row" aria-hidden="true">'+gs+'</div></div>';
+
+  var panel='<div class="gpanel" id="gpanel">'+head+(mob?unitCarousel():unitLedger())+'</div>';
+  return '<aside class="side" aria-labelledby="gpHead">'+panel+'</aside>';
+}
+
+/* bottom utility row; the phone linkage line is carried from the June live capture
+   (group linkage is phone-only on live); flag to client whether it stays */
+function utilityRow(){
+  return '<div class="util-row">'+
+    '<button type="button" class="btn util-btn" onclick="return false;"><span class="mglyph" aria-hidden="true">'+GL.access+'</span>Accessible accommodation</button>'+
+    '<button type="button" class="btn util-btn" onclick="return false;"><span class="mglyph" aria-hidden="true">'+GL.map+'</span>Download resort map</button></div>'+
+    '<p class="group-note">Booking alongside friends or family on a separate booking? Call 0330 100 6649 and we’ll link you up.</p>';
+}
+
+/* ============================================================ RENDER
+   Full re-render on every interaction is an accepted lo-fi limitation, same as the
+   Phase 3 lofi; do not carry this pattern to build. */
+var content=document.getElementById('content');
+var scrollEl=document.getElementById('scroll');
+var railLeft=0, snapFocus=false, addAnim=false;   /* rail scroll: preserved, one-shot snap, one-shot add animation */
+/* Add animation: the new row or card starts faded and offset to the right, then settles as
+   the rail smooth-scrolls to it, which slides every existing card leftwards. Runs on both
+   devices; on the desktop ledger there is no scroll, so it reads as a fade and settle. */
+function playAddAnim(){
+  var i=state.flash; if(i==null) return;
+  var rail=document.getElementById('ucards');
+  var el=rail?rail.querySelector('[data-ucard="'+i+'"]'):content.querySelector('[data-urow="'+i+'"]');
+  if(!el) return;
+  el.classList.add('slide-in');
+  var target=rail?el.offsetLeft-rail.offsetLeft:0;
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    el.classList.remove('slide-in');
+    if(rail){
+      if(rail.scrollTo) rail.scrollTo({left:target,behavior:'smooth'});
+      else rail.scrollLeft=target;
+    }
+  }); });
+}
+function render(){
+  var keep=scrollEl.scrollTop;
+  var prevRail=document.getElementById('ucards');
+  if(prevRail) railLeft=prevRail.scrollLeft;
+  document.getElementById('searchSumm').innerHTML=summText();
+  var mob=state.device==="mobile", panel=stayPanel();
+  /* the tools bar and tiles span full width; the two-column row starts at the results so
+     the panel top-aligns with them. On mobile the panel moves above everything, sticky. */
+  content.innerHTML=(mob?panel:'')+resultsHead()+categoryUI()+
+    '<div class="layout">'+(mob?'':panel)+
+    '<div class="results">'+visibleStock().map(accomCard).join('')+utilityRow()+'</div>'+
+    '</div>';
+  wire();
+  recompute();
+  scrollEl.scrollTop=keep;
+  /* the rail keeps its place across a re-render, except right after an add or remove, when
+     the focused unit is snapped into view. On an add the snap is animated instead, so the
+     rail starts where it was and slides (see playAddAnim). */
+  var rail=document.getElementById('ucards');
+  if(rail){
+    var card=state.focusUnit!=null?rail.querySelector('[data-ucard="'+state.focusUnit+'"]'):null;
+    if(addAnim) rail.scrollLeft=railLeft;
+    else if(snapFocus&&card) rail.scrollLeft=card.offsetLeft-rail.offsetLeft;
+    else rail.scrollLeft=railLeft;
+  }
+  if(addAnim) playAddAnim();
+  snapFocus=false; addAnim=false;
+}
+function recompute(){
+  var t=grandTotal();
+  document.getElementById('totalFig').innerHTML=gbp(t);
+  /* per-person subline on the total always divides by the group size, whatever the basis */
+  document.getElementById('totalPP').textContent=state.guests?gbp(t/state.guests)+' per person':'';
+  var done=isDone(), note;
+  if(done) note='Nice one. Next, dining and extras for your weekender.';
+  else { var m=unplaced(); note='You need to place '+m+' more guest'+(m===1?'':'s')+' to continue.'; }
+  document.getElementById('footNote').textContent=note;
+  document.getElementById('continueBtn').setAttribute('aria-disabled',done?'false':'true');
+}
+
+/* ============================================================ ACTIONS */
+var flashToken=null;
+function flashRow(i){
+  state.flash=i;
+  var tk={}; flashToken=tk;
+  setTimeout(function(){ if(flashToken!==tk) return; state.flash=null; render(); },1200);
+}
+function placeAnnounce(g,name){
+  var sp=spareBeds();
+  announce(plural(g,'guest')+' placed in '+name+'. '+placed(-1)+' of '+state.guests+' guests now have a bed.'+(sp>0?' '+plural(sp,'spare bed')+'.':''));
+}
+var FULL_MSG='Everyone has a bed. Adjust or remove a unit to make changes.';
+
+function addUnit(id,sl){
+  var s=stockById(id);
+  state.units.push({stockId:id,sleeps:sl,guests:defaultGuests(sl),gf:false,pet:false,pickRoom:false});
+  /* the newest unit becomes the focused card on the mobile rail (client, 29 Jul) */
+  state.focusUnit=state.units.length-1;
+  /* a fresh unit lands with its occupancy stepper closed: the smart default is the point */
+  state.openGuests=null;
+  snapFocus=true; addAnim=true;
+  flashRow(state.units.length-1);
+  return s;
+}
+function chipAdd(id,sl){
+  var s=stockById(id), lock=lockedCategory();
+  if(unplaced()<=0){ announce(FULL_MSG); return; }
+  if(lock&&s.cat!==lock){
+    if(state.typeSwitch==="lock"){ announce('Unavailable. All units on one booking must be the same accommodation type.'); return; }
+    /* Confirm variant: ask before replacing, and change nothing until they say yes */
+    state.pendingSwap={stockId:id,sleeps:sl};
+    openSwapModal();
+    return;
+  }
+  addUnit(id,sl);
+  placeAnnounce(state.units[state.units.length-1].guests,s.name);
+  render();
+}
+/* minus removes the most recently added unit of that arrangement; its guests return to the
+   pool and every other stepper's bound updates on the next render */
+function chipMinus(id,sl){
+  var idxs=unitIdxOf(id,sl); if(!idxs.length) return;
+  removeUnit(idxs[idxs.length-1]);
+}
+function shiftIdx(v,i){ if(v==null) return null; if(v===i) return null; return v>i?v-1:v; }
+function removeUnit(i){
+  state.units.splice(i,1);
+  state.flash=shiftIdx(state.flash,i);
+  state.focusUnit=shiftIdx(state.focusUnit,i);
+  state.openGuests=shiftIdx(state.openGuests,i);
+  /* nothing focused after removing the focused card: fall back to the newest unit */
+  if(state.focusUnit==null&&state.units.length) state.focusUnit=state.units.length-1;
+  snapFocus=true;
+  announce('Unit '+(i+1)+' removed. '+placed(-1)+' of '+state.guests+' guests have a bed.'+
+    (state.units.length?'':' Every accommodation type is open again.'));
+  render();
+}
+function stepGuests(i,d){
+  var u=state.units[i], mx=maxGuests(i), nv=u.guests+d;
+  if(nv<1){ announce('Every unit needs at least one guest. Use Remove to take the unit off your booking.'); return; }
+  if(nv>mx){ announce(u.guests>=u.sleeps?'This unit sleeps '+u.sleeps+', so that is the most it can hold.':FULL_MSG); return; }
+  u.guests=nv;
+  state.focusUnit=i;   /* the card being edited is the one to keep in view */
+  placeAnnounce(nv,stockById(u.stockId).name);
+  render();
+}
+
+/* ============================================================ WIRING */
+function q(sel,fn){ content.querySelectorAll(sel).forEach(fn); }
+function wire(){
+  q('[data-basis]',function(b){
+    b.addEventListener('click',function(){
+      state.basis=b.getAttribute('data-basis');
+      announce(state.basis==="pp"?'Prices shown per person.':'Prices shown per unit.');
+      render();
+    });
+  });
+
+  q('[data-cattile]',function(b){
+    b.addEventListener('click',function(){
+      var c=b.getAttribute('data-cattile');
+      if(b.hasAttribute('data-lockdis')){ announce('Unavailable. All units on one booking must be the same accommodation type.'); return; }
+      if(state.browseCat===c) return;
+      state.browseCat=c; state.expand=null;
+      announce(c+'. '+plural(catCount(c),'option')+'.');
+      render();
+    });
+  });
+  /* Lock variant release link: clears the booking so every type reopens */
+  q('[data-clearall]',function(b){
+    b.addEventListener('click',function(){
+      state.units=[]; state.flash=null; state.focusUnit=null; state.openGuests=null;
+      announce('All units removed. Every accommodation type is open again.');
+      render();
+    });
+  });
+
+  /* one card open at a time; adding does NOT close it, so the stepper stays to hand */
+  q('[data-expander]',function(b){
+    b.addEventListener('click',function(){
+      var id=b.getAttribute('data-expander');
+      state.expand=(state.expand===id)?null:id;
+      announce(state.expand?stockById(id).name+' options open. '+plural(stockById(id).sleeps.length,'sleeping arrangement')+'.':'Options closed.');
+      render();
+    });
+  });
+
+  q('[data-chipadd]',function(b){
+    b.addEventListener('click',function(){
+      if(b.getAttribute('aria-disabled')==='true'){ announce(FULL_MSG); return; }
+      var bits=b.getAttribute('data-chipadd').split(':');
+      chipAdd(bits[0],+bits[1]);
+    });
+  });
+  q('[data-chipminus]',function(b){
+    b.addEventListener('click',function(){
+      var bits=b.getAttribute('data-chipminus').split(':');
+      chipMinus(bits[0],+bits[1]);
+    });
+  });
+
+  /* progressive disclosure for occupancy: one unit's stepper open at a time */
+  q('[data-gdisc]',function(b){
+    b.addEventListener('click',function(){
+      var i=+b.getAttribute('data-gdisc'), u=state.units[i];
+      state.openGuests=(state.openGuests===i)?null:i;
+      state.focusUnit=i;
+      announce(state.openGuests===i
+        ? 'Unit '+(i+1)+' guests open. '+plural(u.guests,'guest')+' of a possible '+maxGuests(i)+'.'
+        : 'Unit '+(i+1)+' guests closed.');
+      render();
+    });
+  });
+  q('[data-gstep]',function(b){
+    b.addEventListener('click',function(){
+      var bits=b.getAttribute('data-gstep').split(':');
+      stepGuests(+bits[0],+bits[1]);
+    });
+  });
+  q('[data-opt]',function(b){
+    b.addEventListener('click',function(){
+      var bits=b.getAttribute('data-opt').split(':'), i=+bits[0], u=state.units[i], k=bits[1];
+      u[k]=!u[k];
+      state.focusUnit=i;
+      announce((k==="gf"?'Ground floor':'Pet friendly')+(u[k]?' added to Unit '+(i+1)+', '+gbp(k==="gf"?GF_FEE:PET_FEE)+'.':' removed from Unit '+(i+1)+'.'));
+      render();
+    });
+  });
+  q('[data-unalloc]',function(b){
+    b.addEventListener('click',function(){ removeUnit(+b.getAttribute('data-unalloc')); });
+  });
+  /* tapping anywhere on a unit card focuses it, so the rail's focused state follows the
+     card the customer is actually working on */
+  q('[data-ucard]',function(b){
+    b.addEventListener('click',function(){
+      var i=+b.getAttribute('data-ucard');
+      if(state.focusUnit===i) return;
+      state.focusUnit=i; render();
+    });
+  });
+}
+
+/* ============================================================ MODALS
+   Shared open/close plumbing; the room pick dialog and the type-switch confirm both use
+   the .rp-modal shell. */
+var lastFocus=null;
+function showModal(id,focusId){
+  var m=document.getElementById(id); m.hidden=false;
+  requestAnimationFrame(function(){ m.classList.add('open'); });
+  lastFocus=document.activeElement;
+  /* preventScroll so opening the modal doesn't jump the page behind back to the top */
+  document.getElementById(focusId).focus({preventScroll:true});
+  document.addEventListener('keydown',modalKey);
+}
+function hideModal(id){
+  var m=document.getElementById(id); m.classList.remove('open');
+  document.removeEventListener('keydown',modalKey);
+  setTimeout(function(){ m.hidden=true; },220);
+  if(lastFocus&&lastFocus.focus) lastFocus.focus({preventScroll:true});
+}
+function modalKey(e){
+  if(e.key!=='Escape') return;
+  if(!document.getElementById('swModal').hidden) closeSwapModal();
+  else if(!document.getElementById('rpModal').hidden) hideModal('rpModal');
+}
+
+/* ---- type switch confirm (Confirm variant only) ---- */
+function openSwapModal(){
+  var sw=state.pendingSwap, s=stockById(sw.stockId), lock=lockedCategory();
+  document.getElementById('swTitle').textContent='Switch to '+s.cat+'?';
+  document.getElementById('swLead').textContent=
+    (state.units.length===1?'Your unit in ':'Your '+state.units.length+' units in ')+lock+
+    ' ('+plural(placed(-1),'guest')+' placed) will be removed.';
+  document.getElementById('swKeep').textContent='Keep my '+lock;
+  showModal('swModal','swGo');
+}
+function closeSwapModal(){ state.pendingSwap=null; hideModal('swModal'); }
+document.getElementById('swGo').addEventListener('click',function(){
+  var sw=state.pendingSwap; if(!sw) return;
+  var was=lockedCategory(), wasN=state.units.length;
+  /* clear first so defaultGuests sees the whole pool again, then add with the smart default */
+  state.units=[]; state.flash=null; state.focusUnit=null; state.openGuests=null;
+  var s=addUnit(sw.stockId,sw.sleeps);
+  /* open the card that now holds the booking, so its stepper is where they are looking */
+  state.expand=sw.stockId;
+  state.pendingSwap=null;
+  hideModal('swModal');
+  render();
+  announce('Switched to '+s.cat+'. '+plural(wasN,'unit')+' in '+was+' removed. '+
+    plural(state.units[0].guests,'guest')+' placed in '+s.name+'. '+placed(-1)+' of '+state.guests+' guests have a bed.');
+});
+document.getElementById('swKeep').addEventListener('click',function(){
+  var lock=lockedCategory();
+  closeSwapModal();
+  announce('Keeping your '+lock+'. Nothing changed.');
+});
+document.getElementById('swClose').addEventListener('click',closeSwapModal);
+document.getElementById('swScrim').addEventListener('click',function(e){ if(e.target===this) closeSwapModal(); });
+
+/* ---- room pick, unchanged from the lofi ----
+   Fires once at Continue and applies exact-room pick to every unit at £25 each. Framed as
+   a per-unit upgrade; the running total already lives on the main screen, so no totals are
+   repeated here. */
+document.getElementById('continueBtn').addEventListener('click',function(e){
+  e.preventDefault();
+  if(this.getAttribute('aria-disabled')==='true'){ announce('Place every guest to continue.'); return; }
+  openRoomPickModal();
+});
+function openRoomPickModal(){
+  var units=state.units.map(function(u,i){ return {label:'Unit '+(i+1),guests:u.guests}; });
+  var n=units.length;
+  document.getElementById('rpLead').textContent='Choose exactly where you stay on the resort map, and we’ll keep your group close together.';
+  document.getElementById('rpRows').innerHTML=units.map(function(u){
+    /* the fee is a flat £25 each (no per-guest scaling); the per-guest split is shown
+       because a BBW group is all adults, so it divides cleanly */
+    return '<div class="rp-row"><div class="rp-row-l"><b>'+u.label+'</b><span>'+plural(u.guests,'guest')+'</span></div>'+
+      '<div class="rp-row-r"><span class="rp-fee"><b>'+gbp0(ROOM_PICK)+'</b><span class="rp-per">/unit</span></span>'+
+      '<span class="rp-perg">'+gbp(ROOM_PICK/u.guests)+'/guest</span></div></div>';
+  }).join('');
+  document.getElementById('rpPickCta').textContent='Pick my exact rooms for '+gbp0(ROOM_PICK*n);
+  showModal('rpModal','rpPickCta');
+}
+function rpDecide(pick){
+  state.units.forEach(function(u){ u.pickRoom=pick; });
+  render();
+  hideModal('rpModal');
+  announce(pick
+    ? 'Exact room pick added for all '+plural(state.units.length,'unit')+'. Continuing to dining.'
+    : 'We’ll choose your rooms, included. Continuing to dining.');
+}
+document.getElementById('rpPickCta').addEventListener('click',function(){ rpDecide(true); });
+document.getElementById('rpLetCta').addEventListener('click',function(){ rpDecide(false); });
+document.getElementById('rpClose').addEventListener('click',function(){ hideModal('rpModal'); });
+document.getElementById('rpScrim').addEventListener('click',function(e){ if(e.target===this) hideModal('rpModal'); });
+
+/* ============================================================ DEV CONTROLS */
+function pressGroup(sel,val,attr){
+  document.querySelectorAll(sel).forEach(function(b){ b.setAttribute('aria-pressed',b.getAttribute(attr)===String(val)?'true':'false'); });
+}
+function press(id,on){ document.getElementById(id).setAttribute('aria-pressed',on?'true':'false'); }
+
+function setDevice(d){
+  state.device=d;
+  document.getElementById('deviceHost').setAttribute('data-device',d);
+  press('dvMobile',d==="mobile"); press('dvDesktop',d==="desktop");
+  render(); /* panel DOM position differs per device; state is preserved */
+}
+document.getElementById('dvMobile').addEventListener('click',function(){ setDevice("mobile"); });
+document.getElementById('dvDesktop').addEventListener('click',function(){ setDevice("desktop"); });
+
+/* Group size keeps units that still fit. This clamps occupancy first and only drops units
+   left with nothing, which departs from the lofi's pop-until-fits: that binned a lone
+   sleeps-6 unit outright when the group went 8 to 4, where clamping keeps it at 4 guests
+   with 2 spare beds. Units still drop from the end. */
+document.querySelectorAll('[data-groupbtn]').forEach(function(b){
+  b.addEventListener('click',function(){
+    var n=+b.getAttribute('data-groupbtn');
+    state.guests=n; state.flash=null;
+    var pool=n, keep=[], dropped=0;
+    state.units.forEach(function(u){
+      var g=Math.min(u.guests,pool);
+      if(g<1){ dropped++; return; }
+      u.guests=g; pool-=g; keep.push(u);
+    });
+    state.units=keep;
+    state.flash=null;
+    /* keep any disclosed stepper only if its unit survived */
+    if(state.openGuests!=null&&state.openGuests>keep.length-1) state.openGuests=null;
+    state.focusUnit=keep.length?Math.min(state.focusUnit==null?keep.length-1:state.focusUnit,keep.length-1):null;
+    snapFocus=true;
+    pressGroup('[data-groupbtn]',n,'data-groupbtn');
+    announce('Group size set to '+n+'.'+(dropped?' '+plural(dropped,'unit')+' removed to fit.':'')+
+      ' '+placed(-1)+' of '+n+' guests have a bed.');
+    render();
+  });
+});
+
+/* Type switch is a pure behaviour change: choices are deliberately NOT reset, so the two
+   variants can be compared mid-booking */
+document.querySelectorAll('[data-tsw]').forEach(function(b){
+  b.addEventListener('click',function(){
+    state.typeSwitch=b.getAttribute('data-tsw');
+    /* flipping to Lock while browsing a foreign category would leave the user looking at
+       cards whose own tile is disabled, so snap the browse back to the locked type. Units
+       are untouched: this moves the view, it does not reset a choice. */
+    var lk=lockedCategory();
+    if(state.typeSwitch==="lock"&&lk&&state.browseCat!==lk) state.browseCat=lk;
+    pressGroup('[data-tsw]',state.typeSwitch,'data-tsw');
+    announce(state.typeSwitch==="confirm"
+      ? 'Confirm on add: every type stays selectable, switching asks first.'
+      : 'Lock: other types are disabled once you have a unit.');
+    render();
+  });
+});
+
+/* 5 steps on BBW: accommodation, dining, extras, guests, payment */
+var dots='';
+for(var i=0;i<5;i++) dots+='<span class="dotstep'+(i===0?' current':'')+'" role="listitem" aria-label="Step '+(i+1)+(i===0?', current':'')+'"'+(i===0?' aria-current="step"':'')+'></span>';
+document.getElementById('dots').innerHTML=dots;
+
+render();
+</script>
+</body>
+</html>
