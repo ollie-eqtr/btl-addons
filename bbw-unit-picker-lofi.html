@@ -45,6 +45,8 @@ ul{margin:0;padding:0;list-style:none;}
 .seg button{flex:1;background:#2b2b2b;color:#ddd;border:0;padding:6px 6px;font-size:11px;border-right:1px solid #555;}
 .seg button:last-child{border-right:0;}
 .seg button[aria-pressed="true"]{background:#eee;color:#1f1f1f;font-weight:700;}
+/* the add-flow group carries three options, so it needs tighter type than the two-up segs */
+.seg.seg-3 button{padding:6px 3px;font-size:10px;}
 .main{flex:1;display:flex;min-width:0;}
 .frame-outer{margin:auto;display:flex;justify-content:center;}
 /* prototype is reviewed on desktop; on narrow viewports the rail simply stacks on top */
@@ -98,6 +100,9 @@ ul{margin:0;padding:0;list-style:none;}
 .layout{display:flex;align-items:flex-start;gap:14px;}
 .results{flex:1;min-width:0;}
 .side{width:300px;min-width:300px;position:sticky;top:12px;order:2;} /* panel sits right of the results on desktop */
+/* modal flows: the summary card carries less than the in-card version, so the column gives
+   width back to the results list (client, 30 Jul). Declared after .side, same specificity. */
+.side-slim{width:252px;min-width:252px;}
 .frame-outer[data-device="mobile"] .layout{flex-direction:column;}
 .frame-outer[data-device="mobile"] .side{width:100%;min-width:0;top:0;z-index:7;order:0;}
 
@@ -136,6 +141,25 @@ ul{margin:0;padding:0;list-style:none;}
 /* the action row: pills left, price right. Wraps on the narrow desktop panel. */
 .uact{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:11px;}
 .uprice{margin-left:auto;font-weight:800;font-size:15px;white-space:nowrap;}
+/* modal add flows only: the panel card is a summary, so what was chosen reads as a line of
+   text and the controls are just the way back into the dialog (client, 30 Jul) */
+.uchose{display:block;font-size:12px;font-weight:600;color:var(--ink);margin-top:5px;}
+/* occupancy as the beds themselves: one figure per bed, filled for a guest and outlined for a
+   spare, replacing three numbers to reconcile ("sleeps 4, 1 spare, 3 guests"). Reuses the
+   panel's .pfig glyphs, so a unit is counted the same way the group is (client, 30 Jul). */
+.uocc{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:6px;}
+.uocc .pg-row{margin:0;gap:4px;}
+.uocc-cap{font-size:11.5px;font-weight:700;color:var(--ink);}
+/* Edit and Remove sit together and both run shorter than the 44px targets used elsewhere
+   (client, 30 Jul). Deliberate here because the summary card is dense and neither is a
+   primary action; revisit the target size at hi-fi. */
+.up-edit,.up-bin{padding:5px 14px;font-weight:700;font-size:12px;min-height:32px;}
+.up-bin{padding:5px 11px;display:inline-flex;align-items:center;justify-content:center;}
+/* bin glyph, CSS-drawn like the guest figures so it stays greyscale and needs no asset */
+.binglyph{position:relative;display:inline-block;width:12px;height:15px;}
+.binglyph i{position:absolute;top:0;left:3.5px;width:5px;height:2px;background:var(--ink2);border-radius:1px;}
+.binglyph::before{content:"";position:absolute;top:2.5px;left:0;width:12px;height:1.8px;background:var(--ink2);border-radius:1px;}
+.binglyph::after{content:"";position:absolute;top:5.5px;left:1.5px;width:9px;height:9.5px;border:1.5px solid var(--ink2);border-top:0;border-radius:0 0 3px 3px;}
 
 /* occupancy behind progressive disclosure (client, 29 Jul): the stepper was too prominent
    sitting open in every row, so the count reads as a pill and the control is one tap away.
@@ -289,7 +313,7 @@ button.up-tag:hover{background:var(--fill);}
 .arr-act{display:flex;align-items:center;gap:9px;width:100%;margin-top:5px;padding-top:8px;border-top:1px dashed var(--line2);}
 .arr-price{font-weight:800;font-size:13.5px;}
 .arr-act .arr-add,.arr-act .stepper{margin-left:auto;}
-/* true black outline so the Reserve CTA stands out from the container hairlines */
+/* true black outline so the Add CTA stands out from the container hairlines */
 .arr-add{padding:8px 18px;font-weight:700;font-size:12.5px;border:1.5px solid #000;color:#000;background:var(--paper);border-radius:8px;min-height:44px;}
 .arr-add:hover{background:var(--fill);}
 .arr-add[aria-disabled="true"]{opacity:.45;cursor:not-allowed;}
@@ -320,7 +344,14 @@ button.up-tag:hover{background:var(--fill);}
 /* ---- modal shell (desktop) / bottom drawer (mobile); shared by the room pick and the
        Confirm-variant type switch ---- */
 .rp-modal{position:absolute;inset:0;z-index:60;}
-.rp-scrim{position:absolute;inset:0;background:rgba(20,20,20,.55);display:flex;align-items:center;justify-content:center;padding:22px;opacity:0;transition:opacity .2s;}
+/* The scrim blurs as well as darkens (client, 30 Jul). On desktop the unit dialog's guest
+   glyphs sat alongside the panel's, showing different counts, because a draft deliberately is
+   not on the booking yet. Updating the panel live was the alternative and was rejected: it
+   would show units that Cancel then has to take away again, and its glyphs would disagree with
+   the unit cards directly below them. Blurring makes the page recede instead of compete.
+   Applied to all three dialogs, since none of them wants the page legible behind it. The blur
+   fades in with the scrim, because opacity composites the filtered backdrop too. */
+.rp-scrim{position:absolute;inset:0;background:rgba(20,20,20,.62);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:22px;opacity:0;transition:opacity .2s;}
 .rp-modal.open .rp-scrim{opacity:1;}
 .rp-card{position:relative;background:var(--paper);border-radius:14px;width:min(430px,100%);max-height:calc(100% - 44px);overflow:auto;padding:26px 24px 22px;box-shadow:0 18px 50px rgba(0,0,0,.35);transform:translateY(10px) scale(.98);transition:transform .2s;}
 .rp-modal.open .rp-card{transform:none;}
@@ -344,10 +375,101 @@ button.up-tag:hover{background:var(--fill);}
 .rp-cta{width:100%;padding:13px;font-size:14px;border-radius:9px;}
 .rp-secondary{width:100%;background:var(--paper);border:1px solid var(--line2);border-radius:9px;padding:12px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;}
 .rp-secondary:hover{background:var(--fill);}
+/* ---- unit dialog (modal add flows, 30 Jul): every control for one unit in one place,
+       because splitting quantity onto the arrangement tile and occupancy into the panel read
+       as messy. Stacks one editable block per unit and commits them together, so the whole
+       group can be configured in a single pass. Reuses the modal shell, the panel's
+       rectangular stepper and the add-on pills; only the stacking, the bed selector and the
+       add-another row are new. ---- */
+/* the dialog title takes the page's display treatment, uppercase and heavy, rather than the
+   room-pick dialog's sentence-case heading (mockup, 30 Jul) */
+#duModal .rp-card h3{font-size:26px;line-height:1.05;text-transform:uppercase;letter-spacing:.03em;margin:3px 0 0;}
+/* progress row: pinned above the scrolling body so it stays in view while a stacked list
+   scrolls. Glyphs left, count right, rule underneath (mockup, 30 Jul). Promoted out of a muted
+   caption in the add row because how many guests still need a bed is the one thing driving the
+   next decision (client, 30 Jul). data-done stays as a state hook; nothing styles it. */
+.du-status{display:flex;align-items:center;gap:12px;padding-bottom:12px;margin:20px 0 16px;border-bottom:1px solid var(--ink2);}
+.du-stat-cap{margin-left:auto;font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;}
+.du-status .pg-row{margin:0;gap:7px;flex-wrap:nowrap;}
+/* the dialog's glyphs run larger than the panel's, where they sit in a 252px column */
+.du-status .pfig{width:17px;}
+.du-status .pfig i{width:9px;height:9px;}
+.du-status .pfig b{width:17px;height:11px;}
+/* the body scrolls inside the card so the CTA stays put with five units stacked. Budget on the
+   880px desktop frame: card is 836px, less 232px of chrome, leaves 604px. */
+#duBody{max-height:580px;overflow-y:auto;padding-right:2px;margin-bottom:16px;}
+/* each unit is a contained section rather than a slice divided by a rule (client, 30 Jul), so a
+   stack reads as a list of units instead of one long column of controls */
+.du-unit{border:1px solid var(--line);border-radius:9px;padding:11px 12px 12px;}
+.du-unit+.du-unit{margin-top:9px;}
+/* Modal + beds, nothing chosen yet: a dashed outline says this is not a unit on the booking
+   yet, which matters when it sits below one that is (client, 30 Jul) */
+.du-unit.du-pending{border-style:dashed;border-color:var(--line2);}
+.du-hint{font-size:11.5px;color:var(--muted);margin-top:10px;}
+.du-head{display:flex;align-items:baseline;gap:9px;margin-bottom:9px;}
+.du-head b{font-size:14px;}
+.du-head .up-remove{margin-left:auto;}
+/* section headings inside a block take the display treatment the mockup shows, rather than the
+   panel's small uppercase label (mockup, 30 Jul) */
+.du-h{font-size:17px;font-weight:800;letter-spacing:.005em;margin:0 0 9px;}
+.du-step{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px;}
+.du-step .du-h{margin:0;}
+.du-step .stepper{margin-left:auto;}
+/* add-ons use the parent lofi's add-on row verbatim (glyph, title, sub copy, price bottom
+   left, toggle hard right) in place of the pill, so the dialog matches the pattern the client
+   has already approved elsewhere (client, 30 Jul). Lifted from phase3-search-accom-lofi.html. */
+/* no label above the add-on rows: the row titles itself (mockup, 30 Jul) */
+.du-prefs{margin-top:14px;}
+.gf-row{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:9px;padding:8px 12px;}
+.fglyph{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;min-width:26px;border:1px solid var(--line2);border-radius:6px;background:var(--paper);font-size:14px;filter:grayscale(1);}
+.gf-main{flex:1;min-width:0;}
+.gf-main b{display:block;font-size:13px;padding-top:4px;}
+.gf-price{display:block;font-weight:800;font-size:13px;margin-top:5px;}
+.gf-row .tswitch{margin-left:auto;}
+.tswitch{position:relative;display:inline-flex;align-items:center;width:58px;height:44px;background:none;border:0;padding:0 3px;}
+.tswitch .track{width:52px;height:28px;border-radius:16px;border:1.5px solid var(--line3);background:var(--paper);transition:background .12s;}
+.tswitch .knob{position:absolute;top:50%;transform:translateY(-50%);left:8px;width:19px;height:19px;border-radius:50%;background:var(--line3);transition:left .12s;}
+.tswitch[aria-pressed="true"] .track{background:var(--dark);border-color:var(--dark);}
+.tswitch[aria-pressed="true"] .knob{left:31px;background:#fff;}
+.gf-row+.gf-row{margin-top:8px;}
+/* the unit total sits bottom left under a rule, unlabelled, at display size (mockup, 30 Jul) */
+.du-foot{display:flex;align-items:baseline;gap:8px;margin-top:15px;padding-top:11px;border-top:1px solid var(--ink2);}
+.du-foot .uprice{margin-left:0;font-size:21px;}
+/* bed choice, Modal + beds only: three tiles across, each stacking the capacity, the makeup and
+   the price, the chosen one filled and heavily outlined (mockup, 30 Jul). Was a column of
+   full-width rows; the grid fits because stock never carries more than three arrangements. At
+   the 390px mobile width a tile is about 101px, which wraps a long makeup onto two lines. */
+.du-bedsel{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:7px;}
+.du-bed{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;
+  border:1px solid var(--line2);border-radius:8px;background:var(--paper);padding:9px 10px 10px;
+  font-size:11.5px;color:var(--ink2);white-space:normal;line-height:1.3;min-height:96px;}
+.du-bed b{font-size:13.5px;color:var(--ink);}
+.du-bed .du-bed-pr{margin-top:auto;padding-top:8px;font-size:14.5px;font-weight:800;color:var(--ink);}
+.du-bed:hover{background:var(--fill);}
+.du-bed[aria-pressed="true"]{background:var(--fill3);border-color:#000;box-shadow:inset 0 0 0 1.5px #000;}
+/* add another unit reads as an underlined link below the unit box, not a button (mockup, 30 Jul) */
+.du-addrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:13px 0 2px;}
+.du-add{font-size:13px;}
+.du-add[aria-disabled="true"]{opacity:.45;cursor:not-allowed;}
+/* the CTA takes the page's display treatment, like the title (mockup, 30 Jul) */
+#duDone{text-transform:uppercase;letter-spacing:.045em;font-weight:800;font-size:15px;padding:15px;}
 /* mobile: full-width sheet anchored to the bottom, sliding up */
 .frame-outer[data-device="mobile"] .rp-scrim{align-items:flex-end;padding:0;}
 .frame-outer[data-device="mobile"] .rp-card{width:100%;max-height:90%;border-radius:16px 16px 0 0;padding-bottom:24px;transform:translateY(100%);}
 .frame-outer[data-device="mobile"] .rp-modal.open .rp-card{transform:none;}
+/* the unit dialog takes more of the screen than the other two sheets, and its body scrolls much
+   later, because a second unit was scrolling almost immediately (client, 30 Jul).
+   Budget on a 780px frame: 97% card = 757px, less 219px of chrome (18 top padding, 18 eyebrow,
+   25 heading, 66 progress row, 16 body margin, 52 CTA, 24 bottom padding), leaves 538px.
+   One chosen unit block runs about 370px with the three-up bed tiles and one add-on row, or
+   about 472px with two, which every room type now has. So a whole unit still shows before
+   anything moves, but only just. Two blocks cannot fit a phone at any setting, so draftAdd
+   scrolls the new one into view instead of pretending otherwise. Keep this in step with the
+   trims below: overshooting gives .rp-card its own scrollbar too, which is worse than the
+   problem being fixed. */
+.frame-outer[data-device="mobile"] #duModal .rp-card{max-height:97%;padding-top:18px;}
+.frame-outer[data-device="mobile"] #duModal .rp-card h3{font-size:21px;}
+.frame-outer[data-device="mobile"] #duBody{max-height:530px;}
 </style>
 </head>
 <body>
@@ -368,11 +490,21 @@ button.up-tag:hover{background:var(--fill);}
       <div class="seg" role="group" aria-label="Group size"><button data-groupbtn="4" aria-pressed="false">4</button><button data-groupbtn="8" aria-pressed="true">8</button><button data-groupbtn="14" aria-pressed="false">14</button><button data-groupbtn="19" aria-pressed="false">19</button></div>
     </div>
 
-    <!-- The design variable under test: how the same-type rule behaves once units exist -->
+    <!-- The design variables under test: how the same-type rule behaves once units exist,
+         and where the controls for a unit live -->
     <div class="rail-variants">
       <span class="rail-head">Variant</span>
       <div class="seg-group"><span class="gl">Type switch</span>
         <div class="seg" role="group" aria-label="Type switch"><button data-tsw="confirm" aria-pressed="true">Confirm</button><button data-tsw="lock" aria-pressed="false">Lock</button></div>
+      </div>
+      <!-- Add flow (client, 30 Jul): the 29 Jul build split one unit's controls across two
+           regions, quantity on the arrangement tile and occupancy plus add-ons in the panel,
+           which read as messy and unintuitive. Both modal flows pull every control into one
+           dialog and turn the panel into a summary. Modal + beds also moves the sleeping
+           arrangement in, which is the part still open: it collapses the flow further but
+           takes the useful work off the arrangement tiles. -->
+      <div class="seg-group"><span class="gl">Add flow</span>
+        <div class="seg seg-3" role="group" aria-label="Add flow"><button data-flow="incard" aria-pressed="true">In-card</button><button data-flow="modal" aria-pressed="false">Modal</button><button data-flow="modalbeds" aria-pressed="false">Modal+beds</button></div>
       </div>
     </div>
   </div>
@@ -471,6 +603,30 @@ button.up-tag:hover{background:var(--fill);}
         </div>
       </div>
 
+      <!-- Modal add flows only: Add opens this instead of committing a unit. One
+           editable block per unit, stacked, all committed together on Done. Nothing reaches
+           the booking until then, so Cancel, the close button, the scrim and Escape all
+           leave the basket exactly as it was. Reuses the room pick shell. -->
+      <div class="rp-modal" id="duModal" hidden>
+        <div class="rp-scrim" id="duScrim">
+          <div class="rp-card" role="dialog" aria-modal="true" aria-labelledby="duTitle">
+            <button type="button" class="rp-x" id="duClose" aria-label="Close">&times;</button>
+            <span class="rp-eyebrow" id="duEyebrow"></span>
+            <h3 id="duTitle">Choose your setup</h3>
+            <!-- no lead paragraph: the mockup goes straight from the title to the progress row,
+                 and the two lines it saved go to the scrolling body (mockup, 30 Jul) -->
+            <!-- progress row: outside the scrolling body so it stays in view (client, 30 Jul) -->
+            <div class="du-status" id="duStatus"></div>
+            <div id="duBody"></div>
+            <!-- Add to booking is the only action (client, 30 Jul). Backing out is the close
+                 button, the scrim and Escape, all of which discard the draft; no Cancel. -->
+            <div class="rp-actions">
+              <button type="button" class="btn primary rp-cta" id="duDone">Add to booking</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
   </div>
@@ -488,15 +644,20 @@ button.up-tag:hover{background:var(--fill);}
    conflicts with the 8 per unit cap; capped at 8 here, client asked.
    BBW Comfort Rooms keep the sleeps-2 price at 299 because Phase 2 chains from it (the
    Sept capture shows 244 for this event; prices vary by event).
-   Option rules from Sarah's example (22 Jul), single capture: ground floor (+25) only
-   confirmed on Comfort Rooms and Comfort Apartments, with the accessibility note in the
-   row body text; Gold Apartments have none, presumably all ground floor; caravans have a
-   pet friendly option (+60); lodges and studios have neither. Ground floor availability on
-   other room and apartment types is unknown, client asked.
+   Option rules from Sarah's example (22 Jul), single capture: ground floor (+25) confirmed on
+   Comfort Rooms and Comfort Apartments, with the accessibility note in the row body text;
+   caravans have a pet friendly option (+60); lodges and studios have neither.
+   Client extended this on 30 Jul: ground floor and lounge go on most rooms and apartments, so
+   ground floor now runs across all three room types plus Comfort and Comfort Plus Apartments,
+   and lounge (+15, the fee from the client's own mockup) runs across all three room types plus
+   Comfort Plus and Bayside Apartments.
+   The two exclusions are ours, flagged for the client to confirm: Bayside is left off ground
+   floor as the premium apartment, and Comfort Apartments is left off lounge because its own
+   feature list already advertises a separate living area, so the upgrade would sell nothing.
    What counts as a "room" is still ambiguous, client asked to define.
    BBW runs the Minehead event, so it sells the Minehead line-up. Family stock, other
    resorts, parties and presets are out of scope for this prototype and stripped. */
-var MAX_BOOKING=19, MAX_UNIT=8, ROOM_PICK=25.00, GF_FEE=25.00, PET_FEE=60.00;
+var MAX_BOOKING=19, MAX_UNIT=8, ROOM_PICK=25.00, GF_FEE=25.00, PET_FEE=60.00, LOUNGE_FEE=15.00;
 
 /* glyph characters, decorative only (aria-hidden), rendered greyscale via CSS filter */
 var GL={person:"&#128100;",bed:"&#128719;",kitchen:"&#127859;",shower:"&#128703;",
@@ -504,7 +665,7 @@ var GL={person:"&#128100;",bed:"&#128719;",kitchen:"&#127859;",shower:"&#128703;
   access:"&#9855;",map:"&#128506;",paw:"&#128062;"};
 
 var BBW_STOCK=[
-  { id:"sroom", name:"Standard Rooms", cat:"Rooms", rec:false, beds:"1 bedroom",
+  { id:"sroom", name:"Standard Rooms", cat:"Rooms", rec:false, beds:"1 bedroom", gfOpt:true, loungeOpt:true,
     desc:"Great value base for your break.",
     feats:[{g:GL.pin,t:"3 to 4 minutes from the Skyline Pavilion"},{g:GL.tea,t:"Tea and coffee making"}],
     sleeps:[
@@ -512,7 +673,7 @@ var BBW_STOCK=[
       {sleeps:4,bed:"Double + Bunk beds",price:325},
       {sleeps:5,bed:"Double + Bunk beds + Single",price:439}
     ]},
-  { id:"crooms", name:"Comfort Rooms", cat:"Rooms", rec:true, beds:"1 bedroom", gfOpt:true,
+  { id:"crooms", name:"Comfort Rooms", cat:"Rooms", rec:true, beds:"1 bedroom", gfOpt:true, loungeOpt:true,
     desc:"A comfy base for the weekend, close to the venues.",
     feats:[{g:GL.pin,t:"Late-night friendly location"},{g:GL.shower,t:"Ensuite shower"},{g:GL.tea,t:"Tea and coffee making"}],
     sleeps:[
@@ -520,7 +681,7 @@ var BBW_STOCK=[
       {sleeps:4,bed:"Double + Bunk beds",price:404},
       {sleeps:6,bed:"Double + 2 Bunk beds",price:545}
     ]},
-  { id:"cproom", name:"Comfort Plus Rooms", cat:"Rooms", rec:false, beds:"1 bedroom",
+  { id:"cproom", name:"Comfort Plus Rooms", cat:"Rooms", rec:false, beds:"1 bedroom", gfOpt:true, loungeOpt:true,
     desc:"A touch more comfort, with housekeeping included.",
     feats:[{g:GL.bed,t:"Towels and housekeeping included"},{g:GL.pin,t:"Early check-in from 3pm"}],
     sleeps:[
@@ -539,7 +700,7 @@ var BBW_STOCK=[
   /* the family line-up also flags Comfort Plus Apartments as Recommended. BBW's single
      recommendation is the Comfort Rooms (brief, 29 Jul), so only one badge shows here and
      the default browse category is the one holding it. */
-  { id:"cpapts", name:"Comfort Plus Apartments", cat:"Apartments", rec:false, beds:"2 to 3 bedrooms",
+  { id:"cpapts", name:"Comfort Plus Apartments", cat:"Apartments", rec:false, beds:"2 to 3 bedrooms", gfOpt:true, loungeOpt:true,
     desc:"Upgraded interiors and extra touches.",
     feats:[{g:GL.bed,t:"Towels and housekeeping included"},{g:GL.tv,t:"Smart TV"},{g:GL.kitchen,t:"Kitchenette"}],
     sleeps:[
@@ -561,7 +722,7 @@ var BBW_STOCK=[
     sleeps:[
       {sleeps:8,bed:"Double + 2 Twin + Sofa bed",price:529}
     ]},
-  { id:"bayside", name:"Bayside Apartments", cat:"Apartments", rec:false, beds:"2 bedrooms",
+  { id:"bayside", name:"Bayside Apartments", cat:"Apartments", rec:false, beds:"2 bedrooms", loungeOpt:true,
     desc:"Premium apartments right by the Skyline Pavilion.",
     feats:[{g:GL.pin,t:"1 to 2 minutes from the Skyline Pavilion"},{g:GL.tv,t:"Smart TV"},{g:GL.wifi,t:"Wifi"}],
     sleeps:[
@@ -583,11 +744,13 @@ var state={
   browseCat:"Rooms",         /* single-select tile; Rooms holds the recommended item */
   units:[],                  /* [{stockId,sleeps,guests,gf,pet,pickRoom}] in add order */
   typeSwitch:"confirm",      /* 'confirm' (default) or 'lock' (the control) */
+  addFlow:"incard",          /* 'incard' (the 29 Jul control), 'modal', or 'modalbeds' */
   expand:null,               /* stockId of the one open card, or null */
   focusUnit:null,            /* mobile rail: index of the focused unit card */
   openGuests:null,           /* index of the unit whose occupancy stepper is disclosed */
   flash:null,                /* index of the row that just gained a unit, cleared after 1.2s */
-  pendingSwap:null           /* {stockId,sleeps} awaiting the Confirm dialog */
+  pendingSwap:null,          /* {stockId,sleeps} awaiting the Confirm dialog */
+  draft:null                 /* modal flows: {stockId,editIdx,units:[]} open in the dialog */
 };
 
 /* ============================================================ HELPERS */
@@ -608,9 +771,24 @@ function placed(exclIdx){ var n=0; state.units.forEach(function(u,i){ if(i!==exc
 function unplaced(){ return state.guests-placed(-1); }
 function spareBeds(){ var n=0; state.units.forEach(function(u){ if(u.sleeps>u.guests) n+=u.sleeps-u.guests; }); return n; }
 function lockedCategory(){ return state.units.length?stockById(state.units[0].stockId).cat:null; }
+/* one description per add-on: the flag on the stock item that offers it, the state key on the
+   unit, the label, the fee and the row copy. unitPrice, both renderers and both announce paths
+   read from here, so adding a fourth option is a data change rather than five code changes. */
+var OPTS=[
+  {k:'gf',flag:'gfOpt',t:'Ground floor',row:'Ground floor access',
+   sub:'For accessibility or pushchairs. Call us about access needs.',fee:GF_FEE,g:GL.house},
+  {k:'lounge',flag:'loungeOpt',t:'Lounge',row:'Lounge',
+   sub:'A separate living space to spread out in.',fee:LOUNGE_FEE,g:GL.sofa},
+  {k:'pet',flag:'petOpt',t:'Pet friendly',row:'Pet friendly',
+   sub:'Bring your dog along for the break',fee:PET_FEE,g:GL.paw}
+];
+function optBy(k){ for(var i=0;i<OPTS.length;i++) if(OPTS[i].k===k) return OPTS[i]; return null; }
+/* the options a stock item actually offers, in OPTS order so the rows never reshuffle */
+function optsFor(s){ return OPTS.filter(function(o){ return !!s[o.flag]; }); }
 function unitPrice(u){
-  var a=arrBy(stockById(u.stockId),u.sleeps);
-  return a.price+(u.pickRoom?ROOM_PICK:0)+(u.gf?GF_FEE:0)+(u.pet?PET_FEE:0);
+  var a=arrBy(stockById(u.stockId),u.sleeps), t=a.price+(u.pickRoom?ROOM_PICK:0);
+  OPTS.forEach(function(o){ if(u[o.k]) t+=o.fee; });
+  return t;
 }
 function grandTotal(){ var t=0; state.units.forEach(function(u){ t+=unitPrice(u); }); return t; }
 function isDone(){ return state.units.length>0&&placed(-1)>=state.guests; }
@@ -629,6 +807,34 @@ function unitIdxOf(id,sl){
   var out=[]; state.units.forEach(function(u,i){ if(u.stockId===id&&u.sleeps===sl) out.push(i); }); return out;
 }
 function maxGuests(i){ var u=state.units[i]; return Math.min(u.sleeps,unplaced()+u.guests); }
+
+/* ---- modal add flows: the draft open in the unit dialog ----
+   A draft unit carries the same shape as a committed one, so unitPrice, arrBy and bedLine all
+   work on it unchanged and money keeps a single funnel. Nothing reaches state.units until
+   Done, which is what lets Cancel and Escape be genuinely free of consequence. */
+function modalFlow(){ return state.addFlow!=="incard"; }
+function draftSum(){ var n=0; state.draft.units.forEach(function(d){ n+=d.guests; }); return n; }
+/* guests still without a bed while the dialog is open. An edit session excludes the unit
+   being edited from the committed count, since its guests are represented by its draft: the
+   one call site placed()'s exclusion argument was written for. */
+function draftPool(){
+  return state.guests-placed(state.draft.editIdx==null?-1:state.draft.editIdx)-draftSum();
+}
+function draftMax(j){ var d=state.draft.units[j]; return Math.min(d.sleeps,d.guests+draftPool()); }
+function draftDefault(sl){ return Math.min(sl,draftPool(),MAX_UNIT); }
+/* Modal + beds gates the block on choosing a room size (client, 30 Jul): a draft unit starts
+   with sleeps null and no guests, and its occupancy, add-ons and price stay hidden until one is
+   picked. sleeps null is the only "not chosen yet" marker, so everything that reads sleeps has
+   to go through here. The other flows never produce a pending unit, because the arrangement
+   tile the customer tapped already settled it. */
+function draftReady(d){ return d.sleeps!=null; }
+function draftAllReady(){
+  return state.draft.units.every(function(d){ return draftReady(d); });
+}
+/* pending units contribute no price and no guests, so they cost nothing until chosen */
+function draftTotal(){
+  var t=0; state.draft.units.forEach(function(d){ if(draftReady(d)) t+=unitPrice(d); }); return t;
+}
 /* ground floor and pet friendly used to be listed as text here; they are pressed pills on
    the unit card's action row now, so only the booking-level room pick needs saying */
 /* how the booking reads in the swap notice and dialog. All units are one category by
@@ -722,11 +928,14 @@ function cardPrice(s){
 }
 
 /* in-card expansion, opened from the card foot. The sleeping-arrangement tiles are the
-   whole add: one Reserve button each, which becomes a unit-quantity stepper once the
+   whole add: one Add button each, which becomes a unit-quantity stepper once the
    booking holds units of that arrangement. Occupancy is never asked for here (it defaults
    on add and is edited in the panel), so a tile is one tap from a unit on the booking.
    The action row carries the price on the left and the control on the right, and the
    stepper is the same rectangular component the panel uses (client, 29 Jul).
+   The label is Add again (client, 30 Jul), reversing the 29 Jul rename to Reserve. Every
+   visible label and aria-label follows it; the data-chipadd and data-cardres hooks keep their
+   names, as chipAdd and chipMinus already do for the removed chips.
    Tiles render as divs, not buttons: they contain controls, so nesting is out. */
 function arrangementsUI(s){
   var full=unplaced()<=0;
@@ -734,15 +943,19 @@ function arrangementsUI(s){
     var price=state.basis==="pp"?gbp(a.price/a.sleeps)+' pp':gbp(a.price);
     var n=unitIdxOf(s.id,a.sleeps).length;
     var ctrl;
-    if(n){
+    /* the Modal flow takes quantity off the tile entirely: it belongs with the rest of the
+       unit's controls in the dialog, so the tile keeps one job, Add (client, 30 Jul).
+       The count still survives in the aria-label, as it does on the card trigger. */
+    if(n&&!modalFlow()){
       /* disabled, never hidden: the tap still explains why it will not go up */
       ctrl='<div class="stepper" role="group" aria-label="Units of '+s.name+' sleeps '+a.sleeps+'">'+
         '<button type="button" class="step-btn" data-chipminus="'+s.id+':'+a.sleeps+'" aria-label="Remove one '+s.name+', sleeps '+a.sleeps+'">&minus;</button>'+
         '<span class="qty">'+n+'</span>'+
-        '<button type="button" class="step-btn" data-chipadd="'+s.id+':'+a.sleeps+'"'+(full?' aria-disabled="true"':'')+' aria-label="Reserve another '+s.name+', sleeps '+a.sleeps+'">+</button></div>';
+        '<button type="button" class="step-btn" data-chipadd="'+s.id+':'+a.sleeps+'"'+(full?' aria-disabled="true"':'')+' aria-label="Add another '+s.name+', sleeps '+a.sleeps+'">+</button></div>';
     } else {
       ctrl='<button type="button" class="btn arr-add" data-chipadd="'+s.id+':'+a.sleeps+'"'+(full?' aria-disabled="true"':'')+
-        ' aria-label="Reserve '+s.name+', sleeps '+a.sleeps+', '+a.bed+', '+price+'">Reserve</button>';
+        ' aria-label="'+(n?'Add another ':'Add ')+s.name+', sleeps '+a.sleeps+', '+a.bed+', '+price+
+        (n?', '+plural(n,'unit')+' on your booking':'')+'">Add</button>';
     }
     return '<div class="arr-tile'+(n?' has-units':'')+'">'+
       '<span class="arr-occ"><span class="mglyph" aria-hidden="true">'+GL.person+'</span>Sleeps '+a.sleeps+'</span>'+
@@ -754,7 +967,10 @@ function arrangementsUI(s){
 function cardUnitCount(id){ return state.units.filter(function(u){ return u.stockId===id; }).length; }
 
 function accomCard(s){
-  var open=state.expand===s.id, n=cardUnitCount(s.id);
+  /* Modal + beds has no in-card expansion at all: the dialog carries the bed setup too, so
+     the card needs one way in rather than a disclosure and then a tile (client, 30 Jul) */
+  var beds=state.addFlow==="modalbeds";
+  var open=!beds&&state.expand===s.id, n=cardUnitCount(s.id);
   var occ=minS(s)===maxS(s)?'Sleeps '+maxS(s):'Sleeps '+minS(s)+' to '+maxS(s);
   /* meta rides the title row to keep the collapsed card short */
   var meta='<span class="meta-row">'+
@@ -764,9 +980,16 @@ function accomCard(s){
   /* the visible label stays clean, no unit count (client, 29 Jul): a card holding units is
      signalled by its heavier border instead. The count survives in the aria-label only, so
      a screen reader user still gets the signal the border gives everyone else. */
-  var trigger='<button type="button" class="btn rooms-btn" data-expander="'+s.id+'" aria-expanded="'+(open?'true':'false')+'" aria-controls="exp-'+s.id+'"'+
-    (n&&!open?' aria-label="Show options for '+s.name+', '+plural(n,'unit')+' on your booking"':'')+'>'+
-    (open?'Hide options':'Show options')+'</button>';
+  var trigger;
+  if(beds){
+    var full=unplaced()<=0;
+    trigger='<button type="button" class="btn rooms-btn arr-add" data-cardres="'+s.id+'"'+(full?' aria-disabled="true"':'')+
+      ' aria-label="Add '+s.name+(n?', '+plural(n,'unit')+' on your booking':'')+'">Add</button>';
+  } else {
+    trigger='<button type="button" class="btn rooms-btn" data-expander="'+s.id+'" aria-expanded="'+(open?'true':'false')+'" aria-controls="exp-'+s.id+'"'+
+      (n&&!open?' aria-label="Show options for '+s.name+', '+plural(n,'unit')+' on your booking"':'')+'>'+
+      (open?'Hide options':'Show options')+'</button>';
+  }
   return '<div class="acard'+(n?' has-units':'')+'">'+
     '<div class="ac-top">'+
     '<div class="ph-sq" aria-hidden="true"><span>Photo</span></div>'+
@@ -774,7 +997,7 @@ function accomCard(s){
     '<div class="ac-headrow"><h3>'+s.name+'</h3>'+(s.rec?'<span class="rec-badge">Recommended</span>':'')+meta+'</div>'+
     '<p class="desc">'+s.desc+'</p>'+featRow+'</div>'+
     '<div class="ac-foot">'+cardPrice(s)+trigger+'</div></div>'+
-    '<div class="ac-expand" id="exp-'+s.id+'"'+(open?'':' hidden')+'>'+(open?arrangementsUI(s):'')+'</div></div>';
+    (beds?'':'<div class="ac-expand" id="exp-'+s.id+'"'+(open?'':' hidden')+'>'+(open?arrangementsUI(s):'')+'</div>')+'</div>';
 }
 function visibleStock(){
   return BBW_STOCK.filter(function(s){ return s.cat===state.browseCat; });
@@ -807,20 +1030,53 @@ function guestStepper(i,u){
 /* per-unit add-ons, as pills on the action row. Room pick is booking-level, decided once at
    Continue, so it is not a toggle here; it shows in the capacity line once applied. */
 function optionPills(i,s,u){
-  var o='';
-  if(s.gfOpt) o+='<button type="button" class="up-tag" data-opt="'+i+':gf" aria-pressed="'+(u.gf?'true':'false')+'">Ground floor +'+gbp0(GF_FEE)+'</button>';
-  if(s.petOpt) o+='<button type="button" class="up-tag" data-opt="'+i+':pet" aria-pressed="'+(u.pet?'true':'false')+'">Pet friendly +'+gbp0(PET_FEE)+'</button>';
-  return o;
+  return optsFor(s).map(function(o){
+    return '<button type="button" class="up-tag" data-opt="'+i+':'+o.k+'" aria-pressed="'+(u[o.k]?'true':'false')+'">'+
+      o.t+' +'+gbp0(o.fee)+'</button>';
+  }).join('');
 }
 /* the mockup separates the bed makeup with middots, where the data uses plus signs */
 function bedLine(bed){ return bed.replace(/ \+ /g,' &middot; '); }
 
+/* One unit's occupancy drawn as its beds: a figure per bed, filled for a guest and outlined
+   for a spare, with the count alongside. Replaces reconciling three separate numbers, and it
+   reuses the panel's guest glyphs so a unit is counted the way the group is (client, 30 Jul).
+   The glyph row is decorative; the caption carries the same fact as text. */
+function occRow(u){
+  var g='';
+  for(var k=0;k<u.sleeps;k++) g+='<span class="pfig '+(k<u.guests?'on':'off')+'"><i></i><b></b></span>';
+  var sp=u.sleeps-u.guests;
+  /* "2 spare" rather than "2 spares" or "2 spare beds": the beds are already named by the
+     first half of the line, so repeating the noun reads as padding */
+  return '<div class="uocc"><div class="pg-row" aria-hidden="true">'+g+'</div>'+
+    '<span class="uocc-cap">'+u.guests+' of '+plural(u.sleeps,'bed')+
+    (sp>0?' &middot; '+sp+' spare':'')+'</span></div>';
+}
+
 /* one unit card body, used by the desktop ledger row and the mobile rail card alike */
 function unitBody(i,u){
-  var s=stockById(u.stockId), a=arrBy(s,u.sleeps), sp=u.sleeps-u.guests;
-  return '<div class="uhead"><b>Unit '+(i+1)+' &middot; '+s.name+'</b>'+
-    '<button type="button" class="up-remove" data-unalloc="'+i+'">Remove</button></div>'+
-    '<span class="ubed">'+bedLine(a.bed)+'</span>'+
+  var s=stockById(u.stockId), a=arrBy(s,u.sleeps), sp=u.sleeps-u.guests, modal=modalFlow();
+  /* Modal flows drop the Remove link from the title row: removing moved down beside Edit as a
+     bin button, so the card has one place for its controls (client, 30 Jul) */
+  var head='<div class="uhead"><b>Unit '+(i+1)+' &middot; '+s.name+'</b>'+
+    (modal?'':'<button type="button" class="up-remove" data-unalloc="'+i+'">Remove</button>')+'</div>'+
+    '<span class="ubed">'+bedLine(a.bed)+'</span>';
+  /* Modal flows: the panel stops being a control surface and becomes a summary, which is the
+     other half of pulling the controls together (client, 30 Jul). Occupancy reads as the
+     occupancy row, the add-ons as a line of text, and Edit reopens the dialog on this unit. */
+  if(modal){
+    var chose=[];
+    OPTS.forEach(function(o){ if(u[o.k]) chose.push(o.t); });
+    if(u.pickRoom) chose.push('Exact room');
+    var lab='unit '+(i+1)+', '+u.guests+' of '+plural(u.sleeps,'bed')+(chose.length?', '+chose.join(', '):'');
+    return head+occRow(u)+
+      (chose.length?'<span class="uchose">'+chose.join(' &middot; ')+'</span>':'')+
+      '<div class="uact"><button type="button" class="btn up-edit" data-uedit="'+i+'" aria-label="Edit '+lab+'">Edit</button>'+
+      '<button type="button" class="btn up-bin" data-unalloc="'+i+'" aria-label="Remove '+lab+'">'+
+      '<span class="binglyph" aria-hidden="true"><i></i></span></button>'+
+      '<span class="uprice">'+unitMoney(u)+'</span></div>';
+  }
+  return head+
     '<span class="usleeps">Sleeps '+u.sleeps+(sp>0?' &middot; '+plural(sp,'spare bed'):'')+(u.pickRoom?' &middot; exact room':'')+'</span>'+
     '<div class="uact">'+guestPill(i,u)+optionPills(i,s,u)+'<span class="uprice">'+unitMoney(u)+'</span></div>'+
     guestStepper(i,u);
@@ -872,7 +1128,9 @@ function stayPanel(){
       '<div class="gp-pool"><span class="pool-cap">'+cap+'</span><div class="pg-row" aria-hidden="true">'+gs+'</div></div>';
 
   var panel='<div class="gpanel" id="gpanel">'+head+(mob?unitCarousel():unitLedger())+'</div>';
-  return '<aside class="side" aria-labelledby="gpHead">'+panel+'</aside>';
+  /* the summary card needs less width than the in-card version (client, 30 Jul); mobile keeps
+     the full-bleed rule, which is more specific */
+  return '<aside class="side'+(modalFlow()?' side-slim':'')+'" aria-labelledby="gpHead">'+panel+'</aside>';
 }
 
 /* bottom utility row; the phone linkage line is carried from the June live capture
@@ -963,7 +1221,7 @@ var FULL_MSG='Everyone has a bed. Adjust or remove a unit to make changes.';
 
 function addUnit(id,sl){
   var s=stockById(id);
-  state.units.push({stockId:id,sleeps:sl,guests:defaultGuests(sl),gf:false,pet:false,pickRoom:false});
+  state.units.push({stockId:id,sleeps:sl,guests:defaultGuests(sl),gf:false,lounge:false,pet:false,pickRoom:false});
   /* the newest unit becomes the focused card on the mobile rail (client, 29 Jul) */
   state.focusUnit=state.units.length-1;
   /* a fresh unit lands with its occupancy stepper closed: the smart default is the point */
@@ -982,6 +1240,9 @@ function chipAdd(id,sl){
     openSwapModal();
     return;
   }
+  /* modal flows gather every choice in the dialog first, so nothing is committed here. The
+     pool and same-type guards above still run, which is why both flows enter through here. */
+  if(modalFlow()){ openDraft(id,sl,null); return; }
   addUnit(id,sl);
   placeAnnounce(state.units[state.units.length-1].guests,s.name);
   render();
@@ -1062,6 +1323,15 @@ function wire(){
       chipAdd(bits[0],+bits[1]);
     });
   });
+  /* Modal + beds: the card's own Add, standing in for the expansion. It routes through chipAdd
+     so the pool and same-type guards stay in one place. No sleeps to pass: the dialog opens
+     with nothing selected and the room size is chosen there (client, 30 Jul). */
+  q('[data-cardres]',function(b){
+    b.addEventListener('click',function(){
+      if(b.getAttribute('aria-disabled')==='true'){ announce(FULL_MSG); return; }
+      chipAdd(b.getAttribute('data-cardres'),null);
+    });
+  });
   q('[data-chipminus]',function(b){
     b.addEventListener('click',function(){
       var bits=b.getAttribute('data-chipminus').split(':');
@@ -1092,12 +1362,21 @@ function wire(){
       var bits=b.getAttribute('data-opt').split(':'), i=+bits[0], u=state.units[i], k=bits[1];
       u[k]=!u[k];
       state.focusUnit=i;
-      announce((k==="gf"?'Ground floor':'Pet friendly')+(u[k]?' added to Unit '+(i+1)+', '+gbp(k==="gf"?GF_FEE:PET_FEE)+'.':' removed from Unit '+(i+1)+'.'));
+      var o=optBy(k);
+      announce(o.t+(u[k]?' added to Unit '+(i+1)+', '+gbp(o.fee)+'.':' removed from Unit '+(i+1)+'.'));
       render();
     });
   });
   q('[data-unalloc]',function(b){
     b.addEventListener('click',function(){ removeUnit(+b.getAttribute('data-unalloc')); });
+  });
+  /* modal flows: the panel summary's one control, back into the dialog on this unit */
+  q('[data-uedit]',function(b){
+    b.addEventListener('click',function(){
+      var i=+b.getAttribute('data-uedit'), u=state.units[i];
+      state.focusUnit=i;
+      openDraft(u.stockId,u.sleeps,i);
+    });
   });
   /* tapping anywhere on a unit card focuses it, so the rail's focused state follows the
      card the customer is actually working on */
@@ -1128,9 +1407,12 @@ function hideModal(id){
   setTimeout(function(){ m.hidden=true; },220);
   if(lastFocus&&lastFocus.focus) lastFocus.focus({preventScroll:true});
 }
+/* topmost first. The unit dialog opens while the swap confirm is still fading out, so it has
+   to win the Escape for those 220ms. */
 function modalKey(e){
   if(e.key!=='Escape') return;
-  if(!document.getElementById('swModal').hidden) closeSwapModal();
+  if(!document.getElementById('duModal').hidden) cancelDraft();
+  else if(!document.getElementById('swModal').hidden) closeSwapModal();
   else if(!document.getElementById('rpModal').hidden) hideModal('rpModal');
 }
 
@@ -1150,10 +1432,22 @@ document.getElementById('swGo').addEventListener('click',function(){
   var was=lockedCategory(), wasN=state.units.length;
   /* clear first so defaultGuests sees the whole pool again, then add with the smart default */
   state.units=[]; state.flash=null; state.focusUnit=null; state.openGuests=null;
-  var s=addUnit(sw.stockId,sw.sleeps);
-  /* open the card that now holds the booking, so its stepper is where they are looking */
-  state.expand=sw.stockId;
+  /* open the card that now holds the booking, so its stepper is where they are looking.
+     Modal + beds has no expansion to open. */
+  state.expand=state.addFlow==="modalbeds"?null:sw.stockId;
   state.pendingSwap=null;
+  if(modalFlow()){
+    /* the swap has already emptied the booking, then the dialog configures the replacement,
+       so cancelling out of it leaves nothing rather than the old units. Deliberate for now
+       (the confirm was the decision point), but flag with client. */
+    hideModal('swModal');
+    render();
+    openDraft(sw.stockId,sw.sleeps,null);
+    announce('Switched to '+stockById(sw.stockId).cat+'. '+plural(wasN,'unit')+' in '+was+
+      ' removed. Set up your '+stockById(sw.stockId).name+'.');
+    return;
+  }
+  var s=addUnit(sw.stockId,sw.sleeps);
   hideModal('swModal');
   render();
   announce('Switched to '+s.cat+'. '+plural(wasN,'unit')+' in '+was+' removed. '+
@@ -1166,6 +1460,277 @@ document.getElementById('swKeep').addEventListener('click',function(){
 });
 document.getElementById('swClose').addEventListener('click',closeSwapModal);
 document.getElementById('swScrim').addEventListener('click',function(e){ if(e.target===this) closeSwapModal(); });
+
+/* ---- unit dialog (modal add flows) ----
+   The whole add lives here: guests, add-ons, quantity, and in Modal + beds the sleeping
+   arrangement as well. Units stack, and nothing joins the booking until Done.
+   renderDraft deliberately repaints only the dialog rather than calling render(): the page
+   behind it must not move while a dialog is open, and its state has not changed yet anyway. */
+function draftUnitBlock(j,d,s,base){
+  var num=base+j+1, mx=draftMax(j), lone=state.draft.units.length===1;
+  /* a lone block carries no unit number and no Remove: there is nothing to disambiguate, and the
+     mockup goes straight from the box edge to the choice (mockup, 30 Jul). Backing out of a lone
+     block is the close button. The head appears as soon as a second block does. */
+  var head=lone?'':'<div class="du-head"><b>Unit '+num+'</b>'+
+    '<button type="button" class="up-remove" data-drm="'+j+'" aria-label="Remove unit '+num+' from this setup">Remove</button></div>';
+  var bed;
+  if(state.addFlow==="modalbeds"){
+    /* the bed choice is the gate, so it is headed and comes first */
+    bed='<h4 class="du-h">Choose your beds</h4>'+
+      '<div class="du-bedsel" role="group" aria-label="Beds for unit '+num+'">'+
+      s.sleeps.map(function(a){
+        var pr=state.basis==="pp"?gbp(a.price/a.sleeps)+' pp':gbp(a.price);
+        return '<button type="button" class="du-bed" data-dbed="'+j+':'+a.sleeps+'" aria-pressed="'+(a.sleeps===d.sleeps?'true':'false')+'">'+
+          '<b>Sleeps '+a.sleeps+'</b><span class="du-bed-mk">'+bedLine(a.bed)+'</span>'+
+          '<span class="du-bed-pr">'+pr+'</span></button>';
+      }).join('')+'</div>';
+  } else {
+    bed='<span class="ubed">'+bedLine(arrBy(s,d.sleeps).bed)+'</span>';
+  }
+  /* nothing chosen yet: the block is the bed choice and a hint, and that is all. Everything
+     below depends on the capacity, so revealing it before the choice invites edits that the
+     choice would then overwrite (client, 30 Jul). */
+  if(!draftReady(d)){
+    return '<div class="du-unit du-pending">'+head+bed+
+      '<p class="du-hint">Choose your beds to set who is staying and see the price.</p></div>';
+  }
+  /* add-ons use the parent lofi's add-on row rather than a pill (client, 30 Jul): glyph, title,
+     sub copy, price bottom left, toggle hard right. Lifted from phase3-search-accom-lofi.html
+     along with its copy, so the two prototypes describe the same option the same way. */
+  var opts=optsFor(s).map(function(o){
+    return '<div class="gf-row"><span class="fglyph" aria-hidden="true">'+o.g+'</span>'+
+      '<span class="gf-main"><b>'+o.row+'</b><span class="row-sub">'+o.sub+'</span>'+
+      '<span class="gf-price">+'+gbp(o.fee)+'</span></span>'+
+      '<button type="button" class="tswitch" data-dopt="'+j+':'+o.k+'" aria-pressed="'+(d[o.k]?'true':'false')+'" aria-label="'+o.row+' for unit '+num+', adds '+gbp(o.fee)+'"><span class="track"></span><span class="knob"></span></button></div>';
+  }).join('');
+  if(opts) opts='<div class="du-prefs">'+opts+'</div>';
+  /* no occupancy glyph row here (mockup, 30 Jul): the stepper already states the number, and the
+     mockup runs stepper straight into the add-on. It stays on the panel summary card, where it
+     replaced three numbers to reconcile. */
+  return '<div class="du-unit">'+head+bed+
+    '<div class="du-step"><h4 class="du-h">Guests in this unit</h4>'+
+    '<div class="stepper"><button type="button" class="step-btn" data-dstep="'+j+':-1"'+(d.guests<=1?' aria-disabled="true"':'')+' aria-label="Fewer guests in unit '+num+'">&minus;</button>'+
+    '<span class="qty">'+d.guests+'</span>'+
+    '<button type="button" class="step-btn" data-dstep="'+j+':1"'+(d.guests>=mx?' aria-disabled="true"':'')+' aria-label="More guests in unit '+num+'">+</button></div></div>'+
+    opts+
+    '<div class="du-foot"><span class="uprice">'+gbp(unitPrice(d))+'</span></div></div>';
+}
+/* refocus: the dialog body is rebuilt wholesale like #content is, so the control that was
+   just used has been destroyed. Callers name it and it gets focus back, which keeps a keyboard
+   user on the stepper they are holding down instead of dumping them at the top of the dialog. */
+function renderDraft(refocus){
+  var d=state.draft, s=stockById(d.stockId);
+  /* number the blocks by where they will land, so the dialog and the panel agree */
+  var base=d.editIdx==null?state.units.length:d.editIdx;
+  var pool=draftPool();
+  document.getElementById('duEyebrow').textContent=s.name;
+  document.getElementById('duTitle').textContent=d.editIdx==null?'Choose your setup':'Edit unit '+(d.editIdx+1);
+  /* mobile drops the instruction and keeps only the reassurance, because those two extra lines
+     cost the scrolling body about 19px it needs more (client, 30 Jul) */
+  /* the progress strip carries what the muted add-row caption used to (client, 30 Jul): bold,
+     above the scroll, with the same guest glyphs the panel uses. placed counts committed units
+     plus every draft, and an edit session's own unit is already netted out by draftPool. */
+  var pl=state.guests-pool, gs='';
+  for(var k=0;k<state.guests;k++) gs+='<span class="pfig '+(k<pl?'on':'off')+'"><i></i><b></b></span>';
+  var status=document.getElementById('duStatus');
+  status.setAttribute('data-done',pool>0?'false':'true');
+  /* glyphs left, count right, as "4 / 8 need a bed" (mockup, 30 Jul) */
+  status.innerHTML='<div class="pg-row" aria-hidden="true">'+gs+'</div>'+
+    '<span class="du-stat-cap">'+
+    (pool>0?pool+' / '+state.guests+' need a bed':'Everyone has a bed')+'</span>';
+  /* a pending unit blocks both Done and adding a third: there is no price to show and no sense
+     in stacking empty blocks (client, 30 Jul). Disabled, never hidden, so the tap explains. */
+  var allReady=draftAllReady();
+  document.getElementById('duBody').innerHTML=
+    d.units.map(function(u,j){ return draftUnitBlock(j,u,s,base); }).join('')+
+    '<div class="du-addrow">'+
+    '<button type="button" class="linkbtn du-add" data-dadd'+(pool<=0||!allReady?' aria-disabled="true"':'')+'>Add another unit</button></div>';
+  /* the CTA is a plain Add to booking (mockup, 30 Jul), no count and no running total: each unit
+     states its own total right above, and the footer behind carries the booking total. Watch in
+     testing whether a multi-unit setup wants the total back on the button. */
+  var doneBtn=document.getElementById('duDone');
+  doneBtn.setAttribute('aria-disabled',allReady?'false':'true');
+  doneBtn.textContent='Add to booking';
+  wireDraft();
+  if(refocus){
+    /* aria-disabled rather than disabled throughout, so a control that just hit its bound is
+       still focusable and still explains itself on the next tap */
+    var el=document.getElementById('duBody').querySelector(refocus);
+    if(el) el.focus({preventScroll:true});
+  }
+}
+function wireDraft(){
+  var body=document.getElementById('duBody');
+  function dq(sel,fn){ body.querySelectorAll(sel).forEach(fn); }
+  dq('[data-dstep]',function(b){
+    b.addEventListener('click',function(){
+      var bits=b.getAttribute('data-dstep').split(':');
+      draftStep(+bits[0],+bits[1]);
+    });
+  });
+  dq('[data-dopt]',function(b){
+    b.addEventListener('click',function(){
+      var bits=b.getAttribute('data-dopt').split(':');
+      draftOpt(+bits[0],bits[1]);
+    });
+  });
+  dq('[data-dbed]',function(b){
+    b.addEventListener('click',function(){
+      var bits=b.getAttribute('data-dbed').split(':');
+      draftBed(+bits[0],+bits[1]);
+    });
+  });
+  dq('[data-drm]',function(b){
+    b.addEventListener('click',function(){ draftRemove(+b.getAttribute('data-drm')); });
+  });
+  /* no aria-disabled pre-check here: draftAdd knows which of the two reasons applies */
+  dq('[data-dadd]',function(b){
+    b.addEventListener('click',draftAdd);
+  });
+}
+function openDraft(id,sl,editIdx){
+  var s=stockById(id);
+  state.draft={stockId:id,editIdx:editIdx==null?null:editIdx,units:[]};
+  if(editIdx==null){
+    /* Modal + beds opens with nothing selected (client, 30 Jul), so the passed sleeps is
+       ignored: the room size is the first decision, made here rather than on the card. An edit
+       session is different, since it is editing a unit that already has one. */
+    if(state.addFlow==="modalbeds") state.draft.units.push({stockId:id,sleeps:null,guests:0,gf:false,lounge:false,pet:false,pickRoom:false});
+    else state.draft.units.push({stockId:id,sleeps:sl,guests:draftDefault(sl),gf:false,lounge:false,pet:false,pickRoom:false});
+  } else {
+    /* seed from the committed unit, pickRoom included, so the price in the dialog matches the
+       price in the panel and Done cannot silently drop the booking-level room pick */
+    var u=state.units[editIdx];
+    state.draft.units.push({stockId:u.stockId,sleeps:u.sleeps,guests:u.guests,gf:u.gf,lounge:u.lounge,pet:u.pet,pickRoom:u.pickRoom});
+  }
+  renderDraft();
+  showModal('duModal','duDone');
+  announce(editIdx!=null
+    ? 'Editing unit '+(editIdx+1)+', '+s.name+'.'
+    : draftReady(state.draft.units[0])
+      ? s.name+' setup open. '+plural(state.draft.units[0].guests,'guest')+' in unit '+(state.units.length+1)+' to start.'
+      : s.name+' setup open. Choose a room size for unit '+(state.units.length+1)+'.');
+}
+function draftStep(j,dl){
+  var d=state.draft.units[j], mx=draftMax(j), nv=d.guests+dl, num=(state.draft.editIdx==null?state.units.length:state.draft.editIdx)+j+1;
+  /* no stepper renders on a pending unit, so this only guards the function being called direct */
+  if(!draftReady(d)) return;
+  if(nv<1){ announce('Every unit needs at least one guest. Remove the unit if you do not want it.'); return; }
+  if(nv>mx){ announce(d.guests>=d.sleeps?'This unit sleeps '+d.sleeps+', so that is the most it can hold.':FULL_MSG); return; }
+  d.guests=nv;
+  renderDraft('[data-dstep="'+j+':'+dl+'"]');
+  var pool=draftPool();
+  announce(plural(nv,'guest')+' in unit '+num+'. '+(pool>0?plural(pool,'guest')+' still to place.':'Everyone has a bed.'));
+}
+function draftOpt(j,k){
+  var d=state.draft.units[j], num=(state.draft.editIdx==null?state.units.length:state.draft.editIdx)+j+1;
+  var o=optBy(k);
+  d[k]=!d[k];
+  renderDraft('[data-dopt="'+j+':'+k+'"]');
+  announce(o.t+(d[k]?' added to unit '+num+', '+gbp(o.fee)+'.':' removed from unit '+num+'.'));
+}
+/* Modal + beds only. The first pick is the gate: it fills the unit with the smart default and
+   reveals everything below. After that a smaller setup clamps the guests already in this unit
+   down to it, and a larger one does not pull guests out of the pool on its own, since the
+   stepper is right there. */
+function draftBed(j,sl){
+  var d=state.draft.units[j], s=stockById(state.draft.stockId), first=!draftReady(d);
+  if(d.sleeps===sl) return;
+  var was=d.guests;
+  d.sleeps=sl;
+  if(first) d.guests=draftDefault(sl);
+  else if(d.guests>sl) d.guests=sl;
+  renderDraft('[data-dbed="'+j+':'+sl+'"]');
+  announce(arrBy(s,sl).bed+', sleeps '+sl+'.'+(first
+    ? ' '+plural(d.guests,'guest')+' placed. Guests, extras and price now shown.'
+    : (d.guests!==was?' Guests reduced to '+d.guests+' to fit.':'')));
+}
+function draftRemove(j){
+  var num=(state.draft.editIdx==null?state.units.length:state.draft.editIdx)+j+1;
+  /* Remove is not rendered on a lone block, so this is belt and braces: emptying the dialog
+     is the same thing as cancelling out of it */
+  if(state.draft.units.length<=1){ cancelDraft(); return; }
+  state.draft.units.splice(j,1);
+  /* the block that held focus is gone, so hand it to the add-another button below */
+  renderDraft('[data-dadd]');
+  announce('Unit '+num+' taken out of this setup. '+plural(state.draft.units.length,'unit')+' left.');
+}
+function draftAdd(){
+  /* finish the one already started before stacking another empty block on top of it */
+  if(!draftAllReady()){ announce('Choose a room size for the unit you have already started first.'); return; }
+  var pool=draftPool();
+  if(pool<=0){ announce(FULL_MSG); return; }
+  var n=state.draft.units.length;
+  /* Modal + beds: every unit is its own choice, so a new block starts unselected like the first
+     (client, 30 Jul). The Modal flow has no selector, so it repeats the arrangement the tile
+     fixed, which is the only one available to it anyway. */
+  if(state.addFlow==="modalbeds"){
+    state.draft.units.push({stockId:state.draft.stockId,sleeps:null,guests:0,gf:false,lounge:false,pet:false,pickRoom:false});
+    renderDraft('[data-dadd]');
+    scrollDraftTo(n);
+    announce('Unit added to this setup. Choose its room size.');
+    return;
+  }
+  var sl=state.draft.units[n-1].sleeps, g=draftDefault(sl);
+  state.draft.units.push({stockId:state.draft.stockId,sleeps:sl,guests:g,gf:false,lounge:false,pet:false,pickRoom:false});
+  renderDraft('[data-dadd]');
+  scrollDraftTo(n);
+  announce('Unit added to this setup with '+plural(g,'guest')+'. '+plural(state.draft.units.length,'unit')+' in total.');
+}
+/* Two unit blocks cannot both fit a phone, so the body will scroll: bring the new block into
+   view rather than leaving the customer to find it, since seeing it is the point of the tap.
+   Guarded for the headless harness, which stubs neither querySelectorAll nor scrollTo. */
+function scrollDraftTo(j){
+  var body=document.getElementById('duBody');
+  var el=body.querySelectorAll('.du-unit')[j];
+  if(!el||!body.scrollTo) return;
+  body.scrollTo({top:Math.max(0,el.offsetTop-body.offsetTop-8),behavior:'smooth'});
+}
+function commitDraft(){
+  var d=state.draft;
+  /* a pending unit has no capacity and no price, so it cannot join the booking */
+  if(!draftAllReady()){ announce('Choose a room size before you finish.'); return; }
+  var s=stockById(d.stockId), n=d.units.length, edit=d.editIdx;
+  var at=edit==null?state.units.length:edit;
+  /* splice in place so an edited unit keeps its number and the ones after it do not shuffle */
+  state.units.splice.apply(state.units,[at,edit==null?0:1].concat(d.units));
+  var newest=at+n-1;
+  state.focusUnit=newest;
+  state.openGuests=null;
+  snapFocus=true; addAnim=true;
+  flashRow(newest);
+  state.draft=null;
+  /* hide before rendering, as the swap confirm does: hideModal restores focus to the control
+     that opened the dialog, and render() is about to destroy it */
+  hideModal('duModal');
+  render();
+  announce((edit==null
+    ? plural(n,'unit')+' added in '+s.name+'.'
+    : 'Unit '+(edit+1)+' updated.'+(n>1?' '+plural(n-1,'unit')+' added alongside it.':''))+
+    ' '+placed(-1)+' of '+state.guests+' guests have a bed.');
+}
+function cancelDraft(){
+  var edit=state.draft?state.draft.editIdx:null;
+  state.draft=null;
+  hideModal('duModal');
+  announce(edit==null?'Cancelled. Nothing added to your booking.':'Cancelled. Unit '+(edit+1)+' is unchanged.');
+}
+/* The dev rail sits outside the scrim, so a tester can change the scenario with the dialog
+   open. A draft is stale the moment the booking or the group size moves underneath it, and
+   editIdx could then point past the end of state.units, so drop it rather than let Done splice
+   somewhere that no longer exists. Not a concern in a real build, where there is no rail. */
+function dropDraft(){
+  if(!state.draft) return false;
+  state.draft=null;
+  hideModal('duModal');
+  return true;
+}
+document.getElementById('duDone').addEventListener('click',function(){
+  if(this.getAttribute('aria-disabled')==='true'){ announce('Choose a room size before you finish.'); return; }
+  commitDraft();
+});
+document.getElementById('duClose').addEventListener('click',cancelDraft);
+document.getElementById('duScrim').addEventListener('click',function(e){ if(e.target===this) cancelDraft(); });
 
 /* ---- room pick, unchanged from the lofi ----
    Fires once at Continue and applies exact-room pick to every unit at £25 each. Framed as
@@ -1225,6 +1790,7 @@ document.getElementById('dvDesktop').addEventListener('click',function(){ setDev
 document.querySelectorAll('[data-groupbtn]').forEach(function(b){
   b.addEventListener('click',function(){
     var n=+b.getAttribute('data-groupbtn');
+    var lost=dropDraft();
     state.guests=n; state.flash=null;
     var pool=n, keep=[], dropped=0;
     state.units.forEach(function(u){
@@ -1240,6 +1806,7 @@ document.querySelectorAll('[data-groupbtn]').forEach(function(b){
     snapFocus=true;
     pressGroup('[data-groupbtn]',n,'data-groupbtn');
     announce('Group size set to '+n+'.'+(dropped?' '+plural(dropped,'unit')+' removed to fit.':'')+
+      (lost?' The open setup was discarded.':'')+
       ' '+placed(-1)+' of '+n+' guests have a bed.');
     render();
   });
@@ -1249,6 +1816,7 @@ document.querySelectorAll('[data-groupbtn]').forEach(function(b){
    variants can be compared mid-booking */
 document.querySelectorAll('[data-tsw]').forEach(function(b){
   b.addEventListener('click',function(){
+    dropDraft();
     state.typeSwitch=b.getAttribute('data-tsw');
     /* flipping to Lock while browsing a foreign category would leave the user looking at
        cards whose own tile is disabled, so snap the browse back to the locked type. Units
@@ -1259,6 +1827,26 @@ document.querySelectorAll('[data-tsw]').forEach(function(b){
     announce(state.typeSwitch==="confirm"
       ? 'Confirm on add: every type stays selectable, switching asks first.'
       : 'Lock: other types are disabled once you have a unit.');
+    render();
+  });
+});
+
+/* Add flow, like the type switch, is a pure behaviour change: the booking is deliberately NOT
+   reset, so the three flows can be compared mid-basket. Any open dialog and any in-card
+   expansion do go, since neither concept survives the switch. */
+document.querySelectorAll('[data-flow]').forEach(function(b){
+  b.addEventListener('click',function(){
+    var v=b.getAttribute('data-flow');
+    if(state.addFlow===v) return;
+    dropDraft();
+    state.addFlow=v;
+    state.expand=null; state.openGuests=null;
+    pressGroup('[data-flow]',v,'data-flow');
+    announce(v==="incard"
+      ? 'In-card flow: quantity on the arrangement tile, guests and extras in the panel.'
+      : v==="modal"
+        ? 'Modal flow: Add opens a dialog holding guests, extras and how many units.'
+        : 'Modal plus beds: Add on the card opens a dialog holding the bed setup too.');
     render();
   });
 });
