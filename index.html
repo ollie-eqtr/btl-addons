@@ -45,6 +45,11 @@
   .card.is-disabled:hover{transform:none;box-shadow:none;}
   .card.is-disabled h3{color:var(--ink-3);}
   .card.is-disabled p{color:var(--ink-3);}
+  /* under way but nothing to open yet: stays non-interactive, with the grey Coming soon CTA,
+     but the copy is no longer greyed out because the work is live rather than untouched */
+  .card.is-disabled.is-wip{background:var(--paper);border-style:solid;}
+  .card.is-disabled.is-wip h3{color:inherit;}
+  .card.is-disabled.is-wip p{color:var(--ink-2);}
   .go.go-off{background:#e4e4e3;color:var(--ink-3);}
   .card.is-disabled:hover .go{background:#e4e4e3;}
   /* text-decoration:none matters now the CTAs are real anchors inside the card, not spans */
@@ -102,10 +107,10 @@
       <div class="cards">
         <a class="card" href="/phase2-hifi">
           <h3>High-fidelity</h3>
-          <span class="tag tag-wip">In progress</span>
+          <span class="tag tag-ok">Signed off</span>
           <p>Butlin's Big Weekender skin: branded dark theme, real imagery and interactive extras.</p>
           <span class="go">Open &rarr;</span>
-          <span class="meta"><span class="ver">v0.9</span> · last updated 16/07/26</span>
+          <span class="meta"><span class="ver">v1.0</span> · last updated 20/07/26</span>
         </a>
 
         <a class="card" href="/phase2-lofi">
@@ -121,24 +126,25 @@
     <section class="phase">
       <h2 class="phase-h">Phase 03 — FAM/BBW Accommodation</h2>
       <div class="cards">
-        <div class="card is-disabled" aria-disabled="true">
+        <div class="card is-disabled is-wip" aria-disabled="true">
           <h3>High-fidelity</h3>
-          <span class="tag tag-off">Not started</span>
-          <p>Fully branded accommodation search and booking journey. Not yet started.</p>
+          <span class="tag tag-wip">In progress</span>
+          <p>Branded BBW build of the signed-off flow, carrying the same-type lock and the Modal + beds dialog. The Family skin follows.</p>
           <span class="go go-off">Coming soon</span>
+          <span class="meta"><span class="ver">v0.1</span> · last updated 04/08/26</span>
         </div>
 
         <!-- two prototypes live under this card, so it is a div with explicit links rather
              than a whole-card anchor (no nested interactives) -->
         <div class="card">
           <h3>Low-fidelity</h3>
-          <span class="tag tag-wip">In progress</span>
-          <p>Lightweight wireframe for the accommodation search flow, focused on structure and content.</p>
+          <span class="tag tag-ok">Signed off</span>
+          <p>Wireframes for the accommodation flow and the BBW unit picker. BBW is agreed: a booking locks to one accommodation type, and one Modal + beds dialog carries the beds, guests and extras for each unit.</p>
           <div class="card-actions">
             <a class="go" href="/phase3-lofi">Open &rarr;</a>
             <a class="go go-2" href="/phase3-bbw-variant">BBW Variant</a>
           </div>
-          <span class="meta"><span class="ver">v0.2</span> · last updated 27/07/26</span>
+          <span class="meta"><span class="ver">v1.0</span> · last updated 30/07/26</span>
         </div>
       </div>
     </section>

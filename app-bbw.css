@@ -284,7 +284,9 @@ ul{margin:0;padding:0;list-style:none;}
 .price-meta{font-size:14px;color:#fff;padding-bottom:3px;}
 .price-meta .pm-dot{color:rgba(255,255,255,.4);}
 .price-meta .pm-ppd{color:rgba(255,255,255,.6);}
-.dining-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;}
+/* align-items:start so expanding one card's "Read more" never stretches its neighbour.
+   Collapsed cards still line up, via the .desc / .dc-incl min-heights further down. */
+.dining-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;align-items:start;}
 .dining-grid.one{grid-template-columns:1fr;}
 .frame-outer[data-device="mobile"] .dining-grid{grid-template-columns:1fr;}
 .dcard{display:flex;flex-direction:column;border:1px solid rgba(255,255,255,.4);border-radius:3px;background:var(--grey-3);overflow:hidden;}
@@ -323,7 +325,8 @@ ul{margin:0;padding:0;list-style:none;}
 .dc-menulink:hover{color:var(--yellow-strong);border-bottom-color:var(--yellow-strong);}
 .dc-menulink:hover img{filter:brightness(.88);}
 .dc-more-toggle{align-self:flex-start;background:none;border:0;border-bottom:1.5px solid #fff;padding:3px 0;font-size:16px;line-height:22px;font-weight:700;color:#fff;}
-.dc-more{display:none;font-size:14px;color:rgba(255,255,255,.8);line-height:1.45;}
+/* revealed body copy: full-strength white, with double the standard 16px gap above it */
+.dc-more{display:none;font-size:14px;color:#fff;line-height:1.45;padding-top:16px;}
 .dc-more.open{display:block;}
 .dc-more a{color:#fff;}
 .dc-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:24px;}
@@ -334,6 +337,30 @@ ul{margin:0;padding:0;list-style:none;}
 .cta-check{position:absolute;left:20px;top:50%;transform:translateY(-50%);width:15px;height:11px;display:block;}
 .dining-grid:not(.one) .dcard .desc{min-height:2.6em;}
 .dining-grid:not(.one) .dcard .dc-incl{min-height:72px;}
+/* ---- full-width meal card: the single-plan desktop layout (Figma 952:20057).
+   Body becomes one grid instead of a stack: title across the top, then a copy
+   column (desc + sample menu link), the tick list, and "Read more" hard right.
+   .dc-links goes display:contents so its two children place themselves.
+   Footer turns into a row: price bottom-left, auto-width CTA bottom-right.
+   Design 1104 content: 448 copy | 110 gutter | 451 ticks | 95 read more (16 gap + 79 label).
+   Every track is proportional, never content-sized, so swapping "Read more" for the
+   slightly wider "Read less" cannot shift the tick list. */
+.frame-outer[data-device="desktop"] .dining-grid.one .dc-body{
+  display:grid;
+  grid-template-columns:minmax(0,448fr) minmax(16px,110fr) minmax(0,451fr) minmax(0,95fr);
+  column-gap:0;row-gap:16px;padding:24px;align-content:start;}
+.frame-outer[data-device="desktop"] .dining-grid.one .dc-title{grid-column:1/-1;grid-row:1;}
+.frame-outer[data-device="desktop"] .dining-grid.one .dcard .desc{grid-column:1;grid-row:2;}
+.frame-outer[data-device="desktop"] .dining-grid.one .dc-links{display:contents;}
+.frame-outer[data-device="desktop"] .dining-grid.one .dc-menulink{grid-column:1;grid-row:3;justify-self:start;align-self:end;}
+.frame-outer[data-device="desktop"] .dining-grid.one .dc-incl{grid-column:3;grid-row:2/span 2;align-self:start;padding-top:14px;}
+.frame-outer[data-device="desktop"] .dining-grid.one .dc-more-toggle{grid-column:4;grid-row:3;justify-self:end;align-self:end;white-space:nowrap;}
+.frame-outer[data-device="desktop"] .dining-grid.one .dc-more{grid-column:1/-1;max-width:72ch;}
+.frame-outer[data-device="desktop"] .dining-grid.one .dc-foot{grid-column:1/-1;margin-top:8px;padding-top:24px;
+  flex-direction:row;align-items:flex-end;justify-content:space-between;gap:24px;}
+.frame-outer[data-device="desktop"] .dining-grid.one .dc-cta{width:auto;flex:0 0 auto;white-space:nowrap;}
+/* tick needs clearance once the CTA is only as wide as its label (see .btn-add.is-added) */
+.frame-outer[data-device="desktop"] .dining-grid.one .dc-cta.is-added{padding-left:44px;padding-right:44px;}
 /* mobile meal card padding/spacing per the phase 1 mobile card (Figma 453:15492);
    text styles and colours stay BBW */
 .frame-outer[data-device="mobile"] .dc-body{padding:16px 12px 12px;gap:24px;}
