@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Family brand kit — component gallery</title>
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Gallery chrome only. Nothing here belongs in the kit. */
+body{background:var(--paper-2);}
+.g-wrap{max-width:1200px;margin:0 auto;padding:32px 24px 96px;}
+.g-head{border-bottom:3px solid var(--ink);padding-bottom:16px;margin-bottom:8px;}
+.g-head h1{font-size:30px;margin:0 0 6px;}
+.g-head p{color:var(--ink-2);font-size:14px;max-width:70ch;}
+.g-head code{background:var(--paper-3);padding:1px 5px;font-size:13px;}
+.g-nav{position:sticky;top:0;z-index:20;background:var(--paper-2);border-bottom:1px solid var(--line);
+  padding:10px 0;margin-bottom:32px;display:flex;flex-wrap:wrap;gap:6px;}
+.g-nav a{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink);
+  text-decoration:none;border:1px solid var(--line-strong);padding:5px 9px;}
+.g-nav a:hover{background:var(--ink);color:#fff;}
+.g-sec{margin:0 0 48px;scroll-margin-top:64px;}
+.g-sec > h2{font-size:20px;border-bottom:1px solid var(--line-strong);padding-bottom:6px;margin-bottom:6px;}
+.g-note{font-size:13px;color:var(--ink-2);margin:0 0 16px;max-width:80ch;}
+.g-note b{color:var(--ink);}
+.g-cols{display:grid;grid-template-columns:1fr 390px;gap:24px;align-items:start;}
+@media(max-width:1000px){.g-cols{grid-template-columns:1fr;}}
+.g-pane{background:var(--paper);border:1px solid var(--line);padding:16px;}
+.g-pane > h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--ink-3);margin:0 0 12px;}
+.g-state{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--ink-3);margin:20px 0 6px;}
+.g-state:first-of-type{margin-top:0;}
+.g-dark{background:var(--shell);}
+</style>
+</head>
+<body>
+<div class="g-wrap">
+
+  <div class="g-head">
+    <h1>Butlin's Family — component gallery</h1>
+    <p>Every component in <code>kit.css</code>, at desktop width and at 390px mobile, with the states that matter. This is the visual reference for styling up a lofi: match against these, don't invent. Markup lifted from <code>phase1-dining-fam-hifi.html</code>. Read <code>../LOFI-TOKEN-CONTRACT.md</code> and <code>../STYLING-RECIPE.md</code> first.</p>
+  </div>
+
+  <nav class="g-nav">
+    <a href="#tokens">Tokens</a>
+    <a href="#buttons">Buttons</a>
+    <a href="#meal">Meal card</a>
+    <a href="#plan">Plan card</a>
+    <a href="#slim">Slim rows</a>
+    <a href="#drinks">Drinks bar</a>
+    <a href="#xmas">Christmas bar</a>
+    <a href="#allergen">Allergen band</a>
+    <a href="#unit">Unit block</a>
+    <a href="#footer">Footer + summary</a>
+  </nav>
+
+  <!-- ============================================================ TOKENS -->
+  <section class="g-sec" id="tokens">
+    <h2>Tokens</h2>
+    <p class="g-note">Brand values on the left, lofi role-token aliases on the right. The alias column is the hand-authored remap block at the foot of <code>kit.css</code> — <b>if a re-skin looks wrong, check there first.</b></p>
+    <div class="g-pane">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="text-align:left;border-bottom:1px solid var(--line-strong);">
+            <th style="padding:6px 8px;">Swatch</th><th style="padding:6px 8px;">Brand token</th>
+            <th style="padding:6px 8px;">Value</th><th style="padding:6px 8px;">Lofi role alias</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:6px 8px;"><span style="display:block;width:40px;height:22px;background:var(--ink);border:1px solid var(--line);"></span></td><td style="padding:6px 8px;"><code>--ink</code></td><td style="padding:6px 8px;">#000000</td><td style="padding:6px 8px;"><code>--ink</code>, <code>--dark</code> (see note)</td></tr>
+          <tr><td style="padding:6px 8px;"><span style="display:block;width:40px;height:22px;background:var(--ink-2);border:1px solid var(--line);"></span></td><td style="padding:6px 8px;"><code>--ink-2</code></td><td style="padding:6px 8px;">#3c3c3b</td><td style="padding:6px 8px;"><code>--ink2</code>, <code>--line3</code></td></tr>
+          <tr><td style="padding:6px 8px;"><span style="display:block;width:40px;height:22px;background:var(--ink-3);border:1px solid var(--line);"></span></td><td style="padding:6px 8px;"><code>--ink-3</code></td><td style="padding:6px 8px;">#6f6f6e</td><td style="padding:6px 8px;"><code>--muted</code></td></tr>
+          <tr><td style="padding:6px 8px;"><span style="display:block;width:40px;height:22px;background:var(--line);border:1px solid var(--line-strong);"></span></td><td style="padding:6px 8px;"><code>--line</code></td><td style="padding:6px 8px;">#e4e4e3</td><td style="padding:6px 8px;"><code>--line</code></td></tr>
+          <tr><td style="padding:6px 8px;"><span style="display:block;width:40px;height:22px;background:var(--line-strong);border:1px solid var(--line);"></span></td><td style="padding:6px 8px;"><code>--line-strong</code></td><td style="padding:6px 8px;">#9a9a99</td><td style="padding:6px 8px;"><code>--line2</code></td></tr>
+          <tr><td style="padding:6px 8px;"><span style="display:block;width:40px;height:22px;background:var(--paper);border:1px solid var(--line-strong);"></span></td><td style="padding:6px 8px;"><code>--paper</code></td><td style="padding:6px 8px;">#ffffff</td><td style="padding:6px 8px;"><code>--paper</code></td></tr>
+          <tr><td style="padding:6px 8px;"><span style="display:block;width:40px;height:22px;background:var(--paper-2);border:1px solid var(--line);"></span></td><td style="padding:6px 8px;"><code>--paper-2</code></td><td style="padding:6px 8px;">#f5f5f5</td><td style="padding:6px 8px;"><code>--fill</code></td></tr>
+          <tr><td style="padding:6px 8px;"><span style="display:block;width:40px;height:22px;background:var(--paper-3);border:1px solid var(--line);"></span></td><td style="padding:6px 8px;"><code>--paper-3</code></td><td style="padding:6px 8px;">#e9e9e8</td><td style="padding:6px 8px;"><code>--fill2</code></td></tr>
+          <tr><td style="padding:6px 8px;"><span style="display:block;width:40px;height:22px;background:var(--shell);border:1px solid var(--line);"></span></td><td style="padding:6px 8px;"><code>--shell</code></td><td style="padding:6px 8px;">#dedede</td><td style="padding:6px 8px;"><code>--fill3</code>, <code>--bg</code></td></tr>
+          <tr><td style="padding:6px 8px;"><span style="display:block;width:40px;height:22px;background:var(--accent);border:1px solid var(--line);"></span></td><td style="padding:6px 8px;"><code>--accent</code> Bright Rose</td><td style="padding:6px 8px;">#da291c</td><td style="padding:6px 8px;">— (CTAs only, see note)</td></tr>
+          <tr><td style="padding:6px 8px;"><span style="display:block;width:40px;height:22px;background:var(--select);border:1px solid var(--line);"></span></td><td style="padding:6px 8px;"><code>--select</code> Sunshine</td><td style="padding:6px 8px;">#ffcc00</td><td style="padding:6px 8px;"><code>--selected</code></td></tr>
+          <tr><td style="padding:6px 8px;"><span style="display:block;width:40px;height:22px;background:var(--positive);border:1px solid var(--line);"></span></td><td style="padding:6px 8px;"><code>--positive</code></td><td style="padding:6px 8px;">#32912f</td><td style="padding:6px 8px;">—</td></tr>
+        </tbody>
+      </table>
+      <p class="g-note" style="margin:16px 0 0;"><b>The <code>--dark</code> call.</b> Lofis use <code>--dark</code> for CTAs, pressed controls, badges and tooltips. Family's idiom is black for pressed controls (see the segmented control), gold for selection borders, rose for CTAs and radio dots only. So the kit maps <code>--dark</code> to black, which degrades quietly, and keeps rose scarce. During polish: re-point true CTAs to <code>--accent</code> and selection borders to <code>--selected</code>.</p>
+      <p class="g-note" style="margin:8px 0 0;">Category accents (<code>--c-candy</code>, <code>--c-violet</code>, <code>--c-lake</code>, <code>--c-sky</code>, <code>--c-sea</code>, <code>--c-lawn</code>, <code>--c-sunshine</code>, <code>--c-sunset</code>) each carry a darker <code>-2</code> pair for text use. Radius is a single 3px step; the lofi's 10px is deliberately overridden.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ BUTTONS -->
+  <section class="g-sec" id="buttons">
+    <h2>Buttons</h2>
+    <p class="g-note">The card CTA is the primary action. It has a distinct <b>added</b> state with a tick and a ghost tick for optical balance, not just a colour swap.</p>
+    <div class="g-cols">
+      <div class="g-pane" data-device="desktop">
+        <h3>Desktop</h3>
+        <div class="g-state">Card CTA — default</div>
+        <button type="button" class="card-cta" aria-pressed="false"><span class="cta-label">Add Premium Dining</span></button>
+        <div class="g-state">Card CTA — added</div>
+        <button type="button" class="card-cta" aria-pressed="true"><span class="cta-ico"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="cta-label">Added to booking</span><span class="cta-ico cta-ghost" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+        <div class="g-state">Secondary + party controls</div>
+        <p style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <button type="button" class="unit-revert">Same as Party 1</button>
+          <button type="button" class="unit-customise">Customise for this party</button>
+          <button class="savebtn">Save</button>
+          <button class="continue">Continue without dining</button>
+        </p>
+        <div class="g-state">Links + disclosure</div>
+        <div class="plan-links">
+          <a class="sample-link" href="#" onclick="return false;">Sample menu &amp; allergens<svg class="ext-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6"/><path d="M8 6h10v10"/></svg></a>
+          <button type="button" class="plan-more-toggle" aria-expanded="false">Read more</button>
+        </div>
+        <div class="g-state">Toolbar controls (prototype shell)</div>
+        <p style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+          <span class="tg-field"><button class="switch" aria-checked="false" role="switch"></button><span class="gl">Lunch</span></span>
+          <span class="tg-field"><button class="switch" aria-checked="true" role="switch"></button><span class="gl">Christmas</span></span>
+          <span class="seg"><button aria-pressed="true">Desktop</button><button aria-pressed="false">Mobile</button></span>
+        </p>
+      </div>
+      <div class="g-pane">
+        <h3>Mobile 390</h3>
+        <div class="frame-outer" data-device="mobile" style="display:block;">
+          <div style="max-width:358px;">
+            <div class="g-state">Default</div>
+            <button type="button" class="card-cta" aria-pressed="false"><span class="cta-label">Add Premium Dining</span></button>
+            <div class="g-state">Added</div>
+            <button type="button" class="card-cta" aria-pressed="true"><span class="cta-ico"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="cta-label">Added to booking</span><span class="cta-ico cta-ghost" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+            <div class="g-state">Footer actions stack</div>
+            <div class="factions"><button class="savebtn">Save</button><button class="continue">Continue without dining</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ MEAL CARD -->
+  <section class="g-sec" id="meal">
+    <h2>Meal card</h2>
+    <p class="g-note">Step 1 selector, <code>role="radio"</code> inside a <code>radiogroup</code>. Three states. <b>Sold out replaces the radio and price with a tag</b> and sets <code>aria-disabled</code> plus <code>tabindex="-1"</code>.</p>
+    <div class="g-cols">
+      <div class="g-pane" data-device="desktop">
+        <h3>Desktop</h3>
+        <div class="mini-h"><span class="mh-text"><span class="stepn">Step 1</span>Choose your meals</span></div>
+        <div class="meal-opts" role="radiogroup" aria-label="Which meals would you like covered?">
+          <div class="meal-card" role="radio" aria-checked="false" tabindex="0">
+            <div class="mc-body"><div class="mc-name">Breakfast</div><div class="mc-desc">Start every day with a proper cooked breakfast.</div></div>
+            <div class="mc-plate" aria-hidden="true"><img class="mc-photo" src="../../assets-img/MealComps/1_breakfast.png" alt=""></div>
+            <div class="mc-price"><span class="mc-radio" aria-hidden="true"></span><span class="mc-pricetext">from <b>&pound;96.00</b></span></div>
+          </div>
+          <div class="meal-card is-active" role="radio" aria-checked="true" tabindex="0">
+            <div class="mc-body"><div class="mc-name">Breakfast<br>&amp; dinner</div><div class="mc-desc">Two meals a day, so you only think about lunch.</div></div>
+            <div class="mc-plate" aria-hidden="true"><img class="mc-photo" src="../../assets-img/MealComps/2_half.png" alt=""></div>
+            <div class="mc-price"><span class="mc-radio" aria-hidden="true"></span><span class="mc-pricetext">from <b>&pound;248.00</b></span></div>
+          </div>
+          <div class="meal-card is-soldout" role="radio" aria-checked="false" aria-disabled="true" tabindex="-1">
+            <div class="mc-body"><div class="mc-name">Full board</div><div class="mc-desc">Breakfast, lunch and dinner covered.</div></div>
+            <div class="mc-plate" aria-hidden="true"><img class="mc-photo" src="../../assets-img/MealComps/3_full.png" alt=""></div>
+            <div class="mc-price"><span class="soldout-tag">Sold out</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="g-pane">
+        <h3>Mobile 390</h3>
+        <div class="frame-outer" data-device="mobile" style="display:block;">
+          <div style="max-width:358px;">
+            <div class="mini-h"><span class="mh-text"><span class="stepn">Step 1</span>Choose your meals</span></div>
+            <div class="meal-opts" role="radiogroup" aria-label="Meals">
+              <div class="meal-card is-active" role="radio" aria-checked="true" tabindex="0">
+                <div class="mc-body"><div class="mc-name">Breakfast<br>&amp; dinner</div><div class="mc-desc">Two meals a day.</div></div>
+                <div class="mc-plate" aria-hidden="true"><img class="mc-photo" src="../../assets-img/MealComps/2_half.png" alt=""></div>
+                <div class="mc-price"><span class="mc-radio" aria-hidden="true"></span><span class="mc-pricetext">from <b>&pound;248.00</b></span></div>
+              </div>
+              <div class="meal-card is-soldout" role="radio" aria-checked="false" aria-disabled="true" tabindex="-1">
+                <div class="mc-body"><div class="mc-name">Full board</div><div class="mc-desc">All three meals.</div></div>
+                <div class="mc-plate" aria-hidden="true"><img class="mc-photo" src="../../assets-img/MealComps/3_full.png" alt=""></div>
+                <div class="mc-price"><span class="soldout-tag">Sold out</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ PLAN CARD -->
+  <section class="g-sec" id="plan">
+    <h2>Plan card</h2>
+    <p class="g-note">Step 2. Image, inclusions list, links, price block, CTA. The <b>save tab</b> sits on the image, not in the price row. Selected state is <code>.is-selected</code> on the card plus <code>aria-pressed</code> on the CTA.</p>
+    <div class="g-cols">
+      <div class="g-pane" data-device="desktop">
+        <h3>Desktop</h3>
+        <nav class="plan-anchors" aria-label="Jump to a dining plan"><a class="plan-anchor" href="#plan">Food Court</a><a class="plan-anchor" href="#plan">Premium</a><a class="plan-anchor" href="#plan">Dine Around</a></nav>
+        <div class="plan-grid" role="group" aria-label="Dining plan">
+          <div class="card" data-plan="foodcourt">
+            <h4>Food Court Buffet</h4>
+            <div class="card-img"><div class="ci-slide"><img class="ci-img" src="../../assets-img/foodcourt.jpg" alt=""></div><div class="save-tab" aria-hidden="true">save <b>&pound;40.00</b></div></div>
+            <div class="card-body">
+              <p class="desc">Unlimited buffet dining: family favourites, salad bar and ice cream factory.</p>
+              <ul class="incl"><li>Unlimited hot and cold buffet</li><li>Kids eat free at breakfast</li><li>Ice cream factory included</li></ul>
+              <div class="plan-links"><a class="sample-link" href="#" onclick="return false;">Sample menu &amp; allergens<svg class="ext-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6"/><path d="M8 6h10v10"/></svg></a><button type="button" class="plan-more-toggle" aria-expanded="false">Read more</button></div>
+              <div class="plan-foot"><div class="price"><span class="was">&pound;468.00</span><div class="now-row"><span class="now">&pound;428.00</span><span class="basis">party total for 4 nights</span></div></div></div>
+              <button type="button" class="card-cta" aria-pressed="false"><span class="cta-label">Add Food Court Buffet</span></button>
+            </div>
+          </div>
+          <div class="card is-selected" data-plan="premium">
+            <h4>Premium Dining</h4>
+            <div class="card-img"><div class="ci-slide"><img class="ci-img" src="../../assets-img/premium.jpg" alt=""></div></div>
+            <div class="card-body">
+              <p class="desc">Table service in the Deck restaurant with a three-course menu each evening.</p>
+              <ul class="incl"><li>Three courses, table service</li><li>Christmas Day lunch included</li><li>Booked sitting each night</li></ul>
+              <div class="plan-links"><a class="sample-link" href="#" onclick="return false;">Sample menu &amp; allergens<svg class="ext-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6"/><path d="M8 6h10v10"/></svg></a><button type="button" class="plan-more-toggle" aria-expanded="true">Read more</button></div>
+              <div class="plan-more open"><div class="pm-in"><p>Sittings run from 5pm to 8pm. Highchairs and children's menus are available at every service, and the kitchen caters for all common allergens on request.</p></div></div>
+              <div class="plan-foot"><div class="price"><div class="now-row"><span class="now">&pound;612.00</span><span class="basis">party total for 4 nights</span></div></div></div>
+              <button type="button" class="card-cta" aria-pressed="true"><span class="cta-ico"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="cta-label">Added to booking</span><span class="cta-ico cta-ghost" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="g-pane">
+        <h3>Mobile 390</h3>
+        <div class="frame-outer" data-device="mobile" style="display:block;">
+          <div style="max-width:358px;">
+            <div class="plan-grid" role="group" aria-label="Dining plan">
+              <div class="card is-selected" data-plan="premium">
+                <h4>Premium Dining</h4>
+                <div class="card-img"><div class="ci-slide"><img class="ci-img" src="../../assets-img/premium.jpg" alt=""></div><div class="save-tab" aria-hidden="true">save <b>&pound;40.00</b></div></div>
+                <div class="card-body">
+                  <p class="desc">Table service with a three-course menu each evening.</p>
+                  <ul class="incl"><li>Three courses, table service</li><li>Christmas Day lunch included</li></ul>
+                  <div class="plan-links"><a class="sample-link" href="#" onclick="return false;">Sample menu &amp; allergens<svg class="ext-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6"/><path d="M8 6h10v10"/></svg></a><button type="button" class="plan-more-toggle" aria-expanded="false">Read more</button></div>
+                  <div class="plan-foot"><div class="price"><span class="was">&pound;652.00</span><div class="now-row"><span class="now">&pound;612.00</span><span class="basis">party total for 4 nights</span></div></div></div>
+                  <button type="button" class="card-cta" aria-pressed="true"><span class="cta-ico"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="cta-label">Added to booking</span><span class="cta-ico cta-ghost" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ SLIM ROWS -->
+  <section class="g-sec" id="slim">
+    <h2>Slim rows (Unit 2 and up)</h2>
+    <p class="g-note">The compact alternative to full cards, used once a booking has multiple parties. Meal rows carry a radio affordance; plan rows carry an inline Add CTA.</p>
+    <div class="g-cols">
+      <div class="g-pane" data-device="desktop">
+        <h3>Desktop</h3>
+        <div class="mini-h"><span class="mh-text"><span class="stepn">Step 1</span>Choose your meals</span></div>
+        <div class="slim-list slim-meals" role="radiogroup" aria-label="Meals">
+          <div class="slim-row slim-meal" role="radio" aria-checked="false" tabindex="0"><span class="sr-radio" aria-hidden="true"></span><div class="sr-main"><div class="sr-name">Breakfast</div><div class="sr-desc">Start every day with a proper cooked breakfast.</div></div><div class="sr-price">from &pound;96.00</div></div>
+          <div class="slim-row slim-meal is-active" role="radio" aria-checked="true" tabindex="0"><span class="sr-radio" aria-hidden="true"></span><div class="sr-main"><div class="sr-name">Breakfast &amp; dinner</div><div class="sr-desc">Two meals a day, so you only think about lunch.</div></div><div class="sr-price">from &pound;248.00</div></div>
+          <div class="slim-row slim-meal is-soldout" role="radio" aria-checked="false" aria-disabled="true" tabindex="-1"><span class="sr-radio" aria-hidden="true"></span><div class="sr-main"><div class="sr-name">Full board</div><div class="sr-desc">Breakfast, lunch and dinner covered.</div></div><div class="sr-price"><span class="soldout-tag">Sold out</span></div></div>
+        </div>
+        <div class="mini-h"><span class="mh-text"><span class="stepn">Step 2</span>Choose your dining plan</span></div>
+        <div class="slim-list slim-plans" role="radiogroup" aria-label="Dining plan">
+          <div class="slim-row slim-plan" role="radio" aria-checked="false" tabindex="0"><div class="sr-main"><div class="sr-name">Food Court Buffet</div><div class="sr-desc">Unlimited buffet dining.</div></div><div class="sr-right"><div class="sr-price"><span class="sr-was">&pound;468.00</span><b>&pound;428.00</b><span class="save-amt">Save &pound;40.00</span></div><button type="button" class="slim-cta" aria-pressed="false">Add</button></div></div>
+          <div class="slim-row slim-plan is-active" role="radio" aria-checked="true" tabindex="0"><div class="sr-main"><div class="sr-name">Premium Dining</div><div class="sr-desc">Table service, three courses.</div></div><div class="sr-right"><div class="sr-price"><b>&pound;612.00</b></div><button type="button" class="slim-cta" aria-pressed="true">Added</button></div></div>
+        </div>
+      </div>
+      <div class="g-pane">
+        <h3>Mobile 390</h3>
+        <div class="frame-outer" data-device="mobile" style="display:block;">
+          <div style="max-width:358px;">
+            <div class="slim-list slim-meals" role="radiogroup" aria-label="Meals">
+              <div class="slim-row slim-meal is-active" role="radio" aria-checked="true" tabindex="0"><span class="sr-radio" aria-hidden="true"></span><div class="sr-main"><div class="sr-name">Breakfast &amp; dinner</div><div class="sr-desc">Two meals a day.</div></div><div class="sr-price">from &pound;248.00</div></div>
+              <div class="slim-row slim-meal" role="radio" aria-checked="false" tabindex="0"><span class="sr-radio" aria-hidden="true"></span><div class="sr-main"><div class="sr-name">Breakfast</div><div class="sr-desc">Cooked breakfast daily.</div></div><div class="sr-price">from &pound;96.00</div></div>
+            </div>
+            <div class="slim-list slim-plans" role="radiogroup" aria-label="Dining plan">
+              <div class="slim-row slim-plan is-active" role="radio" aria-checked="true" tabindex="0"><div class="sr-main"><div class="sr-name">Premium Dining</div><div class="sr-desc">Table service.</div></div><div class="sr-right"><div class="sr-price"><b>&pound;612.00</b></div><button type="button" class="slim-cta" aria-pressed="true">Added</button></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ DRINKS BAR -->
+  <section class="g-sec" id="drinks">
+    <h2>Drinks bar</h2>
+    <p class="g-note">The one inverted surface in the Family system. It sits between step 1 and step 2, and the "What's included" content expands <b>inside</b> the same black card via the <code>.open</code> class. <b>Designed for the full 1100px frame</b> — below roughly 900px the desktop row crushes, so it gets full-width panes here. In a lofi re-skin the device frame provides that width.</p>
+    <div class="g-pane g-dark" data-device="desktop" style="margin-bottom:24px;">
+      <h3>Desktop — off / on + expanded</h3>
+      <div class="drinks-bar">
+        <div class="db-main">
+          <div class="db-photo" aria-hidden="true"></div>
+          <div class="db-text"><span class="db-label">Drinks Package</span><span class="db-title">Beers, wines, spirits and soft drinks, plus hot drinks.</span><div class="db-links"><a class="db-sample" href="#" onclick="return false;">Sample drinks range<svg class="ext-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6"/><path d="M8 6h10v10"/></svg></a><button type="button" class="db-link" aria-expanded="false">Read more</button></div></div>
+          <div class="db-price-wrap"><span class="db-price">&pound;336.00</span><span class="db-basis">4 guests &bull; 4 nights</span></div>
+          <button type="button" class="db-add" aria-pressed="false">Add to booking</button>
+        </div>
+      </div>
+      <div style="height:16px;"></div>
+      <div class="drinks-bar is-on">
+        <div class="db-main">
+          <div class="db-photo" aria-hidden="true"></div>
+          <div class="db-text"><span class="db-label">Drinks Package</span><span class="db-title">Beers, wines, spirits and soft drinks, plus hot drinks.</span><div class="db-links"><a class="db-sample" href="#" onclick="return false;">Sample drinks range<svg class="ext-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6"/><path d="M8 6h10v10"/></svg></a><button type="button" class="db-link" aria-expanded="true">Read more</button></div></div>
+          <div class="db-price-wrap"><span class="db-price">&pound;336.00</span><span class="db-basis">4 guests &bull; 4 nights</span></div>
+          <button type="button" class="db-add" aria-pressed="true"><span class="cta-ico"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="cta-label">Added</span><span class="cta-ico cta-ghost" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+        </div>
+        <div class="drinks-more open"><div class="dm-in"><div class="dm-content">
+          <p class="dm-desc">Soft and alcoholic drinks across the resort, served from 11am until late. Includes draught beers and ciders, house wine, spirits with mixers, soft drinks, teas and coffees.</p>
+          <ul class="dm-list"><li>Available at all resort bars and venues</li><li>Soft drinks, hot drinks, beers, wines and spirits</li><li>Served from 11am, last orders at venue close</li><li>Applies to every party on the booking</li></ul>
+          <p class="dm-note">You save &pound;64.00 buying drinks with a dining plan.</p>
+        </div></div></div>
+      </div>
+    </div>
+    <div class="g-pane g-dark">
+      <h3>Mobile 390</h3>
+      <div class="frame-outer" data-device="mobile" style="display:block;max-width:390px;">
+        <div class="drinks-bar is-on">
+          <div class="db-main">
+            <div class="db-photo" aria-hidden="true"></div>
+            <div class="db-text"><span class="db-label">Drinks Package</span><span class="db-title">Beers, wines, spirits and soft drinks, plus hot drinks.</span><div class="db-links"><a class="db-sample" href="#" onclick="return false;">Sample drinks range<svg class="ext-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6"/><path d="M8 6h10v10"/></svg></a><button type="button" class="db-link" aria-expanded="false">Read more</button></div></div>
+            <div class="db-price-wrap"><span class="db-price">&pound;336.00</span><span class="db-basis">4 guests &bull; 4 nights</span></div>
+            <button type="button" class="db-add" aria-pressed="true"><span class="cta-ico"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="cta-label">Added</span><span class="cta-ico cta-ghost" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ CHRISTMAS -->
+  <section class="g-sec" id="xmas">
+    <h2>Christmas bar</h2>
+    <p class="g-note">Same anatomy as the drinks bar but on paper, plus a <b>sitting selector</b>: Add stays disabled until a sitting is chosen, and included-with-plan is a third state, not a disabled add. Also designed for the full frame width, hence full-width panes.</p>
+    <div class="g-pane" data-device="desktop" style="margin-bottom:24px;">
+      <h3>Desktop — default (no sitting chosen) / added + expanded</h3>
+      <div class="xmas-bar">
+        <div class="xb-main">
+          <div class="xb-photo" aria-hidden="true"></div>
+          <div class="xb-text"><span class="xb-label">Christmas Dinner!</span><span class="xb-title">Celebrate the big day with a 3 course meal and all the trimmings. Already included with Premium and Food Court plans.</span><div class="xb-links"><a class="xb-sample" href="#" onclick="return false;">Sample menu &amp; allergens<svg class="ext-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6"/><path d="M8 6h10v10"/></svg></a><button type="button" class="xb-link" aria-expanded="false">Read more</button></div></div>
+          <div class="xb-price-wrap"><span class="xb-price">&pound;120.00</span><span class="xb-basis">&pound;30.00 per person</span></div>
+          <div class="xb-actions">
+            <select class="xb-sitting" aria-label="Choose sitting"><option value="" selected>Choose sitting</option><option>12:00</option><option>13:30</option><option>15:00</option></select>
+            <button type="button" class="xb-add" aria-pressed="false" disabled>Add</button>
+          </div>
+        </div>
+      </div>
+      <div style="height:16px;"></div>
+      <div class="xmas-bar is-on">
+        <div class="xb-main">
+          <div class="xb-photo" aria-hidden="true"></div>
+          <div class="xb-text"><span class="xb-label">Christmas Dinner!</span><span class="xb-title">Celebrate the big day with a 3 course meal and all the trimmings. Already included with Premium and Food Court plans.</span><div class="xb-links"><a class="xb-sample" href="#" onclick="return false;">Sample menu &amp; allergens<svg class="ext-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6"/><path d="M8 6h10v10"/></svg></a><button type="button" class="xb-link" aria-expanded="true">Read more</button></div></div>
+          <div class="xb-price-wrap"><span class="xb-price">&pound;120.00</span><span class="xb-basis">&pound;30.00 per person</span></div>
+          <div class="xb-actions">
+            <select class="xb-sitting" aria-label="Choose sitting"><option value="">Choose sitting</option><option selected>12:00</option><option>13:30</option><option>15:00</option></select>
+            <button type="button" class="xb-add" aria-pressed="true"><span class="cta-ico"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="cta-label">Added</span><span class="cta-ico cta-ghost" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+          </div>
+        </div>
+        <div class="xmas-more open"><div class="xm-in"><div class="xm-content">
+          <p class="xm-desc">A festive three-course lunch with all the trimmings. You will get an invite in your welcome pack on arrival confirming your restaurant.</p>
+          <ul class="xm-list"><li>Three-course Christmas Day lunch</li><li>All the trimmings included</li><li>Sitting confirmed in your welcome pack</li><li>Already included with Premium and Food Court plans</li></ul>
+        </div></div></div>
+      </div>
+    </div>
+    <div class="g-pane">
+      <h3>Mobile 390</h3>
+      <div class="frame-outer" data-device="mobile" style="display:block;max-width:390px;">
+        <div class="xmas-bar">
+          <div class="xb-main">
+            <div class="xb-photo" aria-hidden="true"></div>
+            <div class="xb-text"><span class="xb-label">Christmas Dinner!</span><span class="xb-title">Celebrate the big day with a 3 course meal and all the trimmings. Already included with Premium and Food Court plans.</span><div class="xb-links"><a class="xb-sample" href="#" onclick="return false;">Sample menu &amp; allergens<svg class="ext-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6"/><path d="M8 6h10v10"/></svg></a><button type="button" class="xb-link" aria-expanded="false">Read more</button></div></div>
+            <div class="xb-price-wrap"><span class="xb-price">&pound;120.00</span><span class="xb-basis">&pound;30.00 per person</span></div>
+            <div class="xb-actions">
+              <select class="xb-sitting" aria-label="Choose sitting"><option value="" selected>Choose sitting</option><option>12:00</option><option>13:30</option><option>15:00</option></select>
+              <button type="button" class="xb-add" aria-pressed="false" disabled>Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ ALLERGEN -->
+  <section class="g-sec" id="allergen">
+    <h2>Allergen band</h2>
+    <p class="g-note">Reassurance band, one per dining step. Uses the offer/info surface tokens, not the accent.</p>
+    <div class="g-cols">
+      <div class="g-pane" data-device="desktop">
+        <h3>Desktop</h3>
+        <div class="allergen-band"><div class="ab-text"><h3 class="ab-title">Allergies or dietary requirements?</h3><p class="ab-desc">Every plan caters for vegetarian, vegan and free-from diets.</p></div><a href="#" onclick="return false;">Allergen info<svg class="arrow-ne" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></a></div>
+      </div>
+      <div class="g-pane">
+        <h3>Mobile 390</h3>
+        <div class="frame-outer" data-device="mobile" style="display:block;">
+          <div style="max-width:358px;">
+            <div class="allergen-band"><div class="ab-text"><h3 class="ab-title">Allergies or dietary requirements?</h3><p class="ab-desc">Every plan caters for vegetarian, vegan and free-from diets.</p></div><a href="#" onclick="return false;">Allergen info<svg class="arrow-ne" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ UNIT BLOCK -->
+  <section class="g-sec" id="unit">
+    <h2>Party block</h2>
+    <p class="g-note">Wrapper for multi-party bookings, <code>&lt;section class="party"&gt;</code>. Five states, and the distinction between them is behavioural, not cosmetic: <b>mirrored is reversible via Customise, forced is not.</b> Forced only happens on Full board + drinks, which is a whole-booking choice.</p>
+    <div class="g-cols">
+      <div class="g-pane" data-device="desktop">
+        <h3>Desktop</h3>
+        <div class="g-state">Expanded — party makes its own choice</div>
+        <section class="party" aria-label="Party 2">
+          <div class="unit-head"><div class="uh-titles"><span class="uh-title">Party 2</span><span class="uh-sub">2 adults, 1 child</span></div><span class="uh-right"><button type="button" class="unit-revert">Same as Party 1</button></span></div>
+          <div class="party-body"><p class="g-note" style="margin:0;">Slim meal and plan rows render here.</p></div>
+        </section>
+        <div class="g-state">Collapsed — resolved summary</div>
+        <section class="party" aria-label="Party 3">
+          <div class="unit-head"><div class="uh-titles"><span class="uh-title">Party 3</span><span class="uh-sub">2 adults</span></div><span class="uh-right"></span></div>
+          <div class="party-summary"><b>Breakfast &amp; dinner, Premium Dining &mdash; &pound;612.00</b></div>
+        </section>
+        <div class="g-state">Collapsed — nothing chosen yet</div>
+        <section class="party" aria-label="Party 4">
+          <div class="unit-head"><div class="uh-titles"><span class="uh-title">Party 4</span><span class="uh-sub">1 adult</span></div><span class="uh-right"></span></div>
+          <div class="party-summary none"><b>No dining selected yet</b></div>
+        </section>
+        <div class="g-state">Mirrored — same as Party 1, reversible</div>
+        <section class="party" aria-label="Party 5">
+          <div class="unit-head"><div class="uh-titles"><span class="uh-title">Party 5</span><span class="uh-sub">2 adults, 2 children</span></div><span class="uh-right"></span></div>
+          <div class="unit-samerow">
+            <div class="usr-text"><span class="usr-label">Same as Party 1</span><span class="usr-plan">Breakfast &amp; dinner, Premium Dining</span></div>
+            <div class="usr-right"><span class="usr-price">&pound;816.00</span><button type="button" class="unit-customise">Customise for this party</button></div>
+          </div>
+        </section>
+        <div class="g-state">Forced — whole-booking plan, no opt out</div>
+        <section class="party" aria-label="Party 6">
+          <div class="unit-head"><div class="uh-titles"><span class="uh-title">Party 6</span><span class="uh-sub">2 adults</span></div><span class="uh-right"></span></div>
+          <div class="unit-samerow">
+            <div class="usr-text"><span class="usr-label">Same as Party 1</span><span class="usr-plan">Full board + drinks, Premium Dining</span></div>
+            <div class="usr-right"><span class="usr-price">&pound;744.00</span><span class="usr-note">Whole-booking plan</span></div>
+          </div>
+          <p class="mode-explainer">Full board + drinks applies to the whole booking, so every party has the same plan.</p>
+        </section>
+      </div>
+      <div class="g-pane">
+        <h3>Mobile 390</h3>
+        <div class="frame-outer" data-device="mobile" style="display:block;">
+          <div style="max-width:358px;">
+            <section class="party" aria-label="Party 2">
+              <div class="unit-head"><div class="uh-titles"><span class="uh-title">Party 2</span><span class="uh-sub">2 adults, 1 child</span></div><span class="uh-right"><button type="button" class="unit-revert">Same as Party 1</button></span></div>
+              <div class="party-summary"><b>Breakfast &amp; dinner, Premium &mdash; &pound;612.00</b></div>
+            </section>
+            <div style="height:12px;"></div>
+            <section class="party" aria-label="Party 3">
+              <div class="unit-head"><div class="uh-titles"><span class="uh-title">Party 3</span><span class="uh-sub">2 adults</span></div><span class="uh-right"></span></div>
+              <div class="unit-samerow">
+                <div class="usr-text"><span class="usr-label">Same as Party 1</span><span class="usr-plan">Premium Dining</span></div>
+                <div class="usr-right"><span class="usr-price">&pound;408.00</span><button type="button" class="unit-customise">Customise for this party</button></div>
+              </div>
+            </section>
+            <div style="height:12px;"></div>
+            <section class="party" aria-label="Party 4">
+              <div class="unit-head"><div class="uh-titles"><span class="uh-title">Party 4</span><span class="uh-sub">1 adult</span></div><span class="uh-right"></span></div>
+              <div class="party-summary none"><b>No dining selected yet</b></div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ FOOTER -->
+  <section class="g-sec" id="footer">
+    <h2>Footer + price summary</h2>
+    <p class="g-note">Sticky at the foot of the frame. Total, expandable summary, save and continue. The continue label changes with state ("Continue without dining" when nothing is selected).</p>
+    <div class="g-cols">
+      <div class="g-pane" data-device="desktop">
+        <h3>Desktop</h3>
+        <div class="footer">
+          <div class="ftop">
+            <div class="ftot" aria-live="polite">Total <b>&pound;428.00</b>
+              <button class="sumtoggle" aria-expanded="false">Summary<span class="chev" aria-hidden="true"><svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.93974 5.27781L5.99959 1.21796L10.0594 5.27781" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+            </div>
+            <div class="factions"><button class="savebtn">Save</button><button class="continue">Continue</button></div>
+          </div>
+          <p class="reassure-foot">Amend dining options anytime before you arrive</p>
+        </div>
+        <div class="g-state">Nothing selected</div>
+        <div class="footer">
+          <div class="ftop">
+            <div class="ftot" aria-live="polite">Total <b>&pound;0.00</b></div>
+            <div class="factions"><button class="savebtn">Save</button><button class="continue">Continue without dining</button></div>
+          </div>
+          <p class="reassure-foot">Amend dining options anytime before you arrive</p>
+        </div>
+      </div>
+      <div class="g-pane">
+        <h3>Mobile 390</h3>
+        <div class="frame-outer" data-device="mobile" style="display:block;">
+          <div style="max-width:358px;">
+            <div class="footer">
+              <div class="ftop">
+                <div class="ftot" aria-live="polite">Total <b>&pound;428.00</b>
+                  <button class="sumtoggle" aria-expanded="false">Summary<span class="chev" aria-hidden="true"><svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.93974 5.27781L5.99959 1.21796L10.0594 5.27781" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+                </div>
+                <div class="factions"><button class="savebtn">Save</button><button class="continue">Continue</button></div>
+              </div>
+              <p class="reassure-foot">Amend anytime before you arrive</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

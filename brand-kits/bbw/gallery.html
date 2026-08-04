@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BBW brand kit — component gallery</title>
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Gallery chrome only. Nothing here belongs in the kit. */
+body{background:var(--grey-1);color:var(--ink);}
+.g-wrap{max-width:1200px;margin:0 auto;padding:32px 24px 96px;}
+.g-head{border-bottom:3px solid var(--yellow);padding-bottom:16px;margin-bottom:8px;}
+.g-head h1{font-family:var(--font-display);text-transform:uppercase;font-size:38px;line-height:1;margin:0 0 8px;}
+.g-head p{color:var(--ink2);font-size:14px;max-width:70ch;}
+.g-head code{background:var(--grey-6);padding:1px 5px;font-size:13px;}
+.g-nav{position:sticky;top:0;z-index:20;background:var(--grey-1);border-bottom:1px solid var(--line);
+  padding:10px 0;margin-bottom:32px;display:flex;flex-wrap:wrap;gap:6px;}
+.g-nav a{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink);
+  text-decoration:none;border:1px solid var(--line2);padding:5px 9px;border-radius:var(--radius);}
+.g-nav a:hover{background:var(--yellow);color:var(--on-yellow);border-color:var(--yellow);}
+.g-sec{margin:0 0 48px;scroll-margin-top:64px;}
+.g-sec > h2{font-family:var(--font-display);text-transform:uppercase;font-size:26px;line-height:1;
+  border-bottom:1px solid var(--line2);padding-bottom:8px;margin-bottom:6px;}
+.g-note{font-size:13px;color:var(--ink2);margin:0 0 16px;max-width:80ch;}
+.g-note b{color:var(--ink);}
+.g-cols{display:grid;grid-template-columns:1fr 390px;gap:24px;align-items:start;}
+@media(max-width:1000px){.g-cols{grid-template-columns:1fr;}}
+.g-pane{background:var(--bg);border:1px solid var(--line);padding:16px;border-radius:var(--radius);}
+.g-pane > h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--muted);margin:0 0 12px;}
+.g-state{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--muted);margin:20px 0 6px;}
+.g-state:first-of-type{margin-top:0;}
+.g-swatch{display:block;width:40px;height:22px;border:1px solid var(--line2);border-radius:2px;}
+.g-tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.g-tbl th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line2);}
+.g-tbl td{padding:6px 8px;border-bottom:1px solid var(--line);}
+</style>
+</head>
+<body>
+<div class="g-wrap">
+
+  <div class="g-head">
+    <h1>Big Weekender — component gallery</h1>
+    <p>Every component in <code>kit.css</code>, at desktop width and at 390px mobile, with the states that matter. This is the visual reference for styling up a lofi: match against these, don't invent. Markup lifted from <code>phase2-dining-extras-bbw-hifi.html</code>. Read <code>../LOFI-TOKEN-CONTRACT.md</code> and <code>../STYLING-RECIPE.md</code> first.</p>
+  </div>
+
+  <nav class="g-nav">
+    <a href="#tokens">Tokens</a>
+    <a href="#type">Type</a>
+    <a href="#buttons">Buttons</a>
+    <a href="#dining">Dining card</a>
+    <a href="#promo">Promo</a>
+    <a href="#extras">Extras card</a>
+    <a href="#checkin">Split options</a>
+    <a href="#scope">Scope tags</a>
+    <a href="#unit">Party block</a>
+    <a href="#footer">Footer + total</a>
+  </nav>
+
+  <!-- ============================================================ TOKENS -->
+  <section class="g-sec" id="tokens">
+    <h2>Tokens</h2>
+    <p class="g-note">The BBW <code>:root</code> was authored against the lofi role-token vocabulary from the start, so most role names map straight through. <b>Background is #181818, not pure black</b> — pure black is reserved for the app chrome.</p>
+    <div class="g-pane">
+      <table class="g-tbl">
+        <thead><tr><th>Swatch</th><th>Token</th><th>Value</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td><span class="g-swatch" style="background:var(--bg);"></span></td><td><code>--bg</code></td><td>#181818</td><td>Page + chrome surface</td></tr>
+          <tr><td><span class="g-swatch" style="background:var(--bg-2);"></span></td><td><code>--bg-2</code></td><td>#202020</td><td>Raised: cards, summary, popups. <code>--fill</code></td></tr>
+          <tr><td><span class="g-swatch" style="background:var(--bg-3);"></span></td><td><code>--bg-3</code></td><td>#2a2a2a</td><td>Pressed / deeper surface</td></tr>
+          <tr><td><span class="g-swatch" style="background:var(--ink);"></span></td><td><code>--ink</code></td><td>#ffffff</td><td>Primary text</td></tr>
+          <tr><td><span class="g-swatch" style="background:var(--ink2);"></span></td><td><code>--ink2</code></td><td>#d4d3d6</td><td>Secondary text, 11.4:1</td></tr>
+          <tr><td><span class="g-swatch" style="background:var(--muted);"></span></td><td><code>--muted</code></td><td>#a5a4a8</td><td>Tertiary, 6.5:1 (AA small)</td></tr>
+          <tr><td><span class="g-swatch" style="background:var(--yellow);"></span></td><td><code>--yellow</code></td><td>#ffd614</td><td>Primary action. <code>--dark</code>, <code>--selected</code>, <code>--focus</code></td></tr>
+          <tr><td><span class="g-swatch" style="background:var(--yellow-strong);"></span></td><td><code>--yellow-strong</code></td><td>#e0bc12</td><td>Yellow hover</td></tr>
+          <tr><td><span class="g-swatch" style="background:var(--red);"></span></td><td><code>--red</code></td><td>#da291c</td><td>Promo, urgency</td></tr>
+          <tr><td><span class="g-swatch" style="background:var(--green);"></span></td><td><code>--green</code></td><td>#8ce852</td><td>Confirmed, included</td></tr>
+          <tr><td><span class="g-swatch" style="background:var(--pink);"></span></td><td><code>--pink</code></td><td>#d9598f</td><td>Accent</td></tr>
+          <tr><td><span class="g-swatch" style="background:var(--line);"></span></td><td><code>--line</code></td><td>10% white</td><td>Inner card dividers, always 10%</td></tr>
+          <tr><td><span class="g-swatch" style="background:var(--panel);"></span></td><td><code>--panel</code></td><td>#161616 @ 50%</td><td>Translucent section panel</td></tr>
+        </tbody>
+      </table>
+      <p class="g-note" style="margin:16px 0 0;"><b>Text on yellow is always black</b> (<code>--on-yellow</code>, aliased to <code>--on-dark</code>). Never white. The grey scale is consolidated into <code>--grey-1</code> to <code>--grey-7</code> so shades don't get re-scattered; use those rather than inventing a new dark value. Radius is 6px.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ TYPE -->
+  <section class="g-sec" id="type">
+    <h2>Type</h2>
+    <p class="g-note">Two faces. <b>League Gothic, uppercase, for display only</b> — section labels and headline moments. Proxima Nova for everything else, at 400/700/900.</p>
+    <div class="g-cols">
+      <div class="g-pane" data-device="desktop">
+        <h3>Desktop</h3>
+        <div class="g-state">Display — League Gothic uppercase</div>
+        <p style="font-family:var(--font-display);text-transform:uppercase;font-size:48px;line-height:1;margin:0 0 4px;">Add your extras</p>
+        <p style="font-family:var(--font-display);text-transform:uppercase;font-size:30px;line-height:1;margin:0;color:var(--yellow);">Eat for 3 days</p>
+        <div class="g-state">Section label</div>
+        <div class="sec-head"><h2 class="sec-label">Dining</h2></div>
+        <div class="g-state">Body — Proxima Nova</div>
+        <h3 style="font-size:18px;margin:0 0 4px;">Card heading, 700</h3>
+        <p class="desc">Body copy at 400. Unlimited buffet breakfast and dinner throughout the weekend, with a bar in every venue.</p>
+        <p class="row-sub" style="margin-top:6px;">Supporting line, muted.</p>
+        <div class="g-state">Price block</div>
+        <div class="price"><span class="now">&pound;198.00</span><span class="pp">&pound;33.00 per person</span></div>
+      </div>
+      <div class="g-pane">
+        <h3>Mobile 390</h3>
+        <div class="frame-outer" data-device="mobile" style="display:block;max-width:358px;">
+          <p style="font-family:var(--font-display);text-transform:uppercase;font-size:34px;line-height:1;margin:0 0 8px;">Add your extras</p>
+          <div class="sec-head"><h2 class="sec-label">Dining</h2></div>
+          <h3 style="font-size:17px;margin:0 0 4px;">Card heading</h3>
+          <p class="desc">Body copy at 400, tighter measure on mobile.</p>
+          <div class="price" style="margin-top:10px;"><span class="now">&pound;198.00</span><span class="pp">&pound;33.00 per person</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ BUTTONS -->
+  <section class="g-sec" id="buttons">
+    <h2>Buttons + stepper</h2>
+    <p class="g-note">Yellow fill with black text is the primary. The <b>added</b> state keeps the yellow and adds a tick glyph, so it reads as confirmed rather than disabled. The stepper is the quantity pattern for per-person and per-item extras.</p>
+    <div class="g-cols">
+      <div class="g-pane" data-device="desktop">
+        <h3>Desktop</h3>
+        <div class="g-state">Primary add — default / added</div>
+        <p style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <button type="button" class="btn-add" aria-pressed="false">Add to booking</button>
+          <button type="button" class="btn-add is-added" aria-pressed="true"><img class="cta-check" src="../../assets-bbw/cta-check.svg" alt="" aria-hidden="true">Added to booking</button>
+        </p>
+        <div class="g-state">Card CTA — default / added</div>
+        <button type="button" class="dc-cta" aria-pressed="false">Add Premium Dining</button>
+        <div style="height:10px;"></div>
+        <button type="button" class="dc-cta is-added" aria-pressed="true"><img class="cta-check" src="../../assets-bbw/cta-check.svg" alt="" aria-hidden="true">Added to booking</button>
+        <div class="g-state">Ghost + links</div>
+        <p style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <button class="btn ghost sm">Same as Party 1</button>
+          <button class="savebtn">Save quote</button>
+          <button class="continue">Jump to extras</button>
+        </p>
+        <div class="dc-links"><a class="dc-menulink" href="#" onclick="return false;">Sample menu &amp; allergens<img src="../../assets-bbw/arrow-up-right.svg" alt="" aria-hidden="true"></a><button type="button" class="dc-more-toggle">Read more</button></div>
+        <div class="g-state">Stepper</div>
+        <div class="stepper"><button type="button" class="step-btn" aria-label="Decrease">&minus;</button><span class="qty">2</span><button type="button" class="step-btn" aria-label="Increase">+</button></div>
+        <div class="g-state">Toolbar segment (prototype shell)</div>
+        <span class="seg"><button aria-pressed="true">Desktop</button><button aria-pressed="false">Mobile</button></span>
+      </div>
+      <div class="g-pane">
+        <h3>Mobile 390</h3>
+        <div class="frame-outer" data-device="mobile" style="display:block;max-width:358px;">
+          <div class="g-state">Primary</div>
+          <button type="button" class="btn-add" aria-pressed="false">Add to booking</button>
+          <div class="g-state">Added</div>
+          <button type="button" class="btn-add is-added" aria-pressed="true"><img class="cta-check" src="../../assets-bbw/cta-check.svg" alt="" aria-hidden="true">Added to booking</button>
+          <div class="g-state">Card CTA</div>
+          <button type="button" class="dc-cta is-added" aria-pressed="true"><img class="cta-check" src="../../assets-bbw/cta-check.svg" alt="" aria-hidden="true">Added to booking</button>
+          <div class="g-state">Stepper</div>
+          <div class="stepper"><button type="button" class="step-btn" aria-label="Decrease">&minus;</button><span class="qty">2</span><button type="button" class="step-btn" aria-label="Increase">+</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ DINING CARD -->
+  <section class="g-sec" id="dining">
+    <h2>Dining card</h2>
+    <p class="g-note">The full-anatomy tile: image with carousel and save flag, title, description, inclusions, links, price row, CTA. <b>Price is the hero</b> — party total large, per person per day as the qualifier. Save flag sits on the image; the was-price and promo pill sit above the total.</p>
+    <div class="g-cols">
+      <div class="g-pane" data-device="desktop">
+        <h3>Desktop</h3>
+        <div class="dining-grid">
+          <div class="dcard">
+            <div class="dc-img"><div class="ci-slide"><div class="ci-par"><div class="ci-img" style="background-image:url('../../assets-img/foodcourt.jpg')"></div></div></div>
+              <button type="button" class="img-nav prev" aria-label="Previous image"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg></button>
+              <button type="button" class="img-nav next" aria-label="Next image"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+              <div class="dc-save">save <b>&pound;99.00</b></div>
+            </div>
+            <div class="dc-body">
+              <h3 class="dc-title">Food Court</h3>
+              <p class="desc">Unlimited buffet breakfast and dinner, with a bar in every venue.</p>
+              <ul class="dc-incl"><li>Unlimited buffet breakfast and dinner</li><li>Kids' menu at every service</li><li>Bar in every venue</li></ul>
+              <div class="dc-links"><a class="dc-menulink" href="#" onclick="return false;">Sample menu &amp; allergens<img src="../../assets-bbw/arrow-up-right.svg" alt="" aria-hidden="true"></a><button type="button" class="dc-more-toggle">Read more</button></div>
+              <div class="dc-foot">
+                <div class="price"><div class="was-row"><span class="was">&pound;297.00</span><span class="promo-pill">3 for 2 deal!</span></div>
+                  <div class="price-row"><span class="now">&pound;198.00</span><span class="price-meta">party total <span class="pm-dot">&bull;</span> <span class="pm-ppd">&pound;33.00 per person, per day</span></span></div></div>
+                <button type="button" class="dc-cta" aria-pressed="false">Add Food Court</button>
+              </div>
+            </div>
+          </div>
+          <div class="dcard is-added">
+            <div class="dc-img"><div class="ci-slide"><div class="ci-par"><div class="ci-img" style="background-image:url('../../assets-img/premium.jpg')"></div></div></div>
+              <div class="dc-save">save <b>&pound;132.00</b></div>
+            </div>
+            <div class="dc-body">
+              <h3 class="dc-title">Premium</h3>
+              <p class="desc">Table service, three courses each evening, with drinks included.</p>
+              <ul class="dc-incl"><li>Three courses, table service</li><li>Drinks with dinner</li><li>Booked sitting each night</li></ul>
+              <div class="dc-links"><a class="dc-menulink" href="#" onclick="return false;">Sample menu &amp; allergens<img src="../../assets-bbw/arrow-up-right.svg" alt="" aria-hidden="true"></a><button type="button" class="dc-more-toggle">Read more</button></div>
+              <div class="dc-more open">Sittings run 6pm to 9pm. The kitchen caters for all common allergens on request, and there is a bar in the restaurant.</div>
+              <div class="dc-foot">
+                <div class="price"><div class="was-row"><span class="was">&pound;396.00</span><span class="promo-pill">3 for 2 deal!</span></div>
+                  <div class="price-row"><span class="now">&pound;264.00</span><span class="price-meta">party total <span class="pm-dot">&bull;</span> <span class="pm-ppd">&pound;44.00 per person, per day</span></span></div></div>
+                <button type="button" class="dc-cta is-added" aria-pressed="true"><img class="cta-check" src="../../assets-bbw/cta-check.svg" alt="" aria-hidden="true">Added to booking</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="g-pane">
+        <h3>Mobile 390</h3>
+        <div class="frame-outer" data-device="mobile" style="display:block;max-width:358px;">
+          <div class="dining-grid one">
+            <div class="dcard is-added">
+              <div class="dc-img"><div class="ci-slide"><div class="ci-par"><div class="ci-img" style="background-image:url('../../assets-img/premium.jpg')"></div></div></div><div class="dc-save">save <b>&pound;132.00</b></div></div>
+              <div class="dc-body">
+                <h3 class="dc-title">Premium</h3>
+                <p class="desc">Table service, three courses each evening.</p>
+                <ul class="dc-incl"><li>Three courses, table service</li><li>Drinks with dinner</li></ul>
+                <div class="dc-links"><a class="dc-menulink" href="#" onclick="return false;">Sample menu &amp; allergens<img src="../../assets-bbw/arrow-up-right.svg" alt="" aria-hidden="true"></a></div>
+                <div class="dc-foot">
+                  <div class="price"><div class="was-row"><span class="was">&pound;396.00</span><span class="promo-pill">3 for 2 deal!</span></div>
+                    <div class="price-row"><span class="now">&pound;264.00</span><span class="price-meta">party total <span class="pm-dot">&bull;</span> <span class="pm-ppd">&pound;44.00 pp, per day</span></span></div></div>
+                  <button type="button" class="dc-cta is-added" aria-pressed="true"><img class="cta-check" src="../../assets-bbw/cta-check.svg" alt="" aria-hidden="true">Added to booking</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ PROMO -->
+  <section class="g-sec" id="promo">
+    <h2>Promo anatomy</h2>
+    <p class="g-note">Three related pieces, all off the same "eat for 3, pay for 2" mechanic. <b>Keep the wording consistent across all three</b> — the banner sets it up, the pill confirms it on the card, the pop chases it in the footer. The banner is designed for the full 1100px frame, so it gets a full-width pane here.</p>
+    <div class="g-pane" data-device="desktop" style="margin-bottom:24px;">
+      <h3>Section banner — desktop, full width</h3>
+      <div class="promo-banner"><span class="pb-left">Eat for 3 days</span><span class="pb-mobile">Eat for 3 days, <b>pay for 2!</b></span><span class="pb-sub">Every Big Weekender runs for 3 days. Add a dining plan and we only charge you for 2, with unlimited buffet breakfast and dinner throughout.</span><span class="pb-right">but pay for 2!</span></div>
+    </div>
+    <div class="g-cols">
+      <div class="g-pane" data-device="desktop">
+        <h3>Desktop</h3>
+        <div class="g-state">Card pill + was-price</div>
+        <div class="price"><div class="was-row"><span class="was">&pound;297.00</span><span class="promo-pill">3 for 2 deal!</span></div><div class="price-row"><span class="now">&pound;198.00</span><span class="price-meta">party total</span></div></div>
+        <div class="g-state">Save flag (sits on card image)</div>
+        <div style="position:relative;height:44px;"><div class="dc-save" style="position:static;display:inline-block;">save <b>&pound;99.00</b></div></div>
+        <div class="g-state">Footer chase pop (shown state)</div>
+        <div class="promo-pop show" style="position:relative;left:0;bottom:auto;transform:none;">
+          <button type="button" class="promo-x" aria-label="Dismiss">&#10005;</button>
+          <img class="promo-collage" src="../../assets-bbw/promo-collage.png" alt="" aria-hidden="true">
+          <span class="promo-head">Wait!</span>
+          <img class="promo-dish" src="../../assets-bbw/promo-dish.png" alt="" aria-hidden="true">
+          <span class="promo-sub">You scrolled past all the food?!</span>
+        </div>
+      </div>
+      <div class="g-pane">
+        <h3>Mobile 390</h3>
+        <div class="frame-outer" data-device="mobile" style="display:block;max-width:358px;">
+          <div class="g-state">Banner collapses to one line</div>
+          <div class="promo-banner"><span class="pb-left">Eat for 3 days</span><span class="pb-mobile">Eat for 3 days, <b>pay for 2!</b></span><span class="pb-sub">Add a dining plan and we only charge you for 2.</span><span class="pb-right">but pay for 2!</span></div>
+          <div class="g-state">Chase pop, centred column</div>
+          <div class="promo-pop show" style="position:relative;left:0;bottom:auto;transform:none;">
+            <button type="button" class="promo-x" aria-label="Dismiss">&#10005;</button>
+            <img class="promo-collage" src="../../assets-bbw/promo-collage.png" alt="" aria-hidden="true">
+            <span class="promo-head">Wait!</span>
+            <img class="promo-dish" src="../../assets-bbw/promo-dish.png" alt="" aria-hidden="true">
+            <span class="promo-sub">You scrolled past all the food?!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ EXTRAS -->
+  <section class="g-sec" id="extras">
+    <h2>Extras card (split footer)</h2>
+    <p class="g-note">The agreed hybrid: body on top, then a <b>split footer</b> with price and scope on the left, control on the right. The control varies (stepper for quantity, single add for whole-booking) but the footer anatomy never does.</p>
+    <div class="g-cols">
+      <div class="g-pane" data-device="desktop">
+        <h3>Desktop — stepper control / single add</h3>
+        <div class="card xcard is-added">
+          <div class="xc-body"><div class="xc-head"><img class="xc-ico" src="../../assets-bbw/ico-spa.svg" alt="" aria-hidden="true"><h3>Spa Experience</h3></div>
+            <p class="desc">A 2 hour experience at Ocean Spa with full use of the hydrospa, outdoor hot tub, sauna, crystal steam room and relaxation pods.</p>
+            <button type="button" class="dc-more-toggle">Read more</button>
+          </div>
+          <div class="cbar"><div class="cbar-left"><div class="price"><span class="now">&pound;70.00</span><span class="pp">&pound;35.00 per person</span></div><span class="scope-tag"><img class="st-ico" src="../../assets-bbw/pill-person.svg" alt="" aria-hidden="true">2 guests</span></div>
+            <div class="xc-control"><div class="stepper"><button type="button" class="step-btn" aria-label="Decrease">&minus;</button><span class="qty">2</span><button type="button" class="step-btn" aria-label="Increase">+</button></div><button type="button" class="btn-add is-added" aria-pressed="true"><img class="cta-check" src="../../assets-bbw/cta-check.svg" alt="" aria-hidden="true">Added</button></div>
+          </div>
+        </div>
+        <div style="height:16px;"></div>
+        <div class="card xcard">
+          <div class="xc-body"><div class="xc-head"><img class="xc-ico" src="../../assets-bbw/ico-towels.svg" alt="" aria-hidden="true"><h3>Towel Pack</h3></div>
+            <p class="desc">A fresh towel pack per person for your stay.</p>
+          </div>
+          <div class="cbar"><div class="cbar-left"><div class="price"><span class="now">&pound;8.00</span></div><span class="scope-tag"><img class="st-ico" src="../../assets-bbw/pill-item.svg" alt="" aria-hidden="true">Per item</span></div>
+            <div class="xc-control"><div class="stepper"><button type="button" class="step-btn" aria-label="Decrease">&minus;</button><span class="qty">0</span><button type="button" class="step-btn" aria-label="Increase">+</button></div><button type="button" class="btn-add" aria-pressed="false">Add all</button></div>
+          </div>
+        </div>
+        <div class="g-state">Photo variant (VIP)</div>
+        <div class="card is-added">
+          <div class="brunch-card2"><div class="ph-img square photo" aria-hidden="true"><img class="ph-photo" src="../../assets-img/vip1.webp" alt=""></div>
+            <div class="brunch-main"><div class="bm-pad">
+              <h3>VIP Pass</h3>
+              <p class="desc">Priority access to Silent Disco, Bingo, Soul Stroll and Pool Party, plus a VIP pit with private bar.</p>
+              <ul class="dc-incl"><li>Priority access to Silent Disco, Bingo, Soul Stroll &amp; Pool Party</li><li>Exclusive VIP pit with its own private bar at the main stage</li><li>A dedicated VIP host across the weekend</li><li>One pass covers everyone on your booking</li></ul>
+            </div>
+            <div class="cbar"><div class="cbar-left"><div class="price"><span class="now">&pound;120.00</span><span class="pp">&pound;20.00 per person</span></div><span class="scope-tag"><img class="st-ico" src="../../assets-bbw/pill-group.svg" alt="" aria-hidden="true">Whole booking</span></div>
+              <button type="button" class="btn-add is-added" aria-pressed="true"><img class="cta-check" src="../../assets-bbw/cta-check.svg" alt="" aria-hidden="true">Added to booking</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="g-pane">
+        <h3>Mobile 390 — footer stacks</h3>
+        <div class="frame-outer" data-device="mobile" style="display:block;max-width:358px;">
+          <div class="card xcard is-added">
+            <div class="xc-body"><div class="xc-head"><img class="xc-ico" src="../../assets-bbw/ico-spa.svg" alt="" aria-hidden="true"><h3>Spa Experience</h3></div>
+              <p class="desc">A 2 hour experience at Ocean Spa with full use of the hydrospa and sauna.</p>
+            </div>
+            <div class="cbar"><div class="cbar-left"><div class="price"><span class="now">&pound;70.00</span><span class="pp">&pound;35.00 per person</span></div><span class="scope-tag"><img class="st-ico" src="../../assets-bbw/pill-person.svg" alt="" aria-hidden="true">2 guests</span></div>
+              <div class="xc-control"><div class="stepper"><button type="button" class="step-btn" aria-label="Decrease">&minus;</button><span class="qty">2</span><button type="button" class="step-btn" aria-label="Increase">+</button></div><button type="button" class="btn-add is-added" aria-pressed="true">Added</button></div>
+            </div>
+          </div>
+          <div style="height:16px;"></div>
+          <div class="card xcard">
+            <div class="xc-body"><div class="xc-head"><img class="xc-ico" src="../../assets-bbw/ico-donation.svg" alt="" aria-hidden="true"><h3>Donation</h3></div>
+              <p class="desc">Add a &pound;2 donation to Great Ormond Street Hospital Children's Charity.</p>
+            </div>
+            <div class="cbar"><div class="cbar-left"><div class="price"><span class="now">&pound;2.00</span></div><span class="scope-tag"><img class="st-ico" src="../../assets-bbw/pill-group.svg" alt="" aria-hidden="true">Whole booking</span></div>
+              <div class="xc-control"><button type="button" class="btn-add" aria-pressed="false">Add</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ CHECKIN -->
+  <section class="g-sec" id="checkin">
+    <h2>Split options (mutually exclusive)</h2>
+    <p class="g-note">Two options inside one card where the user should pick one, not both. The constraint lives in the description, and each option carries its own price and add control.</p>
+    <div class="g-cols">
+      <div class="g-pane" data-device="desktop">
+        <h3>Desktop — two up</h3>
+        <div class="card xcard is-added">
+          <div class="xc-body"><div class="xc-head"><img class="xc-ico" src="../../assets-bbw/ico-checkin.svg" alt="" aria-hidden="true"><h3>Extend your stay</h3><span class="scope-tag"><img class="st-ico" src="../../assets-bbw/pill-group.svg" alt="" aria-hidden="true">Whole booking</span></div>
+            <p class="desc">Add one of these, not both. Rooms need a cleaning turnaround between guests.</p>
+            <div class="checkin-opts">
+              <div class="checkin-opt is-added">
+                <div class="co-info"><div class="co-head"><img class="co-ico" src="../../assets-bbw/ico-early.svg" alt="" aria-hidden="true"><b>Arrive from 1pm</b></div><span class="row-sub">Start the party 2 hours earlier, as standard check-in is 3pm.</span></div>
+                <div class="cbar sm"><div class="co-priceblock"><span class="co-price">&pound;25.00</span><span class="co-pp">&pound;4.17 per person</span></div><button type="button" class="btn-add is-added" aria-pressed="true"><img class="cta-check" src="../../assets-bbw/cta-check.svg" alt="" aria-hidden="true">Added</button></div>
+              </div>
+              <div class="checkin-opt">
+                <div class="co-info"><div class="co-head"><img class="co-ico" src="../../assets-bbw/ico-late.svg" alt="" aria-hidden="true"><b>Check out at 12pm</b></div><span class="row-sub">Get an extra 2 hours kip, as standard check-out is 10am.</span></div>
+                <div class="cbar sm"><div class="co-priceblock"><span class="co-price">&pound;25.00</span><span class="co-pp">&pound;4.17 per person</span></div><button type="button" class="btn-add" aria-pressed="false">Add to booking</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="g-pane">
+        <h3>Mobile 390 — one up</h3>
+        <div class="frame-outer" data-device="mobile" style="display:block;max-width:358px;">
+          <div class="card xcard">
+            <div class="xc-body"><div class="xc-head"><img class="xc-ico" src="../../assets-bbw/ico-checkin.svg" alt="" aria-hidden="true"><h3>Extend your stay</h3></div>
+              <p class="desc">Give yourselves a little longer at the resort.</p>
+              <div class="checkin-opts one">
+                <div class="checkin-opt">
+                  <div class="co-info"><div class="co-head"><img class="co-ico" src="../../assets-bbw/ico-late.svg" alt="" aria-hidden="true"><b>Check out at 12pm</b></div><span class="row-sub">An extra 2 hours kip.</span></div>
+                  <div class="cbar sm"><div class="co-priceblock"><span class="co-price">&pound;25.00</span><span class="co-pp">&pound;4.17 per person</span></div><button type="button" class="btn-add" aria-pressed="false">Add to booking</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ SCOPE TAGS -->
+  <section class="g-sec" id="scope">
+    <h2>Scope tags</h2>
+    <p class="g-note">Answers "who does this price cover?" before the user has to ask. Three icon variants, and the label can be replaced by a live count without losing the icon. <b>Every priced extra needs one.</b></p>
+    <div class="g-pane">
+      <p style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+        <span class="scope-tag"><img class="st-ico" src="../../assets-bbw/pill-group.svg" alt="" aria-hidden="true">Whole booking</span>
+        <span class="scope-tag"><img class="st-ico" src="../../assets-bbw/pill-person.svg" alt="" aria-hidden="true">Per person</span>
+        <span class="scope-tag"><img class="st-ico" src="../../assets-bbw/pill-item.svg" alt="" aria-hidden="true">Per item</span>
+        <span class="scope-tag"><img class="st-ico" src="../../assets-bbw/pill-person.svg" alt="" aria-hidden="true">2 guests</span>
+        <span class="scope-tag"><img class="st-ico" src="../../assets-bbw/pill-item.svg" alt="" aria-hidden="true">4 towels</span>
+        <span class="scope-tag"><img class="st-ico" src="../../assets-bbw/pill-person.svg" alt="" aria-hidden="true">6 covers</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================ UNIT -->
+  <section class="g-sec" id="unit">
+    <h2>Party block</h2>
+    <p class="g-note">Multi-party wrapper. BBW leads with total guests then tracks placement, so the party head carries the label and the guest breakdown. "Same as Party 1" is a shortcut, and stays reversible via Customise.</p>
+    <div class="g-cols">
+      <div class="g-pane" data-device="desktop">
+        <h3>Desktop</h3>
+        <div class="g-state">Own selection</div>
+        <div class="unit-block">
+          <div class="unit-head"><b>Party 2</b><span class="unit-sub">2 guests &bull; Wave Hotel</span><button class="btn ghost sm">Same as Party 1</button></div>
+          <p class="g-note" style="margin:0;">Dining grid renders here.</p>
+        </div>
+        <div class="g-state">Mirrored</div>
+        <div class="unit-block">
+          <div class="unit-head"><b>Party 3</b><span class="unit-sub">4 guests &bull; Comfort Room</span></div>
+          <div class="samerow"><div><span class="same-label">Same as Party 1</span><span class="same-plan">Premium</span></div><div class="same-right"><span class="same-price">&pound;528.00</span><button class="btn ghost sm">Customise for this party</button></div></div>
+        </div>
+      </div>
+      <div class="g-pane">
+        <h3>Mobile 390</h3>
+        <div class="frame-outer" data-device="mobile" style="display:block;max-width:358px;">
+          <div class="unit-block">
+            <div class="unit-head"><b>Party 2</b><span class="unit-sub">2 guests &bull; Wave Hotel</span><button class="btn ghost sm">Same as Party 1</button></div>
+          </div>
+          <div style="height:12px;"></div>
+          <div class="unit-block">
+            <div class="unit-head"><b>Party 3</b><span class="unit-sub">4 guests</span></div>
+            <div class="samerow"><div><span class="same-label">Same as Party 1</span><span class="same-plan">Premium</span></div><div class="same-right"><span class="same-price">&pound;528.00</span><button class="btn ghost sm">Customise</button></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ FOOTER -->
+  <section class="g-sec" id="footer">
+    <h2>Footer + total</h2>
+    <p class="g-note">The yellow <b>total price tab</b> is the anchor. The instruction line changes with state to nudge the next action, and the chase pop docks to the left of the bar so it never collides with the tab.</p>
+    <div class="g-cols">
+      <div class="g-pane" data-device="desktop">
+        <h3>Desktop</h3>
+        <div class="footer" style="position:static;">
+          <div class="fprice" aria-live="polite"><span class="fprice-label">Total price</span><b>&pound;462.00</b></div>
+          <div class="fbar">
+            <p class="finstruct">Don't miss the extras below, like the VIP Pass and spa.</p>
+            <div class="factions"><button class="savebtn">Save quote</button><button class="continue">Jump to extras</button></div>
+          </div>
+        </div>
+        <div class="g-state">Nothing added yet</div>
+        <div class="footer" style="position:static;">
+          <div class="fprice" aria-live="polite"><span class="fprice-label">Total price</span><b>&pound;0.00</b></div>
+          <div class="fbar">
+            <p class="finstruct">Pick a dining plan to get started.</p>
+            <div class="factions"><button class="savebtn">Save quote</button><button class="continue">Jump to extras</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="g-pane">
+        <h3>Mobile 390</h3>
+        <div class="frame-outer" data-device="mobile" style="display:block;max-width:358px;">
+          <div class="footer" style="position:static;">
+            <div class="fprice" aria-live="polite"><span class="fprice-label">Total price</span><b>&pound;462.00</b></div>
+            <div class="fbar">
+              <p class="finstruct">Don't miss the extras below.</p>
+              <div class="factions"><button class="savebtn">Save quote</button><button class="continue">Jump to extras</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
