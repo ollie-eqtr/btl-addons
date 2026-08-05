@@ -9,6 +9,8 @@
     { "source": "/phase3-bbw-variant", "destination": "/bbw-unit-picker-lofi" },
     { "source": "/bbw-homepage", "destination": "/external-prototypes/bbw-homepage-prototype" },
     { "source": "/weekender", "destination": "/external-prototypes/90s-weekender-prototype" },
-    { "source": "/weekender-lineup", "destination": "/external-prototypes/90s-weekender-prototype-lineup-cta" }
+    { "source": "/weekender-lineup", "destination": "/external-prototypes/90s-weekender-prototype-lineup-cta" },
+    { "source": "/brand-kit-bbw", "destination": "/brand-kits/bbw/gallery" },
+    { "source": "/brand-kit-family", "destination": "/brand-kits/family/gallery" }
   ]
 }
