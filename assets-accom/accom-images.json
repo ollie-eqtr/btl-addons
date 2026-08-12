@@ -1,0 +1,948 @@
+{
+  "generated": "2026-08-06T14:17:16.572Z",
+  "source": "butlins.com accommodation pages (Magnolia DAM)",
+  "mode": "all gallery images",
+  "rendition": "focalpoint/landscape4-3/1000x",
+  "variations": [
+    "focalpoint/landscape21-9",
+    "focalpoint/landscape16-9",
+    "focalpoint/landscape4-3",
+    "focalpoint/square"
+  ],
+  "urlPattern": "https://prod.butlins-prod.magnolia-platform.com/.imaging/<variation>/<width>x/dam/<assetId><damPath>",
+  "originalPattern": "https://prod.butlins-prod.magnolia-platform.com/dam<damPath>",
+  "resorts": {
+    "minehead": {
+      "bayside-apartments": {
+        "name": "Minehead Bayside Apartments",
+        "bedConfiguration": "<p>One bedroom:</p>\n\n<ul>\n\t<li>Double bed</li>\n</ul>\n\n<p>Two bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n\t<li>Sofa bed</li>\n</ul>\n",
+        "summary": "For style and luxury, choose our Bayside Apartments. Step through sliding French doors onto your own balcony and soak up glorious views of the sea and Minehead's sandy beach, morning and evening.",
+        "image": {
+          "file": "assets-accom/minehead/bayside-apartments/01-16008.jpg",
+          "assetId": "jcr:d4420a39-6da6-4fd8-8260-291b7829efad",
+          "damPath": "/Accommodation/Minehead/Bayside_Apartments/16008.jpg",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:d4420a39-6da6-4fd8-8260-291b7829efad/Accommodation/Minehead/Bayside_Apartments/16008.jpg"
+        },
+        "galleryCount": 8,
+        "images": [
+          {
+            "file": "assets-accom/minehead/bayside-apartments/01-16008.jpg",
+            "assetId": "jcr:d4420a39-6da6-4fd8-8260-291b7829efad",
+            "damPath": "/Accommodation/Minehead/Bayside_Apartments/16008.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:d4420a39-6da6-4fd8-8260-291b7829efad/Accommodation/Minehead/Bayside_Apartments/16008.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/bayside-apartments/02-16009.jpg",
+            "assetId": "jcr:b077d1c4-d44f-4df0-9f2d-38205ba64ec5",
+            "damPath": "/Accommodation/Minehead/Bayside_Apartments/16009.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:b077d1c4-d44f-4df0-9f2d-38205ba64ec5/Accommodation/Minehead/Bayside_Apartments/16009.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/bayside-apartments/03-16006.jpg",
+            "assetId": "jcr:b41ec11a-c31c-4fd4-b299-1a7087837e14",
+            "damPath": "/Accommodation/Minehead/Bayside_Apartments/16006.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:b41ec11a-c31c-4fd4-b299-1a7087837e14/Accommodation/Minehead/Bayside_Apartments/16006.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/bayside-apartments/04-16011.jpg",
+            "assetId": "jcr:b255b9dd-2e8b-4361-a657-85ff2b304a54",
+            "damPath": "/Accommodation/Minehead/Bayside_Apartments/16011.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:b255b9dd-2e8b-4361-a657-85ff2b304a54/Accommodation/Minehead/Bayside_Apartments/16011.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/bayside-apartments/05-16010.jpg",
+            "assetId": "jcr:c08e2b53-14df-4a81-8306-1c0bf90f1339",
+            "damPath": "/Accommodation/Minehead/Bayside_Apartments/16010.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:c08e2b53-14df-4a81-8306-1c0bf90f1339/Accommodation/Minehead/Bayside_Apartments/16010.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/bayside-apartments/06-16012.jpg",
+            "assetId": "jcr:f85eaa57-aeaa-4e8a-a284-9e24fd707000",
+            "damPath": "/Accommodation/Minehead/Bayside_Apartments/16012.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:f85eaa57-aeaa-4e8a-a284-9e24fd707000/Accommodation/Minehead/Bayside_Apartments/16012.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/bayside-apartments/07-16013.jpg",
+            "assetId": "jcr:cf9988f8-7ba3-41bf-8c5a-1e583fb7bacc",
+            "damPath": "/Accommodation/Minehead/Bayside_Apartments/16013.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:cf9988f8-7ba3-41bf-8c5a-1e583fb7bacc/Accommodation/Minehead/Bayside_Apartments/16013.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/bayside-apartments/08-16007.jpg",
+            "assetId": "jcr:fe6ca546-70f4-4e02-bce0-b1daf14ab6ca",
+            "damPath": "/Accommodation/Minehead/Bayside_Apartments/16007.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:fe6ca546-70f4-4e02-bce0-b1daf14ab6ca/Accommodation/Minehead/Bayside_Apartments/16007.jpg"
+          }
+        ]
+      },
+      "comfort-apartments": {
+        "name": "Minehead Comfort Apartments",
+        "bedConfiguration": "<p>One bedroom:</p>\n\n<ul>\n\t<li>Double bed</li>\n</ul>\n\n<p>Two bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n\n<p>Three bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n",
+        "summary": "Introducing our Comfort Apartments, your home away from home. Located in our Oyster Bay, Atlantic Bay and Holnicote villages, they provide a homely, open-plan space for your families.",
+        "image": {
+          "file": "assets-accom/minehead/comfort-apartments/01-19188.jpg0.jpg",
+          "assetId": "jcr:23caf0f4-7ae0-433c-b0b7-64394ec946c9",
+          "damPath": "/Accommodation/Minehead/Comfort_Apartments/19188.jpg0",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:23caf0f4-7ae0-433c-b0b7-64394ec946c9/Accommodation/Minehead/Comfort_Apartments/19188.jpg0"
+        },
+        "galleryCount": 16,
+        "images": [
+          {
+            "file": "assets-accom/minehead/comfort-apartments/01-19188.jpg0.jpg",
+            "assetId": "jcr:23caf0f4-7ae0-433c-b0b7-64394ec946c9",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/19188.jpg0",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:23caf0f4-7ae0-433c-b0b7-64394ec946c9/Accommodation/Minehead/Comfort_Apartments/19188.jpg0"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-apartments/02-15998.jpg",
+            "assetId": "jcr:7a3e6018-75b4-42d5-8a2d-c993b42e1048",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/15998.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:7a3e6018-75b4-42d5-8a2d-c993b42e1048/Accommodation/Minehead/Comfort_Apartments/15998.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-apartments/03-15997.jpg",
+            "assetId": "jcr:f499e814-0b53-495e-8a8e-194c3bfc8e6c",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/15997.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:f499e814-0b53-495e-8a8e-194c3bfc8e6c/Accommodation/Minehead/Comfort_Apartments/15997.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-apartments/04-15664.jpg",
+            "assetId": "jcr:969d2e79-b7fd-45b1-b9e7-22108e7a60f0",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/15664.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:969d2e79-b7fd-45b1-b9e7-22108e7a60f0/Accommodation/Minehead/Comfort_Apartments/15664.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-apartments/05-15984.jpg",
+            "assetId": "jcr:387e11e8-014c-4374-a944-c9e38d71885c",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/15984.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:387e11e8-014c-4374-a944-c9e38d71885c/Accommodation/Minehead/Comfort_Apartments/15984.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-apartments/06-15985.jpg",
+            "assetId": "jcr:af694343-b80c-416b-81a5-9cfcb78e7fbf",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/15985.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:af694343-b80c-416b-81a5-9cfcb78e7fbf/Accommodation/Minehead/Comfort_Apartments/15985.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-apartments/07-15986.jpg",
+            "assetId": "jcr:bbb505c9-2653-4825-b1aa-5870c0ad948e",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/15986.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:bbb505c9-2653-4825-b1aa-5870c0ad948e/Accommodation/Minehead/Comfort_Apartments/15986.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-apartments/08-15987.jpg",
+            "assetId": "jcr:9729ab4b-8881-4ba7-ac5f-bc0beb489f80",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/15987.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:9729ab4b-8881-4ba7-ac5f-bc0beb489f80/Accommodation/Minehead/Comfort_Apartments/15987.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-apartments/09-15988.jpg",
+            "assetId": "jcr:6384c391-c465-416d-bed4-5fc91b030830",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/15988.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:6384c391-c465-416d-bed4-5fc91b030830/Accommodation/Minehead/Comfort_Apartments/15988.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-apartments/10-15996.jpg",
+            "assetId": "jcr:6a04164a-892f-4d8e-9a77-b639d69f8041",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/Duplicates-need-deleting/15996.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:6a04164a-892f-4d8e-9a77-b639d69f8041/Accommodation/Minehead/Comfort_Apartments/Duplicates-need-deleting/15996.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-apartments/11-15997.jpg",
+            "assetId": "jcr:96f85353-8d88-4974-959d-2b45285f5523",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/Duplicates-need-deleting/15997.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:96f85353-8d88-4974-959d-2b45285f5523/Accommodation/Minehead/Comfort_Apartments/Duplicates-need-deleting/15997.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-apartments/12-15998.jpg",
+            "assetId": "jcr:8c8de11d-aa1e-4ff3-8186-35ea44c72d33",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/Duplicates-need-deleting/15998.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:8c8de11d-aa1e-4ff3-8186-35ea44c72d33/Accommodation/Minehead/Comfort_Apartments/Duplicates-need-deleting/15998.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-apartments/13-15999.jpg",
+            "assetId": "jcr:e7fc5463-1332-49df-b422-3f7a985980cf",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/Duplicates-need-deleting/15999.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:e7fc5463-1332-49df-b422-3f7a985980cf/Accommodation/Minehead/Comfort_Apartments/Duplicates-need-deleting/15999.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-apartments/14-16072.jpg",
+            "assetId": "jcr:a3cad886-067b-4a27-aba2-3e51b769059d",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/Duplicates-need-deleting/16072.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:a3cad886-067b-4a27-aba2-3e51b769059d/Accommodation/Minehead/Comfort_Apartments/Duplicates-need-deleting/16072.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-apartments/15-21261.jpg",
+            "assetId": "jcr:da2cdbc2-4e05-43d4-916d-22da108c1f61",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/Duplicates-need-deleting/21261.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:da2cdbc2-4e05-43d4-916d-22da108c1f61/Accommodation/Minehead/Comfort_Apartments/Duplicates-need-deleting/21261.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-apartments/16-21315.jpg",
+            "assetId": "jcr:45227a6f-9d83-4db0-8784-ca6b18f7acd9",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/Duplicates-need-deleting/21315.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:45227a6f-9d83-4db0-8784-ca6b18f7acd9/Accommodation/Minehead/Comfort_Apartments/Duplicates-need-deleting/21315.jpg"
+          }
+        ]
+      },
+      "comfort-caravans": {
+        "name": "Comfort 2 Bedroom Caravan with Veranda - TC8V",
+        "bedConfiguration": "<ul>\n\t<li>1 double</li>\n\t<li>2 x twin</li>\n\t<li>1 sofabed</li>\n</ul>\n\n<p>&nbsp;</p>\n",
+        "summary": "An ideal choice if you are looking for an affordable option, offering space and a comfortable stay for larger groups.",
+        "image": {
+          "file": "assets-accom/minehead/comfort-caravans/01-silver-caravan-hol-home.jpg",
+          "assetId": "jcr:fdc16c92-2fe1-4455-9f62-d932108fdf88",
+          "damPath": "/Accommodation/Caravans/Silver-Caravans/silver-caravan-hol-home.png",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:fdc16c92-2fe1-4455-9f62-d932108fdf88/Accommodation/Caravans/Silver-Caravans/silver-caravan-hol-home.png"
+        },
+        "galleryCount": 7,
+        "images": [
+          {
+            "file": "assets-accom/minehead/comfort-caravans/01-silver-caravan-hol-home.jpg",
+            "assetId": "jcr:fdc16c92-2fe1-4455-9f62-d932108fdf88",
+            "damPath": "/Accommodation/Caravans/Silver-Caravans/silver-caravan-hol-home.png",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:fdc16c92-2fe1-4455-9f62-d932108fdf88/Accommodation/Caravans/Silver-Caravans/silver-caravan-hol-home.png"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-caravans/02-Silver-Caravan-1.jpg",
+            "assetId": "jcr:8e5d2e89-8bcc-44b4-a3d4-e49d63bb40eb",
+            "damPath": "/Accommodation/Caravans/Silver-Caravans/Silver-Caravan-1.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:8e5d2e89-8bcc-44b4-a3d4-e49d63bb40eb/Accommodation/Caravans/Silver-Caravans/Silver-Caravan-1.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-caravans/03-Silver-Caravan-5.jpg",
+            "assetId": "jcr:33147092-3196-4e49-82d6-9edd04883b94",
+            "damPath": "/Accommodation/Caravans/Silver-Caravans/Silver-Caravan-5.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:33147092-3196-4e49-82d6-9edd04883b94/Accommodation/Caravans/Silver-Caravans/Silver-Caravan-5.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-caravans/04-Silver-Caravan-2.jpg",
+            "assetId": "jcr:b4d71832-2a06-42d1-91ac-69c988fbf4cd",
+            "damPath": "/Accommodation/Caravans/Silver-Caravans/Silver-Caravan-2.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:b4d71832-2a06-42d1-91ac-69c988fbf4cd/Accommodation/Caravans/Silver-Caravans/Silver-Caravan-2.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-caravans/05-Silver-Caravan-3.jpg",
+            "assetId": "jcr:3538ed43-2181-4339-8acc-5b621a5a48b9",
+            "damPath": "/Accommodation/Caravans/Silver-Caravans/Silver-Caravan-3.png",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:3538ed43-2181-4339-8acc-5b621a5a48b9/Accommodation/Caravans/Silver-Caravans/Silver-Caravan-3.png"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-caravans/06-Silver-Caravan-6.jpg",
+            "assetId": "jcr:a8115e30-81a1-4fd9-a6ff-60d805997026",
+            "damPath": "/Accommodation/Caravans/Silver-Caravans/Silver-Caravan-6.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:a8115e30-81a1-4fd9-a6ff-60d805997026/Accommodation/Caravans/Silver-Caravans/Silver-Caravan-6.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-caravans/07-Image-for-illustrative-purposes-only.jpg",
+            "assetId": "jcr:48f1db5c-9a91-44d1-907f-2db3ed1d66b3",
+            "damPath": "/Accommodation/Caravans/Image-for-illustrative-purposes-only.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:48f1db5c-9a91-44d1-907f-2db3ed1d66b3/Accommodation/Caravans/Image-for-illustrative-purposes-only.jpg"
+          }
+        ]
+      },
+      "comfort-plus-apartments": {
+        "name": "Minehead Comfort Plus Apartments",
+        "bedConfiguration": "<p>Two bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n\n<p>Three bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n",
+        "summary": "Located in our Plantation Quay and Holnicote villages, our Comfort Plus Apartments are modern and stylish with a focus on comfort.",
+        "image": {
+          "file": "assets-accom/minehead/comfort-plus-apartments/01-18812.jpg",
+          "assetId": "jcr:7221af44-5c09-4435-8cbc-f3792dfb769d",
+          "damPath": "/Accommodation/Minehead/Seaside_Apartments/18812.jpg",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:7221af44-5c09-4435-8cbc-f3792dfb769d/Accommodation/Minehead/Seaside_Apartments/18812.jpg"
+        },
+        "galleryCount": 13,
+        "images": [
+          {
+            "file": "assets-accom/minehead/comfort-plus-apartments/01-18812.jpg",
+            "assetId": "jcr:7221af44-5c09-4435-8cbc-f3792dfb769d",
+            "damPath": "/Accommodation/Minehead/Seaside_Apartments/18812.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:7221af44-5c09-4435-8cbc-f3792dfb769d/Accommodation/Minehead/Seaside_Apartments/18812.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-plus-apartments/02-18813.jpg",
+            "assetId": "jcr:c328184f-9175-4abe-a5d5-497a3d7698b6",
+            "damPath": "/Accommodation/Minehead/Seaside_Apartments/18813.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:c328184f-9175-4abe-a5d5-497a3d7698b6/Accommodation/Minehead/Seaside_Apartments/18813.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-plus-apartments/03-18814.jpg",
+            "assetId": "jcr:34ac52a5-825a-447b-b67f-ce9209e80ccc",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/18814.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:34ac52a5-825a-447b-b67f-ce9209e80ccc/Accommodation/Minehead/Comfort_Plus_Apartments/18814.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-plus-apartments/04-18818.jpg",
+            "assetId": "jcr:37569371-47fa-4143-a10e-202a6ff54866",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/18818.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:37569371-47fa-4143-a10e-202a6ff54866/Accommodation/Minehead/Comfort_Plus_Apartments/18818.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-plus-apartments/05-18811.jpg",
+            "assetId": "jcr:0cefa818-0b22-47a4-8400-1de0ec5ccd7c",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/18811.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:0cefa818-0b22-47a4-8400-1de0ec5ccd7c/Accommodation/Minehead/Comfort_Plus_Apartments/18811.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-plus-apartments/06-21210.jpg",
+            "assetId": "jcr:b23f4f94-ae0d-4c98-ac26-ddbae3c18cd5",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/21210.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:b23f4f94-ae0d-4c98-ac26-ddbae3c18cd5/Accommodation/Minehead/Comfort_Plus_Apartments/21210.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-plus-apartments/07-21205.jpg",
+            "assetId": "jcr:cf92c6b5-b7ae-43c4-b4a0-0541ad688038",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/21205.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:cf92c6b5-b7ae-43c4-b4a0-0541ad688038/Accommodation/Minehead/Comfort_Plus_Apartments/21205.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-plus-apartments/08-21206.jpg",
+            "assetId": "jcr:b45b847e-d1d3-4fda-82b3-e0edb0a71d80",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/21206.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:b45b847e-d1d3-4fda-82b3-e0edb0a71d80/Accommodation/Minehead/Comfort_Plus_Apartments/21206.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-plus-apartments/09-21208.jpg",
+            "assetId": "jcr:3ff9f775-081c-4465-a2ab-467896e34403",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/21208.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:3ff9f775-081c-4465-a2ab-467896e34403/Accommodation/Minehead/Comfort_Plus_Apartments/21208.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-plus-apartments/10-21211.jpg",
+            "assetId": "jcr:59ac8e94-372f-4bf1-a33d-7fa7aa6c9dd0",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/21211.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:59ac8e94-372f-4bf1-a33d-7fa7aa6c9dd0/Accommodation/Minehead/Comfort_Plus_Apartments/21211.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-plus-apartments/11-21300.jpg",
+            "assetId": "jcr:6d554954-1bed-4f45-b2fb-3ad0e86122ba",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/21300.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:6d554954-1bed-4f45-b2fb-3ad0e86122ba/Accommodation/Minehead/Comfort_Plus_Apartments/21300.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-plus-apartments/12-21316.jpg",
+            "assetId": "jcr:1d06239d-e910-43ef-8628-07b2ada8f245",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/21316.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:1d06239d-e910-43ef-8628-07b2ada8f245/Accommodation/Minehead/Comfort_Plus_Apartments/21316.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-plus-apartments/13-21318.jpg",
+            "assetId": "jcr:6fa8a380-a82c-4caf-9f78-ea818d8f7cb9",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/21318.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:6fa8a380-a82c-4caf-9f78-ea818d8f7cb9/Accommodation/Minehead/Comfort_Plus_Apartments/21318.jpg"
+          }
+        ]
+      },
+      "comfort-plus-caravans": {
+        "name": "Comfort Plus 3 Bedroom Caravan - TCP8",
+        "bedConfiguration": "<ul><li>1 Double</li><li>2x Twin</li><li>1 Sofabed</li></ul>",
+        "summary": "An ideal choice if you are looking for a value for money option, as they are comfortable and an excellent base for a Butlins Holiday.",
+        "image": {
+          "file": "assets-accom/minehead/comfort-plus-caravans/01-Cowarth---Gold.jpg",
+          "assetId": "jcr:9d89c9b3-0a0e-4c8f-87dc-5482d9439a11",
+          "damPath": "/Accommodation/Caravans/Gold-Caravans/Cowarth---Gold.jpg",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:9d89c9b3-0a0e-4c8f-87dc-5482d9439a11/Accommodation/Caravans/Gold-Caravans/Cowarth---Gold.jpg"
+        },
+        "galleryCount": 2,
+        "images": [
+          {
+            "file": "assets-accom/minehead/comfort-plus-caravans/01-Cowarth---Gold.jpg",
+            "assetId": "jcr:9d89c9b3-0a0e-4c8f-87dc-5482d9439a11",
+            "damPath": "/Accommodation/Caravans/Gold-Caravans/Cowarth---Gold.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:9d89c9b3-0a0e-4c8f-87dc-5482d9439a11/Accommodation/Caravans/Gold-Caravans/Cowarth---Gold.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-plus-caravans/02-Image-for-illustrative-purposes-only.jpg",
+            "assetId": "jcr:48f1db5c-9a91-44d1-907f-2db3ed1d66b3",
+            "damPath": "/Accommodation/Caravans/Image-for-illustrative-purposes-only.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:48f1db5c-9a91-44d1-907f-2db3ed1d66b3/Accommodation/Caravans/Image-for-illustrative-purposes-only.jpg"
+          }
+        ]
+      },
+      "comfort-plus-rooms": {
+        "name": "Minehead Comfort Plus Rooms",
+        "bedConfiguration": "<p>One bedroom:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n\n<p>Two bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n\n<p>Three bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n",
+        "summary": "If a room’s not quite enough but a kitchen’s too much, our Comfort Plus Rooms are the perfect in-between with extra space for relaxing.",
+        "image": {
+          "file": "assets-accom/minehead/comfort-plus-rooms/01-11350-Deluxe-Suite-MH-Twin.jpg",
+          "assetId": "jcr:d3828468-5a4b-4789-8680-2e022544029e",
+          "damPath": "/Accommodation/Minehead/Comfort-Plus-Rooms/11350-Deluxe-Suite-MH-Twin.jpg",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:d3828468-5a4b-4789-8680-2e022544029e/Accommodation/Minehead/Comfort-Plus-Rooms/11350-Deluxe-Suite-MH-Twin.jpg"
+        },
+        "galleryCount": 4,
+        "images": [
+          {
+            "file": "assets-accom/minehead/comfort-plus-rooms/01-11350-Deluxe-Suite-MH-Twin.jpg",
+            "assetId": "jcr:d3828468-5a4b-4789-8680-2e022544029e",
+            "damPath": "/Accommodation/Minehead/Comfort-Plus-Rooms/11350-Deluxe-Suite-MH-Twin.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:d3828468-5a4b-4789-8680-2e022544029e/Accommodation/Minehead/Comfort-Plus-Rooms/11350-Deluxe-Suite-MH-Twin.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-plus-rooms/02-12105-Deluxe-suite-lounge-MH.jpg",
+            "assetId": "jcr:524899ac-7c21-44de-9990-bf47d571b24f",
+            "damPath": "/Accommodation/Minehead/Comfort-Plus-Rooms/12105-Deluxe-suite-lounge-MH.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:524899ac-7c21-44de-9990-bf47d571b24f/Accommodation/Minehead/Comfort-Plus-Rooms/12105-Deluxe-suite-lounge-MH.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-plus-rooms/03-12103-Deluxe-Suite-MH-Bathroom.jpg",
+            "assetId": "jcr:58c4a5c2-4e7e-46d9-9136-324ac1dc329f",
+            "damPath": "/Accommodation/Minehead/Comfort-Plus-Rooms/12103-Deluxe-Suite-MH-Bathroom.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:58c4a5c2-4e7e-46d9-9136-324ac1dc329f/Accommodation/Minehead/Comfort-Plus-Rooms/12103-Deluxe-Suite-MH-Bathroom.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-plus-rooms/04--16000--Minehead-Deluxe-Suite-Surfers-Point-exterior.jpg",
+            "assetId": "jcr:6cae220a-7083-47ac-b95d-9ef47defd89c",
+            "damPath": "/Accommodation/Minehead/Comfort-Plus-Rooms/-16000--Minehead-Deluxe-Suite-Surfers-Point-exterior.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:6cae220a-7083-47ac-b95d-9ef47defd89c/Accommodation/Minehead/Comfort-Plus-Rooms/-16000--Minehead-Deluxe-Suite-Surfers-Point-exterior.jpg"
+          }
+        ]
+      },
+      "comfort-rooms": {
+        "name": "Minehead Comfort Rooms",
+        "bedConfiguration": "<p>Two bedrooms:</p><ul><li>Double bed</li><li>Twin beds</li></ul><p>Three bedrooms:</p><ul><li>Double bed</li><li>Twin beds</li><li>Single bed or twin beds</li></ul><p>&nbsp;</p>",
+        "summary": "Introducing our Comfort Rooms, located in our Ocean Point and Pacific Wharf villages - your new home away from home.",
+        "image": {
+          "file": "assets-accom/minehead/comfort-rooms/01-19189.jpg",
+          "assetId": "jcr:e5bb4564-9fb5-4eb7-9ba7-9fb1a2beb55a",
+          "damPath": "/Accommodation/Minehead/Comfort_Rooms/19189.jpg",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:e5bb4564-9fb5-4eb7-9ba7-9fb1a2beb55a/Accommodation/Minehead/Comfort_Rooms/19189.jpg"
+        },
+        "galleryCount": 5,
+        "images": [
+          {
+            "file": "assets-accom/minehead/comfort-rooms/01-19189.jpg",
+            "assetId": "jcr:e5bb4564-9fb5-4eb7-9ba7-9fb1a2beb55a",
+            "damPath": "/Accommodation/Minehead/Comfort_Rooms/19189.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:e5bb4564-9fb5-4eb7-9ba7-9fb1a2beb55a/Accommodation/Minehead/Comfort_Rooms/19189.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-rooms/02-19191.jpg",
+            "assetId": "jcr:dd487d21-446d-4ec0-928b-c9b62edd8e4f",
+            "damPath": "/Accommodation/Minehead/Comfort_Rooms/19191.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:dd487d21-446d-4ec0-928b-c9b62edd8e4f/Accommodation/Minehead/Comfort_Rooms/19191.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-rooms/03-19192.jpg",
+            "assetId": "jcr:31fd4f8f-5c51-43a4-bf6f-16eae13544c0",
+            "damPath": "/Accommodation/Minehead/Comfort_Rooms/19192.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:31fd4f8f-5c51-43a4-bf6f-16eae13544c0/Accommodation/Minehead/Comfort_Rooms/19192.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-rooms/04-19195.jpg",
+            "assetId": "jcr:1aa17dd8-bb5c-4fbd-8e35-c44d64777615",
+            "damPath": "/Accommodation/Minehead/Comfort_Rooms/19195.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:1aa17dd8-bb5c-4fbd-8e35-c44d64777615/Accommodation/Minehead/Comfort_Rooms/19195.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/comfort-rooms/05-19201.jpg",
+            "assetId": "jcr:ecd4af75-f88b-4da9-9c93-030a6da0a08a",
+            "damPath": "/Accommodation/Minehead/Comfort_Rooms/19201.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:ecd4af75-f88b-4da9-9c93-030a6da0a08a/Accommodation/Minehead/Comfort_Rooms/19201.jpg"
+          }
+        ]
+      },
+      "deluxe-suites": {
+        "name": "Minehead Comfort Plus Rooms",
+        "bedConfiguration": "<p>One bedroom:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n\n<p>Two bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n\n<p>Three bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n",
+        "summary": "If a room’s not quite enough but a kitchen’s too much, our Comfort Plus Rooms are the perfect in-between with extra space for relaxing.",
+        "image": {
+          "file": "assets-accom/minehead/deluxe-suites/01-11350-Deluxe-Suite-MH-Twin.jpg",
+          "assetId": "jcr:d3828468-5a4b-4789-8680-2e022544029e",
+          "damPath": "/Accommodation/Minehead/Comfort-Plus-Rooms/11350-Deluxe-Suite-MH-Twin.jpg",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:d3828468-5a4b-4789-8680-2e022544029e/Accommodation/Minehead/Comfort-Plus-Rooms/11350-Deluxe-Suite-MH-Twin.jpg"
+        },
+        "galleryCount": 4,
+        "images": [
+          {
+            "file": "assets-accom/minehead/deluxe-suites/01-11350-Deluxe-Suite-MH-Twin.jpg",
+            "assetId": "jcr:d3828468-5a4b-4789-8680-2e022544029e",
+            "damPath": "/Accommodation/Minehead/Comfort-Plus-Rooms/11350-Deluxe-Suite-MH-Twin.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:d3828468-5a4b-4789-8680-2e022544029e/Accommodation/Minehead/Comfort-Plus-Rooms/11350-Deluxe-Suite-MH-Twin.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/deluxe-suites/02-12105-Deluxe-suite-lounge-MH.jpg",
+            "assetId": "jcr:524899ac-7c21-44de-9990-bf47d571b24f",
+            "damPath": "/Accommodation/Minehead/Comfort-Plus-Rooms/12105-Deluxe-suite-lounge-MH.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:524899ac-7c21-44de-9990-bf47d571b24f/Accommodation/Minehead/Comfort-Plus-Rooms/12105-Deluxe-suite-lounge-MH.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/deluxe-suites/03-12103-Deluxe-Suite-MH-Bathroom.jpg",
+            "assetId": "jcr:58c4a5c2-4e7e-46d9-9136-324ac1dc329f",
+            "damPath": "/Accommodation/Minehead/Comfort-Plus-Rooms/12103-Deluxe-Suite-MH-Bathroom.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:58c4a5c2-4e7e-46d9-9136-324ac1dc329f/Accommodation/Minehead/Comfort-Plus-Rooms/12103-Deluxe-Suite-MH-Bathroom.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/deluxe-suites/04--16000--Minehead-Deluxe-Suite-Surfers-Point-exterior.jpg",
+            "assetId": "jcr:6cae220a-7083-47ac-b95d-9ef47defd89c",
+            "damPath": "/Accommodation/Minehead/Comfort-Plus-Rooms/-16000--Minehead-Deluxe-Suite-Surfers-Point-exterior.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:6cae220a-7083-47ac-b95d-9ef47defd89c/Accommodation/Minehead/Comfort-Plus-Rooms/-16000--Minehead-Deluxe-Suite-Surfers-Point-exterior.jpg"
+          }
+        ]
+      },
+      "gold-apartments": {
+        "name": "Minehead Comfort Plus Apartments",
+        "bedConfiguration": "<p>Two bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n\n<p>Three bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n",
+        "summary": "Located in our Plantation Quay and Holnicote villages, our Comfort Plus Apartments are modern and stylish with a focus on comfort.",
+        "image": {
+          "file": "assets-accom/minehead/gold-apartments/01-18812.jpg",
+          "assetId": "jcr:7221af44-5c09-4435-8cbc-f3792dfb769d",
+          "damPath": "/Accommodation/Minehead/Seaside_Apartments/18812.jpg",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:7221af44-5c09-4435-8cbc-f3792dfb769d/Accommodation/Minehead/Seaside_Apartments/18812.jpg"
+        },
+        "galleryCount": 13,
+        "images": [
+          {
+            "file": "assets-accom/minehead/gold-apartments/01-18812.jpg",
+            "assetId": "jcr:7221af44-5c09-4435-8cbc-f3792dfb769d",
+            "damPath": "/Accommodation/Minehead/Seaside_Apartments/18812.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:7221af44-5c09-4435-8cbc-f3792dfb769d/Accommodation/Minehead/Seaside_Apartments/18812.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/gold-apartments/02-18813.jpg",
+            "assetId": "jcr:c328184f-9175-4abe-a5d5-497a3d7698b6",
+            "damPath": "/Accommodation/Minehead/Seaside_Apartments/18813.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:c328184f-9175-4abe-a5d5-497a3d7698b6/Accommodation/Minehead/Seaside_Apartments/18813.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/gold-apartments/03-18814.jpg",
+            "assetId": "jcr:34ac52a5-825a-447b-b67f-ce9209e80ccc",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/18814.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:34ac52a5-825a-447b-b67f-ce9209e80ccc/Accommodation/Minehead/Comfort_Plus_Apartments/18814.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/gold-apartments/04-18818.jpg",
+            "assetId": "jcr:37569371-47fa-4143-a10e-202a6ff54866",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/18818.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:37569371-47fa-4143-a10e-202a6ff54866/Accommodation/Minehead/Comfort_Plus_Apartments/18818.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/gold-apartments/05-18811.jpg",
+            "assetId": "jcr:0cefa818-0b22-47a4-8400-1de0ec5ccd7c",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/18811.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:0cefa818-0b22-47a4-8400-1de0ec5ccd7c/Accommodation/Minehead/Comfort_Plus_Apartments/18811.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/gold-apartments/06-21210.jpg",
+            "assetId": "jcr:b23f4f94-ae0d-4c98-ac26-ddbae3c18cd5",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/21210.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:b23f4f94-ae0d-4c98-ac26-ddbae3c18cd5/Accommodation/Minehead/Comfort_Plus_Apartments/21210.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/gold-apartments/07-21205.jpg",
+            "assetId": "jcr:cf92c6b5-b7ae-43c4-b4a0-0541ad688038",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/21205.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:cf92c6b5-b7ae-43c4-b4a0-0541ad688038/Accommodation/Minehead/Comfort_Plus_Apartments/21205.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/gold-apartments/08-21206.jpg",
+            "assetId": "jcr:b45b847e-d1d3-4fda-82b3-e0edb0a71d80",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/21206.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:b45b847e-d1d3-4fda-82b3-e0edb0a71d80/Accommodation/Minehead/Comfort_Plus_Apartments/21206.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/gold-apartments/09-21208.jpg",
+            "assetId": "jcr:3ff9f775-081c-4465-a2ab-467896e34403",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/21208.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:3ff9f775-081c-4465-a2ab-467896e34403/Accommodation/Minehead/Comfort_Plus_Apartments/21208.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/gold-apartments/10-21211.jpg",
+            "assetId": "jcr:59ac8e94-372f-4bf1-a33d-7fa7aa6c9dd0",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/21211.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:59ac8e94-372f-4bf1-a33d-7fa7aa6c9dd0/Accommodation/Minehead/Comfort_Plus_Apartments/21211.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/gold-apartments/11-21300.jpg",
+            "assetId": "jcr:6d554954-1bed-4f45-b2fb-3ad0e86122ba",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/21300.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:6d554954-1bed-4f45-b2fb-3ad0e86122ba/Accommodation/Minehead/Comfort_Plus_Apartments/21300.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/gold-apartments/12-21316.jpg",
+            "assetId": "jcr:1d06239d-e910-43ef-8628-07b2ada8f245",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/21316.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:1d06239d-e910-43ef-8628-07b2ada8f245/Accommodation/Minehead/Comfort_Plus_Apartments/21316.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/gold-apartments/13-21318.jpg",
+            "assetId": "jcr:6fa8a380-a82c-4caf-9f78-ea818d8f7cb9",
+            "damPath": "/Accommodation/Minehead/Comfort_Plus_Apartments/21318.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:6fa8a380-a82c-4caf-9f78-ea818d8f7cb9/Accommodation/Minehead/Comfort_Plus_Apartments/21318.jpg"
+          }
+        ]
+      },
+      "premium-caravans": {
+        "name": "Premium 3 Bedroom Caravan - TP8",
+        "bedConfiguration": "<ul>\n\t<li>1 Double</li>\n\t<li>2x Twin</li>\n\t<li>1 Sofabed</li>\n</ul>\n",
+        "summary": "An ideal choice if you are looking for an affordable option, offering space and a comfortable stay for larger groups.",
+        "image": {
+          "file": "assets-accom/minehead/premium-caravans/01-The-Wimbledon---Platinum.jpg",
+          "assetId": "jcr:95778092-2886-49b9-bc19-a273dcef2571",
+          "damPath": "/Accommodation/Caravans/Platinum-Caravans/The-Wimbledon---Platinum.jpg",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:95778092-2886-49b9-bc19-a273dcef2571/Accommodation/Caravans/Platinum-Caravans/The-Wimbledon---Platinum.jpg"
+        },
+        "galleryCount": 3,
+        "images": [
+          {
+            "file": "assets-accom/minehead/premium-caravans/01-The-Wimbledon---Platinum.jpg",
+            "assetId": "jcr:95778092-2886-49b9-bc19-a273dcef2571",
+            "damPath": "/Accommodation/Caravans/Platinum-Caravans/The-Wimbledon---Platinum.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:95778092-2886-49b9-bc19-a273dcef2571/Accommodation/Caravans/Platinum-Caravans/The-Wimbledon---Platinum.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/premium-caravans/02-Bordeaux---Platinum.jpg",
+            "assetId": "jcr:9fdcace5-b7a4-453e-9b17-b3bc904fff6b",
+            "damPath": "/Accommodation/Caravans/Platinum-Caravans/Bordeaux---Platinum.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:9fdcace5-b7a4-453e-9b17-b3bc904fff6b/Accommodation/Caravans/Platinum-Caravans/Bordeaux---Platinum.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/premium-caravans/03-Image-for-illustrative-purposes-only.jpg",
+            "assetId": "jcr:48f1db5c-9a91-44d1-907f-2db3ed1d66b3",
+            "damPath": "/Accommodation/Caravans/Image-for-illustrative-purposes-only.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:48f1db5c-9a91-44d1-907f-2db3ed1d66b3/Accommodation/Caravans/Image-for-illustrative-purposes-only.jpg"
+          }
+        ]
+      },
+      "premium-plus-caravans": {
+        "name": "Premium Plus 3 Bedroom Caravan - TPL8",
+        "bedConfiguration": "<ul>\n\t<li>1 Double</li>\n\t<li>2x Twin</li>\n\t<li>1 Sofabed</li>\n</ul>\n",
+        "summary": "An ideal choice if you are looking for the more luxurious option as all the comforts of home are provided including bed linen and towels.",
+        "image": {
+          "file": "assets-accom/minehead/premium-plus-caravans/01-Superior---Platinum-Plus.jpg",
+          "assetId": "jcr:3b56987e-db6d-4ed1-b5d0-e58881c79d02",
+          "damPath": "/Accommodation/Caravans/Platinum-Plus-Caravans/Superior---Platinum-Plus.jpg",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:3b56987e-db6d-4ed1-b5d0-e58881c79d02/Accommodation/Caravans/Platinum-Plus-Caravans/Superior---Platinum-Plus.jpg"
+        },
+        "galleryCount": 2,
+        "images": [
+          {
+            "file": "assets-accom/minehead/premium-plus-caravans/01-Superior---Platinum-Plus.jpg",
+            "assetId": "jcr:3b56987e-db6d-4ed1-b5d0-e58881c79d02",
+            "damPath": "/Accommodation/Caravans/Platinum-Plus-Caravans/Superior---Platinum-Plus.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:3b56987e-db6d-4ed1-b5d0-e58881c79d02/Accommodation/Caravans/Platinum-Plus-Caravans/Superior---Platinum-Plus.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/premium-plus-caravans/02-Image-for-illustrative-purposes-only.jpg",
+            "assetId": "jcr:48f1db5c-9a91-44d1-907f-2db3ed1d66b3",
+            "damPath": "/Accommodation/Caravans/Image-for-illustrative-purposes-only.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:48f1db5c-9a91-44d1-907f-2db3ed1d66b3/Accommodation/Caravans/Image-for-illustrative-purposes-only.jpg"
+          }
+        ]
+      },
+      "seaside-lodges": {
+        "name": "Minehead Seaside Lodges",
+        "bedConfiguration": "<p>Three bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n",
+        "summary": "With everything you need to enjoy a break away, our detached Seaside Lodges are comfortable and clean, providing you with peace and quiet in a cosy home-from-home with an outdoor veranda to relax on, too.",
+        "image": {
+          "file": "assets-accom/minehead/seaside-lodges/01-15667.jpg",
+          "assetId": "jcr:d88479fc-815f-44fe-b466-840bb4cc8807",
+          "damPath": "/Accommodation/Minehead/Seaside_Lodges/15667.jpg",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:d88479fc-815f-44fe-b466-840bb4cc8807/Accommodation/Minehead/Seaside_Lodges/15667.jpg"
+        },
+        "galleryCount": 5,
+        "images": [
+          {
+            "file": "assets-accom/minehead/seaside-lodges/01-15667.jpg",
+            "assetId": "jcr:d88479fc-815f-44fe-b466-840bb4cc8807",
+            "damPath": "/Accommodation/Minehead/Seaside_Lodges/15667.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:d88479fc-815f-44fe-b466-840bb4cc8807/Accommodation/Minehead/Seaside_Lodges/15667.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/seaside-lodges/02-15666.jpg",
+            "assetId": "jcr:9d939beb-35e0-437c-ab3c-0c3a3b9ecae3",
+            "damPath": "/Accommodation/Minehead/Seaside_Lodges/15666.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:9d939beb-35e0-437c-ab3c-0c3a3b9ecae3/Accommodation/Minehead/Seaside_Lodges/15666.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/seaside-lodges/03-15670.jpg",
+            "assetId": "jcr:c8915832-085a-4d3c-a7de-cf9191fa84c2",
+            "damPath": "/Accommodation/Minehead/Seaside_Lodges/15670.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:c8915832-085a-4d3c-a7de-cf9191fa84c2/Accommodation/Minehead/Seaside_Lodges/15670.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/seaside-lodges/04-15671.jpg",
+            "assetId": "jcr:31114b1f-80a2-411b-bca1-90b1e2c12de1",
+            "damPath": "/Accommodation/Minehead/Seaside_Lodges/15671.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:31114b1f-80a2-411b-bca1-90b1e2c12de1/Accommodation/Minehead/Seaside_Lodges/15671.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/seaside-lodges/05-15669.jpg",
+            "assetId": "jcr:b86884ab-42c3-4adb-a5be-7f287e97a02b",
+            "damPath": "/Accommodation/Minehead/Seaside_Lodges/15669.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:b86884ab-42c3-4adb-a5be-7f287e97a02b/Accommodation/Minehead/Seaside_Lodges/15669.jpg"
+          }
+        ]
+      },
+      "silver-bungalow": {
+        "name": "NOT IN USE - Minehead Silver Bungalow",
+        "bedConfiguration": "<p>Two bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n\n<p>Three bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n",
+        "summary": "Great value for money, our Silver Bungalows are a brilliant mid-range option for families looking for an inviting place to stay that's close to the heart of our resort.",
+        "image": {
+          "file": "assets-accom/minehead/silver-bungalow/01--15981--Silver-bungalow-Minehead-double-bedroom.jpg",
+          "assetId": "jcr:0defdabd-e96d-4476-a2c7-8cda732147e4",
+          "damPath": "/Accommodation/Minehead/Comfort_Apartments/-15981--Silver-bungalow-Minehead-double-bedroom.jpg",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:0defdabd-e96d-4476-a2c7-8cda732147e4/Accommodation/Minehead/Comfort_Apartments/-15981--Silver-bungalow-Minehead-double-bedroom.jpg"
+        },
+        "galleryCount": 5,
+        "images": [
+          {
+            "file": "assets-accom/minehead/silver-bungalow/01--15981--Silver-bungalow-Minehead-double-bedroom.jpg",
+            "assetId": "jcr:0defdabd-e96d-4476-a2c7-8cda732147e4",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/-15981--Silver-bungalow-Minehead-double-bedroom.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:0defdabd-e96d-4476-a2c7-8cda732147e4/Accommodation/Minehead/Comfort_Apartments/-15981--Silver-bungalow-Minehead-double-bedroom.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/silver-bungalow/02--15983--Silver-bungalow-Minehead-twin-bedroom.jpg",
+            "assetId": "jcr:4df21d2d-d37a-4796-9d08-bc929f92ac39",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/-15983--Silver-bungalow-Minehead-twin-bedroom.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:4df21d2d-d37a-4796-9d08-bc929f92ac39/Accommodation/Minehead/Comfort_Apartments/-15983--Silver-bungalow-Minehead-twin-bedroom.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/silver-bungalow/03--15984--Silver-bungalow-Minehead-lounge.jpg",
+            "assetId": "jcr:072721b0-31c6-440b-9713-c6814dd30222",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/-15984--Silver-bungalow-Minehead-lounge.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:072721b0-31c6-440b-9713-c6814dd30222/Accommodation/Minehead/Comfort_Apartments/-15984--Silver-bungalow-Minehead-lounge.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/silver-bungalow/04--15982--Silver-bungalow-bathroom-minehead.jpg",
+            "assetId": "jcr:ccc9de3b-1ee7-4c0e-aae9-253f615c01e2",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/-15982--Silver-bungalow-bathroom-minehead.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:ccc9de3b-1ee7-4c0e-aae9-253f615c01e2/Accommodation/Minehead/Comfort_Apartments/-15982--Silver-bungalow-bathroom-minehead.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/silver-bungalow/05--15980--Silver-bungalow-Minehead-exterior.jpg",
+            "assetId": "jcr:b07c6c0a-2b5a-403e-b127-5a04fee3ede5",
+            "damPath": "/Accommodation/Minehead/Comfort_Apartments/-15980--Silver-bungalow-Minehead-exterior.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:b07c6c0a-2b5a-403e-b127-5a04fee3ede5/Accommodation/Minehead/Comfort_Apartments/-15980--Silver-bungalow-Minehead-exterior.jpg"
+          }
+        ]
+      },
+      "silver-rooms": {
+        "name": "Minehead Comfort Rooms",
+        "bedConfiguration": "<p>Two bedrooms:</p><ul><li>Double bed</li><li>Twin beds</li></ul><p>Three bedrooms:</p><ul><li>Double bed</li><li>Twin beds</li><li>Single bed or twin beds</li></ul><p>&nbsp;</p>",
+        "summary": "Introducing our Comfort Rooms, located in our Ocean Point and Pacific Wharf villages - your new home away from home.",
+        "image": {
+          "file": "assets-accom/minehead/silver-rooms/01-19189.jpg",
+          "assetId": "jcr:e5bb4564-9fb5-4eb7-9ba7-9fb1a2beb55a",
+          "damPath": "/Accommodation/Minehead/Comfort_Rooms/19189.jpg",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:e5bb4564-9fb5-4eb7-9ba7-9fb1a2beb55a/Accommodation/Minehead/Comfort_Rooms/19189.jpg"
+        },
+        "galleryCount": 5,
+        "images": [
+          {
+            "file": "assets-accom/minehead/silver-rooms/01-19189.jpg",
+            "assetId": "jcr:e5bb4564-9fb5-4eb7-9ba7-9fb1a2beb55a",
+            "damPath": "/Accommodation/Minehead/Comfort_Rooms/19189.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:e5bb4564-9fb5-4eb7-9ba7-9fb1a2beb55a/Accommodation/Minehead/Comfort_Rooms/19189.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/silver-rooms/02-19191.jpg",
+            "assetId": "jcr:dd487d21-446d-4ec0-928b-c9b62edd8e4f",
+            "damPath": "/Accommodation/Minehead/Comfort_Rooms/19191.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:dd487d21-446d-4ec0-928b-c9b62edd8e4f/Accommodation/Minehead/Comfort_Rooms/19191.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/silver-rooms/03-19192.jpg",
+            "assetId": "jcr:31fd4f8f-5c51-43a4-bf6f-16eae13544c0",
+            "damPath": "/Accommodation/Minehead/Comfort_Rooms/19192.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:31fd4f8f-5c51-43a4-bf6f-16eae13544c0/Accommodation/Minehead/Comfort_Rooms/19192.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/silver-rooms/04-19195.jpg",
+            "assetId": "jcr:1aa17dd8-bb5c-4fbd-8e35-c44d64777615",
+            "damPath": "/Accommodation/Minehead/Comfort_Rooms/19195.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:1aa17dd8-bb5c-4fbd-8e35-c44d64777615/Accommodation/Minehead/Comfort_Rooms/19195.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/silver-rooms/05-19201.jpg",
+            "assetId": "jcr:ecd4af75-f88b-4da9-9c93-030a6da0a08a",
+            "damPath": "/Accommodation/Minehead/Comfort_Rooms/19201.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:ecd4af75-f88b-4da9-9c93-030a6da0a08a/Accommodation/Minehead/Comfort_Rooms/19201.jpg"
+          }
+        ]
+      },
+      "silver-suites": {
+        "name": "Minehead Comfort Rooms",
+        "bedConfiguration": "<p>Two bedrooms:</p><ul><li>Double bed</li><li>Twin beds</li></ul><p>Three bedrooms:</p><ul><li>Double bed</li><li>Twin beds</li><li>Single bed or twin beds</li></ul><p>&nbsp;</p>",
+        "summary": "Introducing our Comfort Rooms, located in our Ocean Point and Pacific Wharf villages - your new home away from home.",
+        "image": {
+          "file": "assets-accom/minehead/silver-suites/01-19189.jpg",
+          "assetId": "jcr:e5bb4564-9fb5-4eb7-9ba7-9fb1a2beb55a",
+          "damPath": "/Accommodation/Minehead/Comfort_Rooms/19189.jpg",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:e5bb4564-9fb5-4eb7-9ba7-9fb1a2beb55a/Accommodation/Minehead/Comfort_Rooms/19189.jpg"
+        },
+        "galleryCount": 5,
+        "images": [
+          {
+            "file": "assets-accom/minehead/silver-suites/01-19189.jpg",
+            "assetId": "jcr:e5bb4564-9fb5-4eb7-9ba7-9fb1a2beb55a",
+            "damPath": "/Accommodation/Minehead/Comfort_Rooms/19189.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:e5bb4564-9fb5-4eb7-9ba7-9fb1a2beb55a/Accommodation/Minehead/Comfort_Rooms/19189.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/silver-suites/02-19191.jpg",
+            "assetId": "jcr:dd487d21-446d-4ec0-928b-c9b62edd8e4f",
+            "damPath": "/Accommodation/Minehead/Comfort_Rooms/19191.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:dd487d21-446d-4ec0-928b-c9b62edd8e4f/Accommodation/Minehead/Comfort_Rooms/19191.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/silver-suites/03-19192.jpg",
+            "assetId": "jcr:31fd4f8f-5c51-43a4-bf6f-16eae13544c0",
+            "damPath": "/Accommodation/Minehead/Comfort_Rooms/19192.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:31fd4f8f-5c51-43a4-bf6f-16eae13544c0/Accommodation/Minehead/Comfort_Rooms/19192.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/silver-suites/04-19195.jpg",
+            "assetId": "jcr:1aa17dd8-bb5c-4fbd-8e35-c44d64777615",
+            "damPath": "/Accommodation/Minehead/Comfort_Rooms/19195.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:1aa17dd8-bb5c-4fbd-8e35-c44d64777615/Accommodation/Minehead/Comfort_Rooms/19195.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/silver-suites/05-19201.jpg",
+            "assetId": "jcr:ecd4af75-f88b-4da9-9c93-030a6da0a08a",
+            "damPath": "/Accommodation/Minehead/Comfort_Rooms/19201.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:ecd4af75-f88b-4da9-9c93-030a6da0a08a/Accommodation/Minehead/Comfort_Rooms/19201.jpg"
+          }
+        ]
+      },
+      "standard-apartment": {
+        "name": "NOT IN USE - Minehead Standard Apartments",
+        "bedConfiguration": "<p>Two bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n\n<p>Three bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n\n<p>Three bedrooms</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n\t<li>Bunk beds and single bed</li>\n</ul>\n",
+        "summary": "Our Standard Apartments are decorated in a clean modern style with pastel-coloured walls and carpeted floors. They're ideal for families sticking to a budget, who want a simple living space to enjoy before and after their days of fun on resort.",
+        "image": {
+          "file": "assets-accom/minehead/standard-apartment/01-16087.jpg",
+          "assetId": "jcr:afd80de5-f202-494f-b0dc-7c2b8064925b",
+          "damPath": "/Accommodation/Minehead/Standard_Apartments/16087.jpg",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:afd80de5-f202-494f-b0dc-7c2b8064925b/Accommodation/Minehead/Standard_Apartments/16087.jpg"
+        },
+        "galleryCount": 5,
+        "images": [
+          {
+            "file": "assets-accom/minehead/standard-apartment/01-16087.jpg",
+            "assetId": "jcr:afd80de5-f202-494f-b0dc-7c2b8064925b",
+            "damPath": "/Accommodation/Minehead/Standard_Apartments/16087.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:afd80de5-f202-494f-b0dc-7c2b8064925b/Accommodation/Minehead/Standard_Apartments/16087.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/standard-apartment/02-16085.jpg",
+            "assetId": "jcr:46a8cf89-4488-407d-baba-83ec93627faf",
+            "damPath": "/Accommodation/Minehead/Standard_Apartments/16085.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:46a8cf89-4488-407d-baba-83ec93627faf/Accommodation/Minehead/Standard_Apartments/16085.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/standard-apartment/03-16089.jpg",
+            "assetId": "jcr:3a1d0fd3-3ebe-40f8-ac86-0c410655d60f",
+            "damPath": "/Accommodation/Minehead/Standard_Apartments/16089.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:3a1d0fd3-3ebe-40f8-ac86-0c410655d60f/Accommodation/Minehead/Standard_Apartments/16089.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/standard-apartment/04-16088.jpg",
+            "assetId": "jcr:83db07b1-6dd9-43b9-b7e7-d7df98834c21",
+            "damPath": "/Accommodation/Minehead/Standard_Apartments/16088.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:83db07b1-6dd9-43b9-b7e7-d7df98834c21/Accommodation/Minehead/Standard_Apartments/16088.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/standard-apartment/05-16086.jpg",
+            "assetId": "jcr:c0ad9fae-b38e-4b74-aa1c-b478ee194ae5",
+            "damPath": "/Accommodation/Minehead/Standard_Apartments/16086.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:c0ad9fae-b38e-4b74-aa1c-b478ee194ae5/Accommodation/Minehead/Standard_Apartments/16086.jpg"
+          }
+        ]
+      },
+      "standard-rooms": {
+        "name": "Minehead Standard Rooms",
+        "bedConfiguration": "<p>One bedroom:</p>\n\n<ul>\n\t<li>Double or twin beds</li>\n</ul>\n\n<p>Two bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n</ul>\n",
+        "summary": "For a place to stay at the end of the day, these great-value rooms are ideal for those wanting a base with a simple interior, complete with beds and a bath.",
+        "image": {
+          "file": "assets-accom/minehead/standard-rooms/01-16002.jpg",
+          "assetId": "jcr:b9b8c92d-b49f-418e-9810-a1ed1e7a9bf9",
+          "damPath": "/Accommodation/Minehead/Standard_Rooms/16002.jpg",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:b9b8c92d-b49f-418e-9810-a1ed1e7a9bf9/Accommodation/Minehead/Standard_Rooms/16002.jpg"
+        },
+        "galleryCount": 4,
+        "images": [
+          {
+            "file": "assets-accom/minehead/standard-rooms/01-16002.jpg",
+            "assetId": "jcr:b9b8c92d-b49f-418e-9810-a1ed1e7a9bf9",
+            "damPath": "/Accommodation/Minehead/Standard_Rooms/16002.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:b9b8c92d-b49f-418e-9810-a1ed1e7a9bf9/Accommodation/Minehead/Standard_Rooms/16002.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/standard-rooms/02-16003.jpg",
+            "assetId": "jcr:cbc09cd0-d453-4365-8cb2-4b53dba008d0",
+            "damPath": "/Accommodation/Minehead/Standard_Rooms/Old-Images-Dont-Use/16003.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:cbc09cd0-d453-4365-8cb2-4b53dba008d0/Accommodation/Minehead/Standard_Rooms/Old-Images-Dont-Use/16003.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/standard-rooms/03--12108--Minehead-standard-room-bathroom.jpg",
+            "assetId": "jcr:0b2acf34-e29e-49da-bd2c-ccdd6e3060f2",
+            "damPath": "/Accommodation/Minehead/Standard_Rooms/Old-Images-Dont-Use/-12108--Minehead-standard-room-bathroom.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:0b2acf34-e29e-49da-bd2c-ccdd6e3060f2/Accommodation/Minehead/Standard_Rooms/Old-Images-Dont-Use/-12108--Minehead-standard-room-bathroom.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/standard-rooms/04--16001--Minehead-Surfers-Point-standard-room-exterior.jpg",
+            "assetId": "jcr:ed85b398-365d-4c3c-8a32-cdbcd3c9cbe7",
+            "damPath": "/Accommodation/Minehead/Standard_Rooms/-16001--Minehead-Surfers-Point-standard-room-exterior.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:ed85b398-365d-4c3c-8a32-cdbcd3c9cbe7/Accommodation/Minehead/Standard_Rooms/-16001--Minehead-Surfers-Point-standard-room-exterior.jpg"
+          }
+        ]
+      },
+      "west-lakes-chalets": {
+        "name": "Minehead West Lakes Chalets",
+        "bedConfiguration": "<p>Two bedrooms:</p>\n\n<ul>\n\t<li>Double and&nbsp;twin beds</li>\n</ul>\n\n<p>Three bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n\t<li>Bunk beds</li>\n</ul>\n\n<p>Four bedrooms:</p>\n\n<ul>\n\t<li>Double bed</li>\n\t<li>Twin beds</li>\n\t<li>Bunk beds</li>\n</ul>\n",
+        "summary": "Our beautiful West Lakes Chalets remain loyal to the history of the traditional Butlin's chalet with modern touches to keep them comfortable and contemporary. Working with Mumsnet to design our chalets, you'll find bright but calming colours inside, soft patterns and comfy modern furniture; they're a real treat to stay in, while leaving you feeling like you're right at home.",
+        "image": {
+          "file": "assets-accom/minehead/west-lakes-chalets/01-18360.jpg0.jpg",
+          "assetId": "jcr:3e20ce09-c1ce-42b9-9b9f-f40998448f46",
+          "damPath": "/Accommodation/Minehead/West_Lake_Chalets/18360.jpg0",
+          "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:3e20ce09-c1ce-42b9-9b9f-f40998448f46/Accommodation/Minehead/West_Lake_Chalets/18360.jpg0"
+        },
+        "galleryCount": 7,
+        "images": [
+          {
+            "file": "assets-accom/minehead/west-lakes-chalets/01-18360.jpg0.jpg",
+            "assetId": "jcr:3e20ce09-c1ce-42b9-9b9f-f40998448f46",
+            "damPath": "/Accommodation/Minehead/West_Lake_Chalets/18360.jpg0",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:3e20ce09-c1ce-42b9-9b9f-f40998448f46/Accommodation/Minehead/West_Lake_Chalets/18360.jpg0"
+          },
+          {
+            "file": "assets-accom/minehead/west-lakes-chalets/02-21311.jpg",
+            "assetId": "jcr:9f35ecd7-3a67-47f5-ad87-bbb03a624905",
+            "damPath": "/Accommodation/Minehead/West_Lake_Chalets/21311.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:9f35ecd7-3a67-47f5-ad87-bbb03a624905/Accommodation/Minehead/West_Lake_Chalets/21311.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/west-lakes-chalets/03-15979.jpg",
+            "assetId": "jcr:4a9ea1e6-c346-4821-a902-f0b7711209e4",
+            "damPath": "/Accommodation/Minehead/West_Lake_Chalets/15979.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:4a9ea1e6-c346-4821-a902-f0b7711209e4/Accommodation/Minehead/West_Lake_Chalets/15979.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/west-lakes-chalets/04-18359.jpg",
+            "assetId": "jcr:03dd5301-6ce2-4fe0-b2b6-b5b0942f28b7",
+            "damPath": "/Accommodation/Minehead/West_Lake_Chalets/18359.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:03dd5301-6ce2-4fe0-b2b6-b5b0942f28b7/Accommodation/Minehead/West_Lake_Chalets/18359.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/west-lakes-chalets/05-14571.jpg",
+            "assetId": "jcr:ad875ad7-7314-4ad4-a035-3560efd7764d",
+            "damPath": "/Accommodation/Minehead/West_Lake_Chalets/14571.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:ad875ad7-7314-4ad4-a035-3560efd7764d/Accommodation/Minehead/West_Lake_Chalets/14571.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/west-lakes-chalets/06-14572.jpg",
+            "assetId": "jcr:50a0a28c-fb6a-4e10-9e35-42f4b2584380",
+            "damPath": "/Accommodation/Minehead/West_Lake_Chalets/Old-Images-Dont-Use/14572.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:50a0a28c-fb6a-4e10-9e35-42f4b2584380/Accommodation/Minehead/West_Lake_Chalets/Old-Images-Dont-Use/14572.jpg"
+          },
+          {
+            "file": "assets-accom/minehead/west-lakes-chalets/07-15978.jpg",
+            "assetId": "jcr:57550fe8-e8a8-46af-9eb3-38aafd380b01",
+            "damPath": "/Accommodation/Minehead/West_Lake_Chalets/15978.jpg",
+            "url": "https://prod.butlins-prod.magnolia-platform.com/.imaging/focalpoint/landscape4-3/1000x/dam/jcr:57550fe8-e8a8-46af-9eb3-38aafd380b01/Accommodation/Minehead/West_Lake_Chalets/15978.jpg"
+          }
+        ]
+      }
+    }
+  }
+}
