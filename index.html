@@ -126,15 +126,20 @@
     <section class="phase">
       <h2 class="phase-h">Phase 03 — FAM/BBW Accommodation</h2>
       <div class="cards">
-        <!-- openable but not signed off: the tag carries that, not the card, since every is-wip
-             rule is qualified by is-disabled and does nothing on its own -->
-        <a class="card" href="/phase3-hifi">
+        <!-- Two skins under one card, so it is a div with explicit links rather than a whole-card
+             anchor (no nested interactives), the same shape the lo-fi card uses.
+             Openable but not signed off: the tag carries that, not the card, since every is-wip rule
+             is qualified by is-disabled and does nothing on its own. -->
+        <div class="card">
           <h3>High-fidelity</h3>
           <span class="tag tag-wip">In progress</span>
-          <p>Branded BBW build of the signed-off flow, carrying the same-type lock and the Modal + beds dialog. The unit dialog is one component now: a drawer on mobile, a modal on desktop. The Family skin follows.</p>
-          <span class="go">Open &rarr;</span>
-          <span class="meta"><span class="ver">v0.2</span> · last updated 12/08/26</span>
-        </a>
+          <p>Both skins of the signed-off flow, carrying the same-type lock and the Modal + beds dialog. The unit dialog is one component: a drawer on mobile, a modal on desktop. Family adds the resort switcher and the party presets.</p>
+          <div class="card-actions">
+            <a class="go" href="/phase3-bbw-hifi">BBW &rarr;</a>
+            <a class="go go-2" href="/phase3-fam-hifi">Family &rarr;</a>
+          </div>
+          <span class="meta"><span class="ver">v0.3</span> · last updated 17/08/26</span>
+        </div>
 
         <!-- two prototypes live under this card, so it is a div with explicit links rather
              than a whole-card anchor (no nested interactives) -->

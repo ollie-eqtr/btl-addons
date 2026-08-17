@@ -140,9 +140,15 @@
    however many categories the stock has. */
 .cat-tiles{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:var(--grid-gutter);margin-bottom:14px;}
 .ctile{padding:2px;background:none;border:1.5px solid transparent;border-radius:5px;text-align:left;}
+/* Deselected tiles carry grey/700 rather than sitting transparent on the page (client, 12 Aug), so a
+   tile reads as a surface before it is touched. Hover takes the selected fill (client, 12 Aug) -
+   pointing at a tile previews the state it is about to take, and the yellow ring plus the yellow icon
+   are what separate hovering from chosen. It was --grey-5, a flat step that belonged to neither. */
+/* no border (client, 12 Aug): the fill is what makes the tile a surface now, and the edge on top of
+   it read as a second line inside the selected state's ring */
 .ct-in{display:flex;align-items:center;gap:12px;width:100%;padding:12px;
-  border:var(--card-edge);border-radius:3px;}
-.ctile:hover .ct-in{background:var(--grey-5);}
+  border:0;border-radius:3px;background:#202020;}
+.ctile:hover .ct-in{background:linear-gradient(173.93deg,#2b2b2b 4.66%,#222121 138.2%);}
 /* Desktop: the tile's visible box fills its whole track, so a deselected tile's edge lines up with
    the accommodation card and the group card beneath it (client, 10 Aug). The two-box grammar above
    held the box 3.5px inside the track on every side - 2px of ring gap plus the 1.5px outer border -
@@ -166,15 +172,22 @@
   background:linear-gradient(173.93deg,#2b2b2b 4.66%,#222121 138.2%);}
 .ctile[aria-pressed="true"] .ct-ico{color:var(--yellow);}
 .ctile[aria-disabled="true"]{opacity:.4;cursor:not-allowed;}
-.ctile[aria-disabled="true"]:hover .ct-in{background:none;}
+/* a locked tile holds its resting fill on hover, so pointing at it previews nothing; this was
+   background:none, which is now a change rather than a no-op */
+.ctile[aria-disabled="true"]:hover .ct-in{background:#202020;}
 /* mobile stays 2-up, so it has to put the flow back to rows */
 /* 2-up here, and at its own 4px: the mobile tiles are a pair of small boxes in a narrow frame, not
    part of the desktop column grid, so the wider gutter would only cost them width */
 .frame-outer[data-device="mobile"] .cat-tiles{grid-auto-flow:row;grid-template-columns:1fr 1fr;gap:4px;}
-.cat-lockline{font-size:13px;color:var(--ink2);margin:0 0 14px;}
+/* Body S, and 24px clear of the tiles above and the results below (client, 13 Aug); it was 13px with
+   no space of its own above and 14px below. The top margin collapses with the tiles' own 14px bottom
+   margin, so 24 is what lands rather than 38 - which also means the tiles keep that 14px as their gap
+   to the results on the screens where no lock line exists. */
+.cat-lockline{font-size:14px;color:var(--ink2);margin:24px 0;}
 .linkbtn{background:none;border:0;border-bottom:1.5px solid var(--yellow);padding:2px 0;color:var(--yellow);font-size:13px;font-weight:700;cursor:pointer;}
 .linkbtn:hover{color:var(--yellow-strong);border-bottom-color:var(--yellow-strong);}
-.cat-lockline .linkbtn{font-size:13px;}
+/* the link matches the sentence it sits in (client, 13 Aug); the kit's .linkbtn is 13px */
+.cat-lockline .linkbtn{font-size:14px;}
 
 /* ---- layout: the filter tiles' columns, carried on down the page (client, 10 Aug) ----
    The tiles generate one 1fr track per category at a 4px gutter, and everything below now declares
@@ -187,13 +200,47 @@
    than the design's 1082px measurements, which never fitted this composition. */
 .layout{display:grid;grid-template-columns:repeat(var(--cat-cols,4),minmax(0,1fr));
   column-gap:var(--grid-gutter);align-items:start;}
-/* both rows are pinned to 1: the panel comes first in the DOM (mobile wants it above the results and
-   uses order to get there), and grid's sparse auto-placement will not step back to column 1 once the
-   cursor has passed it, so an auto row put the results underneath the panel instead of beside it. */
-.results{grid-column:1/-2;grid-row:1;min-width:0;}
-.side{grid-column:-2/-1;grid-row:1;position:sticky;top:12px;}
-.frame-outer[data-device="mobile"] .layout{display:flex;flex-direction:column;}
+/* Every track is placed explicitly: the panel comes first in the DOM (mobile wants it above the
+   results and uses order to get there), and grid's sparse auto-placement will not step back to
+   column 1 once the cursor has passed it, so auto rows put the results underneath the panel instead
+   of beside it. The filter tiles take the full width on row 1, results and panel share row 2 - which
+   is what the page has always looked like; only the tiles' wrapper is new. */
+.cat-block{grid-column:1/-1;grid-row:1;min-width:0;}
+.results{grid-column:1/-2;grid-row:2;min-width:0;}
+.side{grid-column:-2/-1;grid-row:2;position:sticky;top:12px;}
+/* align-items has to be reset with the display: the desktop grid runs align-items:start so its three
+   tracks sit at the top of the row, but on a column flex container that same value packs items to the
+   cross axis start and shrink-to-fits them. The filter tiles were the one item narrow enough to show
+   it - 299px inside a 356px column - because .results and .side are stretched by their own content
+   and width. It only appeared when the tiles moved inside .layout for the 5-column layout; before
+   that they were a block child and full width by default. */
+.frame-outer[data-device="mobile"] .layout{display:flex;flex-direction:column;align-items:stretch;}
 .frame-outer[data-device="mobile"] .side{width:calc(100% + 32px);min-width:0;margin:0 -16px;top:0;z-index:7;order:0;position:sticky;}
+
+/* ---- five columns, and Your group beside the filter tiles (client, 12 Aug; kept 13 Aug) ----
+   The grid runs one track per category plus one for the panel, so Your group starts level with the
+   top of the tiles rather than below them. The accommodation card follows those tracks rather than
+   keeping its own thirds: four columns to match the four the results span, with the copy taking two
+   of them - photo under Rooms, copy under Apartments and Chalets, price under Caravans. That is what
+   closed the handover's open item about the copy column being squeezed; it runs 508px now.
+   The 5 is hard-coded where the base layout reads --cat-cols, so a fifth category would need this
+   changing to 6. Mobile is untouched: it stacks. */
+.frame-outer[data-device="desktop"] .layout{grid-template-columns:repeat(5,minmax(0,1fr));}
+.frame-outer[data-device="desktop"] .cat-block{grid-column:1/-2;}
+.frame-outer[data-device="desktop"] .side{grid-row:1/span 2;}
+.frame-outer[data-device="desktop"] .acard{grid-template-columns:repeat(4,minmax(0,1fr));}
+.frame-outer[data-device="desktop"] .ac-img{grid-column:1;}
+.frame-outer[data-device="desktop"] .ac-main{grid-column:2/4;}
+.frame-outer[data-device="desktop"] .ac-rail{grid-column:4;}
+
+/* ---- 1280px desktop viewport (client, 12 Aug; kept 13 Aug) ----
+   The kit sets --maxw:1100px, which .stage caps its width at and .frame fills; .stage's own 16px
+   padding then left the viewport 1068px. Redeclaring --maxw here as 1280 + those 32px widens the
+   toolbar and the frame together and leaves the kit untouched, as it must be. Every column on the
+   page is fluid, so the five tracks simply go from 194px to ~236px, which puts the accommodation
+   card's photo within 40px of the 276px it is drawn at rather than 80px short.
+   Mobile is unaffected in substance - .frame is capped at 390px there whatever --maxw says. */
+.stage{--maxw:1312px;}
 
 /* ---- Your group card (Figma 1154:326) ----
    A raised #262626 card at radius 16 with the screen's edge and a 4/4/10 shadow, holding the
@@ -209,7 +256,7 @@
    NOT as drawn: the node is ~410px wide, so in this 251px column the heading and caption cannot
    share a line and the head row wraps. Flagged with the client. */
 /* shadow at 12% rather than the node's 36% (client, 10 Aug); the 4/4/10 geometry is as drawn */
-.gpanel{display:flex;flex-direction:column;gap:24px;background:var(--grey-6);border:var(--card-edge);
+.gpanel{display:flex;flex-direction:column;gap:12px;background:var(--grey-6);border:var(--card-edge);
   border-radius:3px;box-shadow:4px 4px 10px rgba(0,0,0,.12);padding:12px;}
 .gpanel h3{font-family:var(--font-display);font-weight:400;font-size:22px;line-height:normal;
   text-transform:uppercase;letter-spacing:0;margin:0;color:#fff;}
@@ -217,6 +264,41 @@
 .gp-head{display:flex;align-items:center;justify-content:space-between;gap:4px 12px;flex-wrap:wrap;width:100%;}
 .pool-cap{display:block;font-size:14px;font-weight:400;line-height:normal;color:var(--muted);margin:0;}
 .pool-cap b{font-weight:700;color:var(--ink2);}
+/* Desktop card on grey/400 rather than the kit's --grey-6 (client, 12 Aug), with the unplaced figures
+   dropped to the page background #181818 (client, 12 Aug) so they read as dark silhouettes cut out of
+   the card rather than a near-match against it. Same recolouring technique as the dialog's - flatten
+   to black, invert to white, then scale down - because it is one asset serving three surfaces now.
+   .095 rather than the exact 24/255: the pipeline floors, so .0941 lands a pixel value short at 23.
+   NOTE: "the same as the background colour" is read here as the screen's background, not the card's
+   own #3c3c3b - matching the card would make the figures invisible, and they are what says which
+   guests still need a bed. One number in the filter if the card's grey was meant instead.
+   Scoped to .gpanel so the dialog's own figures and the mobile sticky bar's are untouched.
+   TWO KNOCK-ONS FLAGGED, both one-line changes if the client wants them:
+   1. .pool-cap is --muted, which was 6.5:1 on #262626 and is 4.1:1 here - under AA for 14px copy.
+      --ink2 would put it back at 7.9:1.
+   2. The card's --card-edge (#2e2e2e) was a shade lighter than the old fill and is now darker, so it
+      reads as an outline rather than a lift. */
+/* 3px gold rule across the top (client, 12 Aug), the card's one accent. The other three sides are a
+   10% white lift on the fill (client, 12 Aug): --card-edge's #2e2e2e was darker than the new fill and
+   read as an outline drawn round the card; grey/300 was lighter but too present at 2.2:1, and the
+   grey scale has nothing between #3c3c3b and #6f6f6e. A translucent white composites over whatever
+   the fill is - #4f4f4e here, 1.35:1, just enough to catch the edge - and stays a slight lift if the
+   fill ever moves again, which it has twice today. border-top comes after border-color so the gold
+   survives the shorthand. Desktop only, like the fill: the mobile panel is a band with its own rules.
+   The caption goes to grey/100 with it (client, 12 Aug) - --muted measured 4.46:1 on this fill, just
+   under AA, and grey/100 is 7.9:1. It makes the whole caption one grey with only the count's weight
+   setting it apart, which is the call already made for the dialog's progress strip. */
+/* Box model per the client's spec (13 Aug): 5px gold top, 1.5px on the other three, 24px of padding
+   top and bottom and 12px either side. The card was 3px/12px all round. */
+.frame-outer[data-device="desktop"] .gpanel{background:#3c3c3b;border-color:rgba(255,255,255,.05);
+  border-top:5px solid var(--yellow);padding:24px 12px;}
+/* The unit list sits 6px off the panel's sides and bottom (client, 13 Aug), tighter than the 24/12
+   the header block runs on. It pulls back out of that padding rather than the panel changing, so the
+   header keeps its own spacing: -6px either side of the 12, and -18px of the 24 below. Desktop only
+   in effect as well as in scope - mobile renders .ucards, not the ledger. */
+.frame-outer[data-device="desktop"] .ledger{margin:0 -6px -18px;}
+.frame-outer[data-device="desktop"] .pool-cap{color:var(--ink2);}
+.frame-outer[data-device="desktop"] .gpanel .gfig.off img{filter:brightness(0) invert(1) brightness(.095);}
 /* ---- guest glyphs (Figma 967:4733, "Guest Counter Icons") ----
    Two exported SVG leaves per figure, head and body, placed on the component's own
    percentage insets inside a square box so the pair scales together with --gfig.
@@ -272,17 +354,44 @@
 .ledger{display:flex;flex-direction:column;gap:6px;}
 /* #3c3c3b, not the screen's --card-edge: inside the #262626 card a #2e2e2e edge all but disappears,
    and 1160:408 asks for the brighter grey. Right corners only, also as drawn. */
-.lrow{display:flex;flex-direction:column;gap:12px;padding:6px;border:1.5px solid #3c3c3b;
+/* The accommodation card's own added-state gradient (client, 12 Aug), so a unit in the panel and the
+   card that produced it share one treatment - it is the kit's .card.is-added fill, to bottom rather
+   than the 175.5deg this row used before. Flat grey/300 sat here for one round and put every piece of
+   small copy under AA; a mid grey has no passing text colour but white.
+   The flash keyframe lands on the gradient's dark end, which is where it always did. */
+.lrow{display:flex;flex-direction:column;gap:12px;padding:12px 6px 6px;border:1.5px solid #3c3c3b;
   border-radius:0 3px 3px 0;
-  background:linear-gradient(175.5deg,#2b2b2b 4.66%,#222121 138.2%);transition:opacity .34s ease,transform .34s ease;}
-@keyframes rowflash{0%{background:rgba(255,214,20,.16);}100%{background:#222121;}}
-.lrow.flash{animation:rowflash 1.2s ease-out;}
+  background:linear-gradient(to bottom,#2b2b2b,#222121);transition:opacity .34s ease,transform .34s ease;}
+/* The add cue was a yellow wash over the whole row (client, 12 Aug: gross). It animated `background`,
+   which meant the gradient was replaced by a flat tint for 1.2s and then snapped back - a glitch
+   rather than a cue.
+   It is the kit's own added-state grammar now: a yellow ring that fades, on the accommodation cards'
+   easing, so the row's fill is never touched and the cue says the same thing the ring round the
+   accommodation card says. Inset, so it cannot shift the row or crowd its neighbour, and done in .9s
+   inside the 1.2s the flash state lives for, so it finishes rather than being cut off by the
+   re-render that clears it. */
+@keyframes rowflash{
+  0%,25%{box-shadow:inset 0 0 0 2px var(--yellow);}
+  100%{box-shadow:inset 0 0 0 2px rgba(255,214,20,0);}
+}
+/* The ring holds solid for the first quarter, then fades away over the rest. The cards' own
+   cubic-bezier(.22,1,.36,1) is wrong here: it front-loads, which on a fade means the ring is
+   effectively gone in 300ms and the remaining 600ms does nothing - it read as a blink. A hold and a
+   plain ease-out reads as a deliberate highlight settling. */
+.lrow.flash{animation:rowflash .9s ease-out both;}
 /* text block: title row then the makeup line, 2px apart (4 Aug: the party moved off its own
    line and into a pill on the title row, which is what took a row out of the card) */
-.utext{display:flex;flex-direction:column;gap:2px;}
+/* 6px between the title row and the spec line (client, 13 Aug); it was 2px, which read as one block
+   rather than a heading over its detail, and 12px for a round, which was too much air */
+.utext{display:flex;flex-direction:column;gap:6px;}
+/* the guests pill sits hard right of the card, not next to the title (client, 13 Aug) */
 .utop{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-/* 28px in the group card (1160:411); the mobile rail keeps its own 24px below */
-.uhead{font-family:var(--font-display);font-weight:400;font-size:28px;line-height:1.05;color:var(--ink);}
+.utop .upill{margin-left:auto;}
+/* Body M bold, not display (client, 13 Aug): it was League Gothic 28px in the group card
+   (1160:411), with the mobile rail on its own 24px. Both breakpoints take 16/22 now - Body M is the
+   same number in either column of the BBW scale, so the mobile override has gone rather than being
+   given a second value. */
+.uhead{font-family:var(--font);font-weight:700;font-size:16px;line-height:22px;color:var(--ink);}
 .upill{display:inline-flex;align-items:center;gap:4px;background:#3c3c3b;border-radius:var(--radius-pill);
   padding:4px 8px;font-size:12px;line-height:normal;color:var(--ink2);white-space:nowrap;}
 .upill svg{width:12px;height:12px;display:block;flex:none;}
@@ -299,7 +408,10 @@
 .ubtns{display:flex;align-items:center;gap:6px;}
 /* grey, not white (1160:430). Both unit cards in the node agree on it now, which settles the open
    item about the two disagreeing. */
-.uprice{font-family:var(--font-display);font-weight:400;font-size:22px;line-height:1;color:var(--muted);white-space:nowrap;}
+/* grey/100 rather than --muted (client, 12 Aug): 22px is under the 24px that would let it count as
+   large text, so it needs the full 4.5:1 and --muted gave 5.71:1 - fine, but grey/100 takes it to
+   9.5:1 and matches the spec line above it. The dialog's own total sets its colour separately. */
+.uprice{font-family:var(--font-display);font-weight:400;font-size:22px;line-height:1;color:var(--ink2);white-space:nowrap;}
 /* 24px icon buttons (client, 4 Aug), down from 36px. Well under the 44px touch target, and small
    even for a dense summary card; flagged with the client to revisit before build. */
 .ubtn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;flex:none;
@@ -319,7 +431,7 @@
 /* the band is a full-bleed strip, so it undoes the desktop card's radius, shadow and surface. The
    head row collapses back to a block: the heading is screen-reader only here, leaving the caption to
    behave as the centred block it was before the desktop card put the two side by side. */
-.frame-outer[data-device="mobile"] .gpanel{display:flex;flex-direction:column;gap:24px;
+.frame-outer[data-device="mobile"] .gpanel{display:flex;flex-direction:column;gap:12px;
   background:var(--bg-2);border:0;
   border-top:var(--card-edge);border-bottom:var(--card-edge);
   border-radius:0;box-shadow:none;padding:12px 0;}
@@ -330,31 +442,43 @@
 /* "GUESTS:" and the tail stay muted; only the count is bold white */
 .frame-outer[data-device="mobile"] .pool-cap b{font-weight:700;color:#fff;}
 /* re-centre and restore the designed 32px: the .side rule above would otherwise win here */
-.frame-outer[data-device="mobile"] .pg-row{justify-content:center;--gfig:32px;}
-.frame-outer[data-device="mobile"] .pg-row[data-dense="mid"]{--gfig:20px;}
-.frame-outer[data-device="mobile"] .pg-row[data-dense="high"]{--gfig:15px;}
+/* The figures take the full width before they give up any size (client, 13 Aug): 32px while the row
+   can hold them, an exact share of it after that. This replaces three fixed steps (32/20/15) that
+   were measured against a 390px frame rather than the space actually available - at 19 they left the
+   row 55px short of full and the figures 3px smaller than they needed to be.
+   Same formula the dialog's progress strip runs on, but divided by --gn, the true total, rather than
+   the desktop card's --gcols: this row is one line, where the desktop card caps at 8 and wraps
+   (client, 10 Aug). nowrap holds that against rounding; centring still applies when a small group
+   leaves slack. */
+.frame-outer[data-device="mobile"] .pg-row{justify-content:center;flex-wrap:nowrap;
+  --gfig:min(32px,calc(100%/var(--gn,8)));}
 /* ---- unit rail with edge fades (Figma 990:1710 "FADE") ----
    Every card is now full-strength; the cards either side are softened by a gradient over the
    rail's edge instead of by dimming their own text (4 Aug). That is the better mechanism: the
    card keeps one appearance wherever it sits, and the fade says "there is more this way".
    Mirrors the kit's own .nav-fade / has-left / has-right grammar for the section nav. */
 .urail{position:relative;}
+/* 12px gutters (client, 13 Aug), matching the 12px the panel leaves below the rail; they were 24px.
+   scroll-padding follows, or snapping would still park a card 24px in. The rail only renders on
+   mobile - desktop builds the ledger instead - so this needs no breakpoint scope. */
 .ucards{display:flex;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
-  padding:0 24px;scroll-padding-left:24px;scrollbar-width:none;}
+  padding:0 12px;scroll-padding-left:12px;scrollbar-width:none;}
 .ucards::-webkit-scrollbar{display:none;}
 .urail-fade{position:absolute;top:0;bottom:0;width:36px;opacity:.8;pointer-events:none;display:none;z-index:2;}
 .urail-fade-l{left:0;background:linear-gradient(to left,rgba(32,32,32,0),var(--bg-2));}
 .urail-fade-r{right:0;background:linear-gradient(to right,rgba(32,32,32,0),var(--bg-2));}
 .urail.has-left .urail-fade-l,.urail.has-right .urail-fade-r{display:block;}
-/* 100% of the rail's content box, which the 24px gutters have already inset: 342px on a 390
-   frame, as designed. The neighbour peeks in the gutter beyond it. */
-.ucard{flex:0 0 100%;scroll-snap-align:start;display:flex;flex-direction:column;gap:12px;padding:6px;
+/* 100% of the rail's content box, which the gutters have already inset: 364px in the 388px band now
+   the gutters are 12px, where it was 340px at 24px. The neighbour still peeks past the card, but only
+   by 4px rather than 16 - the gutter it peeks into is what shrank. The rail's right-hand fade is
+   carrying most of the "there is more" signal now; drop .ucard+.ucard's 8px margin, or take the card
+   under 100%, if that peek needs to come back. */
+.ucard{flex:0 0 100%;scroll-snap-align:start;display:flex;flex-direction:column;gap:12px;padding:12px 6px 6px;
   border:var(--card-edge);border-radius:3px;background:linear-gradient(175.46deg,#2b2b2b 4.66%,#222121 138.2%);
   transition:opacity .34s ease,transform .34s ease;}
 .ucard+.ucard{margin-left:8px;}
 .ucard.slide-in,.lrow.slide-in{opacity:0;transform:translateX(20px);}
 /* mobile takes the designed type scale */
-.frame-outer[data-device="mobile"] .uhead{font-size:24px;}
 
 /* ---- accommodation cards (Figma 1039:7433 desktop / 1003:5737 mobile) ----
    The Phase 2 meal plan card, adapted. Desktop is horizontal: a 276px photo pane, the copy, a
@@ -386,7 +510,11 @@
    become tracks of this grid rather than a single one. Photo stretches, copy and price centre.
    position:relative anchors the three things that sit over the photo: the pills, the Recommended
    label and, on desktop, the small Recommended tag. is-rec just marks the card in the DOM. */
-.acard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:var(--grid-gutter);align-items:center;
+/* Tracks align to the top, not the middle (client, 12 Aug): the copy column was centring in whatever
+   height the photo set, so a short description floated the title into the middle of the card and no
+   two cards in a list started their titles on the same line. The photo and the price rail set
+   align-self:stretch of their own, so this only moves the copy. */
+.acard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:var(--grid-gutter);align-items:start;
   border:var(--card-edge);
   border-radius:3px;background:var(--grey-3);overflow:hidden;position:relative;}
 /* a card holding units reads as chosen: the kit's is-added ring grammar.
@@ -735,11 +863,12 @@
    radius. Fonts stay ours - the Family component is Neutraface. The yellow is BBW's own, not the
    Family file's #fc0, since this is the BBW skin.
    The border is 3px on all four sides in both states and only its colour changes, so selecting a card
-   cannot shift the layout. Padding is 18/9/9 rather than the component's 18/12/12 because the 3px
-   side and bottom borders now sit outside it: the visual inset is the drawn 12px either way.
+   cannot shift the layout. Padding is an even 9px rather than the component's 12px because the 3px
+   border now sits outside it: the visual inset is the drawn 12px. The top was 18px for a round
+   (client, 12 Aug: bring it down to match the other three sides).
    flex is ignored on the desktop grid, so one rule serves both layouts. */
 #duModal .du-bed{display:flex;flex-direction:column;align-items:flex-start;gap:0;text-align:left;
-  flex:0 0 155px;min-height:0;padding:18px 9px 9px;background:rgba(212,211,214,.24);
+  flex:0 0 155px;min-height:0;padding:9px;background:rgba(212,211,214,.24);
   border:3px solid transparent;border-top-color:var(--yellow);border-radius:3px;
   color:#6f6f6e;font-size:14px;line-height:normal;white-space:normal;cursor:pointer;}
 /* Radio to the right of the text, which takes the rest of the row (Figma 1176:7195, client 10 Aug).
@@ -749,11 +878,20 @@
 /* 4px of top padding on the text column (client, 12 Aug), so the sleeps line sits level with the
    middle of the 24px radio beside it rather than its top edge */
 #duModal .du-bed-txt{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:6px;padding-top:4px;}
-/* 24px circle: outlined when not chosen, filled red with a white check when chosen. The check is
-   always in the DOM and hidden by colour, not display, since it strokes on currentColor. */
+/* 24px radio: outlined when not chosen, filled red with a white 10px dot when chosen (Figma
+   1235:7548, client 12 Aug - it was a check for one round). The dot is always in the DOM and hidden
+   by colour, not display, since it fills on currentColor.
+   The node draws a 2/1/3 shadow at 25% under the dot; left off here, to stay with the flat treatment
+   the toggles moved to on the same day.
+   Unchosen outline on grey/200 rather than black (client, 12 Aug), matching the row glyphs.
+   NOTE: that is 2.48:1 on the white sheet and 2.4:1 on a pebble card, under SC 1.4.11's 3:1 - the
+   same reason grey/200 was ruled out for the toggle knob an hour earlier. It is defensible here in a
+   way it was not there, because the card states its own selection twice over besides the radio: the
+   fill goes pebble to white, and the 3px yellow border goes top-only to all four sides. Grey/300
+   would clear 3:1 outright if the client wants belt and braces. */
 #duModal .du-radio{display:flex;align-items:center;justify-content:center;flex:none;
-  width:24px;height:24px;margin:0;color:transparent;border:1.5px solid #000;border-radius:999px;}
-#duModal .du-radio svg{width:14px;height:14px;display:block;}
+  width:24px;height:24px;margin:0;color:transparent;border:1.5px solid #a5a4a8;border-radius:999px;}
+#duModal .du-radio svg{width:10px;height:10px;display:block;}
 #duModal .du-bed[aria-pressed="true"] .du-radio{background:var(--red);border-color:var(--red);color:#fff;}
 /* Type from 1176:7195, which the client has already set in our fonts: Body S on grey/400 for the
    makeup, display for the price. The sleeps line is Body M bold, 16/22 (client, 10 Aug), down from
@@ -815,9 +953,14 @@
    of the block runs on (client, 10 Aug): 6px from the column gap plus 6px of its own. */
 #duModal .gf-price{display:block;font-family:var(--font-display);font-weight:400;font-size:22px;
   line-height:normal;letter-spacing:0;color:#000;margin-top:6px;}
-/* the glyph is just the icon, with no box or border round it (client, 10 Aug) */
+/* The glyph is just the icon, with no box or border round it (client, 10 Aug), on grey/200 rather
+   than black (client, 12 Aug) - so guests, ground floor, lounge and pet all sit quieter than the
+   heading beside them. One colour serves all four because every icon in this file draws on
+   currentColor. #a5a4a8 is the kit's --muted under Figma's name for it.
+   2.4:1 on the white sheet, which is under the 3:1 guideline for meaningful non-text - fine here
+   because each glyph is aria-hidden and its row's heading carries the meaning. */
 #duModal .fglyph{display:inline-flex;align-items:center;justify-content:center;width:auto;height:auto;
-  min-width:0;padding:0;border:0;background:none;color:#000;}
+  min-width:0;padding:0;border:0;background:none;color:#a5a4a8;}
 #duModal .gf-row .tswitch{margin-left:auto;}
 /* Toggle (client, 10 Aug, Figma 1190:7268). The knob is white when on and grey/100 when off. Both
    shadows have gone (client, 12 Aug) - the knob's drop shadow and the track's inset - so the control
@@ -830,9 +973,18 @@
 .tswitch .knob{position:absolute;top:50%;transform:translateY(-50%);left:8px;width:19px;height:19px;
   border-radius:50%;transition:left .12s;}
 .tswitch[aria-pressed="true"] .knob{left:31px;}
+/* The off state keeps the stepper's pebble fill AND its grey/100 border (client, 10 and 12 Aug), so
+   the two controls in the list still read as one family. Only the knob moved to grey/300 for AA
+   (client, 12 Aug).
+   That is enough for WCAG 2.2 SC 1.4.11, which asks 3:1 of the visual information needed to identify
+   the control and its state: the knob is what says on or off, by both position and colour, and it is
+   5.03:1 against the sheet and 4.6:1 against its own track. The track outline is containment rather
+   than state, and stays at grey/100's 1.49:1 - the same value the stepper's border carries.
+   The knob was grey/100 too, which left the whole off state at 1.49:1 and all but invisible.
+   The on state was already fine: red on white is 4.87:1, and the white knob on red the same. */
 #duModal .tswitch .track{background:rgba(212,211,214,.24);border:1.5px solid #d4d3d6;box-shadow:none;}
 #duModal .tswitch[aria-pressed="true"] .track{background:var(--red);border-color:transparent;}
-#duModal .tswitch .knob{background:#d4d3d6;box-shadow:none;}
+#duModal .tswitch .knob{background:#6f6f6e;box-shadow:none;}
 #duModal .tswitch[aria-pressed="true"] .knob{background:#fff;}
 /* same fill as a deselected bed card, so the two controls in the list read as one family
    (client, 10 Aug); the kit's stepper is transparent */
@@ -1077,6 +1229,11 @@ var ICO_CHEV='<svg viewBox="0 0 15.5077 9.51223" width="15.5" height="9.5" fill=
 var ICO_PGUEST="<svg viewBox=\"0 0 12 12\" width=\"12\" height=\"12\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M10.5745 10.3126C10.5415 10.3696 10.4942 10.4169 10.4372 10.4498C10.3801 10.4827 10.3155 10.5001 10.2496 10.5001H1.24962C1.18382 10.5 1.1192 10.4826 1.06225 10.4497C1.0053 10.4167 0.958012 10.3694 0.925144 10.3124C0.892277 10.2554 0.874983 10.1908 0.875 10.125C0.875017 10.0592 0.892344 9.99453 0.925241 9.93755C1.63915 8.70334 2.7393 7.81834 4.02321 7.3988C3.38813 7.02074 2.89472 6.44465 2.61873 5.75902C2.34275 5.07339 2.29947 4.31612 2.49553 3.6035C2.69158 2.89089 3.11614 2.26233 3.704 1.81436C4.29186 1.36639 5.01052 1.12378 5.74962 1.12378C6.48871 1.12378 7.20737 1.36639 7.79523 1.81436C8.38309 2.26233 8.80765 2.89089 9.00371 3.6035C9.19976 4.31612 9.15648 5.07339 8.8805 5.75902C8.60452 6.44465 8.1111 7.02074 7.47602 7.3988C8.75993 7.81834 9.86008 8.70334 10.574 9.93755C10.607 9.99452 10.6244 10.0592 10.6245 10.125C10.6245 10.1908 10.6073 10.2555 10.5745 10.3126Z\"/></svg>";
 var ICO_PBED="<svg viewBox=\"0 0 12 12\" width=\"12\" height=\"12\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M10.125 3.375H1.5V2.25C1.5 2.15054 1.46049 2.05516 1.39017 1.98484C1.31984 1.91451 1.22446 1.875 1.125 1.875C1.02554 1.875 0.930161 1.91451 0.859835 1.98484C0.789509 2.05516 0.75 2.15054 0.75 2.25V9.75C0.75 9.84946 0.789509 9.94484 0.859835 10.0152C0.930161 10.0855 1.02554 10.125 1.125 10.125C1.22446 10.125 1.31984 10.0855 1.39017 10.0152C1.46049 9.94484 1.5 9.84946 1.5 9.75V8.25H11.25V9.75C11.25 9.84946 11.2895 9.94484 11.3598 10.0152C11.4302 10.0855 11.5255 10.125 11.625 10.125C11.7245 10.125 11.8198 10.0855 11.8902 10.0152C11.9605 9.94484 12 9.84946 12 9.75V5.25C12 4.75272 11.8025 4.27581 11.4508 3.92417C11.0992 3.57254 10.6223 3.375 10.125 3.375ZM1.5 4.125H4.875V7.5H1.5V4.125Z\"/></svg>";
 var ICO_FTICK="<svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M2 8L6 12L14 4\"/></svg>";
+/* The bed card's chosen marker is a radio, not a check (Figma 1235:7548, client 12 Aug): a 10px dot
+   inside the 24px circle. On currentColor like everything else here, so the same element serves both
+   states - transparent when the card is not chosen, white when it is. ICO_FTICK stays as it is; the
+   accommodation card's feature list still uses it. */
+var ICO_RDOT="<svg viewBox=\"0 0 10 10\" width=\"10\" height=\"10\" fill=\"currentColor\" aria-hidden=\"true\"><circle cx=\"5\" cy=\"5\" r=\"5\"/></svg>";
 /* util-row link icon: the kit's assets-bbw/arrow-up-right.svg bakes its stroke colour into the file
    (var(--stroke-0,#FFD614)), so it renders yellow no matter what CSS says once it's an <img> - can't
    be recoloured white that way. Inlined here on currentColor instead, per this screen's icon
@@ -1085,20 +1242,40 @@ var ICO_ARROW='<svg viewBox="0 0 14 14" width="14" height="14" fill="none" strok
 /* heroicons-outline/plus at 14px, per the Add another unit link in the mobile dialog (1170:5047) */
 var ICO_PLUS='<svg viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M7 2.625V11.375M2.625 7H11.375"/></svg>';
 
-/* Category icons, path data taken verbatim from the exported 32px assets in assets-bbw/p3
-   (cat-*.svg, Figma 978:1729/1758/1755/1764) and inlined so the fill can follow the tile's
-   state. The files stay in the folder as the source of record. */
+/* Category icons, the client's icons_accom set (Figma 1240:7811, 12 Aug), replacing the filled
+   24-grid glyphs that were here. These are STROKED on a 28 grid, so each entry is the icon's inner
+   markup rather than one path string, and catIcon() supplies the stroke attributes once. The room
+   icon's door knob is the one filled path, so it carries its own fill and turns its stroke off.
+   Colours are dropped on the way in - the node draws each type in the Family skin's category colour,
+   and here they take the tile's state through currentColor.
+   Caps and joins are round throughout; two of the chalet paths are butt-capped in the node, which at
+   this size is well under a pixel. The exports in assets-bbw/p3 (cat-*.svg) are rewritten to match
+   and stay the source of record. */
 var CAT_ICO={
-  Rooms:"M20.25 6.75H3V4.5C3 4.30109 2.92098 4.11032 2.78033 3.96967C2.63968 3.82902 2.44891 3.75 2.25 3.75C2.05109 3.75 1.86032 3.82902 1.71967 3.96967C1.57902 4.11032 1.5 4.30109 1.5 4.5V19.5C1.5 19.6989 1.57902 19.8897 1.71967 20.0303C1.86032 20.171 2.05109 20.25 2.25 20.25C2.44891 20.25 2.63968 20.171 2.78033 20.0303C2.92098 19.8897 3 19.6989 3 19.5V16.5H22.5V19.5C22.5 19.6989 22.579 19.8897 22.7197 20.0303C22.8603 20.171 23.0511 20.25 23.25 20.25C23.4489 20.25 23.6397 20.171 23.7803 20.0303C23.921 19.8897 24 19.6989 24 19.5V10.5C24 9.50544 23.6049 8.55161 22.9017 7.84835C22.1984 7.14509 21.2446 6.75 20.25 6.75ZM3 8.25H9.75V15H3V8.25ZM11.25 15V8.25H20.25C20.8467 8.25 21.419 8.48705 21.841 8.90901C22.2629 9.33097 22.5 9.90326 22.5 10.5V15H11.25Z",
-  Apartments:"M23.1891 13.9547L18.6891 3.45469C18.6313 3.3198 18.5352 3.20482 18.4127 3.124C18.2902 3.04318 18.1467 3.00007 18 3H6C5.85326 3.00007 5.70976 3.04318 5.58728 3.124C5.4648 3.20482 5.36872 3.3198 5.31094 3.45469L0.810937 13.9547C0.762085 14.0687 0.742288 14.1931 0.753322 14.3167C0.764356 14.4403 0.805876 14.5592 0.874161 14.6628C0.942446 14.7664 1.03536 14.8514 1.14459 14.9103C1.25381 14.9691 1.37593 14.9999 1.5 15H11.25V19.5H9C8.80109 19.5 8.61032 19.579 8.46967 19.7197C8.32902 19.8603 8.25 20.0511 8.25 20.25C8.25 20.4489 8.32902 20.6397 8.46967 20.7803C8.61032 20.921 8.80109 21 9 21H15C15.1989 21 15.3897 20.921 15.5303 20.7803C15.671 20.6397 15.75 20.4489 15.75 20.25C15.75 20.0511 15.671 19.8603 15.5303 19.7197C15.3897 19.579 15.1989 19.5 15 19.5H12.75V15H18V18C18 18.1989 18.079 18.3897 18.2197 18.5303C18.3603 18.671 18.5511 18.75 18.75 18.75C18.9489 18.75 19.1397 18.671 19.2803 18.5303C19.421 18.3897 19.5 18.1989 19.5 18V15H22.5C22.6241 14.9999 22.7462 14.9691 22.8554 14.9103C22.9646 14.8514 23.0576 14.7664 23.1258 14.6628C23.1941 14.5592 23.2356 14.4403 23.2467 14.3167C23.2577 14.1931 23.2379 14.0687 23.1891 13.9547ZM2.63719 13.5L6.495 4.5H17.505L21.3628 13.5H2.63719Z",
-  Chalets:"M20.25 8.325V6.75C20.25 5.75544 19.8549 4.80161 19.1517 4.09835C18.4484 3.39509 17.4946 3 16.5 3H7.5C6.50544 3 5.55161 3.39509 4.84835 4.09835C4.14509 4.80161 3.75 5.75544 3.75 6.75V8.325C2.90228 8.49714 2.14014 8.95705 1.59272 9.62681C1.04529 10.2966 0.746241 11.135 0.746241 12C0.746241 12.865 1.04529 13.7034 1.59272 14.3732C2.14014 15.043 2.90228 15.5029 3.75 15.675V18.75C3.75 19.1478 3.90804 19.5294 4.18934 19.8107C4.47064 20.092 4.85218 20.25 5.25 20.25H18.75C19.1478 20.25 19.5294 20.092 19.8107 19.8107C20.092 19.5294 20.25 19.1478 20.25 18.75V15.675C21.0977 15.5029 21.8599 15.043 22.4073 14.3732C22.9547 13.7034 23.2538 12.865 23.2538 12C23.2538 11.135 22.9547 10.2966 22.4073 9.62681C21.8599 8.95705 21.0977 8.49714 20.25 8.325ZM7.5 4.5H16.5C17.0967 4.5 17.669 4.73705 18.091 5.15901C18.5129 5.58097 18.75 6.15326 18.75 6.75V8.325C17.9035 8.49904 17.143 8.95959 16.5965 9.62903C16.05 10.2985 15.7511 11.1358 15.75 12H8.25C8.24894 11.1358 7.94998 10.2985 7.4035 9.62903C6.85703 8.95959 6.09646 8.49904 5.25 8.325V6.75C5.25 6.15326 5.48705 5.58097 5.90901 5.15901C6.33097 4.73705 6.90326 4.5 7.5 4.5ZM19.5366 14.25H19.5C19.3011 14.25 19.1103 14.329 18.9697 14.4697C18.829 14.6103 18.75 14.8011 18.75 15V18.75H5.25V15C5.25 14.8011 5.17098 14.6103 5.03033 14.4697C4.88968 14.329 4.69891 14.25 4.5 14.25H4.46344C4.02006 14.2428 3.58869 14.1047 3.22352 13.8532C2.85835 13.6016 2.57566 13.2477 2.41096 12.836C2.24625 12.4243 2.20688 11.9731 2.29778 11.5391C2.38868 11.105 2.60581 10.7076 2.92188 10.3965C3.23796 10.0855 3.63889 9.87483 4.07432 9.79093C4.50975 9.70704 4.96026 9.75368 5.36927 9.925C5.77828 10.0963 6.12754 10.3847 6.3732 10.7539C6.61885 11.123 6.74994 11.5566 6.75 12V15.75C6.75 15.9489 6.82902 16.1397 6.96967 16.2803C7.11032 16.421 7.30109 16.5 7.5 16.5C7.69891 16.5 7.88968 16.421 8.03033 16.2803C8.17098 16.1397 8.25 15.9489 8.25 15.75V13.5H15.75V15.75C15.75 15.9489 15.829 16.1397 15.9697 16.2803C16.1103 16.421 16.3011 16.5 16.5 16.5C16.6989 16.5 16.8897 16.421 17.0303 16.2803C17.171 16.1397 17.25 15.9489 17.25 15.75V12C17.2501 11.5566 17.3811 11.123 17.6268 10.7539C17.8725 10.3847 18.2217 10.0963 18.6307 9.925C19.0397 9.75368 19.4902 9.70704 19.9257 9.79093C20.3611 9.87483 20.762 10.0855 21.0781 10.3965C21.3942 10.7076 21.6113 11.105 21.7022 11.5391C21.7931 11.9731 21.7537 12.4243 21.589 12.836C21.4243 13.2477 21.1416 13.6016 20.7765 13.8532C20.4113 14.1047 19.9799 14.2428 19.5366 14.25Z",
-  Caravans:"M22.5 9.95344V6.75C22.5 6.35218 22.342 5.97064 22.0607 5.68934C21.7794 5.40804 21.3978 5.25 21 5.25H3C2.60218 5.25 2.22064 5.40804 1.93934 5.68934C1.65804 5.97064 1.5 6.35218 1.5 6.75V9.95344C1.27233 10.0849 1.08321 10.2738 0.95158 10.5014C0.819949 10.729 0.750434 10.9871 0.75 11.25V15.75C0.75 16.1478 0.908035 16.5294 1.18934 16.8107C1.47064 17.092 1.85218 17.25 2.25 17.25H3V18.75C3 18.9489 3.07902 19.1397 3.21967 19.2803C3.36032 19.421 3.55109 19.5 3.75 19.5C3.94891 19.5 4.13968 19.421 4.28033 19.2803C4.42098 19.1397 4.5 18.9489 4.5 18.75V17.25H19.5V18.75C19.5 18.9489 19.579 19.1397 19.7197 19.2803C19.8603 19.421 20.0511 19.5 20.25 19.5C20.4489 19.5 20.6397 19.421 20.7803 19.2803C20.921 19.1397 21 18.9489 21 18.75V17.25H21.75C22.1478 17.25 22.5294 17.092 22.8107 16.8107C23.092 16.5294 23.25 16.1478 23.25 15.75V11.25C23.2496 10.9871 23.1801 10.729 23.0484 10.5014C22.9168 10.2738 22.7277 10.0849 22.5 9.95344ZM21 9.75H20.25C19.8522 9.75 19.4706 9.90804 19.1893 10.1893C18.908 10.4706 18.75 10.8522 18.75 11.25V12.75H12.75V6.75H21V9.75ZM11.25 6.75V12.75H5.25V11.25C5.25 10.8522 5.09196 10.4706 4.81066 10.1893C4.52936 9.90804 4.14782 9.75 3.75 9.75H3V6.75H11.25ZM21.75 15.75H2.25V11.25H3.75V13.5C3.75 13.6989 3.82902 13.8897 3.96967 14.0303C4.11032 14.171 4.30109 14.25 4.5 14.25H19.5C19.6989 14.25 19.8897 14.171 20.0303 14.0303C20.171 13.8897 20.25 13.6989 20.25 13.5V11.25H21.75V15.75Z"
+  Rooms:'<path d="M2.625 27H25.375"/>'+
+    '<path d="M8 26.5V12.125C8 11.9592 8.07024 11.8003 8.19526 11.6831C8.32029 11.5658 8.48986 11.5 8.66667 11.5H19.3333C19.5101 11.5 19.6797 11.5658 19.8047 11.6831C19.9298 11.8003 20 11.9592 20 12.125V26.5"/>'+
+    '<path d="M14 20.5C14.5523 20.5 15 20.0523 15 19.5C15 18.9477 14.5523 18.5 14 18.5C13.4477 18.5 13 18.9477 13 19.5C13 20.0523 13.4477 20.5 14 20.5Z" fill="currentColor" stroke="none"/>'+
+    '<path d="M17 11.5V26.5"/>',
+  Apartments:'<path d="M2.625 27H25.375"/><path d="M6.125 3.625V26.375"/><path d="M21.875 26.375V3.625"/>'+
+    '<path d="M10.5 8H12.25"/><path d="M15.75 8H17.5"/><path d="M10.5 12.375H12.25"/><path d="M15.75 12.375H17.5"/>'+
+    '<path d="M10.5 16.75H12.25"/><path d="M15.75 16.75H17.5"/>'+
+    '<path d="M11.375 26.375V21.125H16.625V26.375"/><path d="M4.375 3.625H23.625"/>',
+  Chalets:'<path d="M1.75 27H26.25"/>'+
+    '<path d="M24.5 26.8747V15.7917C24.5003 15.6475 24.4649 15.5054 24.3969 15.3781C24.329 15.2508 24.2306 15.1423 24.1106 15.0622L14.4856 8.64518C14.3418 8.54924 14.1729 8.49805 14 8.49805C13.8271 8.49805 13.6582 8.54924 13.5144 8.64518L3.88938 15.0622C3.76936 15.1423 3.671 15.2508 3.60307 15.3781C3.53513 15.5054 3.49973 15.6475 3.5 15.7917V26.8747"/>'+
+    '<path d="M8.16797 27.1663V17.833H19.8346V27.1663"/><path d="M14 18.708V25.708"/><path d="M7.875 22.5H20.125"/>',
+  Caravans:'<path d="M8.85139 24.9832C8.4138 24.5457 8.16797 23.9522 8.16797 23.3333C8.16797 22.7145 8.4138 22.121 8.85139 21.6834C9.28897 21.2458 9.88246 21 10.5013 21C11.1201 21 11.7136 21.2458 12.1512 21.6834C12.5888 22.121 12.8346 22.7145 12.8346 23.3333C12.8346 23.9522 12.5888 24.5457 12.1512 24.9832C11.7136 25.4208 11.1201 25.6667 10.5013 25.6667C9.88246 25.6667 9.28897 25.4208 8.85139 24.9832Z"/>'+
+    '<path d="M12.8333 23.3333H21C21.6188 23.3333 22.2123 23.0875 22.6499 22.6499C23.0875 22.2123 23.3333 21.6188 23.3333 21V12.8333C23.3333 12.2145 23.0875 11.621 22.6499 11.1834C22.2123 10.7458 21.6188 10.5 21 10.5H9.91667C8.21486 10.5 6.58276 11.176 5.3794 12.3794C4.17604 13.5828 3.5 15.2149 3.5 16.9167V21C3.5 21.6188 3.74583 22.2123 4.18342 22.6499C4.621 23.0875 5.21449 23.3333 5.83333 23.3333H8.16667"/>'+
+    '<path d="M1.75 27H26.25"/><path d="M9.33203 10.5L17.4987 7L18.6654 10.5"/>'+
+    '<path d="M15.168 15.7493C15.168 15.5946 15.2294 15.4463 15.3388 15.3369C15.4482 15.2275 15.5966 15.166 15.7513 15.166H18.0846C18.2393 15.166 18.3877 15.2275 18.4971 15.3369C18.6065 15.4463 18.668 15.5946 18.668 15.7493V18.0827C18.668 18.2374 18.6065 18.3858 18.4971 18.4952C18.3877 18.6046 18.2393 18.666 18.0846 18.666H15.7513C15.5966 18.666 15.4482 18.6046 15.3388 18.4952C15.2294 18.3858 15.168 18.2374 15.168 18.0827V15.7493Z"/>'+
+    '<path d="M23.332 21H26.25"/>'
 };
 function catIcon(c){
-  var d=CAT_ICO[c];
-  if(!d) return '';
-  /* the 0 0 24 24 viewBox is the asset's own; the exports moved to a 24 grid on 4 Aug */
-  return '<svg class="ct-ico" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="'+d+'"/></svg>';
+  var g=CAT_ICO[c];
+  if(!g) return '';
+  /* 0 0 28 28 is the set's own grid; both consumers size it in CSS (24px on a tile, 25px on the
+     dialog's category disc), so the box only has to be square */
+  return '<svg class="ct-ico" viewBox="0 0 28 28" width="28" height="28" fill="none" stroke="currentColor"'+
+    ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+g+'</svg>';
 }
 
 /* ACCOMMODATION PHOTOGRAPHY: real Butlin's imagery from the Magnolia DAM, all from the Minehead
@@ -1332,17 +1509,21 @@ function categoryUI(){
 function resultsHead(){
   return '<div class="res-tools">'+
     '<div class="rt-headrow"><h2 class="rt-head">Accommodation</h2></div>'+
-    '<div class="basis-seg" role="group" aria-label="Price basis"><button type="button" data-basis="unit" aria-pressed="'+(state.basis==="unit"?'true':'false')+'">Per unit</button><button type="button" data-basis="pp" aria-pressed="'+(state.basis==="pp"?'true':'false')+'">Per person</button></div></div>';
+    '<div class="basis-seg" role="group" aria-label="Price basis"><button type="button" data-basis="unit" aria-pressed="'+(state.basis==="unit"?'true':'false')+'">&pound; Unit</button><button type="button" data-basis="pp" aria-pressed="'+(state.basis==="pp"?'true':'false')+'">&pound; Person</button></div></div>';
 }
 
-/* "from" now sits inside the price line rather than as a label above it, with the basis as a
-   quiet subline beneath (Figma 1003:5737). That subline is what the pink scope pill used to say,
-   so the pill has gone from the card. */
+/* Three stacked lines: "from" small and grey above, the figure in display, then the basis as a quiet
+   subline beneath (Figma 1039:7490, client 12 Aug). "from" was inside the price line at display size
+   for one round, per the older 1003:5737; it now takes the same Body S grey as the subline, so the
+   figure is the only thing on the card set at display size. That subline is what the pink scope pill
+   used to say, so the pill has gone from the card. */
 function cardPrice(s){
   var a=lowArr(s);
-  if(state.basis==="pp")
-    return '<div class="ac-price"><b>from '+gbp(a.price/a.sleeps)+'</b><span>per person, based on '+plural(a.sleeps,'guest')+'</span></div>';
-  return '<div class="ac-price"><b>from '+gbp(a.price)+'</b><span>per unit, whole break</span></div>';
+  var sub=state.basis==="pp"
+    ? 'per person, based on '+plural(a.sleeps,'guest')
+    : 'per unit, whole break';
+  var fig=state.basis==="pp"?gbp(a.price/a.sleeps):gbp(a.price);
+  return '<div class="ac-price"><span>from</span><b>'+fig+'</b><span>'+sub+'</span></div>';
 }
 
 /* the occupancy and bedroom counts are frosted pills; they sit beside the title on desktop and are
@@ -1458,14 +1639,15 @@ function guestGlyphs(total,placedN){
      a row, capped at 8: the group card sizes its figures as an exact share of the row and wraps past
      8 rather than shrinking. --gn is the true total: the dialog's progress strip has to fit
      every figure on one line beside its caption, so it divides by all of them. The mobile sticky bar
-     uses neither and keeps its fixed data-dense steps, measured against its 390px frame. */
+     divides by all of them, and so does the mobile group panel - both are single rows that shrink to
+     fit rather than wrapping. data-dense is now unused by either. */
   return '<div class="pg-row" style="--gcols:'+Math.min(total,8)+';--gn:'+total+'"'+(dense?' data-dense="'+dense+'"':'')+' aria-hidden="true">'+g+'</div>';
 }
 /* Unit card per Figma 990:1686 (4 Aug): the unit number and a guests pill share the title row,
    then the accommodation name and bed makeup on one middot line. Moving the party into the pill
    is what took a row out of the card; the middots run dimmer than the words they separate. */
 function unitBody(i,u){
-  var s=stockById(u.stockId), a=arrBy(s,u.sleeps), sp=u.sleeps-u.guests;
+  var s=stockById(u.stockId), a=arrBy(s,u.sleeps);
   var chose=[];
   OPTS.forEach(function(o){ if(u[o.k]) chose.push(o.t); });
   if(u.pickRoom) chose.push('Exact room');
@@ -1474,9 +1656,9 @@ function unitBody(i,u){
      their own; the line already wraps, so they still cost no fixed height */
   var makeup=[s.name].concat(a.bed.split(' + ')).join(sep)+
     chose.map(function(c){ return sep+'<span class="uext">'+c+'</span>'; }).join('');
-  /* the guests pill is the only pill left on the title row */
-  var pills='<span class="upill">'+ICO_PERSON+plural(u.guests,'guest').toUpperCase()+
-    (sp>0?', '+plural(sp,'spare').toUpperCase():'')+'</span>';
+  /* The guests pill is the only pill left on the title row, and it no longer calls out spare beds
+     (client, 13 Aug) - so nothing on this card reads u.sleeps against u.guests any more. */
+  var pills='<span class="upill">'+ICO_PERSON+plural(u.guests,'guest').toUpperCase()+'</span>';
   var lab='unit '+(i+1)+', '+s.name+', '+plural(u.guests,'guest')+(chose.length?', '+chose.join(', '):'');
   return '<div class="utext"><div class="utop"><span class="uhead">Unit '+(i+1)+'</span>'+pills+'</div>'+
     '<span class="ubed">'+makeup+'</span></div>'+
@@ -1571,10 +1753,14 @@ function render(){
   if(prevRail) railLeft=prevRail.scrollLeft;
   document.getElementById('searchSumm').innerHTML=summText();
   var mob=state.device==="mobile", panel=stayPanel();
-  content.innerHTML=(mob?panel:'')+resultsHead()+categoryUI()+
+  content.innerHTML=(mob?panel:'')+resultsHead()+
     /* --cat-cols hands the tile grid's column count to .layout, so the results column and the Your
-       stay panel land on the same tracks as the filter tiles (client, 10 Aug) */
+       stay panel land on the same tracks as the filter tiles (client, 10 Aug).
+       The filter tiles are INSIDE .layout, as a full-width row above the results. They read the same
+       either way at four columns, and it is what lets the 5-column trial run the panel up beside
+       them - see the fenced block in the CSS. */
     '<div class="layout" style="--cat-cols:'+catList().length+'">'+(mob?'':panel)+
+    '<div class="cat-block">'+categoryUI()+'</div>'+
     '<div class="results"><div class="acards">'+visibleStock().map(accomCard).join('')+'</div>'+utilityRow()+'</div>'+
     '</div>';
   wire();
@@ -1756,7 +1942,7 @@ function draftUnitBlock(j,d,s,base){
         '<span class="du-bed-head">'+
         '<span class="du-bed-txt"><b>Sleeps '+a.sleeps+'</b>'+
         '<span class="du-bed-mk">'+bedLine(a.bed)+'</span></span>'+
-        '<span class="du-radio" aria-hidden="true">'+ICO_FTICK+'</span></span>'+
+        '<span class="du-radio" aria-hidden="true">'+ICO_RDOT+'</span></span>'+
         '<span class="du-bed-pr">'+pr+'</span></button>';
     }).join('')+'</div>';
   /* no hint line under the tiles (client, 10 Aug): the dialog's title and the tiles themselves carry
@@ -2026,6 +2212,7 @@ function setDevice(d){
 }
 document.getElementById('dvMobile').addEventListener('click',function(){ setDevice("mobile"); });
 document.getElementById('dvDesktop').addEventListener('click',function(){ setDevice("desktop"); });
+
 
 /* Group size keeps units that still fit: occupancy clamps first and only units left
    with nothing drop, from the end */

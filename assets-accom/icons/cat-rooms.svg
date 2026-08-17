@@ -1,0 +1,10 @@
+<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icons_accom">
+<g id="Property 1=room">
+<path id="Vector" d="M2.625 27H25.375" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_2" d="M8 26.5V12.125C8 11.9592 8.07024 11.8003 8.19526 11.6831C8.32029 11.5658 8.48986 11.5 8.66667 11.5H19.3333C19.5101 11.5 19.6797 11.5658 19.8047 11.6831C19.9298 11.8003 20 11.9592 20 12.125V26.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_3" d="M14 20.5C14.5523 20.5 15 20.0523 15 19.5C15 18.9477 14.5523 18.5 14 18.5C13.4477 18.5 13 18.9477 13 19.5C13 20.0523 13.4477 20.5 14 20.5Z" fill="currentColor"/>
+<path id="Vector_4" d="M17 11.5V26.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+</svg>
