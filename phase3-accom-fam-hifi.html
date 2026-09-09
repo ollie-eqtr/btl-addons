@@ -5,6 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Phase 3 Family Accommodation (hi-fi)</title>
 <!--
+  SCREEN TWEAKS (9 Sept 2026), three on the user's direction. The sleeping-arrangement tile hovers LIGHT
+  GREY again (5% tint, 1.5px grey-100 ring), not the black ring of 14 Aug. THE FINAL PARTY CLOSES after its
+  Add on desktop too: it plays the same handover as every earlier party, with no next party to open (desktop
+  used to keep its panel open so the page was not left bare). THE ADDED CARD'S CATEGORY BAND GOES GOLD with
+  the ring, so the frame closes on all four sides (5px top, 3px round). Search SCREEN TWEAKS.
+
+  SECTION HEADING (9 Sept 2026). "Where will you stay?" was only rendered in the single-party layout; with
+  2 or 5 parties the row held the price toggle alone (user, 9 Sept). It now renders in both layouts, same
+  copy in every state. The user first asked for it to follow BBW (name the locked type, say when the task is
+  done), then reversed that the same day: the choosing party's own h3 already says "Choose your next {type}",
+  and Family needs no done state. BBW's heading does change; see that file. Search SECTION HEADING.
+
   HI-FI: Phase 3 Accommodation, Butlin's Family skin. Sibling of phase3-accom-bbw-hifi.html.
 
   - SOURCE LOFI: phase3-search-accom-lofi.html (signed off 30 Jul), FAMILY platform only.
@@ -141,6 +153,19 @@
         from the lofi; fine for moderated testing, not fine for build.
       * Touch targets: the add-on toggles are BBW's 58x44 .tswitch and the dialog close is
         32px. Both under 44px, both as the kit draws them. Same flag as the BBW build's.
+  - PARTY HANDOVER (8 Sept 2026), the response to the Sept 2026 user testing. Testers got no clear
+    feedback that Party 1's room had been added, and Party 2 opening on one type with no tiles read as a
+    pre-selection they had not made. Five options were explored in
+    BTL P1 Cursor/phase3-accom-fam-feedback-options.html; option C was chosen and refined with the user
+    over two days, then ported here. In short: Add this room holds its Added state for 0.6s, then in one
+    0.7s movement the finished party's content fades out and down as its box closes to a white row inside
+    a gold edge, the next party opens in place beneath it, and the page glides the finished row to the
+    top; a green disc pops in with a heavy white tick, and the name and price rise. Every party after the
+    first is headed "Choose your next {type}" with the same-type rule as a line of copy where the "i"
+    tooltip was. Also from that work: the multi-party Add button keeps one label in both states; the
+    yellow "Party N" pill is gone from the cards; Up next headers are white; a collapsed party has no
+    doubled foot line; on mobile the status label sits on the Party N line; the title/makeup gap is 0.
+    The CSS lives in the PARTY HANDOVER block, the JS in the PARTY HANDOVER section; search either.
   - TWO BUGS FIXED that only measurement or a screenshot would show, both worth re-checking if you
     touch the areas concerned:
       * The kit's .card-cta is white-space:nowrap, so a label too wide for its button bleeds out
@@ -670,7 +695,9 @@ ul{margin:0;padding:0;list-style:none;}
    GREY rather than going white, because a white fill on a borderless card leaves it shapeless against
    the white page. (client, 10 Aug; revised 12 Aug)
    THE RING SKIPS THE TOP EDGE (user, 14 Aug) so it does not run across the 5px category band and put
-   two accent colours end to end on one line. Three shadows rather than one ring, because a ring cannot
+   two accent colours end to end on one line. SCREEN TWEAKS (user, 9 Sept): THE BAND ITSELF GOES GOLD on
+   the added card (rule in the GOLD HANDOVER block), so the frame is closed on all four sides; the ring
+   still skips the top because the band IS the top. Three shadows rather than one ring, because a ring cannot
    be partial: a left band, a right band and a bottom band, each 3px, no blur, no spread. Geometry is
    identical to the ring it replaces - shadows cost no layout - so nothing moves.
    MOBILE TAKES THE SAME THREE-SIDED TREATMENT and loses its outset outline, which is the 12 Aug call.
@@ -856,6 +883,12 @@ ul{margin:0;padding:0;list-style:none;}
 .acard.has-alloc::after{content:'';position:absolute;inset:0;z-index:6;pointer-events:none;
   border-radius:var(--radius);
   box-shadow:inset 3px 0 0 var(--select),inset -3px 0 0 var(--select),inset 0 -3px 0 var(--select);}
+/* SCREEN TWEAKS (user, 9 Sept): THE 5px CATEGORY BAND GOES GOLD TOO on the added card, so the ring's three
+   sides and the band close a frame (5px top, 3px round). It comes in with the ring: a keyframe rather than
+   a transition, because the render that adds has-alloc is a fresh node with nothing to transition from. */
+.acard.has-alloc{border-top-color:var(--select);}
+@keyframes bandGold{from{border-top-color:var(--cat);}to{border-top-color:var(--select);}}
+.acard.is-committing{animation:bandGold var(--t-move) var(--ease-calm) both;}
 @keyframes goldHandoverOut{from{opacity:1;}to{opacity:0;}}
 @keyframes goldHandoverIn{from{opacity:0;}to{opacity:1;}}
 .acard.is-committing .arr-tile[aria-pressed="true"]::after,
@@ -912,7 +945,8 @@ ul{margin:0;padding:0;list-style:none;}
    Hover is carried in the markup as .is-hover for the same reason the filter tiles do it: clicking an
    arrangement re-renders the screen, and a replaced element under a stationary cursor does not get
    :hover back until the pointer moves. That was survivable when hover was a faint --paper-3 ring; at
-   1.5px of black it would be an obvious flash. */
+   1.5px of black it would be an obvious flash. SCREEN TWEAKS (9 Sept): the ring is grey again, but a
+   1.5px ring snapping to 1px would still flash, so .is-hover stays. */
 .arr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:calc(var(--u)*1.5);}
 [data-device="mobile"] .arr-grid{grid-template-columns:minmax(0,1fr);}
 .arr-tile{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:calc(var(--u)*3);
@@ -928,12 +962,13 @@ ul{margin:0;padding:0;list-style:none;}
    fade out and the whole accom card takes it. See the GOLD HANDOVER block further down, which owns every
    rule for that; this one only sets the white fill the chosen tile keeps either way. */
 .arr-tile[aria-pressed="true"]{background:var(--paper);box-shadow:none;}
+/* SCREEN TWEAKS (user, 9 Sept): HOVER IS LIGHT GREY - the 5% tint every other control on this screen
+   hovers with, and the ring goes to 1.5px in its own grey-100 rather than to black. The black ring
+   (14 Aug) read as a state change rather than a hover. The radio keeps its resting edge. */
 @media(hover:hover){
   .arr-tile:not([aria-disabled="true"]):hover,
-  .arr-tile.is-hover:not([aria-disabled="true"]){background:var(--neutral-12);
-    box-shadow:inset 0 0 0 1.5px var(--ink);}
-  .arr-tile:not([aria-disabled="true"]):hover .arr-radio,
-  .arr-tile.is-hover:not([aria-disabled="true"]) .arr-radio{border-color:var(--ink);}
+  .arr-tile.is-hover:not([aria-disabled="true"]){background:rgba(0,0,0,.05);
+    box-shadow:inset 0 0 0 1.5px var(--grey-100);}
 }
 /* disabled, and NOT by an opacity dim: the control goes entirely, the text greys, and the tile FILLS
    grey-100 with NO EDGE (user, 14 Aug). Filling with the same colour the other tiles outline in is what
@@ -1254,6 +1289,111 @@ ul{margin:0;padding:0;list-style:none;}
 [data-device="mobile"] .rp-head{padding:calc(var(--u)*3) calc(var(--u)*7) 0 calc(var(--u)*2);}
 [data-device="mobile"] .rp-body{padding:calc(var(--u)*2) calc(var(--u)*2) calc(var(--u)*3);}
 [data-device="mobile"] .rp-actions{padding:calc(var(--u)*2);}
+
+/* ============================================================ PARTY HANDOVER (8 Sept 2026)
+   The response to the Sept 2026 user testing: see the header comment for the finding and the exploration
+   it came from. Timeline from the tap on Add this room:
+     0.00s  the button flips to its rose Added state and HOLDS for HO_HOLD (0.6s), so the result of the
+            tap is read before anything moves.
+     0.60s  re-render, then ONE MOVEMENT over --ho-move (0.7s) on one rise curve:
+              - the finished party comes back with a GHOST of the body it just had (the old markup, inert,
+                in flow, at its old height, so the page is exactly as tall as it was and nothing jumps);
+                the ghost's content fades out and down and its box closes to nothing;
+              - the next party's header, on screen from the start, brightens from Up next, and its body
+                EXTENDS from nothing to its full height, pushing the parties and links below it down;
+              - JS drives the scroller so the finished row lands at the top of the screen (hoRebuild).
+            Sharing a start, a length and a curve is what makes the next party unfold UPWARDS from the
+            bottom of the screen as the finished one closes above it. The utility links rise in with it.
+     1.30s  (--ho-land) landed. The finished row takes its completed look - white, gold edge, gold ring -
+            over 0.24s; the green disc pops at +0.12s; the white tick draws and the name and price rise at
+            +0.30s. The next party's body height is released so it can grow when a card opens.
+   Every step after the re-render is a keyframe gated by a one-shot class (ho-done-in on the finished
+   party, ho-next-in on the next, ho-util-in on the links, the ghost itself), because the re-render
+   replaces every node and a transition would have nothing to run from (see the header comment). The
+   resting white-and-gold hangs off is-done, which every render sets, so it survives later re-renders.
+   Gold = chosen and green = done in this screen's grammar; the finished row is the record of a choice.
+   THE GOLD EDGE IS 3px PAINTED AS 1px + 2px: the .party border (1.5px, floored to 1px by Blink) goes gold
+   and a 2px inset ring on a ::after overlay sits inside it; an overlay because an inset shadow on .party
+   would paint UNDER .unit-head's fill. overflow:clip on .party keeps the overlay at inset:0.
+   Under prefers-reduced-motion none of this runs: animatePartiesAdvance takes its old fade-and-scroll
+   path and the row simply appears in its completed state. */
+:root{--ho-collapse-delay:0s;--ho-move:.7s;--ho-land:var(--ho-move);}
+/* the finished row: white inside a 3px gold edge, and it stays that way */
+.party.is-done{position:relative;border-color:var(--select);}
+.party.is-done::after{content:'';position:absolute;inset:0;z-index:7;pointer-events:none;
+  border-radius:calc(var(--radius) - 1px);box-shadow:inset 0 0 0 2px var(--select);}
+.party.is-done .unit-head{background:var(--paper);}
+/* the done disc: solid green with a heavy white tick. The kit's outline disc and its 14px check asset
+   were the disc testers did not notice. The tick is an inline path with pathLength="1", so a dash of 1
+   draws it from nothing whatever its real length. Candidate for the kit's .pstep.done. */
+.pstep.done{background:var(--positive);border-color:var(--positive);color:#fff;}
+.pstep.done svg{display:block;width:14px;height:14px;}
+.pstep.done .ho-tickpath{stroke-dasharray:1;stroke-dashoffset:0;}
+/* THE GHOST: the body the party just had, back in flow at its old height so nothing jumps. Its content
+   fades out and down over the same --ho-move its box takes to close, so the two finish together and the
+   box is never empty. The inner .party-body keeps the real body's padding, so the content sits exactly
+   where it did. */
+.ho-ghost{overflow:hidden;pointer-events:none;animation:hoGhost var(--ho-move) var(--ease-rise) both;animation-delay:var(--ho-collapse-delay);}
+@keyframes hoGhost{from{height:var(--ho-collapse,0px);}to{height:0px;}}
+.ho-ghost-body{animation:hoOutDown var(--ho-move) var(--ease-calm) both;animation-delay:var(--ho-collapse-delay);}
+@keyframes hoOutDown{from{opacity:1;transform:none;}to{opacity:0;transform:translateY(16px);}}
+/* THE COMPLETED LOOK ARRIVES WHEN THE BOX HAS LANDED, not before: during the collapse the section keeps
+   its grey edge and pebble header, so what shrinks is the section the customer was just using. */
+.party.ho-done-in{animation:hoDoneEdge var(--t-state) var(--ease-calm) both;animation-delay:var(--ho-land);}
+.party.ho-done-in::after{animation:hoFadeIn var(--t-state) var(--ease-calm) both;animation-delay:var(--ho-land);}
+.party.ho-done-in .unit-head{animation:hoDoneFill var(--t-state) var(--ease-calm) both;animation-delay:var(--ho-land);}
+@keyframes hoDoneEdge{from{border-color:var(--grey-100);}to{border-color:var(--select);}}
+@keyframes hoDoneFill{from{background-color:var(--paper-2);}to{background-color:var(--paper);}}
+@keyframes hoFadeIn{from{opacity:0;}to{opacity:1;}}
+.party.ho-done-in .pstep.done{animation:hoPop var(--t-state) var(--ease-pop) both;animation-delay:calc(var(--ho-land) + .12s);}
+.party.ho-done-in .pstep.done .ho-tickpath{animation:hoDraw .32s var(--ease-calm) both;animation-delay:calc(var(--ho-land) + .3s);}
+.party.ho-done-in .ph-choice{animation:hoRise var(--t-move) var(--ease-rise) both;animation-delay:calc(var(--ho-land) + .3s);}
+@keyframes hoPop{from{transform:scale(.5);opacity:0;}to{transform:none;opacity:1;}}
+@keyframes hoDraw{from{stroke-dashoffset:1;}to{stroke-dashoffset:0;}}
+@keyframes hoRise{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+/* THE NEXT PARTY OPENS IN PLACE, IN THE SAME MOVEMENT. Its header is on screen from the re-render,
+   brightening from Up next; its body starts at nothing and EXTENDS to its full height over --ho-move,
+   clipped as it grows, pushing whatever sits below it down. --ho-open is the body's resting height and
+   --ho-pad its resting padding (24px desktop, 12px mobile), both measured by hoRebuild on the fresh DOM
+   and written inline, because height cannot animate to auto and the padding differs per breakpoint. The
+   height is released again once the opening has played (hoRebuild removes the animation), so the body can
+   grow later when a card opens. The heading and rule, then the card, follow in a short stagger so the eye
+   is led down into it. */
+.party.ho-next-in{animation:hoBrighten var(--t-state) var(--ease-calm) both;}
+@keyframes hoBrighten{from{opacity:.55;}to{opacity:1;}}
+.party.ho-next-in .party-body{box-sizing:border-box;overflow:hidden;
+  animation:hoOpen var(--ho-move) var(--ease-rise) both;animation-delay:var(--ho-collapse-delay);}
+@keyframes hoOpen{from{height:0px;padding-top:0px;padding-bottom:0px;}
+  to{height:var(--ho-open,auto);padding-top:var(--ho-pad,24px);padding-bottom:var(--ho-pad,24px);}}
+.party.ho-next-in .pc-headrow,.party.ho-next-in .pc-rule{animation:hoRise var(--t-move) var(--ease-rise) both;animation-delay:.15s;}
+.party.ho-next-in .ac-list{animation:hoRise var(--t-move) var(--ease-rise) both;animation-delay:.3s;}
+/* the links below rise in with the movement */
+.ho-util-in{animation:hoRise var(--ho-move) var(--ease-rise) both;animation-delay:var(--ho-collapse-delay);}
+
+/* ---- the same-type rule as a line of copy under "Choose your next ...", where the "i" tooltip was.
+   Same 14px/ink-2 voice as .cat-lockline, 8px under the heading, then the list's usual 24px. ---- */
+.pc-headrow{margin-bottom:var(--u);}
+.pc-rule{font-size:14px;line-height:1.4;color:var(--ink-2);margin:0 0 calc(var(--u)*3);}
+[data-device="mobile"] .pc-rule{margin-bottom:calc(var(--u)*2);}
+
+/* ---- party headers (user, 7 and 8 Sept): an Up next party is white, not pebble; a collapsed party has
+   no doubled line at its foot (the header's own bottom border sat on the section's border, and the two
+   1px lines read as one thick one - colour, not width, so nothing moves); on mobile the status label
+   ("Choosing now", "Up next") sits on the Party N line, top right, absolute so the makeup line keeps the
+   full width (the finished row's summary is too long for that and keeps its own line); and no gap
+   between the Party N title and its makeup line, where the kit had 3px. ---- */
+.party.is-upcoming .unit-head{background:var(--paper);}
+.party.is-collapsed .unit-head{border-bottom-color:transparent;}
+[data-device="mobile"] .unit-head{position:relative;}
+[data-device="mobile"] .uh-right.uh-status{position:absolute;top:calc(var(--u)*2);right:calc(var(--u)*3);flex:none;}
+[data-device="mobile"] .uh-status .ph-choice{flex:none;text-align:right;line-height:24px;}
+.unit-head .uh-titles{gap:0;}
+
+@media(prefers-reduced-motion:reduce){
+  .party.ho-done-in,.party.ho-done-in::after,.party.ho-done-in .unit-head,.ho-util-in,.ho-ghost,.ho-ghost-body,
+  .party.ho-next-in,.party.ho-next-in .party-body,.party.ho-next-in .pc-headrow,.party.ho-next-in .pc-rule,.party.ho-next-in .ac-list,
+  .party.ho-done-in .pstep.done,.party.ho-done-in .pstep.done .ho-tickpath,.party.ho-done-in .ph-choice{animation:none!important;}
+}
 </style>
 </head>
 <body>
@@ -1721,8 +1861,14 @@ var state={
                             pointer moves - without this the tile flashes to its resting look and back */
   gal:{},                /* carousel index per resort:stockId - lives in state so it survives the
                             full re-render every other interaction triggers */
-  expand:null            /* open in-card expansion: {stockId,arr,gf,pet,pickRoom,boundUnit}
+  expand:null,           /* open in-card expansion: {stockId,arr,gf,pet,pickRoom,boundUnit}
                             boundUnit!=null means the expansion edits that unit live */
+  /* PARTY HANDOVER one-shots, set by commit() and consumed by the render that follows, the same pattern
+     as commitFx and revealSecs (see the header comment on why keyframes and one-shots) */
+  hoDoneFx:null,         /* index of the party that just finished: its row plays the completed look */
+  hoNextIn:false,        /* the next party opens in place on this render */
+  hoCollapse:0,          /* the height of the body the finished party just had */
+  hoGhost:''             /* that body's markup, rendered back inert so it can fade out and down */
 };
 
 /* ============================================================ HELPERS */
@@ -1995,21 +2141,31 @@ function partyChoiceBody(lock){
     return categoryUI()+cards;
   }
   var noun=CAT_NOUN[lock]||lock.toLowerCase();
-  var tip='<span class="infotip"><button type="button" class="infotip-btn" aria-label="Why can I only choose this type?">i</button>'+
-    '<span class="infotip-pop" role="tooltip">Everyone in your group books the same accommodation type. To choose a different type, remove your choices and start again.</span></span>';
-  return '<div class="pc-headrow"><h3 class="pc-heading">Choose your '+noun+'</h3>'+tip+'</div>'+cards;
+  /* "NEXT" (user, 7 Sept): the one word that says a first choice has already been made. And the rule
+     moves out of the "i" into a line of copy under the heading: testers did not find it behind the icon,
+     and the finding was as much about not knowing WHY one type as about not knowing a choice had been
+     made. Short and warm; the category name is the noun so it reads as a fact about this group. */
+  var rule='<p class="pc-rule">Everyone in your group stays in the same accommodation type, so it’s '+lock+' all round.</p>';
+  return '<div class="pc-headrow"><h3 class="pc-heading">Choose your next '+noun+'</h3></div>'+rule+cards;
 }
 function partiesUI(){
   var lock=lockedCategory(), cur=firstUnallocated();
+  /* PARTY HANDOVER one-shots, consumed here so they play on this render only */
+  var doneFx=state.hoDoneFx; state.hoDoneFx=null;
+  var nextIn=state.hoNextIn; state.hoNextIn=false;
+  var collapse=state.hoCollapse; state.hoCollapse=0;
+  var ghost=state.hoGhost; state.hoGhost='';
   return state.parties.map(function(p,i){
-    var a=state.alloc[i], cls='', body='';
+    var a=state.alloc[i], cls='', body='', collapsed=null;
     /* cot visibility only; the type comes from the search step */
     var sub=partyLabel(p)+(p.infants>0?' &middot; '+(p.cot||'Cot needed'):'');
     var titles='<span class="uh-titles"><span class="uh-title">Party '+(i+1)+'</span><span class="uh-sub">'+sub+'</span></span>';
     var head;
     if(a){
       var s=stockById(a.stockId), ad=addOnText(a);
-      head='<div class="unit-head"><span class="pstep done" aria-hidden="true"></span>'+titles+
+      /* is-done is persistent (the row's white-and-gold hangs off it); ho-done-in is the one-shot */
+      cls=' is-done'+(doneFx===i?' ho-done-in':'');
+      head='<div class="unit-head"><span class="pstep done" aria-hidden="true">'+HO_TICK+'</span>'+titles+
         '<span class="uh-right"><span class="ph-choice">'+s.name+' &middot; '+gbp(unitPrice(a))+
         (ad?'<span class="pc-add">'+ad+'</span>':'')+'</span>'+
         '<button type="button" class="unit-revert" data-edit="'+i+'">Edit</button>'+
@@ -2017,28 +2173,40 @@ function partiesUI(){
       /* editing this party reopens its card, bound, inside the section */
       if(state.expand&&state.expand.boundUnit===i&&stockById(state.expand.stockId))
         body='<div class="party-body">'+accomCard(stockById(state.expand.stockId))+'</div>';
+      /* PARTY HANDOVER: the body this party just had comes back as an inert ghost at its old height, so
+         it can fade out and down while its box closes. Not a real body: the section still counts as
+         collapsed, and hoRebuild removes the ghost once its box has shrunk to nothing. */
+      if(doneFx===i&&ghost){
+        collapsed=!body;
+        body+='<div class="ho-ghost" style="--ho-collapse:'+(collapse||0)+'px" aria-hidden="true" inert>'+
+          '<div class="party-body ho-ghost-body">'+ghost+'</div></div>';
+      }
     } else if(i===cur){
-      cls=' is-current';
+      /* PARTY HANDOVER: the next party opens in place on the render after the commit */
+      cls=' is-current'+(nextIn?' ho-next-in':'');
       /* no numbered badge (user, 14 Aug) - "Party N" is already the heading, and "Choosing now"
          on the right is what marks this one as live */
       head='<div class="unit-head">'+titles+
-        '<span class="uh-right"><span class="ph-choice now">Choosing now</span></span></div>';
+        '<span class="uh-right uh-status"><span class="ph-choice now">Choosing now</span></span></div>';
       body='<div class="party-body">'+partyChoiceBody(lock)+'</div>';
     } else {
       cls=' is-upcoming';
       head='<div class="unit-head">'+titles+
-        '<span class="uh-right"><span class="ph-choice dim">Up next</span></span></div>';
+        '<span class="uh-right uh-status"><span class="ph-choice dim">Up next</span></span></div>';
     }
-    return '<section class="party'+cls+'">'+head+body+'</section>';
+    /* is-collapsed: no body, so the header's bottom border would double the section's (user, 7 Sept) */
+    if(collapsed===null) collapsed=!body;
+    return '<section class="party'+cls+(collapsed?' is-collapsed':'')+'">'+head+body+'</section>';
   }).join('');
 }
 
 /* ============================================================ RESULTS */
-/* the price-basis toggle drives the tile from-prices as well as the card prices. In the tiles
-   layout it shares a header row with the "Accommodation types" heading. */
-function resultsHead(withHead){
+/* the price-basis toggle drives the tile from-prices as well as the card prices. It shares a header row
+   with the section heading in BOTH layouts (SECTION HEADING, 9 Sept; the parties layout had the toggle
+   alone until then, which read as the heading missing). */
+function resultsHead(){
   /* heading is "Where will you stay?" (user, 12 Aug); it was "Accommodation types", then
-     "Accommodation" per the tweak brief. */
+     "Accommodation" per the tweak brief. It does not change state (user, 9 Sept); the party h3 does. */
   /* the node's own labels are "PER UNIT" / "PER PERSON" with no "Price" prefix, and at 16px Bold the
      prefix would add about 100px to a control the design draws at 261px. The group keeps
      aria-label="Price basis" so the meaning is still announced. */
@@ -2047,8 +2215,8 @@ function resultsHead(withHead){
   var opt=function(v,label){
     return '<button type="button" data-basis="'+v+'" aria-pressed="'+(state.basis===v?'true':'false')+'">'+label+'</button>';
   };
-  return '<div class="res-tools'+(withHead?' with-head':'')+'">'+
-    (withHead?'<h2 class="sec-h">Where will you stay?</h2>':'')+
+  return '<div class="res-tools with-head">'+
+    '<h2 class="sec-h">Where will you stay?</h2>'+
     '<div class="basis-seg" role="group" aria-label="Price basis">'+opt('unit','&pound; unit')+opt('pp','&pound; guest')+
     '</div></div>';
 }
@@ -2208,8 +2376,13 @@ function expansion(s,exp){
       addRow='<div class="addrow">'+ctaBtn('Added',{added:true,attrs:' data-added'})+
         '<button type="button" class="unit-revert" data-unalloc="'+exp.boundUnit+'">Remove</button></div>';
     } else {
-      /* one Add button; the label stays put in the disabled state too (client) */
-      var lbl=(tgt<0)?'All parties have a room':(needArr?'Choose a sleeping arrangement first':'Add this room');
+      /* ONE LABEL IN BOTH STATES (user, 7 Sept). "Choose a sleeping arrangement first" ran wider than a
+         390px card - .card-cta is nowrap, so it bled out of the button rather than wrapping - and a button
+         that changes its words when it becomes usable reads as a different control. The reason it is
+         disabled moves to a visually hidden span, the same pattern the single-party pair uses, so a screen
+         reader still hears why. */
+      var why=(tgt<0)?'All parties have a room.':(needArr?'Choose a sleeping arrangement first.':'');
+      var lbl='Add this room'+(why?'<span class="sr-only">. '+why+'</span>':'');
       addRow='<div class="addrow">'+ctaBtn(lbl,{disabled:!canCommit,attrs:' data-rcopt="0"'})+'</div>';
     }
   } else {
@@ -2286,11 +2459,11 @@ function accomCard(s){
      party; otherwise a too-small card carries its reason as a banner across the top */
   var dead=cardDead(s)&&!exp;
 
+  /* THE YELLOW "PARTY N" PILL IS GONE (user, 7 Sept). It sat on the photo beside Recommended and the two
+     fought for the same corner. It was carrying "on your booking" for the parties layout (client, 27 Jul,
+     in place of the gold card ring); the finished party's own row now says which accommodation it holds,
+     so the card no longer has to. .alloc-tags CSS stays above, unused. */
   var tags='';
-  var here=[]; state.alloc.forEach(function(a,i){ if(a&&a.stockId===s.id) here.push(i); });
-  /* the Party pill only earns its place in a multi-party booking; with one party it is redundant */
-  if(here.length&&state.parties.length>1)
-    tags='<div class="alloc-tags">'+here.map(function(i){ return '<span class="alloc-tag">'+TICK+'Party '+(i+1)+'</span>'; }).join('')+'</div>';
 
   /* pill copy uses hyphenated ranges on both breakpoints - "4-8 GUESTS", not "4 to 8"
      (client, 10 Aug). The bed line is free text in the data, so the same rule is applied to it:
@@ -2394,9 +2567,9 @@ function render(){
      Every Family resort happens to have four categories, but the count is read, not assumed. */
   content.style.setProperty('--cat-cols',catList().length);
   if(isParties()){
-    content.innerHTML=resultsHead(false)+partiesUI()+utilityRow();
+    content.innerHTML=resultsHead()+partiesUI()+utilityRow();
   } else {
-    content.innerHTML=resultsHead(true)+categoryUI()+cardList()+utilityRow();
+    content.innerHTML=resultsHead()+categoryUI()+cardList()+utilityRow();
   }
   /* a category switch set this before re-rendering: bring the new set in on the rise */
   if(state.cardsEnter){
@@ -2603,6 +2776,15 @@ function wire(){
      (client, 27 Jul) */
   function animatePartiesAdvance(doneIdx){
     var secs=document.querySelectorAll('.party');
+    /* PARTY HANDOVER: no live phase. The body the party just had is carried into the re-render as an inert
+       ghost at its old height, so the page is as tall as before and nothing jumps; hoRebuild then runs the
+       one movement (see the PARTY HANDOVER block in the CSS). Reduced motion keeps the older path below. */
+    if(!reduceMotion()){
+      var sec=secs[doneIdx], pb=sec?sec.querySelector('.party-body'):null;
+      if(pb){ state.hoCollapse=pb.offsetHeight; state.hoGhost=pb.innerHTML; }
+      render(); hoRebuild(doneIdx);
+      return;
+    }
     var body=secs[doneIdx]?secs[doneIdx].querySelector('.party-body'):null;
     if(!body){ render(); openNextParty(); return; }
     body.classList.add('party-fading');
@@ -2642,17 +2824,14 @@ function wire(){
       pickRoom:exp.pickRoom,gf:exp.gf,pet:exp.pet};
     announce(state.parties.length===1?s.name+' added to your booking.':s.name+' added for Party '+(t+1)+'.');
     if(isParties()){
-      /* desktop: after the final party, keep its panel open (bound) so the page is not left
-         bare with every section collapsed. Mobile stays fully collapsed after the last add
-         (client). Before the final party, advance to the next section as normal. */
-      if(allAllocated()&&state.device!=="mobile"){
-        openExpand(s,t);
-        render();
-        var lastSec=document.querySelectorAll('.party')[t];
-        if(lastSec&&lastSec.scrollIntoView) lastSec.scrollIntoView({behavior:'smooth',block:'start'});
-        return;
-      }
+      /* SCREEN TWEAKS (user, 9 Sept): THE FINAL PARTY CLOSES TOO. Desktop used to keep the last party's
+         panel open (bound) so the page was not left bare with every section collapsed; mobile collapsed
+         (client). Both now play the same handover as every earlier party, with no next party to open:
+         the finished row takes its completed look and the page rests on the done rows and the links. */
       state.expand=null;
+      /* PARTY HANDOVER: the render that follows plays the finished row's completed look and opens the
+         next party in place */
+      state.hoDoneFx=t; state.hoNextIn=true;
       animatePartiesAdvance(t);
       return;
     }
@@ -2677,7 +2856,8 @@ function wire(){
         render();
       } else {
         exp.pickRoom=pick;
-        commit();
+        /* PARTY HANDOVER: hold the button in its Added state, then commit (single party commits at once) */
+        hoHold(b,commit);
       }
     });
   });
@@ -2775,6 +2955,8 @@ function press(id,on){ document.getElementById(id).setAttribute('aria-pressed',o
 function resetChoices(){
   state.alloc=state.parties.map(function(){ return null; });
   state.expand=null; state.catOff={};
+  state.hoDoneFx=null; state.hoNextIn=false; state.hoCollapse=0; state.hoGhost='';
+  hoGlideToken++; /* cancel a glide still running */
 }
 function setDevice(d){
   state.device=d;
@@ -2804,6 +2986,96 @@ document.querySelectorAll('[data-presetbtn]').forEach(function(b){
     render();
   });
 });
+
+/* ============================================================ PARTY HANDOVER (8 Sept 2026)
+   The JS half of the PARTY HANDOVER block in the CSS. Search PARTY HANDOVER for the hooks above. */
+
+/* The hold. Moving the instant you click steals the confirmation (the same reasoning as anchorSection's
+   pause): the button shows its result for HO_HOLD before anything moves. Single party commits at once, as
+   it always did - its added state stays on screen. */
+var HO_HOLD=600;
+var hoBusy=false;
+/* the finished row's heavy tick: TICK's own path at stroke 3 (TICK runs 2), pathLength normalised so CSS
+   can draw it on */
+var HO_TICK='<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ho-tickpath" pathLength="1" d="M3 8.5L6.3 12L13 4.8"/></svg>';
+/* flip the LIVE button first, the way the filter tiles flip aria-pressed, so the rose fill has a state to
+   transition from and the customer sees the button they pressed take its result. Then hold, then commit. */
+function hoHold(btn,next){
+  if(hoBusy) return;
+  if(!isParties()){ next(); return; }
+  hoBusy=true;
+  btn.setAttribute('aria-pressed','true');
+  btn.innerHTML='<span class="cta-ico" aria-hidden="true">'+TICK+'</span><span class="cta-label">Added</span><span class="cta-ico cta-ghost" aria-hidden="true">'+TICK+'</span>';
+  setTimeout(function(){ hoBusy=false; next(); },HO_HOLD);
+}
+function hoMs(name){ return (parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name))||0)*1000; }
+/* the cubic-bezier CSS runs for --ease-rise, solved for x by bisection, so the JS-driven scroll and the
+   CSS-driven collapse and opening share one curve and arrive together */
+function hoBezier(x1,y1,x2,y2){
+  function bx(t){ return 3*x1*(1-t)*(1-t)*t+3*x2*(1-t)*t*t+t*t*t; }
+  function by(t){ return 3*y1*(1-t)*(1-t)*t+3*y2*(1-t)*t*t+t*t*t; }
+  return function(x){
+    if(x<=0) return 0; if(x>=1) return 1;
+    var lo=0,hi=1,t=x;
+    for(var k=0;k<30;k++){ var v=bx(t); if(Math.abs(v-x)<1e-5) break; if(v<x) lo=t; else hi=t; t=(lo+hi)/2; }
+    return by(t);
+  };
+}
+var hoRiseCurve=hoBezier(.22,1,.36,1);
+var hoGlideToken=0;
+function hoGlide(from,to,ms){
+  var tk=++hoGlideToken, t0=null;
+  function step(ts){
+    if(hoGlideToken!==tk) return;
+    if(t0===null) t0=ts;
+    var p=Math.min(1,(ts-t0)/ms);
+    /* clamped to what the page allows RIGHT NOW: the next party is still opening while this runs, so the
+       maximum grows under the glide; without the clamp a frame could ask for more than exists and snap */
+    var max=scrollEl.scrollHeight-scrollEl.clientHeight;
+    scrollEl.scrollTop=Math.max(0,Math.min(from+(to-from)*hoRiseCurve(p),max));
+    if(p<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+/* The rebuild, on the fresh DOM straight after the re-render. The finished party has its ghost body in
+   flow at the old height, about to fade and close; the next party's body is about to open. Measure the
+   page AT REST (ghost out of the way, next party open) or the glide is aimed at the wrong page and snaps
+   at the end; hand the next party its resting height and padding; then drive the scroller so the row
+   lands at the top over the same --ho-move and curve as the collapse and the opening: one movement. When
+   the box has closed, drop the ghost and mark the section collapsed; when the opening has played, release
+   the next party's height. */
+function hoRebuild(i){
+  var secs=document.querySelectorAll('.party'), p=secs[i], n=secs[i+1]; if(!p) return;
+  content.querySelectorAll('.util-row,.group-note').forEach(function(u){ u.classList.add('ho-util-in'); });
+  var ghost=p.querySelector('.ho-ghost'), nb=n?n.querySelector('.party-body'):null;
+  if(ghost) ghost.style.display='none';
+  if(nb) nb.style.animation='none';
+  var vp=scrollEl.clientHeight, max=scrollEl.scrollHeight-vp, sTop=scrollEl.getBoundingClientRect().top;
+  var rowTop=p.getBoundingClientRect().top-sTop+scrollEl.scrollTop;
+  if(nb){
+    nb.style.setProperty('--ho-open',nb.offsetHeight+'px');
+    nb.style.setProperty('--ho-pad',getComputedStyle(nb).paddingTop);
+    nb.style.animation='';
+  }
+  if(ghost) ghost.style.display='';
+  var landing=Math.max(0,Math.min(rowTop-8,max));
+  var move=hoMs('--ho-move'), wait=hoMs('--ho-collapse-delay');
+  setTimeout(function(){ hoGlide(scrollEl.scrollTop,landing,move); },wait);
+  if(nb){
+    var opened=false, release=function(){ if(opened) return; opened=true; nb.style.animation='none'; };
+    nb.addEventListener('animationend',function(e){ if(e.target===nb&&e.animationName==='hoOpen') release(); });
+    setTimeout(release,wait+move+80);
+  }
+  if(ghost){
+    var gone=false, drop=function(){
+      if(gone) return; gone=true;
+      if(ghost.parentNode) ghost.parentNode.removeChild(ghost);
+      p.classList.add('is-collapsed');
+    };
+    ghost.addEventListener('animationend',function(e){ if(e.target===ghost) drop(); });
+    setTimeout(drop,wait+move+80);
+  }
+}
 
 render();
 </script>

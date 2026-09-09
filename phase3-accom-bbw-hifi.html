@@ -5,6 +5,49 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Phase 3 BBW Accommodation (hi-fi)</title>
 <!--
+  DONE HEADING (9 Sept 2026). Once every guest has a unit the section heading stops asking for another and
+  says so: "Everyone's got a bed!" (user, 9 Sept: "something that shows the task is complete", in the
+  platform's tone and at a similar length to "Choose your next apartment"). Removing a unit takes it
+  straight back to "Choose your next room". See sectionTitle. Family's sibling line is
+  "Your stay is sorted!". Search DONE HEADING.
+
+  BBW HANDOVER (8 Sept 2026). The BBW answer to the Sept 2026 user-testing finding (the new unit had very low
+  prominence after the first add; the Family answer is in that hi-fi's handover doc, section 2n). Explored in
+  phase3-accom-bbw-feedback-explore.html, now frozen as the record, and ported here the same day. Search
+  BBW HANDOVER for every hook. What it is:
+  - The section heading reads "Choose your accommodation" before any unit exists and "Choose your next
+    room" / "next apartment" / "next chalet" / "next caravan" once the type is locked. Once a unit exists the
+    filter tiles are not rendered at all, and the "Want a different accommodation type? Remove units to
+    refresh" line sits 6px under the heading; on desktop the panel then sits in line with the first card.
+    On mobile the heading row is a row before the first unit (toggle right) and a column after it (heading,
+    lock line, toggle beneath). The selected tile has its gold edge (the post-testing tweak had taken it;
+    with the tiles gone by the time a unit's ring appears there is nothing for it to compete with).
+  - After an add every accommodation card is back at its default state: no added fill, no ring.
+  - Unit rows have 3px corners on all four sides and keep the flash ring's 2px top edge once the ring has
+    faded; the panel's gold cap goes once a unit exists and its top padding drops to 12px; caption to icons
+    16px, icons to first unit card 24px. The mobile rail's card gets the same flash, fading to nothing.
+  - After Add to booking the page glides so the section heading sits at the top with its whole top margin
+    showing (32px on mobile, under the sticky panel; 24px on desktop).
+
+  POST-TESTING TWEAKS (8 Sept 2026). User testing (Sept 2026) found the Unit 1 card in the Your group
+  panel had very low prominence after the first add. Three changes on the user's direction, so the one
+  gold cue left on screen is the one that matters: the selected filter tile has no gold edge (the yellow
+  icon and the lighter fill carry the state; the other tiles dim once a unit exists anyway); an
+  accommodation card that holds units keeps its added fill and its normal edge but no gold ring; and the
+  unit row's gold ring in the panel now holds for 2s and fades over 0.7s (was 0.225s and 0.675s), with the
+  flash state living 3s so the re-render that clears it cannot cut it off. Search POST-TESTING TWEAKS.
+  Not yet done, and part of the BBW handover discussion to come: on mobile the unit card in the rail has
+  never had the ring, and the panel sits above the cards, so a customer scrolled to the cards sees little.
+
+  UNIT CARD CONTROLS (8 Sept 2026). User testing found the ... and x on the unit card unclear. Root cause:
+  the build's icons were 24px artwork (assets-bbw/p3/unit-more.svg, unit-remove.svg) shown at 14px, so the
+  cross painted at 0.9px and the dots shrank with it, while Figma 1160:418 draws both glyphs ON a 14px box
+  at a 1.5px stroke (saved as unit-more-14.svg and unit-remove-14.svg, inlined as ICO_MORE14 / ICO_X14).
+  Seven treatments were explored in phase3-accom-bbw-feedback-explore.html; the user chose F: Edit and
+  Remove as the card's FOOTER, two equal cells of icon and word, flush to the card's edges, with the price
+  on the makeup line. The 24px icon buttons (.ubtn) and the .uact row are gone from the card; their CSS
+  stays, marked superseded, until the kit graduates the card. Search UNIT CARD CONTROLS.
+
   HI-FI FIRST PASS: Phase 3 Accommodation, Butlin's BBW (Big Weekender) skin.
   - Source lofi: bbw-unit-picker-lofi.html (signed off 3 Aug). The two design variants
     are BAKED IN per sign-off: Type switch = LOCK (other types disable once a unit
@@ -157,6 +200,9 @@
    the same 5px effective radius as before (3px box + 2px offset).
    Mobile keeps the inset ring: its tiles sit 4px apart, with no room for a ring outside the box. */
 .frame-outer[data-device="desktop"] .ctile{padding:0;border:0;border-radius:3px;}
+/* BBW HANDOVER (user, 8 Sept): the selected tile's gold edge is BACK, on both breakpoints. The post-testing
+   tweak in the hi-fi took it because it competed with the new unit's ring; here the tiles are not rendered
+   once a unit exists, so before the first add the gold can say "this type" again with nothing to fight. */
 .frame-outer[data-device="desktop"] .ctile[aria-pressed="true"]{outline:1.5px solid var(--yellow);
   outline-offset:2px;}
 /* 24px, down from the design's 32px (client, 4 Aug) */
@@ -183,7 +229,28 @@
    no space of its own above and 14px below. The top margin collapses with the tiles' own 14px bottom
    margin, so 24 is what lands rather than 38 - which also means the tiles keep that 14px as their gap
    to the results on the screens where no lock line exists. */
-.cat-lockline{font-size:14px;color:var(--ink2);margin:24px 0;}
+/* BBW HANDOVER: the line now only renders under the heading, 6px below it (user, 8 Sept); the heading row
+   drops its 24px bottom margin to 6px while the type is locked, and the line keeps 24px down to the cards */
+.cat-lockline{font-size:14px;color:var(--ink2);margin:0 0 24px;}
+.frame-outer[data-device="desktop"] .res-tools.is-locked{margin-bottom:6px;}
+/* and on desktop the panel no longer shares the first row with the lock line: it sits in the results row,
+   top in line with the first accommodation card (user, 8 Sept), and the lock line runs the full width */
+.frame-outer[data-device="desktop"] .layout.is-locked .side{grid-row:2;}
+.frame-outer[data-device="desktop"] .layout.is-locked .cat-block{grid-column:1/-1;}
+/* BBW HANDOVER (user's mockup, 8 Sept): on mobile the heading row has two shapes.
+   LOCKED (a unit exists): a COLUMN. Heading full width, then the lock line (rendered inside this row on
+   mobile, see resultsHead), then the price toggle underneath, left aligned. 6px heading to line, 24px line
+   to toggle, 24px toggle to cards.
+   NOT LOCKED (tiles still showing): one ROW, heading left and the toggle on the right, the heading taking
+   what is left and wrapping its words (user, 8 Sept).
+   Desktop is untouched: heading and toggle on one row, lock line below in the grid. */
+.frame-outer[data-device="mobile"] .res-tools.is-locked{display:flex;flex-direction:column;align-items:flex-start;flex-wrap:nowrap;gap:6px;}
+.frame-outer[data-device="mobile"] .res-tools.is-locked .rt-headrow{flex:0 0 auto;width:100%;}
+.frame-outer[data-device="mobile"] .res-tools.is-locked .cat-lockline{margin:0;}
+.frame-outer[data-device="mobile"] .res-tools.is-locked .basis-seg{flex:0 0 auto;align-self:flex-start;margin-top:18px;}
+.frame-outer[data-device="mobile"] .res-tools:not(.is-locked){flex-wrap:nowrap;align-items:flex-end;justify-content:space-between;gap:12px;}
+.frame-outer[data-device="mobile"] .res-tools:not(.is-locked) .rt-headrow{flex:1 1 auto;min-width:0;}
+.frame-outer[data-device="mobile"] .res-tools:not(.is-locked) .basis-seg{flex:0 0 auto;align-self:flex-end;}
 .linkbtn{background:none;border:0;border-bottom:1.5px solid var(--yellow);padding:2px 0;color:var(--yellow);font-size:13px;font-weight:700;cursor:pointer;}
 .linkbtn:hover{color:var(--yellow-strong);border-bottom-color:var(--yellow-strong);}
 /* the link matches the sentence it sits in (client, 13 Aug); the kit's .linkbtn is 13px */
@@ -292,6 +359,11 @@
    top and bottom and 12px either side. The card was 3px/12px all round. */
 .frame-outer[data-device="desktop"] .gpanel{background:#3c3c3b;border-color:rgba(255,255,255,.05);
   border-top:5px solid var(--yellow);padding:24px 12px;}
+/* BBW HANDOVER (user, 8 Sept): the gold cap has done its job once a unit exists - the gold moves to the
+   unit rows. Colour, not width, so the panel does not shift by 5px. And with the cap gone the 24px above
+   YOUR GROUP reads as slack, so it comes down to 12px (user, 8 Sept). */
+.frame-outer[data-device="desktop"] .gpanel.has-units{border-top-color:#3c3c3b;padding-top:12px;}
+
 /* The unit list sits 6px off the panel's sides and bottom (client, 13 Aug), tighter than the 24/12
    the header block runs on. It pulls back out of that padding rather than the panel changing, so the
    header keeps its own spacing: -6px either side of the 12, and -18px of the 24 below. Desktop only
@@ -359,8 +431,26 @@
    than the 175.5deg this row used before. Flat grey/300 sat here for one round and put every piece of
    small copy under AA; a mid grey has no passing text colour but white.
    The flash keyframe lands on the gradient's dark end, which is where it always did. */
-.lrow{display:flex;flex-direction:column;gap:12px;padding:12px 6px 6px;border:1.5px solid #3c3c3b;
-  border-radius:0 3px 3px 0;
+/* BBW HANDOVER (user, 8 Sept): 3px corners on all four sides (the node's right-corners-only read as a
+   mistake once a ring wrapped the row), and EVERY ADDED ROW KEEPS A 2px GOLD TOP EDGE once the ring has faded: since the last pass of 8 Sept a ::before
+   laid over the row's own top border, which drops onto it as the ring fades (see .lrow below). The
+   grey border stays the same on all four sides. (A gold border-top on top of the band was tried first: it
+   made the bar 3px, thicker than the ring, and the gold curved into the grey at the rounded corners.) */
+/* THE RING SITS OUTSIDE THE CARD (user, 8 Sept): a 2px outset shadow, so nothing inside the card - the footer's
+   rules, the cells - can ever sit on it. The rows have the room: 6px each side inside the panel, 6px between
+   rows, 24px above the first. --uedge is the card's own edge colour, which the footer rules take (#3c3c3b here,
+   the card token on mobile).
+   THE 2px TOP EDGE IT LEAVES BEHIND SITS ON THE CARD, not above it (user, 8 Sept: CSS has no Figma-style stroke
+   alignment; a border is always inside the box and a shadow always outside it, so a shadow band above the card
+   left the grey border showing as a gap). It is a ::before FLUSH WITH THE CARD'S VISIBLE FILL - the top 2px of
+   the padding box, corners matching its inner radius. It was first laid over the 1.5px border, out to the
+   border-box edges, but the row's grey border is the panel's own colour on desktop, so those 1.5px read as the
+   band overhanging the card on both sides (user, 8 Sept: "too wide"). On a flashing row it DROPS from the
+   ring's top (3.5px up: the border and the ring) onto the edge as the ring fades: the ring's top settles onto
+   the card. Rows that never flashed just have it. */
+.lrow{--uedge:#3c3c3b;position:relative;display:flex;flex-direction:column;gap:12px;padding:12px 6px 6px;border:1.5px solid var(--uedge);
+  border-radius:3px;
+  box-shadow:0 0 0 2px rgba(255,214,20,0);
   background:linear-gradient(to bottom,#2b2b2b,#222121);transition:opacity .34s ease,transform .34s ease;}
 /* The add cue was a yellow wash over the whole row (client, 12 Aug: gross). It animated `background`,
    which meant the gradient was replaced by a flat tint for 1.2s and then snapped back - a glitch
@@ -370,15 +460,33 @@
    accommodation card says. Inset, so it cannot shift the row or crowd its neighbour, and done in .9s
    inside the 1.2s the flash state lives for, so it finishes rather than being cut off by the
    re-render that clears it. */
+/* POST-TESTING TWEAKS (8 Sept): the ring HOLDS FOR 2s, then fades over 0.7s. It held for 0.225s before,
+   which with the tile and the card also going gold left the new unit as the least prominent of three
+   cues. 74% of 2.7s is 2s. The flash state lives 3s (flashRow), past the animation's end, so the
+   re-render that clears it never cuts the fade. */
 @keyframes rowflash{
-  0%,25%{box-shadow:inset 0 0 0 2px var(--yellow);}
-  100%{box-shadow:inset 0 0 0 2px rgba(255,214,20,0);}
+  0%,74%{box-shadow:0 0 0 2px var(--yellow);}
+  100%{box-shadow:0 0 0 2px rgba(255,214,20,0);}
 }
+.lrow::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;z-index:2;pointer-events:none;
+  background:var(--yellow);border-radius:1.5px 1.5px 0 0;}
+.lrow.flash::before{animation:topedge 2.7s ease-out both;}
+@keyframes topedge{
+  0%,74%{opacity:0;transform:translateY(-3.5px);}
+  100%{opacity:1;transform:none;}
+}
+/* BBW HANDOVER: the mobile rail's card gets the same flash, and fades back to nothing - no persistent top
+   edge there (user, 8 Sept: "maybe unnecessary, but we'll see") */
+@keyframes cardflash{
+  0%,74%{box-shadow:0 0 0 2px var(--yellow);}
+  100%{box-shadow:0 0 0 2px rgba(255,214,20,0);}
+}
+.ucard.flash{animation:cardflash 2.7s ease-out both;}
 /* The ring holds solid for the first quarter, then fades away over the rest. The cards' own
    cubic-bezier(.22,1,.36,1) is wrong here: it front-loads, which on a fade means the ring is
    effectively gone in 300ms and the remaining 600ms does nothing - it read as a blink. A hold and a
    plain ease-out reads as a deliberate highlight settling. */
-.lrow.flash{animation:rowflash .9s ease-out both;}
+.lrow.flash{animation:rowflash 2.7s ease-out both;}
 /* text block: title row then the makeup line, 2px apart (4 Aug: the party moved off its own
    line and into a pill on the title row, which is what took a row out of the card) */
 /* 6px between the title row and the spec line (client, 13 Aug); it was 2px, which read as one block
@@ -418,6 +526,37 @@
   background:var(--grey-7);border:1.5px solid #3c3c3b;border-radius:3px;color:var(--ink2);}
 .ubtn:hover{background:#3c3c3b;color:#fff;}
 .ubtn svg{width:14px;height:14px;display:block;}
+/* ============================================================ UNIT CARD CONTROLS (8 Sept 2026)
+   .uact, .ubtns and .ubtn above are SUPERSEDED: the card no longer renders a controls row. They stay until
+   the kit graduates the unit card. What replaced them, chosen from seven treatments explored after user
+   testing found the 24px icon buttons unclear (see the header comment):
+   THE FOOTER. Edit and Remove as two equal cells, the design's 14px glyph and the word, 32px tall, flush to
+   the card's edges. Negative margins take the cells out through the card's 6px padding to the inside of its
+   border, and overflow:hidden on the card rounds their bottom corners with it. The cells are the largest
+   targets the card can offer, half its width each, which is also what settles the 44px touch-target flag on
+   the old 24px buttons. Grey/500 fill and grey/400 rules, the same surface and edge the buttons had.
+   THE PRICE sits on the makeup line, right-aligned, bottoms level; the makeup wraps beside it as it must.
+   WORDS ONLY, AND SEE-THROUGH (user, 8 Sept): the glyphs came off the cells - the word is the control - and
+   the cells have no fill of their own, so the card's gradient runs down into them and only the rules say
+   where the cells are. That is also what lets the gold flash ring, an inset shadow on the card, show along the
+   footer. (The ring has since moved OUTSIDE the card, so the rules can run edge to edge; see .lrow.)
+   ICO_MORE14 / ICO_X14 stay defined for the dialog or a later use. */
+/* the footer rounds its own bottom corners; the card must not clip, or the top edge laid over its border would go */
+.ufoot{overflow:hidden;border-radius:0 0 2px 2px;}
+.ubed-row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;}
+.ubed-row .ubed{flex:1 1 auto;min-width:0;}
+.ubed-row .uprice{flex:none;}
+/* the rules take the card's own edge colour (--uedge: the mobile card's border is the darker token, and the
+   rules read lighter against it until they matched) and run edge to edge again; the ring is outside the card
+   now, so there is nothing for them to sit on (user, 8 Sept). The top rule overlays the top 1.5px of the cells. */
+.ufoot{position:relative;display:grid;grid-template-columns:1fr 1fr;margin:8px -6px -6px;}
+.ufoot::before{content:'';position:absolute;left:0;right:0;top:0;height:1.5px;background:var(--uedge,#3c3c3b);}
+.ufoot-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0;
+  background:transparent;border:0;color:var(--ink2);font-size:11px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;line-height:1;cursor:pointer;white-space:nowrap;}
+.ufoot-btn+.ufoot-btn::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1.5px;background:var(--uedge,#3c3c3b);}
+.ufoot-btn:hover{background:rgba(255,255,255,.06);color:#fff;}
+.ufoot-btn:focus-visible{outline:2px solid var(--yellow);outline-offset:-2px;}
 .up-remove{background:none;border:0;padding:0;color:var(--ink2);text-decoration:underline;font-size:12px;}
 .up-remove:hover{color:#fff;}
 
@@ -458,11 +597,11 @@
    card keeps one appearance wherever it sits, and the fade says "there is more this way".
    Mirrors the kit's own .nav-fade / has-left / has-right grammar for the section nav. */
 .urail{position:relative;}
-/* 12px gutters (client, 13 Aug), matching the 12px the panel leaves below the rail; they were 24px.
-   scroll-padding follows, or snapping would still park a card 24px in. The rail only renders on
-   mobile - desktop builds the ledger instead - so this needs no breakpoint scope. */
+/* 16px gutters (user, 8 Sept; they were 12px from 13 Aug, matching the 12px the panel leaves below the
+   rail, and 24px before that). scroll-padding follows, or snapping would still park a card 12px in. The
+   rail only renders on mobile - desktop builds the ledger instead - so this needs no breakpoint scope. */
 .ucards{display:flex;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
-  padding:0 12px;scroll-padding-left:12px;scrollbar-width:none;}
+  padding:2px 16px;margin:-2px 0;scroll-padding-left:16px;scrollbar-width:none;} /* 2px of vertical room for the card's outside ring, given back by the margin */
 .ucards::-webkit-scrollbar{display:none;}
 .urail-fade{position:absolute;top:0;bottom:0;width:36px;opacity:.8;pointer-events:none;display:none;z-index:2;}
 .urail-fade-l{left:0;background:linear-gradient(to left,rgba(32,32,32,0),var(--bg-2));}
@@ -473,10 +612,15 @@
    by 4px rather than 16 - the gutter it peeks into is what shrank. The rail's right-hand fade is
    carrying most of the "there is more" signal now; drop .ucard+.ucard's 8px margin, or take the card
    under 100%, if that peek needs to come back. */
-.ucard{flex:0 0 100%;scroll-snap-align:start;display:flex;flex-direction:column;gap:12px;padding:12px 6px 6px;
+.ucard{--uedge:var(--grey-7);flex:0 0 100%;scroll-snap-align:start;display:flex;flex-direction:column;gap:12px;padding:12px 6px 6px;
   border:var(--card-edge);border-radius:3px;background:linear-gradient(175.46deg,#2b2b2b 4.66%,#222121 138.2%);
   transition:opacity .34s ease,transform .34s ease;}
 .ucard+.ucard{margin-left:8px;}
+/* FOOTER AT THE FOOT (user, 9 Sept 2026): the rail is a flex row, so every card stretches to the tallest
+   (a two-line makeup beside a one-line one). The card is a flex column, and without this the spare height
+   sat UNDER the footer. The text block takes it instead, so Edit and Remove stay on the card's bottom edge
+   and the gap opens between the makeup line and the footer. */
+.ucard>.utext{flex:1 1 auto;}
 .ucard.slide-in,.lrow.slide-in{opacity:0;transform:translateX(20px);}
 /* mobile takes the designed type scale */
 
@@ -523,9 +667,9 @@
    right edge landed on the Your stay panel's yellow border, the two reading as one thick rule.
    Inset, the card's outer edge stays on the tile boundary whether it holds units or not. Mobile has
    room around the card, so it keeps the kit's outset ring below. */
-.acard.has-units{border-color:transparent;background:linear-gradient(to bottom,#2b2b2b,#222121);
-  outline:2px solid var(--yellow);outline-offset:-2px;}
-.frame-outer[data-device="mobile"] .acard.has-units{outline-offset:4px;}
+/* POST-TESTING TWEAKS (8 Sept) took the ring. BBW HANDOVER (user, 8 Sept) takes the added fill too: after
+   an add every card is back at its default state, and the record of what was added is the unit row in
+   the panel. has-units stays in the markup so the aria-label can still say "2 units on your booking". */
 
 /* ---- Recommended, two treatments by breakpoint (client, 10 Aug). Mobile floats a wide label over
    the top of the photo (Figma 1152:192, the client's second approach); desktop keeps the small tag on
@@ -1023,10 +1167,15 @@
 
 @media (prefers-reduced-motion:reduce){
   .rp-scrim,.rp-card,.lrow,.ucard{transition:none;}
-  .lrow.flash{animation:none;}
+  .lrow.flash,.ucard.flash,.lrow.flash::before{animation:none;}
   .acards.cat-switch-out,.acards.cat-switch-in{animation:none;}
   .du-in{animation:none;}
 }
+/* BBW HANDOVER (user, 8 Sept): panel rhythm - 16px from the caption to the guest icons, 24px from the icons
+   to the first unit card, both breakpoints (were 12px / 6px and 12px). At the end of the sheet on purpose: the
+   mobile panel's own gap rule has the same weight and would win by order anywhere earlier. */
+.frame-outer[data-device="desktop"] .gpanel .gp-pool,.frame-outer[data-device="mobile"] .gpanel .gp-pool{gap:16px;}
+.frame-outer[data-device="desktop"] .gpanel,.frame-outer[data-device="mobile"] .gpanel{gap:24px;}
 </style>
 </head>
 <body>
@@ -1222,6 +1371,11 @@ var GFIG=P3ICO+"guest-";
 var ICO_PERSON='<svg viewBox="0 0 12 12" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M10.5745 10.3126C10.5415 10.3696 10.4942 10.4169 10.4372 10.4498C10.3801 10.4827 10.3155 10.5001 10.2496 10.5001H1.24962C1.18382 10.5 1.1192 10.4826 1.06225 10.4497C1.0053 10.4167 0.958012 10.3694 0.925144 10.3124C0.892277 10.2554 0.874983 10.1908 0.875 10.125C0.875017 10.0592 0.892344 9.99453 0.925241 9.93755C1.63915 8.70334 2.7393 7.81834 4.02321 7.3988C3.38813 7.02074 2.89472 6.44465 2.61873 5.75902C2.34275 5.07339 2.29947 4.31612 2.49553 3.6035C2.69158 2.89089 3.11614 2.26233 3.704 1.81436C4.29186 1.36639 5.01052 1.12378 5.74962 1.12378C6.48871 1.12378 7.20737 1.36639 7.79523 1.81436C8.38309 2.26233 8.80765 2.89089 9.00371 3.6035C9.19976 4.31612 9.15648 5.07339 8.8805 5.75902C8.60452 6.44465 8.1111 7.02074 7.47602 7.3988C8.75993 7.81834 9.86008 8.70334 10.574 9.93755C10.607 9.99452 10.6244 10.0592 10.6245 10.125C10.6245 10.1908 10.6073 10.2555 10.5745 10.3126Z"/></svg>';
 var ICO_MORE='<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M4.29289 12.7071C4.10536 12.5196 4 12.2652 4 12C4 11.7348 4.10536 11.4804 4.29289 11.2929C4.48043 11.1054 4.73478 11 5 11C5.26522 11 5.51957 11.1054 5.70711 11.2929C5.89464 11.4804 6 11.7348 6 12C6 12.2652 5.89464 12.5196 5.70711 12.7071C5.51957 12.8946 5.26522 13 5 13C4.73478 13 4.48043 12.8946 4.29289 12.7071Z"/><path d="M11 12C11 12.2652 11.1054 12.5196 11.2929 12.7071C11.4804 12.8946 11.7348 13 12 13C12.2652 13 12.5196 12.8946 12.7071 12.7071C12.8946 12.5196 13 12.2652 13 12C13 11.7348 12.8946 11.4804 12.7071 11.2929C12.5196 11.1054 12.2652 11 12 11C11.7348 11 11.4804 11.1054 11.2929 11.2929C11.1054 11.4804 11 11.7348 11 12Z"/><path d="M18 12C18 12.2652 18.1054 12.5196 18.2929 12.7071C18.4804 12.8946 18.7348 13 19 13C19.2652 13 19.5196 12.8946 19.7071 12.7071C19.8946 12.5196 20 12.2652 20 12C20 11.7348 19.8946 11.4804 19.7071 11.2929C19.5196 11.1054 19.2652 11 19 11C18.7348 11 18.4804 11.1054 18.2929 11.2929C18.1054 11.4804 18 11.7348 18 12Z"/></svg>';
 var ICO_X='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6L6 18"/><path d="M6 6L18 18"/></svg>';
+/* UNIT CARD CONTROLS (8 Sept 2026): the design's own 14px glyphs (Figma 1160:418), stroke 1.5 on a 14 box, on
+   currentColor like every icon here. ICO_MORE and ICO_X above are the 24px-box versions of the same marks;
+   shown at 14px they painted the cross at 0.9px, which is why the controls tested as unclear. */
+var ICO_MORE14='<svg viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.50419 7.41248C2.39479 7.30308 2.33333 7.15471 2.33333 7C2.33333 6.84529 2.39479 6.69692 2.50419 6.58752C2.61358 6.47812 2.76196 6.41667 2.91667 6.41667C3.07138 6.41667 3.21975 6.47812 3.32915 6.58752C3.43854 6.69692 3.5 6.84529 3.5 7C3.5 7.15471 3.43854 7.30308 3.32915 7.41248C3.21975 7.52187 3.07138 7.58333 2.91667 7.58333C2.76196 7.58333 2.61358 7.52187 2.50419 7.41248Z"/><path d="M6.41667 7C6.41667 7.15471 6.47812 7.30308 6.58752 7.41248C6.69692 7.52187 6.84529 7.58333 7 7.58333C7.15471 7.58333 7.30308 7.52187 7.41248 7.41248C7.52187 7.30308 7.58333 7.15471 7.58333 7C7.58333 6.84529 7.52187 6.69692 7.41248 6.58752C7.30308 6.47812 7.15471 6.41667 7 6.41667C6.84529 6.41667 6.69692 6.47812 6.58752 6.58752C6.47812 6.69692 6.41667 6.84529 6.41667 7Z"/><path d="M10.5 7C10.5 7.15471 10.5615 7.30308 10.6709 7.41248C10.7803 7.52187 10.9286 7.58333 11.0833 7.58333C11.238 7.58333 11.3864 7.52187 11.4958 7.41248C11.6052 7.30308 11.6667 7.15471 11.6667 7C11.6667 6.84529 11.6052 6.69692 11.4958 6.58752C11.3864 6.47812 11.238 6.41667 11.0833 6.41667C10.9286 6.41667 10.7803 6.47812 10.6709 6.58752C10.5615 6.69692 10.5 6.84529 10.5 7Z"/></svg>';
+var ICO_X14='<svg viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 3.5L3.5 10.5"/><path d="M3.5 3.5L10.5 10.5"/></svg>';
 
 /* Card icons, path data from the exported assets in assets-bbw/p3 (Figma 1003:5737): the two
    photo meta pills and the feature tick. Inlined on currentColor so each follows its context. */
@@ -1374,7 +1528,7 @@ var state={
   units:[],                  /* [{stockId,sleeps,guests,gf,lounge,pet,pickRoom}] in add order */
   focusUnit:null,            /* mobile rail: index of the focused unit card */
   gal:{},                    /* per stock item: which photo the carousel is showing */
-  flash:null,                /* index of the row that just gained a unit, cleared after 1.2s */
+  flash:null,                /* index of the row that just gained a unit, cleared after 3s */
   draft:null                 /* {stockId,editIdx,units:[]} open in the unit dialog */
 };
 
@@ -1502,13 +1656,18 @@ function categoryUI(){
     line='<p class="cat-lockline">Want a different accommodation type? '+
       '<button type="button" class="linkbtn" data-clearall aria-label="Remove your units to choose a type other than '+lock+'">Remove units to refresh</button></p>';
   }
-  return '<div class="cat-tiles" role="group" aria-label="Accommodation type">'+tiles+'</div>'+line;
+  /* BBW HANDOVER (user, 8 Sept): once the type is locked the tiles are not rendered at all - they take
+     the space of a row and can do nothing - and the lock line sits under the section heading instead,
+     which now names the type ("Choose your next room"). */
+  if(lock) return state.device==="mobile"?'':line;   /* mobile: the line renders inside the heading row, see lockLine() */
+  return '<div class="cat-tiles" role="group" aria-label="Accommodation type">'+tiles+'</div>';
 }
 
 /* ============================================================ RESULTS */
 function resultsHead(){
-  return '<div class="res-tools">'+
-    '<div class="rt-headrow"><h2 class="rt-head">Accommodation</h2></div>'+
+  return '<div class="res-tools'+(lockedCategory()?' is-locked':'')+'">'+
+    '<div class="rt-headrow"><h2 class="rt-head">'+sectionTitle()+'</h2></div>'+  /* BBW HANDOVER: see sectionTitle */
+    (state.device==="mobile"?lockLine():'')+  /* BBW HANDOVER: mobile carries the lock line here, under the heading */
     '<div class="basis-seg" role="group" aria-label="Price basis"><button type="button" data-basis="unit" aria-pressed="'+(state.basis==="unit"?'true':'false')+'">&pound; Unit</button><button type="button" data-basis="pp" aria-pressed="'+(state.basis==="pp"?'true':'false')+'">&pound; Person</button></div></div>';
 }
 
@@ -1660,14 +1819,14 @@ function unitBody(i,u){
      (client, 13 Aug) - so nothing on this card reads u.sleeps against u.guests any more. */
   var pills='<span class="upill">'+ICO_PERSON+plural(u.guests,'guest').toUpperCase()+'</span>';
   var lab='unit '+(i+1)+', '+s.name+', '+plural(u.guests,'guest')+(chose.length?', '+chose.join(', '):'');
+  /* UNIT CARD CONTROLS (8 Sept 2026): Edit and Remove are the card's footer - two equal cells, icon and word,
+     flush to the card's edges - and the price sits on the makeup line, right-aligned. The accessible names
+     start with the visible word. See the CSS block of the same name for the why. */
   return '<div class="utext"><div class="utop"><span class="uhead">Unit '+(i+1)+'</span>'+pills+'</div>'+
-    '<span class="ubed">'+makeup+'</span></div>'+
-    '<div class="uact"><span class="ubtns">'+
-    '<button type="button" class="ubtn" data-uedit="'+i+'" aria-label="Change '+lab+'">'+
-    ICO_MORE+'</button>'+
-    '<button type="button" class="ubtn" data-unalloc="'+i+'" aria-label="Remove '+lab+'">'+
-    ICO_X+'</button></span>'+
-    '<span class="uprice">'+unitMoney(u)+'</span></div>';
+    '<div class="ubed-row"><span class="ubed">'+makeup+'</span><span class="uprice">'+unitMoney(u)+'</span></div></div>'+
+    '<div class="ufoot">'+
+    '<button type="button" class="ufoot-btn" data-uedit="'+i+'" aria-label="Edit '+lab+'">Edit</button>'+
+    '<button type="button" class="ufoot-btn" data-unalloc="'+i+'" aria-label="Remove '+lab+'">Remove</button></div>';
 }
 /* desktop: the vertical ledger, one row per unit in add order */
 function unitLedger(){
@@ -1682,18 +1841,22 @@ function unitCarousel(){
   if(!state.units.length) return '';
   return '<div class="urail" id="urail">'+
     '<div class="ucards" id="ucards" role="group" aria-label="Your units">'+state.units.map(function(u,i){
-      return '<div class="ucard'+(state.focusUnit===i?' focused':'')+'" data-ucard="'+i+'">'+unitBody(i,u)+'</div>';
+      return '<div class="ucard'+(state.focusUnit===i?' focused':'')+(state.flash===i?' flash':'')+'" data-ucard="'+i+'">'+unitBody(i,u)+'</div>';
     }).join('')+'</div>'+
-    '<span class="urail-fade urail-fade-l" aria-hidden="true"></span>'+
-    '<span class="urail-fade urail-fade-r" aria-hidden="true"></span></div>';
+    (state.units.length>1?'<span class="urail-fade urail-fade-l" aria-hidden="true"></span>'+
+    '<span class="urail-fade urail-fade-r" aria-hidden="true"></span>':'')+'</div>';
 }
-/* a fade shows only on a side that has more cards, so a single unit gets neither */
+/* a fade shows only on a side that has more cards, so a single unit gets neither. Since 8 Sept (user review:
+   a dark gradient showed on a one-unit rail; not reproduced headless, where the rail never had any
+   scrollable overflow) the fade spans are not rendered at all for one unit and railFades() will not
+   switch them on, so whatever the browser makes of the slide-in transform or the smooth scroll, one unit
+   cannot light a fade. */
 function railFades(){
   var rail=document.getElementById('ucards'), wrap=document.getElementById('urail');
   if(!rail||!wrap) return;
-  var max=rail.scrollWidth-rail.clientWidth;
-  wrap.classList.toggle('has-left',max>1&&rail.scrollLeft>1);
-  wrap.classList.toggle('has-right',max>1&&rail.scrollLeft<max-1);
+  var max=rail.scrollWidth-rail.clientWidth, many=state.units.length>1;
+  wrap.classList.toggle('has-left',many&&max>1&&rail.scrollLeft>1);
+  wrap.classList.toggle('has-right',many&&max>1&&rail.scrollLeft<max-1);
 }
 function stayPanel(){
   var total=state.guests, pl=placed(-1), mob=state.device==="mobile";
@@ -1715,7 +1878,7 @@ function stayPanel(){
     '<span class="pool-cap">'+cap+'</span></div>'+glyphs+'</div>';
   /* the units sit inside the card at both breakpoints (client, 10 Aug): the ledger on desktop, the
      rail on mobile, each spaced from the progress block by the card's own 24px gap */
-  var panel='<div class="gpanel" id="gpanel">'+head+(mob?unitCarousel():unitLedger())+'</div>';
+  var panel='<div class="gpanel'+(state.units.length?' has-units':'')+'" id="gpanel">'+head+(mob?unitCarousel():unitLedger())+'</div>';
   return '<aside class="side" aria-labelledby="gpHead">'+panel+'</aside>';
 }
 
@@ -1759,7 +1922,7 @@ function render(){
        The filter tiles are INSIDE .layout, as a full-width row above the results. They read the same
        either way at four columns, and it is what lets the 5-column trial run the panel up beside
        them - see the fenced block in the CSS. */
-    '<div class="layout" style="--cat-cols:'+catList().length+'">'+(mob?'':panel)+
+    '<div class="layout'+(lockedCategory()?' is-locked':'')+'" style="--cat-cols:'+catList().length+'">'+(mob?'':panel)+
     '<div class="cat-block">'+categoryUI()+'</div>'+
     '<div class="results"><div class="acards">'+visibleStock().map(accomCard).join('')+'</div>'+utilityRow()+'</div>'+
     '</div>';
@@ -1793,7 +1956,7 @@ var flashToken=null;
 function flashRow(i){
   state.flash=i;
   var tk={}; flashToken=tk;
-  setTimeout(function(){ if(flashToken!==tk) return; state.flash=null; render(); },1200);
+  setTimeout(function(){ if(flashToken!==tk) return; state.flash=null; render(); },3000); /* POST-TESTING TWEAKS: outlives the 2.7s ring */
 }
 var FULL_MSG='Everyone has a bed. Adjust or remove a unit to make changes.';
 
@@ -2004,8 +2167,12 @@ function renderDraft(refocus){
   var allReady=draftAllReady();
   document.getElementById('duBody').innerHTML=
     d.units.map(function(u,j){ return draftUnitBlock(j,u,s,base); }).join('')+
-    '<div class="du-addrow">'+
-    '<button type="button" class="linkbtn du-add" data-dadd'+(pool<=0||!allReady?' aria-disabled="true"':'')+'>Add another unit'+ICO_PLUS+'</button></div>';
+    /* FIGMA HANDOFF (user, 9 Sept 2026): an Edit dialog is about the one unit being edited, so the Add another unit
+       row renders only for a new add. The last unit block's own 24px padding keeps the actions clear without it. */
+    (d.editIdx==null
+      ? '<div class="du-addrow">'+
+        '<button type="button" class="linkbtn du-add" data-dadd'+(pool<=0||!allReady?' aria-disabled="true"':'')+'>Add another unit'+ICO_PLUS+'</button></div>'
+      : '');
   draftInAnim=null;
   var doneBtn=document.getElementById('duDone');
   doneBtn.setAttribute('aria-disabled',allReady?'false':'true');
@@ -2140,6 +2307,7 @@ function commitDraft(){
   state.draft=null;
   hideModal('duModal');
   render();
+  hoLandOnSection(); /* BBW HANDOVER: glide to the new heading (under the sticky panel on mobile) */
   announce((edit==null
     ? plural(n,'unit')+' added in '+s.name+'.'
     : 'Unit '+(edit+1)+' updated.'+(n>1?' '+plural(n-1,'unit')+' added alongside it.':''))+
@@ -2245,6 +2413,39 @@ document.querySelectorAll('[data-groupbtn]').forEach(function(b){
 var INCLUDED=["Splash Waterworld","Fairground Thrills","West End Quality Shows","Daytime Activities","Comfy Accommodation"];
 var TICK='<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.6 6.2 12 13 4.6"/></svg>';
 document.getElementById('promoList').innerHTML=INCLUDED.map(function(t){ return '<li>'+TICK+t+'</li>'; }).join('');
+
+/* ============================================================ BBW HANDOVER (8 Sept 2026): heading + mobile landing */
+var HO_NOUN={Rooms:'room',Apartments:'apartment',Chalets:'chalet',Caravans:'caravan'};
+/* "Choose your accommodation" until a unit exists; then the heading names the locked type, which is what
+   makes the missing tiles read as a choice already made rather than something broken */
+/* DONE HEADING (user, 9 Sept): with nobody left to place, the heading says the task is done. 21 characters
+   against "Choose your accommodation" at 25, so the row holds its shape. */
+var DONE_TITLE="Everyone’s got a bed!";
+function sectionTitle(){
+  if(state.units.length&&unplaced()<=0) return DONE_TITLE;
+  var lock=lockedCategory();
+  return lock?'Choose your next '+(HO_NOUN[lock]||lock.toLowerCase()):'Choose your accommodation';
+}
+/* the lock line as one string, so the heading row (mobile) and the grid (desktop) can each place it */
+function lockLine(){
+  var lock=lockedCategory(); if(!lock) return '';
+  return '<p class="cat-lockline">Want a different accommodation type? '+
+    '<button type="button" class="linkbtn" data-clearall aria-label="Remove your units to choose a type other than '+lock+'">Remove units to refresh</button></p>';
+}
+/* After Add to booking the page glides so the section heading sits at the top with its whole top margin
+   showing (read from the computed style so it cannot drift: 32px on mobile, 24px on desktop). On mobile the
+   sticky Your group panel sits above it, so its height comes off too, and the customer sees the new heading
+   and the flashing unit card together. On desktop the panel is beside the cards, so only the margin comes
+   off. Then the customer scrolls down to choose the next one. (user, 8 Sept, both breakpoints) */
+function hoLandOnSection(){
+  var head=content.querySelector('.res-tools'), side=state.device==="mobile"?content.querySelector('.side'):null;
+  if(!head) return;
+  var sTop=scrollEl.getBoundingClientRect().top, mt=parseFloat(getComputedStyle(head).marginTop)||0;
+  var off=head.getBoundingClientRect().top-sTop+scrollEl.scrollTop-(side?side.offsetHeight:0)-mt;
+  off=Math.max(0,Math.min(off,scrollEl.scrollHeight-scrollEl.clientHeight));
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(scrollEl.scrollTo) scrollEl.scrollTo({top:off,behavior:reduce?'auto':'smooth'}); else scrollEl.scrollTop=off;
+}
 
 render();
 </script>
