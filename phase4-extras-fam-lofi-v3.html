@@ -1,0 +1,2703 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 4 Family Extras (lo-fi) v3</title>
+<!--
+  PHASE 4: FAMILY EXTRAS AND PASSES. Step 3 of 6.
+
+  V2, forked from phase4-extras-fam-lofi.html on 24 Aug 2026 after Oliver's client call. The
+  client wants to see TWO token approaches side by side:
+
+    A. "Token packs"  - the pack-led approach this workstream has been building.
+    B. "Current + quick wins" - much closer to their existing tokens page, with a short list
+       of quick wins layered on.
+
+  The toolbar's Tokens control switches between them. BOTH BRANCHES ARE DELIBERATELY IDENTICAL
+  RIGHT NOW: the split exists so the two can be ideated separately without another fork. When
+  B is designed, change tokensSectionCurrent() and leave tokensSectionPacks() alone.
+
+  The original file is untouched and remains the single-approach reference.
+
+  V3, forked from phase4-extras-fam-lofi-v2.html on 25 Sep 2026 on Sarah's feedback:
+    - the tokens heading is "The more you buy, the more you save" (was "Save now, play later")
+    - the packs are 5, 15 and 20: fixed and standalone, no per-guest count or label anywhere
+    - the three pack cards carry Sarah's new names and copy (Try it out / Fun for everyone /
+      Go all out)
+    - the Quick Wins variant is gone. Its price-per-token band ladder survives, moved into the
+      activity costs dialog above the list, where it is the proof of the new heading
+    - in that dialog the booking note moves above the list and the seasonal line is cut
+  v2, its harness and its screenshots are untouched and stay green.
+
+  Rebuilt from `Phase 3-4 Sketches/phase4-extras-family-lofi.html` after a pattern review
+  against the signed-off work. Where this file departs from that sketch it is because an
+  established pattern already existed elsewhere in the workstream:
+
+    - Extras card, cost display rule, scope tag and grouped breakdown
+        <- phase2-dining-extras-bbw-hifi.html (the current truth for the extras step)
+    - Wireframe tokens, nav pill, nav overflow affordance, section grammar
+        <- phase2-dining-extras-bbw-lofi.html
+    - Party blocks, "Same as Party 1" mirroring, collapse behaviour, footer summary panel,
+      contextual continue button
+        <- phase1-dining-fam-hifi.html / phase1-dining-fam-lofi.html
+    - Party presets (1 / 2 at 2+8 / 5), party status grammar, aria-disabled never hidden
+        <- phase3-accom-fam-hifi.html and the BBW unit picker handover
+
+  DECIDED WITH OLIVER, 18 Aug 2026:
+    1. Party blocks only. Every extra renders inside a party block, including the ones that
+       apply to the whole booking. Those carry a shared toggle and an explicit note so the
+       rule reads the same wherever the user lands. Donation is the one exception: it is a
+       flat GBP 2 for the booking and cannot be split, so it keeps its own section.
+    2. BBW hi-fi card anatomy: body on top, control bar underneath.
+    3. Dev toolbar carries Phase 3's party presets, up to 19 guests.
+    4. BBW hi-fi grouped breakdown, per party.
+
+  Terminology is "Party", per Family convention. The sketch said "Unit"; that is BBW's word.
+
+  NO DINING ON THIS SCREEN. Dining is chosen at step 2 and carried in read-only. The toolbar's
+  Dining control switches between carried-in and skipped so the upsell path can be reviewed.
+
+  Prices from the June 2026 live capture (content inventory v0.3, section 4b) except where
+  marked. Full re-render on interaction is an accepted lo-fi limitation: keyboard focus is
+  lost after each click. Do not carry that to build.
+-->
+<style>
+/* ============================================================ WIREFRAME TOKENS
+   Identical to phase2-dining-extras-bbw-lofi.html. Do not drift. */
+:root{
+  --ink:#2b2b2b; --ink2:#555; --muted:#6e6e6e;
+  --line:#cfcfcf; --line2:#a9a9a9; --line3:#8a8a8a;
+  --fill:#f2f2f2; --fill2:#e7e7e7; --fill3:#dcdcdc;
+  --paper:#fff; --bg:#9a9a9a;
+  --dark:#2b2b2b; --radius:10px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+/* A11Y NOTE: --muted darkened from the BBW lofi's #7a7a7a to #6e6e6e, which clears 4.5:1 on
+   white for small body text. The BBW files still carry the lighter value and its caveat. */
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:var(--font);color:var(--ink);background:var(--bg);line-height:1.45;-webkit-font-smoothing:antialiased;}
+button{font-family:inherit;cursor:pointer;}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:3px;}
+.toolbar :focus-visible{outline-color:#fff;}
+h1,h2,h3,h4{margin:0;font-weight:700;color:var(--ink);}
+p{margin:0;}
+ul{margin:0;padding:0;list-style:none;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;}
+
+/* ============================================================ STAGE + TOOLBAR */
+.stage{padding:18px;min-height:100vh;}
+.toolbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1120px;margin:0 auto 14px;
+  background:#1f1f1f;color:#eee;border-radius:10px;padding:9px 12px;font-size:12px;}
+.toolbar .tlabel{font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:11px;}
+.toolbar .right{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap;}
+.seg-group{display:flex;align-items:center;gap:7px;}
+.seg-group .gl{color:#aaa;text-transform:uppercase;letter-spacing:.05em;font-size:10px;}
+.seg{display:inline-flex;border:1px solid #555;border-radius:7px;overflow:hidden;}
+.seg button{background:#2b2b2b;color:#ddd;border:0;padding:5px 9px;font-size:11px;border-right:1px solid #555;}
+.seg button:last-child{border-right:0;}
+.seg button[aria-pressed="true"]{background:#eee;color:#1f1f1f;font-weight:700;}
+
+/* ============================================================ DEVICE FRAME */
+.frame-outer{max-width:1120px;margin:0 auto;display:flex;justify-content:center;}
+.frame{position:relative;display:flex;flex-direction:column;width:1080px;height:880px;
+  background:var(--paper);border:1px solid #6f6f6f;border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.25);}
+.frame-outer[data-device="mobile"] .frame{width:390px;height:780px;}
+.scroll{flex:1;overflow:auto;scroll-behavior:smooth;}
+
+/* ============================================================ APP CHROME */
+.appbar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--line);background:var(--paper);}
+.appbar .ico{width:26px;height:26px;border:1px solid var(--line2);border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:var(--ink2);}
+.appbar .brand{font-weight:800;letter-spacing:.02em;font-size:17px;}
+.appbar .brand small{display:block;font-weight:600;font-size:8px;letter-spacing:.18em;color:var(--muted);}
+.appbar .icons{margin-left:auto;display:flex;gap:7px;}
+.chrome-mid{padding:12px 18px;border-bottom:1px solid var(--line);background:var(--fill);}
+.backlink{color:var(--ink2);text-decoration:none;font-size:13px;font-weight:600;white-space:nowrap;}
+.step-title{text-align:center;font-size:13.5px;font-weight:800;letter-spacing:.02em;color:var(--ink);margin-bottom:10px;}
+.step-row{position:relative;display:flex;align-items:center;justify-content:center;min-height:30px;}
+.step-row .backlink{position:absolute;left:0;top:50%;transform:translateY(-50%);}
+.dots{display:flex;align-items:center;gap:10px;}
+.dotstep{width:22px;height:22px;border-radius:50%;border:1px solid var(--line2);background:var(--paper);display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);}
+.dotstep.done{background:var(--dark);border-color:var(--dark);color:#fff;}
+.dotstep.current{background:var(--dark);border-color:var(--dark);color:#fff;box-shadow:0 0 0 3px var(--fill3);}
+.frame-outer[data-device="mobile"] .step-row{justify-content:flex-start;gap:14px;}
+.frame-outer[data-device="mobile"] .step-row .backlink{position:static;transform:none;}
+.searchsum{display:flex;align-items:center;gap:12px;margin-top:12px;font-size:12.5px;color:var(--ink2);}
+.searchsum .editsum{margin-left:auto;background:var(--paper);border:1px solid var(--line2);border-radius:7px;padding:5px 10px;font-size:12px;color:var(--ink);}
+.frame-outer[data-device="mobile"] .searchsum{flex-wrap:wrap;}
+
+/* ============================================================ BODY + LAYOUT */
+.body{padding:16px 18px 22px;}
+/* heading only, so the gap to the nav lives on .intro rather than under the h1 */
+.intro{margin-bottom:14px;}
+.intro h1{font-size:31px;line-height:1.06;margin-bottom:0;text-transform:uppercase;letter-spacing:.035em;font-weight:800;text-align:center;}
+.frame-outer[data-device="mobile"] .intro h1{font-size:23px;}
+
+/* ---- section nav, lifted from phase2-dining-extras-bbw-lofi.html including the
+        overflow affordance the sketch dropped: edge fades plus chevron scrollers.
+        With 5 parties the nav always overflows, so this is load-bearing here. ---- */
+.nav-wrap{position:sticky;top:0;z-index:4;background:var(--paper);border-bottom:1px solid var(--line);margin:0 -18px 18px;
+  display:flex;align-items:center;}
+.sectionnav{order:0;flex:1;min-width:0;display:flex;gap:8px;align-items:center;overflow-x:auto;padding:10px 18px;scrollbar-width:none;}
+.sectionnav::-webkit-scrollbar{display:none;}
+.nav-item{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;background:var(--paper);
+  border:1px solid var(--line2);border-radius:20px;padding:7px 13px;font-size:13px;color:var(--ink2);}
+.nav-item:hover{background:var(--fill);color:var(--ink);}
+.nav-item.is-active{background:var(--dark);border-color:var(--dark);color:#fff;font-weight:700;}
+.nav-tick{width:15px;height:15px;border-radius:50%;border:1px solid var(--line2);display:none;align-items:center;justify-content:center;font-size:9px;background:var(--dark);border-color:var(--dark);color:#fff;}
+.nav-item.added .nav-tick,.nav-item.partial .nav-tick{display:inline-flex;}
+.nav-item.partial .nav-tick{background:linear-gradient(90deg,var(--dark) 50%,var(--paper) 50%);color:transparent;}
+.nav-item.is-active .nav-tick{background:#fff;border-color:#fff;color:var(--dark);}
+.nav-item.is-active.partial .nav-tick{background:linear-gradient(90deg,#fff 50%,transparent 50%);border-color:#fff;color:transparent;}
+/* CHEVRONS GET THEIR OWN TRACK, they are not overlaid on the scroller.
+   Render check, 18 Aug: overlaid chevrons sat on top of the end pill, so "Party 5" read as
+   "P >". Reserving scroll padding fixed the two ends but not the middle, because pills pass
+   under an overlay anywhere in the range: at 75% scroll the right chevron still covered 28px
+   of "Your booking". A track cannot be scrolled under, so it fixes the whole range.
+   The track is reserved on `is-over` (overflow alone, which does not change while scrolling)
+   and the chevrons only toggle VISIBILITY within it on has-left / has-right. Toggling their
+   display instead would resize the scroller every time you reached an end and shift every
+   pill by 40px. */
+.nav-fade{position:absolute;top:0;bottom:1px;width:24px;pointer-events:none;display:none;z-index:1;}
+.nav-fade-left{left:0;background:linear-gradient(to right,var(--paper),rgba(255,255,255,0));}
+.nav-fade-right{right:0;background:linear-gradient(to left,var(--paper),rgba(255,255,255,0));}
+.nav-chev{flex:none;display:none;width:28px;height:28px;margin:0 6px;
+  align-items:center;justify-content:center;background:var(--paper);border:1px solid var(--line2);border-radius:50%;font-size:14px;color:var(--ink);}
+.nav-chev-left{order:-1;}
+.nav-chev-right{order:1;}
+.nav-wrap.has-left .nav-fade-left,.nav-wrap.has-right .nav-fade-right{display:block;}
+/* both tracks exist whenever the nav overflows; visibility is what changes as you scroll */
+.nav-wrap.is-over .nav-chev{display:inline-flex;visibility:hidden;}
+.nav-wrap.is-over.has-left .nav-chev-left{visibility:visible;}
+.nav-wrap.is-over.has-right .nav-chev-right{visibility:visible;}
+/* the fades hug the scroller, so they inset past the chevron tracks (28px + 6px margins) */
+.nav-wrap.is-over .nav-fade-left{left:40px;}
+.nav-wrap.is-over .nav-fade-right{right:40px;}
+/* MOBILE HAS NO CHEVRONS (Oliver, 20 Aug). The reserved left track is 40px wide and, at rest,
+   holds an invisible button: measured headless at 390px, that pushed the first pill to 55px
+   against a 19px page margin. On touch the chevrons earn nothing anyway, because you swipe.
+   Dropping them on mobile puts the first pill on the margin and gives the row 80px more space,
+   with the edge fades left as the overflow affordance. The fades run to the edges here since
+   there is no track to inset past. Desktop keeps the tracks and the 18 Aug no-overlay
+   behaviour exactly as above. */
+.frame-outer[data-device="mobile"] .nav-wrap.is-over .nav-chev{display:none;}
+.frame-outer[data-device="mobile"] .nav-wrap.is-over .nav-fade-left{left:0;}
+.frame-outer[data-device="mobile"] .nav-wrap.is-over .nav-fade-right{right:0;}
+
+/* ============================================================ SECTIONS */
+.sec{scroll-margin-top:70px;margin-bottom:26px;}
+.subsec{scroll-margin-top:70px;margin-bottom:18px;}
+.anchor-wrap{scroll-margin-top:70px;}
+.sec-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;}
+.sec-label{font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
+.sec-note{font-size:12.5px;color:var(--ink2);margin-bottom:12px;}
+
+/* ============================================================ PARTY BLOCKS
+   Lifted from phase1-dining-fam-hifi.html (.unit-head / .uh-titles / .party-body /
+   .party-summary / .collapse-btn) and phase3-accom-fam-hifi.html (the done check),
+   translated into this file's wireframe tokens. The parties layout carries status
+   structurally, which is why there is no separate ledger panel. */
+/* "Same as Party 1": the Phase 1 mirroring control, reused to copy per-person extras. */
+.unit-samerow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--paper);flex-wrap:wrap;}
+.unit-samerow .usr-text{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.unit-samerow .usr-label{font-size:12px;color:var(--muted);}
+.unit-samerow .usr-plan{font-size:13.5px;font-weight:700;}
+.unit-samerow .usr-plan.none{font-weight:400;color:var(--muted);font-style:italic;}
+.frame-outer[data-device="mobile"] .unit-samerow .btn{width:100%;}
+
+/* ============================================================ CARDS
+   Phase 2 BBW runs TWO card types for extras and this file follows it:
+     1. FEATURE CARD, a photo pane beside the copy, for the premium sells. BBW uses it for
+        Bottomless Brunch and the VIP Pass. Here it carries the Early Access VIP Pass.
+     2. REGULAR CARD, icon-led, for everything else.
+   Both share the same control bar: price and scope tag left, control right.
+   Regular-card anatomy is the BBW hi-fi's: body on top, full-width control bar underneath. */
+.card{border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);margin-bottom:12px;overflow:hidden;
+  /* clear the sticky section nav. Without this an anchor jump or a focus() lands the top of the
+     card under the nav and its first line is unreadable, which is the same class of defect as
+     the sticky bar clipping the paragraph at the bottom. (20 Aug) */
+  scroll-margin-top:56px;}
+.card.is-added{border-color:var(--line3);box-shadow:inset 3px 0 0 var(--dark);}
+/* ---- FEATURE CARD, lifted from phase2-dining-extras-bbw-lofi.html ----
+   Class names are Family-neutral here because BBW's own name, `.brunch-card2`, names a
+   product this journey does not sell. The layout is BBW's unchanged. The mapping is:
+     .feature-card = .brunch-card2    .fc-main = .brunch-main    .fc-pad = .bm-pad
+   The title sits in its own band above the split, so it spans the photo and the copy. */
+.dc-head{padding:12px 14px;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+  background:var(--fill2);border-bottom:1px solid var(--line);}
+.ph-img{position:relative;background:repeating-linear-gradient(45deg,#ededed,#ededed 9px,#e3e3e3 9px,#e3e3e3 18px);
+  border-bottom:1px solid var(--line);height:120px;display:flex;align-items:center;justify-content:center;}
+.ph-img span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;
+  background:rgba(255,255,255,.7);padding:2px 7px;border-radius:4px;}
+.feature-card{display:flex;align-items:stretch;}
+.feature-card .ph-img.square{width:210px;min-width:210px;flex:none;height:auto;border-bottom:0;border-right:1px solid var(--line);}
+.fc-main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.fc-pad{padding:14px 14px 10px;flex:1;display:flex;flex-direction:column;gap:6px;}
+.fc-pad .desc{margin:0;}
+/* The added state is a ::after overlay, not the inset shadow the regular card uses. An inset
+   shadow paints under the element's own children, so the photo pane and the title band would
+   both cover it and the card would look unadded. Same reasoning, and the same fix, as the
+   gold ring in phase3-accom-fam-hifi.html. Worth folding back: BBW's own feature cards carry
+   the inset shadow and have the same latent problem. */
+.card.feature{position:relative;}
+.card.feature.is-added:after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--dark);z-index:2;pointer-events:none;}
+.frame-outer[data-device="mobile"] .feature-card{flex-direction:column;}
+.frame-outer[data-device="mobile"] .feature-card .ph-img.square{width:100%;min-width:0;height:120px;
+  border-right:0;border-bottom:1px solid var(--line);}
+.xcard{display:block;}
+.xc-body{padding:12px 13px 10px;display:flex;flex-direction:column;gap:6px;}
+.xc-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.xc-head h3{font-size:15px;}
+.xc-ico{font-size:20px;line-height:1;color:var(--ink2);flex:none;}
+.desc{color:var(--ink2);font-size:13px;}
+.xc-body .desc{margin:0;}
+.dc-incl{display:flex;flex-direction:column;gap:4px;}
+.dc-incl li{position:relative;padding-left:20px;font-size:12.5px;color:var(--ink2);}
+.dc-incl li:before{content:"\2713";position:absolute;left:0;top:0;font-weight:800;color:var(--ink);}
+.dc-more-toggle{align-self:flex-start;background:none;border:0;border-bottom:1.5px solid var(--ink);padding:0 0 1px;font-size:13px;font-weight:600;color:var(--ink);}
+.dc-more{display:none;font-size:12.5px;color:var(--ink2);line-height:1.45;}
+.dc-more.open{display:block;}
+.row-sub{display:block;font-size:12px;color:var(--muted);}
+.cbar{border-top:1px solid var(--line);padding:10px 13px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.cbar.sm{padding:8px 12px;}
+.cbar-left{display:flex;flex-direction:column;align-items:flex-start;gap:5px;}
+.xc-control{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;}
+.price{display:flex;flex-direction:column;line-height:1.25;}
+.price .now{font-size:20px;font-weight:800;}
+.price .pp{font-size:11px;color:var(--muted);}
+.scope-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);border:1px solid var(--line2);border-radius:20px;padding:2px 8px;background:var(--fill);}
+.scope-tag .st-ico{font-size:11px;line-height:1;}
+/* the all-parties note: says the rule in the place the user is standing */
+.allnote{font-size:12px;color:var(--ink2);background:var(--fill);border:1px dashed var(--line2);border-radius:7px;padding:7px 9px;}
+.frame-outer[data-device="mobile"] .cbar{align-items:stretch;}
+.frame-outer[data-device="mobile"] .xc-control{width:100%;justify-content:space-between;}
+
+/* ---- TOKENS as a PRICING SECTION (Oliver, 20 Aug, 17:33). Ported verbatim from
+   `phase4-token-packs-preview.html`, which is where the treatment was proved. It replaces the
+   "three sizes, in their units" fold from earlier today: three named tiers, each a full card
+   with its own badge, price, button and "what that gets you" list, mobile first as one column
+   and three columns with the middle tier lifted on the wide frame.
+   The ladder is 2, 4 and 6 tokens per chargeable guest, so a tier means the same thing whatever
+   the party size. Superseded from the earlier fold: the "each"-labelled rows, the single Best
+   rate flag, the demoted bar stepper, and the percentage saving line. The guide paragraph and
+   the band nudge are back, both from the preview.
+   Kept from this file rather than the preview: `scroll-margin-top` on `.card`, and the modal's
+   `inert` handling, which the preview does not do. ---- */
+/* ============================================================ TOKEN PACKS as a pricing section
+   Mobile first: one card per row, full width. Desktop: three columns, the guide pack lifted.
+   The escalation is carried by the badge (quarter, half, full) as well as the price, so the
+   ladder reads without relying on the copy. */
+.pk-grid{display:flex;flex-direction:column;gap:10px;}
+.pk{display:flex;flex-direction:column;border:1px solid var(--line2);border-radius:var(--radius);
+  background:var(--paper);text-align:left;overflow:hidden;}
+/* THE HEADER BAND (hi-fi, 27 Aug): dots, the count, and the per-guest slice right-aligned.
+   The hi-fi colours the three bands blue, teal and orange; the lo-fi steps a grey per tier. */
+.pk-band{display:flex;align-items:center;gap:8px;padding:11px 13px;border-bottom:1px solid var(--line2);}
+.pk-band-0{background:#ececec;}
+.pk-band-1{background:#e0e0e0;}
+.pk-band-2{background:#d2d2d2;}
+.pk-dots{font-size:17px;line-height:1;color:var(--ink);}
+.pk-bandn{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink);}
+.pk-bandn b{font-size:19px;font-weight:800;letter-spacing:0;}
+.pk-each{margin-left:auto;font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--ink2);}
+.pk-body{display:flex;flex-direction:column;gap:8px;padding:13px;flex:1;}
+/* the earned chip beside the price, on the ladder's best rate only */
+.pk-best{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  border-radius:999px;padding:2px 9px;background:var(--dark);color:#fff;}
+.pk.is-hero{background:var(--fill);border-color:var(--line3);}
+.pk.is-hero .pk-btn{border-color:var(--dark);border-width:2px;}
+/* the Recommended tag reads as promoted rather than neutral, so it is filled where the earned
+   "Best rate" chip stays an outline */
+.pk-chip.is-rec{background:var(--dark);border-color:var(--dark);color:#fff;}
+.pk.is-on{box-shadow:inset 3px 0 0 var(--dark);border-color:var(--dark);}
+.pk-badge{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line3);background:var(--paper);
+  display:inline-flex;align-items:center;justify-content:center;font-size:16px;color:var(--ink);flex:none;}
+.pk-titles{display:flex;flex-direction:column;gap:2px;}
+.pk-kicker{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
+.pk-name{font-size:17px;}
+.pk-chip{align-self:flex-start;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  border:1px solid var(--line2);border-radius:999px;padding:2px 8px;background:var(--paper);color:var(--ink2);}
+.pk-chip.is-empty{visibility:hidden;}
+.frame-outer[data-device="mobile"] .pk-chip.is-empty{display:none;}
+.pk-copy{font-size:12.5px;color:var(--ink2);}
+/* desktop only: reserve three lines of copy so the prices share a baseline, the way a pricing
+   table has to. On mobile the cards stack, so there is nothing to align against. */
+.frame-outer[data-device="desktop"] .pk-copy{min-height:3.2em;}
+.frame-outer[data-device="desktop"] .pk-btn{margin-bottom:2px;}
+.pk-money{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+.pk-cost{font-size:26px;font-weight:800;line-height:1.05;}
+.pk-rate{font-size:12px;color:var(--muted);}
+.pk-btn{width:100%;border:1.5px solid var(--line3);border-radius:8px;background:var(--paper);
+  padding:9px 12px;font-size:13.5px;font-weight:700;color:var(--ink);}
+.pk-btn:hover{background:var(--fill2);}
+.pk.is-on .pk-btn{background:var(--dark);color:#fff;border-color:var(--dark);}
+.pk-inclhd{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.pk-incl{display:flex;flex-direction:column;gap:5px;}
+.pk-incl li{position:relative;padding-left:18px;font-size:12.5px;color:var(--ink2);}
+.pk-incl li:before{content:"\2713";position:absolute;left:0;top:0;font-weight:800;color:var(--ink);}
+.frame-outer[data-device="desktop"] .pk-grid{flex-direction:row;align-items:stretch;}
+.frame-outer[data-device="desktop"] .pk{flex:1;}
+.frame-outer[data-device="desktop"] .pk.is-hero{margin-top:-6px;margin-bottom:-6px;padding-top:19px;padding-bottom:19px;}
+/* the block is a plain column now: the three packs and the own-number line sit straight on the
+   section, with no card around them. */
+.tok-block{display:flex;flex-direction:column;gap:12px;}
+/* the custom amount, as a card above the packs. It carries the SAME ANATOMY as every other card
+   on this screen (Oliver, 21 Aug): body on top, then a .cbar footer with the price on the left
+   at the shared .co-price size and the control on the right. It used to be one flat row with the
+   price right-aligned at 17px and, on mobile, a stepper stretched to the full width by
+   `flex:1 0 100%`. No bullets and no commit button: it is already on the booking, and the
+   stepper is here so it can be amended without reopening the modal. */
+.tok-own{border:1px solid var(--dark);border-radius:var(--radius);background:var(--fill);
+  box-shadow:inset 3px 0 0 var(--dark);}
+.to-body{display:flex;flex-direction:column;gap:1px;padding:10px 13px;}
+.to-kicker{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
+/* THE COUNT IS NOT REPEATED HERE (Oliver, 21 Aug): the stepper in the footer is showing it.
+   What goes in its place is the one fact a custom amount has nowhere else to learn. Each PACK
+   prints its own rate, so a pack can be compared at a glance; a number typed between bands
+   cannot, and it can sit one token under a cliff where buying MORE costs LESS in total. That is
+   the band cliff the harness has always insisted the screen must state rather than let the
+   guest walk into. At the top band there is nothing to reach for, so it says so instead. */
+.to-note{font-size:12.5px;color:var(--ink);}
+.to-note b{font-weight:800;}
+.to-note.is-best{color:var(--muted);}
+.pk-onchip{align-self:flex-start;font-size:10.5px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.05em;border-radius:999px;padding:2px 9px;background:var(--dark);color:#fff;}
+
+/* ---- B13 (25 Aug): the hero and its pills, and the always-visible custom row. ---- */
+/* FULL BLEED, FLUSH TO THE ANCHOR BAR (Oliver, 25 Aug). The hero sits ABOVE the section
+   heading now, edge to edge: the -18px sides eat .body's padding and the -18px top eats
+   .nav-wrap's margin, so the image touches the bar. No border, no radius: a full-bleed image
+   owns its edges. position:relative so the carousel arrows anchor to it. */
+/* THE SECTION IS THE PHOTO (Oliver, 27 Aug round 2): one STATIC image behind the whole
+   section - a flat light grey stands in for it, no hatch - full bleed, with the heading, body
+   copy and costs link straight on it and one static pill top-right. The carousel, its arrows
+   and its count are gone from this section; the slim card keeps its own. */
+.tok-photo{position:relative;background:#e7e7e7;margin:-18px -18px 26px;
+  padding:20px 18px 22px;}
+.tok-photo .sec-head{margin-bottom:8px;}
+/* the pill states the price of a GO on the photo. Text on an image, never a control. */
+.tok-photo>.tok-pill{position:absolute;top:12px;right:14px;z-index:2;max-width:45%;
+  background:rgba(255,255,255,.95);border:1px solid var(--line2);border-radius:9px;
+  font-size:10px;font-weight:700;color:var(--ink);padding:2px 8px;line-height:1.3;text-align:left;}
+.tok-costs-row{margin-bottom:14px;}
+/* desktop rhythm (Oliver, 27 Aug): 48px of photo above the heading, 48px between the costs
+   link and the pack grid */
+.frame-outer[data-device="desktop"] .tok-photo{padding-top:48px;}
+/* V3 (Oliver, 25 Sep 2026): the "Laser Tag · 1 token" pill is a desktop-only flourish. On the
+   phone it competed with the heading for the top of the section, so it is hidden there. The
+   markup still renders on both devices - the harness pins it and the desktop frame shows it. */
+.frame-outer[data-device="mobile"] .tok-photo>.tok-pill{display:none;}
+.frame-outer[data-device="desktop"] .tok-photo .tok-costs-row{margin-bottom:48px;}
+/* slim's carousel controls, mobile frame only, as before the 27 Aug round 1 detour */
+.hero-arrow{display:none;position:absolute;top:50%;transform:translateY(-50%);z-index:2;
+  width:34px;height:34px;border-radius:50%;border:1px solid var(--line2);background:rgba(255,255,255,.92);
+  font-size:16px;line-height:1;color:var(--ink);}
+.hero-arrow[data-heroarrow="-1"]{left:8px;}
+.hero-arrow[data-heroarrow="1"]{right:8px;}
+.frame-outer[data-device="mobile"] .hero-arrow{display:inline-flex;align-items:center;justify-content:center;}
+/* SUPERSEDED 27 Aug: .tok-ownrow and the standing typed-field card went with the hi-fi. */
+/* THE CUSTOM BAR (hi-fi, 27 Aug): one full-width row under the grid, dashed and filled so it
+   reads as the adjacent path rather than a fourth pack. Closed it carries the from-rate and one
+   button; open it carries the draft's figures, a type-or-step control and the commit; committed
+   it carries the booking's price, the amendable stepper and On your booking. */
+.own-bar{display:flex;flex-direction:column;gap:12px;border:1.5px dashed var(--line3);
+  border-radius:var(--radius);background:var(--fill);padding:14px;}
+.own-bar.is-on{border-style:solid;border-color:var(--dark);box-shadow:inset 3px 0 0 var(--dark);}
+/* ONE FIGURE SHAPE, EVERY STATE (Oliver, 27 Aug round 2): small line, then the price at ONE
+   size with the rate beside it. The hi-fi holds 14/24px across both states; nothing here may
+   change size when the bar opens or commits. */
+.own-bar .ol-save,.own-bar .of-kick{font-size:12px;font-weight:700;color:var(--ink);
+  text-transform:none;letter-spacing:0;}
+.own-bar .of-kick{color:var(--ink2);}
+.own-bar .pk-money{align-items:baseline;gap:6px;flex-wrap:nowrap;}
+.own-bar .pk-cost{font-size:22px;}
+.own-bar .pk-rate{font-size:12px;}
+.own-live{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.own-live .to-note{font-size:11.5px;}
+/* the actions slot: the control when there is one, then the button - the same slot in every
+   state, so the button holds its place when the bar changes state */
+.own-actions{display:flex;flex-direction:column;gap:10px;}
+/* the stepper's readout is a typeable field: type or step, both, as since 24 Aug. The control
+   matches the buttons' height so the row sits on one line. */
+.own-ctl{display:flex;}
+.own-ctl .stepper{height:44px;}
+.own-ctl .stepper .own-input{width:56px;border:0;background:none;text-align:center;
+  font-weight:700;font-size:14px;padding:0;}
+.own-ctl .stepper .own-input:focus-visible{outline:2px solid var(--ink);outline-offset:-2px;}
+.own-bar .pk-btn{width:100%;padding:12px;}
+/* DESKTOP (Oliver, 28 Aug): the figures column is PINNED. Column one is exactly a pack-card's
+   width, so the figures always start on the middle card's left edge and stay there whatever
+   the state renders - a from-price, a draft or the booking. The actions hug the right. */
+.frame-outer[data-device="desktop"] .own-bar{display:grid;
+  grid-template-columns:calc((100% - 20px)/3) minmax(0,1fr) auto;
+  gap:10px;align-items:center;padding:14px 0;}
+.frame-outer[data-device="desktop"] .own-bar .pk-titles{padding-left:14px;}
+.frame-outer[data-device="desktop"] .own-actions{flex-direction:row;align-items:center;
+  gap:12px;justify-content:flex-end;padding-right:14px;}
+.frame-outer[data-device="desktop"] .own-bar .own-ctl .stepper{width:132px;justify-content:space-between;}
+.frame-outer[data-device="desktop"] .own-bar .pk-btn{width:220px;flex:none;}
+.tok-sub{margin-bottom:12px;}
+
+/* ============================================================ TOKENS SLIM (27 Aug 2026)
+   The Paper V2 card: the whole section in one card. Hero with a translucent Tokens pill (no
+   dots; arrows are the mobile-only .hero-arrow rules above), the title and body copy inside
+   the card, pack rows as radios with rate and cash saving, the custom stepper row, and the
+   price in the CARD footer via the shared .cbar anatomy. Desktop is the feature-card grammar:
+   image pane left at full card height, copy centred beside the rows, the bar under both. */
+.slim-hero{position:relative;display:flex;}
+.slim-hero .ph-img{display:none;height:150px;flex:1;border-radius:0;border-bottom:1px solid var(--line);}
+.slim-hero .ph-img.is-active{display:flex;}
+.slim-pill{position:absolute;left:10px;top:10px;z-index:2;display:inline-flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,.78);border:1px solid var(--line2);border-radius:999px;padding:3px 10px;
+  font-size:11px;font-weight:700;letter-spacing:.02em;color:var(--ink2);backdrop-filter:blur(3px);}
+.slim-main{display:flex;flex-direction:column;gap:12px;padding:14px;}
+.slim-copy{display:flex;flex-direction:column;gap:6px;}
+.slim-title{font-size:17px;}
+.slim-copy .desc{margin:0;}
+.slim-costs{margin:2px 0 0;}
+.slim-rows{display:flex;flex-direction:column;gap:8px;}
+.slim-row{display:flex;align-items:center;gap:10px;border:1px solid var(--line2);border-radius:8px;
+  background:var(--paper);padding:11px 12px;width:100%;text-align:left;font-size:13.5px;color:var(--ink);
+  min-height:48px;}   /* one height for packs AND the custom row (Oliver, 27 Aug) */
+.slim-row.is-on{border-color:var(--dark);background:var(--fill);box-shadow:inset 0 0 0 1px var(--dark);}
+.slim-row b{flex:1;font-weight:700;}
+.slim-rate{font-size:12px;color:var(--ink2);text-align:right;}
+.slim-dot{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--ink);flex:none;
+  position:relative;background:var(--paper);}
+.slim-row.is-on .slim-dot:after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--dark);}
+/* the custom row: the radio half is its own button so the stepper's buttons are not nested.
+   NO PADDING AROUND THE STEPPER (Oliver, 27 Aug, screenshot): the stepper is a full-height
+   cell block on the row's right edge, rules not borders, so the row matches the packs' 48px. */
+.slim-row.is-custom{padding:0 0 0 12px;overflow:hidden;}
+.slim-row.is-custom .slim-pick{align-self:stretch;padding:0;}
+.slim-row.is-custom .stepper{align-self:stretch;align-items:stretch;gap:0;
+  border:0;border-left:1px solid var(--line2);border-radius:0;}
+.slim-row.is-custom .step-btn{height:auto;}
+.slim-row.is-custom .qty{display:inline-flex;align-items:center;justify-content:center;min-width:44px;
+  border-left:1px solid var(--line2);border-right:1px solid var(--line2);}
+.slim-pick{display:flex;align-items:center;gap:10px;flex:1;background:none;border:0;padding:5px 0;
+  text-align:left;font-size:13.5px;color:var(--ink);}
+.slim-pick b{font-weight:700;}
+/* the card footer: price row first, the saving line in demi under it (Oliver's Paper layout) */
+.slim-bar .co-priceblock{gap:2px;}
+.slim-money{display:flex;align-items:baseline;gap:7px;}
+.slim-save{font-size:11.5px;font-weight:700;color:var(--ink);}
+.slim-save.is-none{color:var(--muted);font-weight:600;}
+/* 210px image pane, matching .feature-card's .ph-img.square, so this card and the feature
+   cards below share one photo width (Oliver, 27 Aug — 380px read too big). */
+.frame-outer[data-device="desktop"] .slim-card{display:grid;grid-template-columns:210px minmax(0,1fr);}
+.frame-outer[data-device="desktop"] .slim-hero{grid-row:1/3;border-right:1px solid var(--line);}
+.frame-outer[data-device="desktop"] .slim-hero .ph-img{height:100%;border-bottom:0;}
+/* the carousel arrows run on desktop too here (Oliver, 27 Aug); .hero-arrow is otherwise
+   mobile-only. Sized down to suit the 210px pane. */
+.frame-outer[data-device="desktop"] .slim-hero .hero-arrow{display:inline-flex;align-items:center;
+  justify-content:center;width:28px;height:28px;font-size:14px;}
+.frame-outer[data-device="desktop"] .slim-main{grid-column:2;display:grid;
+  grid-template-columns:minmax(240px,1fr) minmax(0,1.25fr);gap:16px 28px;align-items:center;padding:18px;}
+.frame-outer[data-device="desktop"] .slim-bar{grid-column:2;}
+
+/* the section's own furniture, below the packs */
+.tok-guide{font-size:12.5px;color:var(--ink2);}
+.tok-nudge{font-size:12.5px;color:var(--ink);background:var(--fill);border:1px dashed var(--line3);
+  border-radius:7px;padding:8px 10px;}
+.tok-note{font-size:11.5px;color:var(--muted);}
+.tok-custom{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;
+  border-top:1px solid var(--line);padding-top:10px;}
+.tok-more{align-self:flex-start;background:none;border:0;border-bottom:1.5px solid var(--ink);
+  padding:0 0 1px;font-size:13px;font-weight:600;color:var(--ink);}
+.tok-costs-link{align-self:flex-start;}
+/* the tokens intro: copy, then the activity costs link, held to half the frame on desktop */
+.tok-intro{margin-bottom:12px;}
+.tok-intro .sec-note{margin-bottom:8px;}
+.frame-outer[data-device="desktop"] .tok-intro{max-width:50%;}
+/* ============================================================ V2: THE VALUE ARGUMENT
+   Added 24 Aug 2026 after the client call. Three beats above the packs: why buying now is worth
+   it, what you are NOT committing to, and when the booking actually happens. These are
+   STRUCTURE rather than a sentence in the intro because the client's problem is that the
+   argument was never made, not that it was made badly. */
+/* NO BOX (Oliver, 24 Aug). It was a bordered grey card, which put the explainer at the same
+   visual weight as the three packs underneath it and made the top of the step read as four
+   cards rather than an argument followed by a choice. On the page background it reads as page
+   furniture and the packs are the only cards in the section, which is the point of them. */
+.tok-how{margin-bottom:14px;}
+.th-steps{display:flex;flex-direction:column;gap:10px;margin:0 0 10px;padding:0;list-style:none;}
+/* the number spans both text rows, so the title and the detail sit against one marker rather
+   than the detail wrapping back under it */
+.th-step{display:grid;grid-template-columns:24px 1fr;gap:2px 10px;align-items:start;}
+.th-num{grid-row:1 / span 2;width:24px;height:24px;border-radius:50%;background:var(--dark);color:#fff;
+  display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;}
+.th-t{font-size:13.5px;font-weight:800;}
+.th-d{font-size:12.5px;color:var(--ink2);}
+.th-d b{font-weight:800;color:var(--ink);}
+.frame-outer[data-device="desktop"] .th-steps{flex-direction:row;}
+.frame-outer[data-device="desktop"] .th-step{flex:1;}
+/* the intro and its activity costs link move INSIDE this block, under a rule. The half-width
+   hold was there to stop one measure of body text running across 1080px; inside a bordered
+   block with three columns above it there is nothing left to hold back. */
+.tok-how .tok-intro{margin-bottom:0;border-top:1px solid var(--line);padding-top:10px;}
+.frame-outer[data-device="desktop"] .tok-how .tok-intro{max-width:none;}
+
+/* the saving row on a pack. CASH against a stated resort price, never a percentage: see the
+   note on RESORT_RATE. The resort figure is struck, which is the only place on this screen a
+   was-price appears, so it carries the comparison without a word of explanation. */
+/* one line since the hi-fi port (27 Aug): "Save £x.xx on resort prices" */
+.pk-save{display:flex;align-items:baseline;gap:5px;font-size:12px;color:var(--ink2);
+  border-top:1px dashed var(--line2);border-bottom:1px dashed var(--line2);padding:7px 0;}
+.pk-was{font-size:11.5px;color:var(--muted);}
+.pk-off{font-size:13.5px;font-weight:800;}
+.pk-save.is-none{font-size:11.5px;color:var(--muted);gap:4px;}
+/* the flagged-figure chip. tkMark() has existed since 20 Aug with nothing styling it, because
+   nothing had used it; the on resort rate is the first figure on this screen that needs it. */
+.tok-tk{display:inline-block;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+  border:1px dashed var(--line3);border-radius:4px;padding:1px 5px;color:var(--ink2);background:var(--paper);}
+.tok-basis{margin-top:10px;}
+/* said once more directly under the commit buttons. Beat 2 says it at the top of the section,
+   but on a phone three stacked packs push that a screen and a half away, and this is the exact
+   confusion the client asked us to design out. */
+.tok-noboo{font-size:12px;color:var(--ink2);}
+
+/* ---- V2: THE CUSTOM CHOOSER, back on the block. Type a number or step to it. ---- */
+.tok-ownwrap{display:flex;flex-direction:column;gap:10px;align-items:flex-start;}
+.own-panel{width:100%;border:1px solid var(--line2);border-radius:var(--radius);background:var(--paper);
+  padding:12px;display:flex;flex-direction:column;gap:10px;}
+.own-panel[hidden]{display:none;}   /* display:flex would otherwise beat the hidden attribute */
+.own-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.own-lab{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+/* the field lives INSIDE the stepper shell, so the shell draws the border and the field only
+   draws the two rules that separate it from the buttons. */
+.own-step{align-items:stretch;}
+.own-input{width:66px;height:44px;padding:0 6px;font:inherit;font-size:15px;font-weight:700;
+  color:var(--ink);text-align:center;background:var(--paper);
+  border:0;border-left:1px solid var(--line2);border-right:1px solid var(--line2);border-radius:0;}
+/* the spinners would sit next to the minus and plus doing the same job in a smaller target */
+.own-input::-webkit-outer-spin-button,.own-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.own-input[type=number]{-moz-appearance:textfield;appearance:textfield;}
+.own-live{display:flex;flex-direction:column;gap:2px;}
+.ol-cost{font-size:19px;font-weight:800;}
+.ol-rate,.ol-save{font-size:12px;color:var(--ink2);}
+.ol-save.is-none,.ol-none{font-size:12px;color:var(--muted);}
+.own-panel .to-note{font-size:12px;}
+.own-add[aria-disabled="true"]{opacity:.45;cursor:not-allowed;}
+.frame-outer[data-device="mobile"] .own-add{width:100%;}
+
+/* ---- QUICK WINS REMOVED (V3, 25 Sep 2026, Sarah). The split guide-and-panel section, its
+   typed field, its paging and every qw- rule went with the variant; v2 keeps them whole. ONE
+   PIECE SURVIVES: the price-per-token band ladder (explorations rounds 9-11), which now sits in
+   the activity costs dialog, above the list. Same drawing: a hairlined block, six cells dearest
+   to cheapest, the band the booking sits in outlined and never dark-filled - dark fill is this
+   file's added state. tok-r prefix now that it belongs to the dialog, not a variant. ---- */
+.tok-ratebox{border-top:1px solid var(--line);padding:10px 0 2px;margin:4px 0 0;}
+.tok-rlbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 8px;}
+.tok-rbar{display:flex;gap:2px;margin:0 0 2px;}
+.tok-rseg{flex:1;height:26px;background:var(--fill);border:1px solid var(--line);border-radius:3px;
+  display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:var(--muted);
+  white-space:nowrap;overflow:hidden;}
+.tok-rseg.done{background:var(--fill3);color:var(--ink2);}
+.tok-rseg.cur{background:var(--paper);border:2px solid var(--ink);color:var(--ink);}
+.tok-rlegend{display:flex;gap:2px;}
+.tok-rlegend span{flex:1;text-align:center;font-size:8.5px;color:var(--muted);}
+
+/* ---- MODAL. Activity costs is reference content, so it overlays rather than lengthening the
+   section. Bottom sheet on a phone, centred dialog on desktop, both inside the device frame. ---- */
+.modal-back{position:absolute;inset:0;z-index:30;background:rgba(0,0,0,.45);
+  display:flex;align-items:flex-end;justify-content:center;}
+.frame-outer[data-device="desktop"] .modal-back{align-items:center;}
+.modal{background:var(--paper);border:1px solid var(--line2);border-radius:12px 12px 0 0;
+  width:100%;max-height:84%;display:flex;flex-direction:column;overflow:hidden;}
+.frame-outer[data-device="mobile"] .modal{max-height:88%;}
+/* the drawer slides (Oliver, 21 Aug). The out state needs the element to stay mounted while it
+   plays, so closeTokModal() sets .is-closing, waits for the animation, then re-renders. */
+@keyframes drawerIn{from{transform:translateY(100%);}to{transform:translateY(0);}}
+@keyframes drawerOut{from{transform:translateY(0);}to{transform:translateY(100%);}}
+@keyframes scrimIn{from{opacity:0;}to{opacity:1;}}
+.modal-back{animation:scrimIn .2s ease;}
+.modal-back.is-closing{animation:scrimIn .18s ease reverse forwards;}
+.frame-outer[data-device="mobile"] .modal{animation:drawerIn .24s cubic-bezier(.2,.8,.2,1);}
+.frame-outer[data-device="mobile"] .modal.is-closing{animation:drawerOut .2s ease-in forwards;}
+@media (prefers-reduced-motion: reduce){
+  .modal-back,.modal-back.is-closing,
+  .frame-outer[data-device="mobile"] .modal,
+  .frame-outer[data-device="mobile"] .modal.is-closing{animation:none;}
+}
+.frame-outer[data-device="desktop"] .modal{border-radius:12px;max-width:560px;max-height:80%;}
+.modal-head{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);}
+.modal-head h3{font-size:15.5px;flex:1;}
+.modal-x{width:30px;height:30px;flex:none;border:1px solid var(--line2);border-radius:50%;
+  background:var(--paper);font-size:15px;line-height:1;color:var(--ink);}
+.modal-body{padding:12px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;
+  flex:1;min-height:0;}   /* min-height:0 is what lets a flex child actually scroll */
+.modal-intro{font-size:12.5px;color:var(--ink2);line-height:1.5;}
+.modal-intro b{color:var(--ink);}
+/* the lede sits between the head and the filters, so it stays put while the list scrolls */
+.modal-lede{padding:10px 14px;display:flex;flex-direction:column;gap:6px;flex:none;}
+/* filters. One row under the head, so they stay put while the list scrolls. */
+.modal-filters{display:flex;gap:6px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--line);
+  background:var(--fill);flex:none;}
+.fchip{background:var(--paper);border:1px solid var(--line2);border-radius:999px;padding:5px 12px;
+  font-size:12px;font-weight:600;color:var(--ink2);}
+.fchip:hover{background:var(--fill2);}
+.fchip[aria-pressed="true"]{background:var(--dark);border-color:var(--dark);color:#fff;}
+/* SUPERSEDED 27 Aug: the dialog footer is gone. The cross in the head closes it, and the
+   "not a booking" sentence leads the dialog above the filters, so .modal-foot and the .mf-*
+   rules went with it. */
+.scroll.is-locked{overflow:hidden;}
+.tok-vh{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink);
+  padding-bottom:6px;border-bottom:1px solid var(--line2);}
+.tok-vh span{float:right;font-weight:600;color:var(--muted);letter-spacing:0;}
+.tok-acts{display:flex;flex-direction:column;}
+/* three levels a row: the name, then who it suits and what a go covers, then the token cost.
+   It was one flat line of 12px text for everything, which is why it read as a wall. */
+/* the whole row is a tap target since 21 Aug, so the grid moves onto the button and the list
+   item is just the divider. */
+.ta-row{border-bottom:1px solid var(--line);}
+.ta-row:last-child{border-bottom:0;}
+/* THE TAP TARGET FILLS THE ROW EXACTLY. Two wrong turns worth recording: width:100% with
+   margin:0 -6px pinned the width and then shifted it left, so it ended 6px short on the right;
+   dropping width:100% was worse, because a <button> sizes to fit-content even as a grid, so it
+   collapsed to 217px. width:100% with no horizontal margin or padding is the stable answer, and
+   it puts the + flush with the end of the divider. */
+.ta-tap{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;width:100%;
+  background:none;border:0;padding:9px 0;text-align:left;font:inherit;color:inherit;}
+/* PRESS, not hover, is the state that matters here (Oliver, 21 Aug), and it is carried by the
+   round button alone: flashing the whole row is heavy on a list built for repeated tapping.
+   The browser's own tap highlight is suppressed for the same reason. */
+.ta-tap{-webkit-tap-highlight-color:transparent;}
+.ta-tap:active .ta-plus{background:var(--dark);border-color:var(--dark);color:#fff;}
+.ta-tap[aria-disabled="true"]{opacity:.45;cursor:not-allowed;}
+.ta-tap[aria-disabled="true"]:active .ta-plus{background:none;border-color:var(--line2);color:var(--ink);}
+.ta-right{display:flex;align-items:center;gap:8px;}
+.ta-plus{width:24px;height:24px;flex:none;border:1px solid var(--line2);border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;font-size:15px;line-height:1;color:var(--ink);}
+/* HOVER ONLY WHERE THERE IS A POINTER, and only in the wide frame. A phone has no hover, and
+   the device here is a toolbar toggle rather than a real viewport, so the media query alone
+   would not honour it. Kept visibly distinct from the press state: hover darkens the ring and
+   tints the row, press fills the ring. */
+@media (hover:hover) and (pointer:fine){
+  .frame-outer[data-device="desktop"] .ta-tap:hover{background:var(--fill);}
+  .frame-outer[data-device="desktop"] .ta-tap:hover .ta-plus{border-color:var(--ink);}
+  .frame-outer[data-device="desktop"] .ta-tap[aria-disabled="true"]:hover{background:none;}
+  .frame-outer[data-device="desktop"] .ta-tap[aria-disabled="true"]:hover .ta-plus{border-color:var(--line2);}
+}
+/* V2: THE ROW IS A LINE OF REFERENCE, NOT A CONTROL (client, 24 Aug). Tap-to-add is gone, so
+   the grid moves off a <button> and onto a plain div. Everything the tap state needed - the
+   press fill, the hover tint, the disabled-at-cap handling, the round plus - went with it. */
+.ta-line{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:9px 0;}
+.ta-main{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.ta-name{font-size:15px;font-weight:700;color:var(--ink);}
+.ta-meta{font-size:11.5px;color:var(--muted);}
+/* the token count is the smallest thing in the row: this is a reference list, not a price list */
+.ta-cost{font-size:12px;font-weight:700;color:var(--ink2);white-space:nowrap;text-align:right;}
+/* ---- check-in pair: one card, two options, per BBW ---- */
+.checkin-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.checkin-opts.one{grid-template-columns:1fr;}
+.checkin-opt{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--paper);}
+.checkin-opt.is-added{border-color:var(--line3);box-shadow:inset 3px 0 0 var(--dark);}
+.co-info{padding:10px 12px 8px;}
+.co-info b{font-size:13.5px;}
+.co-priceblock{display:flex;flex-direction:column;line-height:1.2;}
+.co-price{font-size:16px;font-weight:800;}
+.co-pp{font-size:11px;color:var(--muted);}
+.frame-outer[data-device="mobile"] .checkin-opts{grid-template-columns:1fr;}
+
+/* ---- buttons and controls ---- */
+.btn{background:var(--paper);border:1px solid var(--line2);border-radius:8px;padding:8px 13px;font-size:13px;font-weight:600;color:var(--ink);}
+.btn:hover{background:var(--fill);}
+.btn.ghost{background:none;border-color:var(--line2);color:var(--ink2);}
+.btn.sm{padding:5px 9px;font-size:12px;}
+.btn.primary{background:var(--dark);color:#fff;border-color:var(--dark);}
+.btn-add{background:var(--paper);border:1.5px dashed var(--line3);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap;}
+.btn-add:hover{background:var(--fill);}
+.btn-add.is-added{background:var(--dark);color:#fff;border:1.5px solid var(--dark);}
+.btn-add .tick{font-weight:800;}
+.btn-add[aria-disabled="true"]{opacity:.45;cursor:not-allowed;border-style:solid;}
+.stepper{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line2);border-radius:8px;overflow:hidden;}
+.step-btn{width:44px;height:44px;border:0;background:var(--paper);font-size:18px;line-height:1;color:var(--ink);}
+.step-btn:hover{background:var(--fill);}
+.step-btn[aria-disabled="true"]{opacity:.4;cursor:not-allowed;}
+.qty{min-width:34px;text-align:center;font-weight:700;font-size:14px;}
+
+/* ---- callouts ---- */
+.callout{display:flex;align-items:center;gap:12px;border:1px solid var(--line2);border-left:4px solid var(--dark);
+  border-radius:8px;background:var(--fill);padding:11px 13px;margin-bottom:12px;}
+.callout b{font-size:14px;}
+.callout-sub{display:block;font-size:12px;color:var(--ink2);}
+.callout .btn{margin-left:auto;}
+.frame-outer[data-device="mobile"] .callout{flex-wrap:wrap;}
+.frame-outer[data-device="mobile"] .callout .btn{width:100%;margin-left:0;}
+
+/* ============================================================ OVERVIEW */
+.ov-block{border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);padding:13px;margin-bottom:12px;}
+.ov-head{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14px;margin-bottom:8px;}
+.ov-head .ov-sub{font-weight:500;font-size:12px;color:var(--muted);}
+.ov-head .btn{margin-left:auto;}
+.ovsum-toggle{width:100%;display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;font:inherit;font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--ink);}
+.ovsum-toggle .chev{margin-left:auto;color:var(--muted);font-size:14px;}
+.ov-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line);font-size:13px;}
+.ov-row:first-child{border-top:0;}
+.ov-row.muted{color:var(--muted);}
+.ov-price{margin-left:auto;text-align:right;display:flex;flex-direction:column;line-height:1.2;}
+.ov-price .pp{font-size:11px;color:var(--muted);}
+.incl-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:13px;}
+.incl-row:first-child{border-top:0;}
+.incl-text{display:flex;flex-direction:column;gap:2px;}
+.incl-text span{font-size:12px;color:var(--ink2);}
+.inc-tag{margin-left:auto;flex:none;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);border:1px solid var(--line2);border-radius:20px;padding:2px 8px;background:var(--fill);}
+.ov-changelink{display:inline-block;margin-top:10px;background:none;border:0;padding:0;color:var(--ink2);text-decoration:underline;font-size:12.5px;}
+/* grouped breakdown: bdRow from phase2-dining-extras-bbw-hifi.html. Parallel left/right
+   stacks so the indented sub-lines line up with their values. */
+.bd-list{display:flex;flex-direction:column;}
+.bd-row{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-top:1px solid var(--line2);}
+.bd-row:first-child{border-top:0;}
+.bd-l,.bd-r{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.bd-r{text-align:right;flex:none;}
+.bd-main{font-size:13.5px;font-weight:700;}
+.bd-sub{font-size:12px;color:var(--ink2);font-weight:400;}
+/* the sub-lines are indented under their group label, which is what makes them read as
+   belonging to it rather than as siblings. Left stack only: the right stack stays flush so
+   the values keep a single alignment down the column. */
+.bd-l .bd-sub{padding-left:12px;}
+.bd-row.muted .bd-main{font-weight:400;color:var(--muted);}
+.bd-row.savings .bd-main{color:var(--ink);}
+.bd-row.total{border-top:2px solid var(--line3);margin-top:4px;padding-top:10px;}
+.bd-row.total .bd-main{font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.02em;}
+.sum-addlink{background:none;border:0;padding:0;color:var(--ink);font-weight:600;font-size:13px;text-decoration:underline;}
+
+/* ============================================================ FOOTER
+   MATCHED TO THE LIVE BUTLIN'S ACTION BAR (Oliver, 20 Aug: "match what they have now, there's
+   no scope in this project to improve it"). This reverses the call previously recorded here,
+   which read "Not BBW's floating price tab" on the grounds that Family used the inline total
+   from phase1-dining-fam-lofi.html. The live Family footer IS the tab, so the Family shell was
+   the divergence. Layout and greyscale lift from phase2-dining-extras-bbw-lofi.html, whose own
+   comment already says it mirrors the live site, and the copy string matches it byte for byte.
+   Live carries no summary control in the footer, so it has gone. The grouped breakdown is not
+   lost with it: breakdownRows() also renders into the Your booking section.
+
+   SOURCE OF TRUTH, 21 Aug: "Screenshots for Idealize/btl_chrome_mobile.heic" and
+   ".../btl_chrome_desktop.heic". Both frames carry the price tab and the SAVE QUOTE / CONTINUE
+   pair; desktop also carries the one line of copy, mobile does not (Oliver, 21 Aug). Colour is
+   the one deliberate departure: live prints the total in Butlin's red, this file is greyscale
+   by the wireframe-tokens rule at the top. Layout, not palette, is what these screenshots
+   settle. Do not change this footer without Oliver asking. */
+.footer{position:relative;z-index:6;}
+/* the price is a tab that pokes up above the bar, over the page content, so the footer only
+   reserves the bar height and there is no empty white row beside it */
+.fprice{position:absolute;right:0;bottom:100%;display:flex;align-items:baseline;gap:8px;
+  background:var(--fill2);border:1px solid var(--line);border-bottom:0;
+  border-top-left-radius:8px;border-top-right-radius:8px;padding:8px 18px;}
+.fprice-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);}
+.fprice b{font-size:20px;color:var(--ink);}
+.fbar{width:100%;display:flex;align-items:center;gap:16px;border-top:1px solid var(--line2);padding:12px 18px;background:var(--paper);}
+.finstruct{flex:1;font-size:13px;color:var(--ink2);min-width:0;}
+.factions{display:flex;gap:10px;margin-left:auto;}
+.savebtn{background:var(--paper);border:1px solid var(--ink);border-radius:6px;padding:12px 20px;font-weight:700;font-size:13px;color:var(--ink);text-transform:uppercase;letter-spacing:.04em;}
+.savebtn:hover{background:var(--fill);}
+.continue{background:var(--dark);color:#fff;border:1px solid var(--dark);border-radius:6px;padding:12px 22px;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em;}
+/* MOBILE: THE PRICE TAB PLUS THE TWO BUTTONS. Settled by Oliver, 21 Aug, against the browser
+   captures now in "Screenshots for Idealize" (btl_chrome_mobile, 744x1330 @2x = 372 CSS px,
+   and btl_chrome_desktop, 3020x1714 @2x = 1510 CSS px). Those two screenshots are the footer.
+   Do not deviate from them without Oliver saying so.
+   This closes the contested call recorded here on 20 Aug ("the copy and the price tab are
+   desktop-only", read off Booking-Overview-08-19-2026). Half of it was wrong: the tab IS on
+   mobile, so there is a running total while you scroll. The copy is not, and Oliver asked for
+   it out explicitly, so .finstruct stays hidden.
+   Measured off btl_chrome_mobile: tab 50px tall, bottom edge flush with the bar top, left edge
+   ~104px in and the right edge running off the screen - so the top-right radius goes, because
+   live shows no corner there. The price keeps its desktop size: live does not shrink it, and
+   the tab still clears the frame at 390px. Buttons stay content-sized and centred as a pair,
+   NOT stretched to half the bar each (a first pass used flex:1 and the check caught it). */
+.frame-outer[data-device="mobile"] .fbar{flex-wrap:wrap;gap:10px;padding:12px;}
+.frame-outer[data-device="mobile"] .fprice{padding:7px 16px;border-top-right-radius:0;border-right:0;}
+.frame-outer[data-device="mobile"] .finstruct{display:none;}
+.frame-outer[data-device="mobile"] .factions{width:100%;margin-left:0;gap:10px;justify-content:center;}
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- DEV TOOLBAR -->
+  <!-- Defaults are mobile, Bognor Regis, single party (user, 20 Aug). Mobile because the client
+       is mobile-first and that is the frame the work should be judged in. Bognor because it
+       carries the most sections, so the busiest state is the one you land on. -->
+  <div class="toolbar" id="rootToggleHost" data-device="mobile">
+    <span class="tlabel">Phase 4 &middot; Family Extras</span>
+    <div class="seg-group"><span class="gl">Booking</span>
+      <div class="seg" role="group" aria-label="Booking shape"><button id="bkP1" aria-pressed="true">1 party of 4</button><button id="bkP2" aria-pressed="false">2 parties, 2+8</button></div>
+    </div>
+    <div class="seg-group"><span class="gl">Resort</span>
+      <div class="seg" role="group" aria-label="Resort"><button id="rsBognor" aria-pressed="true">Bognor Regis</button><button id="rsMine" aria-pressed="false">Minehead</button></div>
+    </div>
+    <div class="seg-group"><span class="gl">Break</span>
+      <div class="seg" role="group" aria-label="Break type"><button id="brTerm" aria-pressed="true">Term time</button><button id="brSummer" aria-pressed="false">Summer hols</button></div>
+    </div>
+    <!-- V2 ONLY. Which tokens approach the step renders. Bognor only, so at Minehead the
+         control is still live but the section it governs is absent (tokensActive()). -->
+    <div class="seg-group"><span class="gl">Tokens</span>
+      <!-- "Tokens Slim" (27 Aug): the Paper V2 single-card design, chosen on the 27 Aug review.
+           "Tokens Large" is the pack grid that was labelled "Token packs". "Quick Wins", the
+           branch that was "Current + quick wins", came off in V3 (Sarah, 25 Sep 2026); its
+           band ladder lives on inside the activity costs dialog. Ids are unchanged so the
+           wiring and the harness keep their handles. -->
+      <div class="seg" role="group" aria-label="Tokens approach"><button id="tkSlim" aria-pressed="false">Tokens Slim</button><button id="tkPacks" aria-pressed="true">Tokens Large</button></div>
+    </div>
+    <!-- everything that changes the BOOKING sits left; the device toggle is a viewing control,
+         not part of the scenario, so it stands alone on the right (user, 20 Aug) -->
+    <div class="right">
+      <div class="seg" role="group" aria-label="Device"><button id="dvMobile" aria-pressed="true">Mobile</button><button id="dvDesktop" aria-pressed="false">Desktop</button></div>
+    </div>
+  </div>
+
+  <!-- DEVICE FRAME -->
+  <div class="frame-outer" id="deviceHost" data-device="mobile">
+    <div class="frame">
+
+      <div class="scroll" id="scroll">
+
+        <div class="appbar">
+          <span class="ico" aria-hidden="true">&#9776;</span>
+          <span class="brand">Butlin's<small>90 YEARS</small></span>
+          <span class="icons" aria-hidden="true"><span class="ico">&#128100;</span><span class="ico">?</span><span class="ico">&#8942;</span></span>
+        </div>
+
+        <div class="chrome-mid">
+          <p class="step-title">Step 3 of 6: Extras &amp; Passes</p>
+          <div class="step-row">
+            <a href="#" class="backlink" onclick="return false;">&lsaquo; Back</a>
+            <div class="dots" role="list" aria-label="Booking progress, step 3 of 6">
+              <span class="dotstep done" role="listitem" aria-label="Step 1, complete"><span aria-hidden="true">&#10003;</span></span>
+              <span class="dotstep done" role="listitem" aria-label="Step 2, complete"><span aria-hidden="true">&#10003;</span></span>
+              <span class="dotstep current" role="listitem" aria-current="step" aria-label="Step 3, current"></span>
+              <span class="dotstep" role="listitem" aria-label="Step 4"></span>
+              <span class="dotstep" role="listitem" aria-label="Step 5"></span>
+              <span class="dotstep" role="listitem" aria-label="Step 6"></span>
+            </div>
+          </div>
+          <div class="searchsum">
+            <span class="summ"><b id="resortSumm">Minehead</b> | 20 to 24 Jul 2026 (4 nights) | <b id="guestSumm">4 guests</b></span>
+            <button class="editsum" onclick="return false;">Edit search</button>
+          </div>
+        </div>
+
+        <div class="body">
+          <!-- Heading only. The standing body copy was removed (user, 19 Aug): it restated
+               what the cards and the footer note already say, and on mobile it pushed the
+               first extra below the fold. P0 2a and 2c, above the fold and copy that earns
+               its place. -->
+          <div class="intro">
+            <h1>Make more of your break</h1>
+          </div>
+
+          <div class="nav-wrap" id="navWrap">
+            <nav class="sectionnav" id="sectionNav" aria-label="Sections on this page"></nav>
+            <span class="nav-fade nav-fade-left" aria-hidden="true"></span>
+            <span class="nav-fade nav-fade-right" aria-hidden="true"></span>
+            <button type="button" class="nav-chev nav-chev-left" id="navChevLeft" aria-label="Scroll sections left">&lsaquo;</button>
+            <button type="button" class="nav-chev nav-chev-right" id="navChevRight" aria-label="Scroll sections right">&rsaquo;</button>
+          </div>
+          <div class="content" id="content"></div>
+        </div>
+
+      </div>
+
+      <div class="footer" id="footer">
+        <div class="fprice" aria-live="polite"><span class="fprice-label">Total price</span><b id="totalFig">&pound;0.00</b></div>
+        <div class="fbar">
+          <p class="finstruct" id="footNote">Once you've customised your break, select continue to proceed.</p>
+          <div class="factions">
+            <button class="savebtn" onclick="return false;">Save quote</button>
+            <button class="continue" id="continueBtn">Continue</button>
+          </div>
+        </div>
+      </div>
+      <!-- the activity costs modal renders here, inside the frame, so it covers the device and
+           its sticky bar rather than the whole page -->
+      <div id="sheetHost"></div>
+
+    </div>
+  </div>
+
+  <div class="sr-only" role="status" aria-live="polite" id="liveAnnounce"></div>
+</div>
+
+<script>
+/* ============================================================ DATA */
+
+/* Party presets. p1 and p5 are lifted from phase3-accom-fam-hifi.html's PRESETS so the two
+   steps test the same bookings. p2 is Phase 3's deliberately awkward "small party first,
+   big party second" case, the one live handles with a post-hoc popup.
+   Toddlers are chargeable; infants under 2 are not, which is what the live VIP render does
+   (party of 4 including 1 infant charged for 3). */
+var PRESETS={
+  p1:{ label:"1 party of 4", parties:[{adults:2,children:1,toddlers:0,infants:1}] },
+  p2:{ label:"2 parties, 2+8", parties:[
+        {adults:2,children:0,toddlers:0,infants:0},
+        {adults:2,children:4,toddlers:1,infants:1}
+      ] },
+  /* p5 is no longer on the toolbar (user, 20 Aug): three booking variants were more than a
+     sign-off demo needs. It stays here because it is the only preset that exercises the
+     19-guest booking cap, the page length at scale and the nav overflow that surfaced the
+     chevron defect. The harness and _shots/shots.mjs reach it with setPreset('p5'). */
+  p5:{ label:"5 parties", parties:[
+        {adults:2,children:2,toddlers:1,infants:0},
+        {adults:2,children:1,toddlers:0,infants:1},
+        {adults:2,children:2,toddlers:0,infants:0},
+        {adults:2,children:1,toddlers:0,infants:0},
+        {adults:1,children:2,toddlers:0,infants:0}
+      ] }
+};
+
+/* Accommodation carried in from step 2. Same category across the booking, per Sarah's rules.
+   p2's GBP 1158.00 total and the GBP 25 per unit picker are the figures Phase 3 Family
+   verifies (its handover, multi-party check). p5's per-party prices are representative. */
+var ACCOM={
+  p1:{ room:"Comfort Room",           units:[482.00] },
+  p2:{ room:"Comfort Plus Apartment", units:[498.00,660.00] },
+  p5:{ room:"Comfort Plus Apartment", units:[520.00,498.00,498.00,470.00,470.00] }
+};
+var ROOM_PICK=25.00;   /* per unit, booking-level, decided once. Phase 3 convention. */
+
+/* Dining carried in from step 2, read-only here. Per-guest rates derived from the live
+   capture: Premium Dining Plan GBP 262.20 now / GBP 349.60 was for a party of 4. Charged on
+   every guest including infants, matching live; flagged below.
+   NO LUNCH ADD-ON (user, 20 Aug): the product no longer exists, so it is gone from the data,
+   the overview and the breakdown rather than left carrying a stale GBP 57.00 line. */
+var DINING_NAME="Premium Dining Plan";
+var DINING_PP={ now:65.55, was:87.40 };
+var DINING_FROM=50.55;  /* Food Court lead-in, per person, teaser only */
+/* which parties took a plan on the previous step. Deliberately uneven so "no plan for this
+   party" is visible on every multi-party preset. */
+var DINING_ON={ p1:[true], p2:[true,false], p5:[true,true,false,true,false] };
+
+/* TOKENS, rebuilt as packs on 19 Aug 2026, replacing the activity calculator. Option A from
+   the token review in `tokens-review-and-options.html`.
+   SOURCES, all read 19 Aug 2026: butlins.com Tokens, More about Tokens, How to book your
+   activities and PLAYXPERIENCE; the token price grid Butlin's published on Facebook; and the
+   Bognor Regis screen capture for the per-activity token costs.
+
+   THREE FACTS DRIVE THE DESIGN.
+   1. The rate is BANDED, so what one token costs depends on how many are bought in one go.
+      That is why tokens sit on the booking here rather than in the party blocks: splitting a
+      19-guest booking into five purchases would price every party in the worst band and cost
+      the guest money. It also follows this file's own precedent, the donation, which sits
+      outside the party blocks because a booking-level amount cannot be split per party.
+   2. Butlin's own guide is "3 tokens each". The ladder is now 2/4/6, so no pack matches it and
+      nothing on screen attributes a quantity to Butlin's.
+   3. The bands below 12 tokens were cropped out of the capture. GBP 8.50 is an accepted
+      assumption for this prototype (Oliver, 21 Aug), so the screen no longer flags it. The
+      `sure` field stays on the data so build can pick the question back up. */
+/* THE PUBLISHED 2026 GRID, complete, from Oliver's butlins.com captures of 25 Aug 2026. This
+   supersedes the Facebook-capture bands (stale: 12-15 read 5.85 against the real 6.10) and the
+   sub-12 placeholder. `res`/`holRes` are Butlin's own ON RESORT columns - banded, not flat -
+   which retires the implied GBP 7.17 this file used to work back from one saving claim.
+   EVERY band saves pre-arrival, so the old "no saving under 12" state was an artefact. */
+var TOKEN_BANDS=[
+  { min:1,  max:3,   term:8.50, res:9.50, hol:8.50, holRes:9.50, sure:true },
+  { min:4,  max:7,   term:7.10, res:7.95, hol:8.25, holRes:9.20, sure:true },
+  { min:8,  max:11,  term:6.40, res:7.40, hol:8.00, holRes:9.00, sure:true },
+  { min:12, max:15,  term:6.10, res:6.90, hol:7.70, holRes:8.65, sure:true },
+  { min:16, max:19,  term:5.85, res:6.60, hol:7.50, holRes:8.50, sure:true },
+  { min:20, max:200, term:5.20, res:5.90, hol:7.20, holRes:8.20, sure:true }
+];
+var TOKEN_MAX=200;          /* Butlin's own top of band */
+/* the three tiers. Names carry the intent, not the size, because the size moves with the party.
+   Copy is written for the persona Oliver described, from the child who wants one go up to the
+   family that cannot sit still. */
+/* V3 (Sarah, 25 Sep 2026): her names and copy, verbatim, for 5 / 15 / 20. */
+var PACK_TIERS=[
+  { badge:"◔", name:"Try it out",
+    copy:"Just enough for the kids to have a go on their favourites, with time left for the pool and the evening show." },
+  { badge:"◑", name:"Fun for everyone",
+    copy:"Enough for the whole family to try a few activities together, plus a few spare for the inevitable &ldquo;just one more go!&rdquo;" },
+  { badge:"●", name:"Go all out",
+    copy:"For families who want to do it all, from the first morning to the last night, with plenty of &ldquo;can we go again?&rdquo;" }
+];
+
+
+/* THE ON RESORT RATE, back on 24 Aug 2026 at the client's request. It is what turns this
+   section from a price list into an argument: the client's standing problem is that guests do
+   not know why tokens are worth buying at booking, and "cheaper the more you buy" answers a
+   question nobody asked. What a token costs ON RESORT is the comparison that does.
+
+   [TK] BUTLIN'S HAS NOT PUBLISHED AN ON RESORT TOKEN GRID. It has published exactly one
+   quantified claim: "on average a family of 4 could save GBP 15.80 when purchasing 3 tokens
+   each before you arrive." Three each for four guests is 12 tokens, GBP 70.20 in advance at the
+   term time rate, so that claim implies GBP 86.00 on resort and GBP 7.17 a token. Every
+   comparison on this screen is computed from that one implied rate, which is why the section
+   carries a single To confirm marker naming it.
+
+   CASH, NEVER A PERCENTAGE. Under the DMCC rules in force since April 2025 a saving claim needs
+   a substantiated, comparable basis on the screen that carries it. A cash figure beside a
+   stated resort price is that basis. A percentage off an unsourced average is not, which is why
+   the percentage line the 19 Aug explorations carried has not come back with the rate.
+
+   FLAT ACROSS BANDS AND BREAK TYPES. The advance rate falls with volume; there is no evidence
+   the resort rate does, and none that it moves with the season. Set RESORT_RATE from the real
+   grid and every figure on the screen becomes quotable with no other change. */
+/* RESORT_RATE / RESORT_IMPLIED are gone (25 Aug): the resort price is the grid's own res /
+   holRes column, per band, read by resortRate(n). Nothing is implied any more. */
+var TOKEN_PER_GUEST=3;      /* "3 tokens each", from the Tokens page. Still the stated guide,
+                               now shown once between the packs rather than on one of them. */
+
+/* What tokens buy, from the Bognor capture. `per` is the token cost of one go and `unit` is
+   what that go covers, which is the whole point: ten different units across one list. Nine sit
+   inside PLAYXPERIENCE, which is how Butlin's groups them and how a family meets them. */
+var TOKEN_ACTIVITIES=[
+  { name:"VR-Cade",             per:2, unit:"player", ages:"8+",  venue:"play" },
+  { name:"Glow Pong",           per:2, unit:"table",  ages:"5+",  venue:"play" },
+  { name:"Shuffleboard",        per:2, unit:"board",  ages:"5+",  venue:"play" },
+  { name:"Laser Tag",           per:1, unit:"player", ages:"6+",  venue:"play" },
+  { name:"Batting Cage",        per:4, unit:"cage",   ages:"4+",  venue:"play" },
+  { name:"Neo Games",           per:4, unit:"arena",  ages:"4+",  venue:"play" },
+  { name:"Digi Darts",          per:4, unit:"lane",   ages:"8+",  venue:"play" },
+  { name:"Escape Rooms",        per:6, unit:"room",   ages:"5+",  venue:"play" },
+  { name:"TechPutt",            per:1, unit:"player", ages:"3+",  venue:"play" },
+  { name:"Archery",             per:2, unit:"person", ages:"8+",  venue:"resort" },
+  { name:"High Ropes",          per:2, unit:"person", ages:"8+",  venue:"resort" },
+  { name:"Skyline Gang Disco Dance Academy", per:2, unit:"person", ages:"All", venue:"resort" },
+  { name:"T-Shirt Design",      per:2, unit:"person", ages:"All", venue:"resort" },
+  { name:"Karaoke Pod",         per:4, unit:"pod",    ages:"3+",  venue:"resort" },
+  { name:"Pottery Painting",    per:1, unit:"person", ages:"5+",  venue:"resort" },
+  { name:"Football Academy",    per:1, unit:"person", ages:"8-12",venue:"resort" },
+  { name:"Football Academy (5-7 yrs)", per:1, unit:"person", ages:"5-7", venue:"resort" },
+  { name:"Mini Archery",        per:1, unit:"person", ages:"5-7", venue:"resort" },
+  { name:"Balanceability",      per:1, unit:"person", ages:"2.5-6", venue:"resort" },
+  { name:"Peppa Pig, Ready Pedal Go!", per:1, unit:"guest", ages:"2.5-5", venue:"resort" }
+];
+
+var PRICE={ vipPP:39.00, allActionPP:24.00, circusPP:7.50, spaPP:30.00,
+            earlyPerUnit:22.00, latePerUnit:20.00, towelEach:4.00, donation:2.00 };
+
+/* Included in the price. Name plus description, per the BBW hi-fi's ovIncluded. */
+var INCLUDED=[
+  {name:"Splash Waterworld", desc:"Slides, rapids and toddler pools, included every day of your break."},
+  {name:"Fairground Thrills", desc:"Unlimited rides on the traditional fairground, no tokens needed."},
+  {name:"West End quality shows", desc:"Live shows every evening in the Skyline Pavilion."},
+  {name:"Daytime activities", desc:"Character breakfasts, sports and crafts across the resort."}
+];
+
+/* ============================================================ STATE */
+var state={
+  /* diningPrev: dining was chosen on step 2 and is carried in read-only. Its toolbar toggle was
+     removed (user, 20 Aug), so this is now fixed true and the "No dining added" upsell in the
+     overview can no longer be reached from the UI. The code path and its assertions are kept,
+     because that upsell is a P0 recommendation and live still shows it ("IT'S NOT TOO LATE" in
+     the Bognor capture). Flip this to false to see it. */
+  presetId:"p1", resort:"bognor", breakType:"term", device:"mobile", diningPrev:true,
+  /* V2: which tokens approach renders. "packs" is the pack-led work; "current" is the one that
+     stays close to the live tokens page plus quick wins. Both render the same markup today. */
+  tokenApproach:"packs",
+  /* whole-booking decisions. Under Sarah's rules VIP, Early Access and the check-in pair
+     apply to every guest on the booking, so they are single flags. They still RENDER in
+     every party block, priced for that party, with a note saying so. */
+  /* tokens are a booking-level count, not a per-party one: the bands price one purchase. */
+  book:{ vip:false, early:false, late:false, donation:false, roomPick:false, tokens:0 },
+  /* per-party quantities for the per-person extras */
+  px:[],
+  _tokList:false,        /* true when the activity costs modal is open */
+  _tokFilter:"all",      /* which age bracket the activity list is filtered to */
+  /* NO TAP LOG (Oliver, 21 Aug). A tap adds a multiple of tokens, it does not add an activity,
+     so there is nothing to count back. The log, its base, and the pill that displayed it are
+     all gone, along with the four resets that existed only to keep it honest. */
+  _sheetWas:false,       /* previous modal state, so focus can return to the trigger on close */
+  /* WHERE THE TOKEN COUNT CAME FROM. True when the guest set it themselves - the stepper, the
+     modal, an activity tap - false when they tapped a pack. The custom card used to appear
+     whenever the count did not equal a pack value, which meant stepping 11 -> 12 landed on the
+     12 pack, the card vanished mid-interaction and took its own stepper with it, stranding the
+     guest with no way back up. Provenance is the honest test, not the number. */
+  _tokOwn:false,
+  /* V2, 24 Aug. The custom chooser is a disclosure on the block again, so it needs its own two
+     pieces of state: whether the panel is open, and the number being typed BEFORE it is
+     committed. _ownDraft is deliberately separate from book.tokens - nothing reaches the
+     booking, or the footer total, until the guest presses the commit button. */
+  _ownOpen:false, _ownDraft:null,
+  _heroIdx:0,   /* which hero image the mobile carousel shows (25 Aug) */
+  /* SLIM approach drafts (27 Aug). _slimSel: which row is picked before commit - a pack size,
+     "custom", or null meaning "read it off the booking". _slimN: the custom row's count.
+     Both are drafts, like _ownDraft: nothing here reaches the price in the page footer. */
+  _slimSel:null, _slimN:null,
+  /* QUICK WINS drafts (_qwN, _qwShown) went with the variant in V3, 25 Sep 2026. */
+  _summaryOpen:true, _inclOpen:false, _activeSec:null
+};
+
+/* ============================================================ HELPERS */
+function gbp(n){ return "£"+n.toFixed(2); }
+/* PARTY BLOCKS REMOVED (Oliver, 21 Aug). Nothing on this screen is charged per party: every
+   product is per person, per item, or whole booking. The preset's party array survives as
+   DATA - it still carries the guest mix, which parties took a dining plan on step 2, and the
+   accommodation unit count - but the screen treats the booking as one party. */
+function rawParties(){ return PRESETS[state.presetId].parties; }
+function bookingParty(){
+  return rawParties().reduce(function(a,p){
+    return { adults:a.adults+p.adults, children:a.children+p.children,
+             toddlers:a.toddlers+p.toddlers, infants:a.infants+p.infants }; },
+    { adults:0, children:0, toddlers:0, infants:0 });
+}
+function parties(){ return [bookingParty()]; }
+/* ACCOMMODATION UNITS on the booking. Early check-in and late check-out are charged PER UNIT,
+   and that multiplier used to be the party count. With parties gone it comes from the
+   accommodation carried in from step 2, which is what a unit actually is. Miss this and the
+   two per-unit products silently start charging for a single unit. */
+function nUnits(){ return accom().units.length; }
+function nParties(){ return parties().length; }
+function multi(){ return nParties()>1; }
+function pGuests(p){ return p.adults+p.children+p.toddlers+p.infants; }
+function pPay(p){ return p.adults+p.children+p.toddlers; }   /* under 2s go free */
+function totalGuests(){ return parties().reduce(function(n,p){ return n+pGuests(p); },0); }
+function payGuests(){ return parties().reduce(function(n,p){ return n+pPay(p); },0); }
+function partyLabel(i){ return multi()?("Party "+(i+1)):"Your party"; }
+function accom(){ return ACCOM[state.presetId]; }
+function resortName(){ return state.resort==="bognor"?"Bognor Regis":"Minehead"; }
+function spaActive(){ return state.resort==="bognor"; }
+function circusActive(){ return state.breakType==="summer"; }
+/* Tokens show at Bognor Regis (user, 19 Aug), where the capture puts them first in the list.
+   NOTE: the Minehead capture in content inventory v0.3 also lists a Tokens tab, so this may
+   belong at both resorts. If so it is one word: return true. See the open questions. */
+function tokensActive(){ return state.resort==="bognor"; }
+function announce(t){ document.getElementById('liveAnnounce').textContent=t; }
+function px(i){ if(!state.px[i]) state.px[i]={aa:0,cir:0,spa:0,tow:0}; return state.px[i]; }
+function resetParties(){ state.px=[]; }
+
+/* ---- costs ---- */
+function vipCost(){ return state.book.vip?PRICE.vipPP*payGuests():0; }
+function earlyCost(){ return state.book.early?PRICE.earlyPerUnit*nUnits():0; }
+function lateCost(){ return state.book.late?PRICE.latePerUnit*nUnits():0; }
+function aaCost(){ return state.px.reduce(function(t,e,i){ return t+(e?e.aa:0)*PRICE.allActionPP; },0); }
+function cirCost(){ return circusActive()?state.px.reduce(function(t,e){ return t+(e?e.cir:0)*PRICE.circusPP; },0):0; }
+function spaCost(){ return spaActive()?state.px.reduce(function(t,e){ return t+(e?e.spa:0)*PRICE.spaPP; },0):0; }
+function towCost(){ return state.px.reduce(function(t,e){ return t+(e?e.tow:0)*PRICE.towelEach; },0); }
+/* ---- tokens: banded pricing on one booking-level purchase ---- */
+function tokenBandFor(n){
+  for(var i=0;i<TOKEN_BANDS.length;i++) if(n>=TOKEN_BANDS[i].min&&n<=TOKEN_BANDS[i].max) return TOKEN_BANDS[i];
+  return TOKEN_BANDS[TOKEN_BANDS.length-1];
+}
+/* the school holiday column is the dearer one. The break toggle switches it, which is the
+   real behaviour: token prices are published per break type, not per resort. */
+function tokenRate(n){ var b=tokenBandFor(n); return state.breakType==="summer"?b.hol:b.term; }
+function tokenRateSure(n){ return tokenBandFor(n).sure; }
+function resortRate(n){ var b=tokenBandFor(n||1); return state.breakType==="summer"?b.holRes:b.res; }
+function resortCost(n){ return n*resortRate(n); }
+/* MAY BE NEGATIVE, AND THAT IS THE POINT. Below 12 tokens the advance rate is GBP 8.50, above
+   the implied resort rate, so a small purchase saves nothing at all. Every caller checks the
+   sign before it prints the word "save": a screen that claims a saving it cannot show is the
+   one defect in here that would survive into build and cost Butlin's money. */
+function tokenSaving(n){ return n>0 ? resortCost(n)-(n*tokenRate(n)) : 0; }
+/* the smallest purchase that actually beats the resort rate, DERIVED from the bands rather than
+   written into the copy. If Butlin's confirm a cheaper sub-12 band this number moves on its own
+   and not one sentence has to be rewritten. */
+function savingFrom(){
+  for(var i=0;i<TOKEN_BANDS.length;i++){
+    var r=state.breakType==="summer"?TOKEN_BANDS[i].hol:TOKEN_BANDS[i].term;
+    if(r<resortRate()) return TOKEN_BANDS[i].min;
+  }
+  return null;
+}
+/* what a token costs a go, read off the activity list rather than asserted in the copy */
+function tokPerRange(){
+  var ps=TOKEN_ACTIVITIES.map(function(a){ return a.per; });
+  return { lo:Math.min.apply(null,ps), hi:Math.max.apply(null,ps) };
+}
+function tokensTotal(){ return tokensActive()?(state.book.tokens||0):0; }
+function tokCost(){ var n=tokensTotal(); return n>0?n*tokenRate(n):0; }
+/* the ladder. Butlin's guide is 3 each, then 4 and 5. A small booking lands below the lowest
+   band we hold a rate for, so it snaps to the three published bands instead of quoting a
+   placeholder as a recommendation. */
+/* THE LADDER EXPRESSES THE PERSONAS, 2, 4 and 6 tokens per chargeable guest, so "Dip in" is
+   always a couple of goes each and "Never sit still" is always six, whatever the party size.
+   The earlier rule snapped small parties up to the published bands (12/16/20), which kept every
+   pack priced but made "Dip in" mean four goes each on a family of four and, on the 19-guest
+   preset, a GBP 299.70 pack wearing the smallest persona. Sizes now hold their meaning and the
+   cost of that is visible: on a small party the lowest pack falls under 12 tokens, where the
+   rate was cropped out of our capture, so it carries the placeholder flag. That is the case for
+   getting those bands from Butlin's, not a reason to hide the pack. */
+/* FIXED SIZES (Sarah, 24 Aug; built 25 Aug): 5, 10 and 15, DECOUPLED from the party. The
+   2/4/6-each ladder priced itself off the guest count; Sarah prefers arbitrary round sizes,
+   and on the published grid all three carry a real saving on every break type, so the
+   decoupling costs nothing commercially. PACK_EACH is retired with the per-guest maths. */
+/* V3 (Sarah, 25 Sep 2026): 5, 15 and 20. Still fixed and still standalone - the sizes do not
+   move with the party and nothing on screen prints a per-guest count. 20 lands in the top
+   published band, so the Best value chip goes to the largest pack on its own merit. */
+var PACK_SIZES=[5,15,20];
+function tokenPacks(){
+  return PACK_SIZES.map(function(n){
+    return { n:n, rate:tokenRate(n), cost:n*tokenRate(n), sure:tokenBandFor(n).sure };
+  });
+}
+/* THE LARGE VARIANT'S OWN LADDER (Oliver's hi-fi, 27 Aug). The hi-fi's pack bands pair the
+   total with a per-guest count - "6 TOKENS / 2 each" - which only divides cleanly on the
+   2/4/6-each ladder the fixed sizes replaced. So Tokens Large goes back to per-guest packs,
+   and ONLY Tokens Large: tokenPacks() keeps Sarah's fixed 5/10/15 for the Slim rows, and the
+   two ladders quote the same TOKEN_BANDS grid either way. */
+/* SUPERSEDED 21 Sep 2026: the per-guest ladder is retired on request - pack sizes must not be
+   linked to the guest count. Tokens Large now sells the same fixed 5, 10 and 15 as the Slim
+   rows, one ladder for both variants, and the band header drops its "N each" slice because a
+   fixed size does not divide cleanly per guest. PACK_EACH goes with it; the hi-fi still
+   carries the per-guest ladder until its own port. */
+function largePacks(){ return tokenPacks(); }
+function tokenNextBand(n){
+  if(n<=0) return null;
+  var cur=tokenRate(n), out=null;
+  TOKEN_BANDS.forEach(function(b){
+    var r=state.breakType==="summer"?b.hol:b.term;
+    if(b.min>n && r<cur && !out) out={ min:b.min, rate:r, add:b.min-n, delta:(b.min*r)-(n*cur) };
+  });
+  return out;
+}
+function donationCost(){ return state.book.donation?PRICE.donation:0; }
+function roomPickCost(){ return state.book.roomPick?ROOM_PICK*nUnits():0; }
+/* what one party costs in extras. The whole-booking items are charged to the party they
+   cover, which is what makes the per-party figure add up to the booking total. */
+
+/* ---- dining carried in ---- */
+function diningFor(i){
+  if(!state.diningPrev) return null;
+  if(!DINING_ON[state.presetId][i]) return null;
+  var g=pGuests(rawParties()[i]);
+  return { name:DINING_NAME, now:DINING_PP.now*g, was:DINING_PP.was*g };
+}
+function anyDining(){ for(var i=0;i<rawParties().length;i++) if(diningFor(i)) return true; return false; }
+function diningTotals(){
+  var now=0,was=0;
+  /* dining was chosen per party on step 2 and is read-only here, so its total still sums the
+     raw data. That is accounting carried in, not a party block on this screen. */
+  for(var i=0;i<rawParties().length;i++){ var d=diningFor(i); if(d){ now+=d.now; was+=d.was; } }
+  return {now:now,was:was,save:was-now};
+}
+
+function computeAll(){
+  var a=accom(), accomBase=a.units.reduce(function(t,v){ return t+v; },0);
+  var d=diningTotals();
+  var vip=vipCost(), aa=aaCost(), cir=cirCost(), spa=spaCost(), tok=tokCost(),
+      early=earlyCost(), late=lateCost(), tow=towCost(), don=donationCost(), pick=roomPickCost();
+  var extras=vip+tok+aa+cir+spa+early+late+tow+don;
+  return { accom:accomBase, pick:pick, accomTotal:accomBase+pick,
+    diningNow:d.now, diningWas:d.was, diningSave:d.save,
+    vip:vip, tokens:tok, tokenCount:tokensTotal(), allAction:aa, circus:cir, spa:spa,
+    early:early, late:late, towels:tow, donation:don,
+    extras:extras, grand:accomBase+pick+d.now+extras };
+}
+
+/* ============================================================ UI HELPERS */
+/* scopeTag(scope, label): the glyph is keyed off the scope; an optional label overrides the
+   text so a count chip can replace the scope descriptor without losing the variant.
+   Text glyphs stand in for the hi-fi's pill icons; this folder has no assets. */
+/* The glyph must match the basis. Anything unrecognised falls through to the whole-booking
+   house, so a new scope needs a case here or it will silently claim to cover the booking.
+   Render check, 19 Aug: "Per token" did exactly that before this line existed. */
+/* the flagged figure marker. It read "TK", the newsroom convention for "to come". Nobody
+   outside the workstream recognises that on a screen, so the chip says what it means and TK
+   stays the internal shorthand in comments. (user, 20 Aug) */
+function tkMark(){ return '<span class="tok-tk">To confirm</span>'; }
+function scopeTag(scope,label){
+  var ico = scope==="Per item"  ? "▤"
+          : scope==="Per token" ? "◉"
+          : scope==="Per person"? "◎"
+          : "⌂";
+  return '<span class="scope-tag"><span class="st-ico" aria-hidden="true">'+ico+'</span>'+(label||scope)+'</span>';
+}
+function addBtn(on,attrs,off,onl,disabled,disLabel){
+  off=off||"Add to booking"; onl=onl||"Added to booking";
+  if(disabled) return '<button type="button" class="btn-add" aria-disabled="true" '+attrs+'>'+(disLabel||off)+'</button>';
+  return '<button type="button" class="btn-add'+(on?' is-added':'')+'" aria-pressed="'+(on?'true':'false')+'" '+attrs+'>'+
+    (on?('<span class="tick">✓</span> '+onl):off)+'</button>';
+}
+/* the quantity readout is NOT aria-hidden: the sketch hid it with no substitute, which left
+   screen reader users with no way to read the current count. */
+function stepper(qty,attrs,name,atMax,cls){
+  return '<div class="stepper'+(cls?' '+cls:'')+'" '+attrs+'>'+
+    '<button type="button" class="step-btn" data-dir="-1" aria-label="Decrease, '+name+'"'+(qty<=0?' aria-disabled="true"':'')+'>−</button>'+
+    '<span class="qty" aria-label="'+name+', '+qty+'">'+qty+'</span>'+
+    '<button type="button" class="step-btn" data-dir="1" aria-label="Increase, '+name+'"'+(atMax?' aria-disabled="true"':'')+'>+</button></div>';
+}
+/* qtyControl, from the BBW hi-fi: the stepper for partial cover sits beside one button that
+   covers everyone in one tap. Any quantity flips that button to the added state with a
+   running count. This is the answer to P0's "laborious to add 1 by 1". */
+function qtyControl(o){
+  var on=o.qty>0, full=o.qty>=o.max&&o.max>0;
+  var label = on ? (o.qty+' of '+o.max+' '+o.noun+' added') : ('Add for all '+o.max+' '+o.noun);
+  return '<div class="xc-control">'+stepper(o.qty,o.attr,o.name,full)+
+    '<button type="button" class="btn-add'+(on?' is-added':'')+'" aria-pressed="'+(on?'true':'false')+'" '+o.allAttr+'>'+
+    (on?'<span class="tick">✓</span> ':'')+label+'</button></div>';
+}
+/* COST DISPLAY, carried verbatim from the BBW hi-fi. Two archetypes, and the pill must
+   describe what the hero number represents.
+   1. QUANTITY cards (All Action, Circus, Spa, Towels): nothing added, hero = the rate and the
+      pill = the scope descriptor. Once a quantity exists, hero = the running total, a sub-line
+      states the rate, and the pill becomes a count chip.
+   2. WHOLE-BOOKING cards (VIP, check-in pair): hero = the total always, sub-line = the rate,
+      pill = the scope. No added-state transition. */
+/* the two builders take the SAME option object, so a product switches card type by changing
+   which one it calls. Shared pieces are built once by cardMore, cardIncl and cardBar. */
+function cardMore(o){
+  return o.more ? '<button type="button" class="dc-more-toggle" data-more="'+o.id+'" aria-expanded="false" aria-controls="more-'+o.id+'">Read more</button>'+
+                  '<div class="dc-more" id="more-'+o.id+'">'+o.more+'</div>' : '';
+}
+function cardIncl(o){
+  return o.incl ? '<ul class="dc-incl">'+o.incl.map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ul>' : '';
+}
+function cardBar(o){
+  return '<div class="cbar"><div class="cbar-left"><div class="price"><span class="now">'+o.price+'</span>'+
+    (o.priceSub?'<span class="pp">'+o.priceSub+'</span>':'')+'</div>'+scopeTag(o.scope,o.scopeLabel)+'</div>'+
+    o.control+'</div>';
+}
+/* REGULAR CARD: icon-led, for the everyday extras. */
+function extraCard(o){
+  return '<div class="card xcard'+(o.added?' is-added':'')+'" id="card-'+o.id+'">'+
+    '<div class="xc-body"><div class="xc-head"><span class="xc-ico" aria-hidden="true">'+o.icon+'</span><h3>'+o.title+'</h3></div>'+
+    '<p class="desc">'+o.desc+'</p>'+cardIncl(o)+(o.body||'')+cardMore(o)+'</div>'+
+    cardBar(o)+'</div>';
+}
+/* FEATURE CARD: photo pane beside the copy, for the premium sells. The title takes its own
+   band above the split so it spans both columns, and no icon is used: the photo is the mark. */
+function featureCard(o){
+  return '<div class="card feature'+(o.added?' is-added':'')+'" id="card-'+o.id+'">'+
+    '<h3 class="dc-head">'+o.title+'</h3>'+
+    '<div class="feature-card">'+
+    '<div class="ph-img square" aria-hidden="true"><span>Photo: '+(o.photo||o.title)+'</span></div>'+
+    '<div class="fc-main"><div class="fc-pad">'+
+    '<p class="desc">'+o.desc+'</p>'+cardIncl(o)+(o.body||'')+cardMore(o)+'</div>'+
+    cardBar(o)+'</div></div></div>';
+}
+
+/* ============================================================ PRODUCTS
+   Every product takes a party index. In a single-party booking they render straight into
+   product sections; in a multi-party booking they render inside that party's block.
+   `k` suffixes every id so the anchors and read-more toggles stay unique across parties. */
+
+/* ---- Early Access VIP Pass: applies to every guest on the booking ---- */
+function xVip(i){
+  var p=parties()[i], pay=pPay(p), on=state.book.vip, total=PRICE.vipPP*pay;
+  var note = multi()
+    ? '<div class="allnote">Applies to every guest on the booking, so adding it here adds it for all '+nParties()+' parties. The price shown is '+partyLabel(i)+'\'s share.</div>'
+    : '';
+  /* FEATURE CARD. This is the premium sell on the step, so it takes the photo-led layout
+     BBW gives its VIP Pass rather than the icon-led card the everyday extras use. */
+  return featureCard({ id:"vip-"+i, title:"Early Access VIP Pass", added:on,
+    photo:"VIP Pass",
+    scope: multi()?"All parties":"Whole booking",
+    desc:"Book shows and activities 3 days before slots open to other guests, plus venue entry 15 minutes early.",
+    incl:["Book shows and activities 3 days early","Into entertainment venues 15 minutes before doors","Covers every guest on the booking","Under 2s go free"],
+    more:"Reserve seats for shows and book activity slots 3 days before general release, and get into entertainment venues 15 minutes before doors open, so you can pick your spot. Charged for every guest aged 2 and over.",
+    body:note,
+    price:gbp(total), priceSub:gbp(PRICE.vipPP)+' per person × '+pay+' guest'+(pay===1?'':'s'),
+    control:'<div class="xc-control">'+addBtn(on,'data-book="vip"','Add to booking','Added to booking')+'</div>' });
+}
+
+/* ---- Tokens, as packs. Option A from the review, 19 Aug 2026.
+   The calculator this replaces asked the guest to price 20 activities across ten different
+   units, in a currency whose own rate moves with the quantity, and then to remember the answer
+   for a modal that opened at zero. Here the bands Butlin's already prices in become three
+   buyable packs, the list becomes reassurance behind a link, and one tap commits.
+   BOOKING LEVEL, so it renders once, outside the party blocks. See the note on TOKEN_BANDS. ---- */
+/* "roughly how many activities" as Oliver asked, derived from the real token costs rather than
+   asserted. Party-level goes differentiate the tiers; the per-guest slice sits alongside. */
+function packBullets(n,g){
+  var each=n/g;
+  var out=[];
+  out.push("<b>"+each+" tokens each</b> for your "+g+" chargeable guest"+(g===1?"":"s"));
+  out.push(Math.floor(n/2)+" goes on the 2-token favourites, like VR-Cade or High Ropes");
+  out.push("Or "+n+" goes on the 1-token ones, like Laser Tag and TechPutt");
+  if(n>=6) out.push("An Escape Room for up to six takes 6 of them");
+  return out;
+}
+
+/* WHAT THIS PACK SAVES, or honestly nothing. Two branches, and the second one is the reason
+   this function exists rather than one line of template. On a party of four the smallest pack is
+   8 tokens, which falls in the sub-12 band at GBP 8.50 a token - ABOVE the implied resort rate.
+   That pack saves nothing, and the screen says so and points at the size where the saving
+   starts, rather than printing a negative number or quietly hiding the comparison on the one
+   card where it is unflattering. The client should see that, and so should Butlin's: it is the
+   case for getting the real sub-12 band, and it makes the smallest tier's weakness legible. */
+/* RESHAPED to the hi-fi (27 Aug): one line, "Save £x.xx on resort prices". The struck resort
+   price came off with the hi-fi; the honest no-saving branch stays, because a ladder change or
+   a grid change can put a size back above the resort rate and the card must say so. */
+function packSaveRow(pk){
+  var save=tokenSaving(pk.n), from=savingFrom();
+  if(save<=0){
+    return '<p class="pk-save is-none"><span>'+gbp(resortCost(pk.n))+' on resort, so this size '+
+      'saves nothing.'+(from?' Savings start at '+from+' tokens.':'')+'</span></p>';
+  }
+  return '<p class="pk-save"><b class="pk-off">Save '+gbp(save)+'</b> on resort prices</p>';
+}
+
+/* ---- V2: BUY NOW, BOOK LATER. The three beats the client asked for, 24 Aug 2026.
+   1. why buying now is worth money, against a resort price rather than against itself
+   2. that nothing is being booked today, which is the confusion they want designed out
+   3. when the booking does happen, and what moves it earlier
+   Every figure is computed. The rates come from the bands, the activity count and the range of
+   token costs come from TOKEN_ACTIVITIES, so no sentence in here can go stale on its own. ---- */
+/* SUPERSEDED 25 Aug by the B13 section shape: nothing calls this. Kept for the record; note
+   its beat-1 figure predates the published grid and must not be revived as-is. */
+function tokHow(){
+  var best=Math.min.apply(null,tokenPacks().map(function(p){ return p.rate; }));
+  var r=tokPerRange();
+  function beat(n,t,d){
+    return '<li class="th-step"><span class="th-num" aria-hidden="true">'+n+'</span>'+
+      '<span class="th-t">'+t+'</span><span class="th-d">'+d+'</span></li>';
+  }
+  /* NO HEADING OF ITS OWN (Oliver, 24 Aug). It said "Buy tokens now, book activities later",
+     which is now the job of the section heading above it - two headings a paragraph apart were
+     saying the same thing twice. */
+  return '<div class="tok-how">'+
+    '<ol class="th-steps">'+
+      beat(1,'Buy now, pay less','A token costs <b>'+gbp(resortRate())+'</b> on resort. '+
+        'Buy it with your break and you pay from <b>'+gbp(best)+'</b>.')+
+      beat(2,'Nothing is booked today','You are choosing how many tokens to buy. '+
+        'You are not picking activities, and you are not picking times.')+
+      beat(3,'Book your slots in the app','From four weeks before you arrive. '+
+        'Three days earlier with the Early Access VIP Pass.')+
+    '</ol>'+
+    '<div class="tok-intro">'+
+      '<p class="sec-note">Tokens pay for '+TOKEN_ACTIVITIES.length+' activities at '+resortName()+
+        ', from '+r.lo+' token a go up to '+r.hi+'.</p>'+
+      '<button type="button" class="tok-more tok-costs-link" id="tokCostsBtn" data-toklist '+
+        'aria-haspopup="dialog">See activity costs</button>'+
+    '</div>'+
+  '</div>';
+}
+
+/* ---- V2: THE CUSTOM CHOOSER, BACK ON THE BLOCK (client, 24 Aug 2026).
+   It lived in the activity costs modal's sticky footer from 21 Aug. The modal is read-only
+   reference content now, so the one control that set a number could not stay in it: a stepper
+   beside a list of activities is precisely the "am I booking these?" confusion the client asked
+   us to remove. It returns as the disclosure it was before that move, below the packs and closed
+   by default, so the packs stay the obvious path. Sarah's read is that a small proportion of
+   guests want this, which is what a disclosure is for.
+
+   TYPE OR STEP, both. The number input is the fast path for someone who already knows what they
+   want; the stepper is for everyone else.
+
+   NEITHER DRAFT CONTROL RE-RENDERS. This file's accepted lo-fi limitation is that a full render
+   loses keyboard focus. That is survivable for a button and fatal for a text input: you could
+   not type a second digit. So the draft lives in state._ownDraft, the panel updates itself in
+   place, and only the commit button renders. ---- */
+/* What the custom card says instead of repeating its own count. Three states, all computed:
+   under a cliff, where more tokens cost less in total; a better rate within reach; or already
+   on the best rate. Nothing here is prose for its own sake - every number comes from
+   tokenNextBand(), which was already unit tested and until now unused on screen.
+   LIFTED TO TOP LEVEL, 24 Aug 2026. It was declared INSIDE tokensCard(), so it was only
+   reachable from there. Harmless while tokensCard() was the only caller; the moment ownLive()
+   in the new custom chooser called it the whole section threw ReferenceError and rendered
+   nothing. Caught by the v2 harness, not by reading the diff. */
+function ownNote(n,nb){
+  if(!nb) return '<span class="to-note is-best">Best rate you can get</span>';
+  var more=nb.add+' more token'+(nb.add===1?'':'s');
+  return nb.delta<0
+    ? '<span class="to-note">'+more+' and you pay <b>'+gbp(-nb.delta)+' less</b> in total</span>'
+    : '<span class="to-note">'+more+' drops you to <b>'+gbp(nb.rate)+' per token</b></span>';
+}
+function ownDraft(){
+  if(state._ownDraft!==null&&state._ownDraft!==undefined) return state._ownDraft;
+  /* SEEDED FROM THE GUIDE from 25-27 Aug; SUPERSEDED 27 Aug (Oliver, round 3): the bar opens
+     on ZERO. Never from the booking either - a chosen pack's number would print its price a
+     second time, breaking ONE PRICE FOR WHAT IS ON THE BOOKING (held since 21 Aug). At zero
+     the figures ask for a number and the commit stays disabled until one is given. */
+  return 0;
+}
+/* THE CUSTOM CARD'S INTERNALS (reshaped 25 Aug): the shared .pk-money price block at the same
+   size as every pack, the saving as cash alone - the "against £x on resort" comparison came off
+   at Oliver's ask; the struck resort price on the packs above already establishes the basis -
+   and the band-cliff note, which is still the one fact a typed number cannot read off the packs. */
+function ownLive(d){
+  if(!d||d<1) return '<span class="ol-none">Choose how many tokens you want.</span>';
+  var sv=tokenSaving(d);
+  /* the hi-fi's order (27 Aug): the saving as a small line ABOVE the price, then the price with
+     its rate, then the band-cliff note - still the one fact a typed number cannot read off the
+     packs, so it stays even though the hi-fi does not draw it. */
+  return (sv>0?'<span class="ol-save">Save '+gbp(sv)+'</span>'
+             :'<span class="ol-save is-none">No saving at this size</span>')+
+    '<div class="pk-money"><span class="pk-cost">'+gbp(d*tokenRate(d))+'</span>'+
+    '<span class="pk-rate">'+gbp(tokenRate(d))+' a token</span></div>'+
+    ownNote(d,tokenNextBand(d));
+}
+/* SAME LABEL AS THE PACKS (Oliver, 25 Aug): the count is already in the field beside it. */
+function ownAddLabel(d){ return 'Add to booking'; }
+/* THE PANEL RENDERS NOTHING WHILE IT IS CLOSED, and that is a rule rather than a saving.
+   ONE PRICE FOR WHAT IS ON THE BOOKING has held since 21 Aug: whichever option owns the count
+   states the price and nothing else does. The draft opens on the count already on the booking,
+   so a panel that rendered its price while closed printed that figure a second time - GBP 70.20
+   twice on a 12-token booking, once on the pack that owns it and once inside a hidden div. The
+   empty div stays so aria-controls still points at a real element. */
+/* SUPERSEDED 27 Aug by ownBar(): the standing B13 card with its typed field is replaced by the
+   hi-fi's full-width CUSTOM bar below the grid. */
+/* THE CUSTOM BAR (Oliver's hi-fi, 27 Aug). One full-width row under the packs, three states:
+   CLOSED - "Custom / You choose", the best rate as a from-price, and one button that opens it.
+   OPEN   - the draft: saving, price and rate, the band-cliff note, a stepper whose readout is
+            a typeable field (type or step, both, as since 24 Aug), and Add to booking. Only
+            the commit reaches state.book - the DMCC rule the whole section observes.
+   ON     - a committed custom amount lives HERE now, not in a card above the packs: the same
+            bar shows the booking's price, the amendable stepper (data-tokqty, the wiring the
+            old tok-own card used), and "On your booking", which removes on tap like a pack.
+   The ids (tokOwnNum, tokOwnLive) and data hooks are unchanged, so the typing, stepping and
+   commit wiring carry over untouched. */
+/* ONE ANATOMY, THREE STATES (Oliver, 27 Aug round 2): every state renders the same row -
+   titles on the left, then a right-hand group of figures, an optional control, and a
+   fixed-width button. The figures block is the same shape everywhere: a small line, the price
+   at ONE size, the rate beside it. Nothing changes size between states. */
+function ownFigures(small,cost,rate,note){
+  return '<div class="own-live" id="tokOwnLive" aria-live="polite">'+
+    '<span class="ol-save">'+small+'</span>'+
+    '<div class="pk-money"><span class="pk-cost">'+cost+'</span>'+
+      '<span class="pk-rate">'+rate+'</span></div>'+
+    (note||'')+
+  '</div>';
+}
+function ownBar(){
+  var titles='<div class="pk-titles"><span class="pk-kicker">Custom</span>'+
+    '<h4 class="pk-name">You choose</h4></div>';
+  if(state._tokOwn && tokensTotal()>0){
+    var n=tokensTotal(), sv=tokenSaving(n);
+    return '<div class="own-bar is-on" id="tokOwnPanel">'+titles+
+      ownFigures(sv>0?'Save '+gbp(sv):'On your booking',
+        gbp(tokCost()), gbp(tokenRate(n))+' a token', ownNote(n,tokenNextBand(n)))+
+      '<div class="own-actions">'+
+        '<div class="own-ctl">'+stepper(n,'data-tokqty="1"','Tokens on your booking',n>=TOKEN_MAX,'quiet')+'</div>'+
+        '<button type="button" class="pk-btn own-add" data-tokclear aria-pressed="true">'+
+          '&#10003; On your booking</button>'+
+      '</div>'+
+    '</div>';
+  }
+  if(!state._ownOpen){
+    /* the from-price is the grid's best rate, which only a big custom amount can reach - the
+       one honest "from" on the screen, and the reason to open the bar at all */
+    return '<div class="own-bar" id="tokOwnPanel">'+titles+
+      ownFigures('<span class="of-kick">from</span>', gbp(tokenRate(TOKEN_MAX)), 'per token')+
+      '<div class="own-actions">'+
+        '<button type="button" class="pk-btn own-open" data-tokown aria-expanded="false" '+
+          'aria-controls="tokOwnLive">Choose your tokens</button>'+
+      '</div>'+
+    '</div>';
+  }
+  var d=ownDraft();
+  return '<div class="own-bar is-open" id="tokOwnPanel">'+titles+
+    '<div class="own-live" id="tokOwnLive" aria-live="polite">'+ownLive(d)+'</div>'+
+    '<div class="own-actions">'+
+      '<div class="own-ctl"><div class="stepper quiet" data-ownstep role="group" aria-label="How many tokens">'+
+        '<button type="button" class="step-btn" data-dir="-1" aria-label="Decrease, how many tokens"'+
+          (d<=0?' aria-disabled="true"':'')+'>&minus;</button>'+
+        '<input class="own-input" id="tokOwnNum" type="number" inputmode="numeric" min="0" '+
+          'max="'+TOKEN_MAX+'" value="'+d+'" data-ownnum aria-label="How many tokens" '+
+          'aria-describedby="tokOwnLive">'+
+        '<button type="button" class="step-btn" data-dir="1" aria-label="Increase, how many tokens"'+
+          (d>=TOKEN_MAX?' aria-disabled="true"':'')+'>+</button>'+
+      '</div></div>'+
+      '<button type="button" class="pk-btn own-add" data-ownadd'+(d>0?'':' aria-disabled="true"')+'>'+
+        ownAddLabel(d)+'</button>'+
+    '</div>'+
+  '</div>';
+}
+
+/* THE HI-FI CARD (27 Aug): a header band carrying the count and the per-guest slice - the
+   hi-fi colours the three bands; the lo-fi steps a grey - then name, persona copy (back from
+   the explorations; the hi-fi reinstated it), price with its rate, the Best value chip on the
+   cheapest rate, the save line, and the commit. */
+/* REPOINTED 21 Sep: the per-guest slice came off the band with the per-guest ladder - a fixed
+   5/10/15 has no clean "N each" to print. The band carries the count alone. */
+function packCard(pk,idx){
+  var tier=PACK_TIERS[idx], on=(!state._tokOwn && tokensTotal()===pk.n);
+  /* earned, never asserted: the chip goes to the best rate on the ladder, and only if that
+     size actually saves against the resort column */
+  var best=tokenSaving(pk.n)>0 &&
+    pk.rate===Math.min.apply(null,largePacks().map(function(p){ return p.rate; }));
+  return '<div class="pk'+(on?' is-on':'')+'">'+
+    '<div class="pk-band pk-band-'+idx+'">'+
+      '<span class="pk-dots" aria-hidden="true">&#8759;</span>'+
+      '<span class="pk-bandn"><b>'+pk.n+'</b> tokens</span>'+
+    '</div>'+
+    '<div class="pk-body">'+
+      '<h4 class="pk-name">'+tier.name+'</h4>'+
+      '<p class="pk-copy">'+tier.copy+'</p>'+
+      '<div class="pk-money"><span class="pk-cost">'+gbp(pk.cost)+'</span>'+
+        '<span class="pk-rate">'+gbp(pk.rate)+' a token</span>'+
+        (best?'<span class="pk-best">Best value</span>':'')+'</div>'+
+      packSaveRow(pk)+
+      '<button type="button" class="pk-btn" data-tokpack="'+pk.n+'" aria-pressed="'+(on?'true':'false')+'">'+
+        (on?'✓ On your booking':'Add to booking')+'</button>'+
+    '</div></div>';
+}
+
+/* the section body, from the preview's render(). The card, the guide, the nudge, the custom
+   stepper and the activity costs link, in that order. Data attributes are THIS file's
+   (`data-tokpack`, `data-tokqty`, `data-toklist`) so the existing wiring and its assertions
+   carry over unchanged; only the classes and the structure are the preview's. */
+/* SUPERSEDED 27 Aug: the tok-own card above the grid is gone. A committed custom amount lives
+   in the custom bar itself now (ownBar's ON state), so nothing sits above the first pack and
+   the one-price rule holds with one fewer surface. */
+function tokensCard(){
+  /* the id stays on a plain wrapper so the nav, the harness and the shots keep their handle */
+  return '<div class="tok-block" id="card-tokens">'+
+    '<div class="pk-grid">'+largePacks().map(packCard).join('')+'</div>'+
+    ownBar()+
+    '</div>';
+}
+
+/* THE ACTIVITY COSTS MODAL, markup from the preview. Reference content, so it overlays rather
+   than lengthening the section: bottom sheet on a phone, centred dialog on the wide frame.
+   The focus, inert and Escape handling in renderSheet() below is this file's and is kept: the
+   preview locks the scroller but does not make the booking behind the dialog inert. */
+/* age bounds parsed from the published strings rather than duplicated into the data: "8+" is
+   8 to 99, "5-7" is 5 to 7, "All" is everyone, "2.5-6" is 2.5 to 6. */
+function ageRange(a){
+  var t=String(a.ages).trim();
+  if(/^all$/i.test(t)) return [0,99];
+  var plus=t.match(/^([\d.]+)\+$/);        if(plus) return [parseFloat(plus[1]),99];
+  var span=t.match(/^([\d.]+)\s*-\s*([\d.]+)$/); if(span) return [parseFloat(span[1]),parseFloat(span[2])];
+  return [0,99];
+}
+/* AGE BRACKETS (Oliver, 21 Aug). These were Adults / Children / Toddlers, derived from the
+   party, and they barely cut anything: almost every activity is an open-ended minimum like
+   "5+", so "Children" filtered nothing at all. Real brackets ask the question a parent asks,
+   which is what a five year old can actually do. */
+var AGE_FILTERS=[
+  { key:"all",   label:"All ages", lo:0,  hi:99 },
+  { key:"2to4",  label:"2 to 4",   lo:2,  hi:4  },
+  { key:"5to7",  label:"5 to 7",   lo:5,  hi:7  },
+  { key:"8to11", label:"8 to 11",  lo:8,  hi:11 },
+  { key:"12up",  label:"12+",      lo:12, hi:99 }
+];
+function ageFilter(key){
+  for(var i=0;i<AGE_FILTERS.length;i++) if(AGE_FILTERS[i].key===key) return AGE_FILTERS[i];
+  return AGE_FILTERS[0];
+}
+function suitsBand(a,key){
+  if(key==="all") return true;
+  var f=ageFilter(key), r=ageRange(a);
+  return r[0]<=f.hi && r[1]>=f.lo;
+}
+
+/* THE ACTIVITY COSTS MODAL. It does two jobs since 21 Aug: it is where a guest finds out what a
+   token is worth, and it is where they set their own number, in the sticky footer. Everything
+   above the footer scrolls; the modal is capped so it never grows past the frame. */
+/* THE MODAL IS BUILT FROM PARTS, so an open dialog can be UPDATED rather than replaced.
+   Replacing it on every state change meant a fresh .modal and .modal-back element each time,
+   and a fresh element restarts its CSS animation: the drawer slid up again on every stepper
+   press on mobile, and the scrim faded from nothing on desktop. (Oliver, 21 Aug) */
+/* the name is the biggest thing in the row and the token count the smallest: this is a
+   reference list, not a price list. */
+/* SUPERSEDED 24 Aug 2026: TAP TO ADD IS GONE, at the client's request, and tokRowLabel() and
+   tokRowRight() went with it. Tap-to-add was added on 21 Aug so a tap added exactly what the row
+   said it cost, one go of that activity's own unit. The maths was right and the affordance was
+   the problem: a list of named activities with a + on every line reads as a booking screen, and
+   guests not understanding that they are buying credit rather than booking slots is the client's
+   single biggest complaint about tokens. So the dialog is now purely read-only reference: no
+   plus, no count, no clear, no commit, and nothing inside it can change the booking.
+   The custom chooser that shared its footer moved back onto the block - see ownBar(). */
+function tokVisibleIdx(){
+  var key=state._tokFilter||"all", out=[];
+  ["play","resort"].forEach(function(v){
+    TOKEN_ACTIVITIES.forEach(function(a,i){ if(a.venue===v&&suitsBand(a,key)) out.push(i); });
+  });
+  return out;
+}
+function tokActRow(a){
+  return '<li class="ta-row"><div class="ta-line">'+
+    '<span class="ta-main">'+
+      '<span class="ta-name">'+a.name+'</span>'+
+      '<span class="ta-meta">Ages '+a.ages+' &middot; per '+a.unit+'</span></span>'+
+    '<span class="ta-cost">'+a.per+' token'+(a.per===1?'':'s')+'</span>'+
+    '</div></li>';
+}
+function tokModalList(){
+  var key=state._tokFilter||"all";
+  function group(label,venue){
+    var rows=TOKEN_ACTIVITIES.map(function(a,i){ return {a:a,i:i}; })
+      .filter(function(r){ return r.a.venue===venue && suitsBand(r.a,key); });
+    if(!rows.length) return '';
+    return '<h4 class="tok-vh">'+label+' <span>'+rows.length+'</span></h4>'+
+      '<ul class="tok-acts">'+rows.map(function(r){ return tokActRow(r.a); }).join('')+'</ul>';
+  }
+  var shown=TOKEN_ACTIVITIES.filter(function(a){ return suitsBand(a,key); }).length;
+  return group("In PLAYXPERIENCE","play")+group("Around the resort","resort")+
+    (shown?'':'<p class="tok-note">Nothing in the list suits that age on its own.</p>');
+}
+/* SUPERSEDED 24 Aug 2026: tokModalLeft() and tokModalActions() are gone. The footer held the
+   custom-amount stepper, a Clear and an "Add to Booking", which made a reference list look like
+   a basket. */
+/* SUPERSEDED 27 Aug 2026: tokModalFoot() is gone too. The cross in the head already closes the
+   dialog, so the Close button was a duplicate; the "not a booking" sentence now LEADS the
+   dialog, in the lede above the filters, where it is read before the prices rather than after.
+   Nothing in here writes to state.book. */
+function tokenModal(){
+  if(!state._tokList) return '';
+  var key=state._tokFilter||"all";
+  var chips='<div class="modal-filters" role="group" aria-label="Filter by age">'+
+    AGE_FILTERS.map(function(f){
+      return '<button type="button" class="fchip" data-tokfilter="'+f.key+'" aria-pressed="'+
+        (f.key===key?'true':'false')+'">'+f.label+'</button>';
+    }).join('')+'</div>';
+
+  return '<div class="modal-back" data-scrim>'+
+    '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="tokModalTitle" tabindex="-1" id="tokSheet">'+
+      '<div class="modal-head"><h3 id="tokModalTitle">Activity costs</h3>'+
+        '<button type="button" class="modal-x" data-sheetclose aria-label="Close activity costs">&#10005;</button></div>'+
+      /* REWORDED 27 Aug (Oliver): same three jobs, told in one flow - what this dialog is NOT,
+         how to read the prices, and that the line-up moves. The when-and-where of booking
+         lives once, in the note under the list. Soft family tone, no repeats. */
+      /* V3 (Sarah, 25 Sep 2026): the seasonal line is cut, the when-and-where note moves UP
+         into the lede so every word of copy is read before the list, and the band ladder from
+         the retired Quick Wins panel sits under the copy, above the filters - at the top, not
+         the bottom, because it is the proof of the new section heading and a list of twenty
+         rows would bury it. The body now holds the list alone. */
+      '<div class="modal-lede">'+
+        '<p class="modal-intro"><b>This is a price list, not a booking.</b> It simply shows '+
+          'what your tokens will get you, so you can work out how many to buy.</p>'+
+        '<p class="modal-intro">Every price is for one go. Some are per table or per room, '+
+          'so one go covers the whole family.</p>'+
+        '<p class="tok-note">When you&rsquo;re ready, book your slots in the Butlin&rsquo;s app '+
+          'from four weeks before you arrive. Early Access VIP Pass holders can book three '+
+          'days earlier.</p>'+
+        '<div class="tok-ratebox" id="tokRateBox" data-set="'+state.breakType+':'+tokensTotal()+'">'+
+          '<h4 class="tok-rlbl">Price per token</h4>'+tokRateLadder(tokensTotal())+'</div>'+
+      '</div>'+
+      chips+
+      '<div class="modal-body">'+
+        '<div id="tokModalList">'+tokModalList()+'</div>'+
+      '</div>'+
+    '</div></div>';
+}
+
+/* its own section, like the donation, and first in the step because that is where Bognor
+   puts it. One card, whatever the party count. */
+/* V2 SPLIT. tokensSection() is now a dispatcher over state.tokenApproach. The two branches
+   are byte-identical for now, on purpose - the fork is here so approach B can be designed
+   without touching approach A, and so the toolbar toggle is real from the first commit.
+   Anything shared should STAY in tokensSectionPacks() until B actually diverges; copying it
+   into both now would just be two things to keep in step. */
+function tokensSection(){
+  if(state.tokenApproach==="slim") return tokensSectionSlim();
+  /* V3: "current" (Quick Wins) is gone, so anything that is not slim is the pack grid */
+  return tokensSectionPacks();
+}
+
+/* ============================================================ TOKENS SLIM (27 Aug 2026).
+   The Paper V2 card, the approach chosen on the 27 Aug review. The whole section is ONE CARD:
+   hero with a Tokens pill (arrows on the phone, no dots), "Save now, play later" and the body
+   line INSIDE the card, the packs as radio rows carrying the per-token rate and the cash
+   saving, a custom row with a stepper, and the price in the CARD footer - the selection's
+   cost, rate and saving, or "From" the best rate while nothing is chosen. Rows are a DRAFT:
+   only Add to booking reaches state.book.tokens, per the DMCC caution on pre-selection that
+   the pack grid already observes. Sizes, rates and savings all come from tokenPacks() /
+   tokenRate() / tokenSaving(), so this branch quotes the same grid as the other two. */
+function slimSel(){
+  if(state._slimSel!==null&&state._slimSel!==undefined) return state._slimSel;
+  var n=tokensTotal();
+  if(n<=0) return null;
+  return (!state._tokOwn && PACK_SIZES.indexOf(n)>=0) ? n : "custom";
+}
+function slimN(){ return (state._slimN!==null&&state._slimN!==undefined) ? state._slimN : TOKEN_PER_GUEST*payGuests(); }
+function slimCount(sel){ return sel==="custom" ? slimN() : (sel||0); }
+function slimRow(pk){
+  var on=slimSel()===pk.n;
+  return '<button type="button" class="slim-row'+(on?' is-on':'')+'" data-slimsel="'+pk.n+'" '+
+      'role="radio" aria-checked="'+(on?'true':'false')+'">'+
+    '<span class="slim-dot" aria-hidden="true"></span>'+
+    '<b>'+pk.n+' tokens</b>'+
+    /* V3 (25 Sep): "a token", not "each" - "each" was the per-guest word on the deployed cards
+       Sarah reviewed, and the Large cards already say "a token" */
+    '<span class="slim-rate">'+gbp(pk.rate)+' a token &middot; save '+gbp(tokenSaving(pk.n))+'</span>'+
+  '</button>';
+}
+/* the custom row: the radio half is its own button so the stepper's buttons are not nested */
+function slimCustomRow(){
+  var on=slimSel()==="custom", d=slimN();
+  return '<div class="slim-row is-custom'+(on?' is-on':'')+'">'+
+    '<button type="button" class="slim-pick" data-slimsel="custom" role="radio" aria-checked="'+(on?'true':'false')+'">'+
+      '<span class="slim-dot" aria-hidden="true"></span><b>Custom</b></button>'+
+    stepper(d,'data-slimstep="1"','Custom tokens',d>=TOKEN_MAX,'quiet')+
+  '</div>';
+}
+/* the card footer. Selected: cost, rate, saving, in the layout Oliver set in Paper (price row
+   first, the demi saving line under it). Nothing selected: "From" the best per-token rate. */
+function slimBar(){
+  var sel=slimSel(), n=slimCount(sel);
+  var committed = n>0 && tokensTotal()===n && (sel!=="custom" ? !state._tokOwn : state._tokOwn);
+  var price;
+  if(n>0){
+    var sv=tokenSaving(n);
+    price='<div class="co-priceblock"><span class="slim-money"><span class="co-price">'+gbp(n*tokenRate(n))+'</span>'+
+      '<span class="co-pp">'+gbp(tokenRate(n))+' per token</span></span>'+
+      (sv>0?'<span class="slim-save">you save '+gbp(sv)+' vs on resort</span>'
+           :'<span class="slim-save is-none">no saving at this size</span>')+'</div>';
+  } else {
+    var best=Math.min.apply(null,tokenPacks().map(function(p){ return p.rate; }));
+    price='<div class="co-priceblock"><span class="slim-money"><span class="co-price">From '+gbp(best)+'</span>'+
+      '<span class="co-pp">per token</span></span>'+
+      '<span class="slim-save">every pack beats the on-resort rate</span></div>';
+  }
+  return '<div class="cbar slim-bar">'+price+
+    addBtn(committed,'data-slimadd','Add to booking','On your booking',n<1)+'</div>';
+}
+function tokensSectionSlim(){
+  if(!tokensActive()) return '';
+  /* same three hero placeholders and the same carousel state as the pack grid, so the
+     data-heroarrow wiring carries over untouched */
+  var heroActs=[TOKEN_ACTIVITIES[3],TOKEN_ACTIVITIES[10],TOKEN_ACTIVITIES[7]];
+  var hi=state._heroIdx%heroActs.length;
+  /* the pill names the ACTIVE photo and its token cost (Oliver, 27 Aug: "Laser Tag • 1 token"),
+     so Laser Tag leads the trio. The arrow handler re-renders, which is what updates it. */
+  var hero='<div class="slim-hero">'+heroActs.map(function(a,i){
+    return '<div class="ph-img'+(i===hi?' is-active':'')+'" aria-hidden="true"></div>';
+  }).join('')+
+    '<span class="slim-pill">'+heroActs[hi].name+' &bull; '+heroActs[hi].per+' token'+(heroActs[hi].per===1?'':'s')+'</span>'+
+    '<button type="button" class="hero-arrow" data-heroarrow="-1" aria-label="Previous activity photo">&lsaquo;</button>'+
+    '<button type="button" class="hero-arrow" data-heroarrow="1" aria-label="Next activity photo">&rsaquo;</button>'+
+  '</div>';
+  return '<section class="sec" id="sec-tokens" data-sec="tokens">'+
+    '<div class="sec-head"><h2 class="sec-label">Activity Tokens</h2></div>'+
+    '<div class="card slim-card" id="card-tokens">'+
+      hero+
+      '<div class="slim-main">'+
+        '<div class="slim-copy"><h3 class="slim-title">The more you buy, the more you save</h3>'+  /* V3 heading (Sarah, 25 Sep) */
+        '<p class="desc">Buy tokens now at a cheaper rate and use them to book your activities from 4 weeks before your stay.</p>'+
+        '<p class="slim-costs"><button type="button" class="tok-more tok-costs-link" id="tokCostsBtn" data-toklist aria-haspopup="dialog">See activity costs</button></p></div>'+
+        '<div class="slim-rows" role="radiogroup" aria-label="How many tokens">'+
+          tokenPacks().map(slimRow).join('')+slimCustomRow()+
+        '</div>'+
+      '</div>'+
+      slimBar()+
+    '</div></section>';
+}
+
+/* APPROACH B, QUICK WINS: REMOVED in V3 (Sarah, 25 Sep 2026). It was settled in
+   phase4-tokens-quickwins-explorations.html over eleven rounds and ported here on 16 Sep; the
+   v2 file keeps it whole, with its wiring and its assertions. One piece survives, below. */
+/* THE BAND LADDER (from the quick-wins buy panel, rounds 9-11): six cells, dearest to
+   cheapest, quoting the term or holiday column as the toolbar has it. `n` is the count to
+   locate: its band is outlined ("cur"), the dearer bands it has climbed past are shaded
+   ("done"), and at zero nothing is marked. The dialog passes the count on the booking, so the
+   ladder is reference like everything else in there - it never writes state.book. */
+function tokRateLadder(n){
+  var cur=n>0?tokenBandFor(n):null;
+  var segs=TOKEN_BANDS.map(function(b){
+    var r=state.breakType==="summer"?b.hol:b.term;
+    var cls=cur===b?' cur':(n>=b.min?' done':'');
+    return '<span class="tok-rseg'+cls+'">'+gbp(r)+'</span>';
+  }).join('');
+  var legend=TOKEN_BANDS.map(function(b){
+    return '<span>'+(b.max>=TOKEN_MAX?(b.min+"+"):(b.min+"–"+b.max))+'</span>';
+  }).join('');
+  var where=cur?(', your '+n+' token'+(n===1?'':'s')+' sit in the '+
+    (cur.max>=TOKEN_MAX?(cur.min+' or more'):(cur.min+' to '+cur.max))+' band'):'';
+  return '<div class="tok-rbar" role="img" aria-label="Price per token by quantity, dearest to cheapest'+where+'">'+
+      segs+'</div>'+
+    '<div class="tok-rlegend">'+legend+'</div>';
+}
+
+/* APPROACH A: the pack-led approach. This is the body that was tokensSection() in v1. */
+/* B13 FROM THE EXPLORATIONS (Oliver, 25 Aug), now THE token pack variation of this prototype:
+   hero photography with name-and-cost pills, "Save now, play later", his body copy carrying
+   the book-later message, fixed 5/10/15 slim packs, the custom row standing open, and the
+   activity costs link below the grid. tokHow()'s three beats and the old intro are superseded
+   by this shape; packBullets() went with the card bullets. Both survive in the file history
+   and in tokens-section-explorations / phase4-tokens-explorations-v3. */
+function tokensSectionPacks(){
+  if(!tokensActive()) return '';
+  /* ONE STATIC IMAGE BEHIND THE WHOLE SECTION (Oliver, 27 Aug round 2): the carousel, its
+     arrows and its count are gone. The section itself is the photo - a flat light grey stands
+     in for it - with the heading, body copy and costs link straight on it, no panel, and one
+     static pill top-right naming an activity and what a go costs. */
+  var act=TOKEN_ACTIVITIES[3];   /* Laser Tag, the hi-fi's own pill */
+  return '<section class="sec tok-photo" id="sec-tokens" data-sec="tokens">'+
+    '<span class="tok-pill">'+act.name+' &middot; '+act.per+' token'+(act.per===1?'':'s')+'</span>'+
+    '<div class="sec-head"><h2 class="sec-label">The more you buy, the more you save</h2></div>'+  /* V3 heading (Sarah, 25 Sep) */
+    '<p class="sec-note tok-sub">Buy activity tokens now at a cheaper rate and use to book '+
+      'your activities from 4 weeks before your stay.</p>'+
+    '<p class="sec-note tok-costs-row"><button type="button" class="tok-more tok-costs-link" '+
+      'id="tokCostsBtn" data-toklist aria-haspopup="dialog">See all activity costs</button></p>'+
+    tokensCard()+
+    '</section>';
+}
+
+/* ---- All Action Pass: per person, choose who. FEATURE CARD (user, 19 Aug). ---- */
+function xAllAction(i){
+  var p=parties()[i], pay=pPay(p), e=px(i), q=e.aa, total=q*PRICE.allActionPP;
+  return featureCard({ id:"aa-"+i, photo:"All Action Pass", title:"All Action Pass", added:q>0, scope:"Per person",
+    scopeLabel: q>0 ? (q+' guest'+(q===1?'':'s')) : '',
+    desc:"Unlimited goes on our headline activities across your break, from the climbing wall to go-karts.",
+    incl:["Unlimited sessions all break","Climbing wall, go-karts, aerial adventure","Height and age limits apply on some activities"],
+    more:"One pass per guest gives unlimited sessions on the All Action activity list for your whole break. Height and age restrictions apply on some activities. Under 2s do not need a pass.",
+    price: q>0?gbp(total):gbp(PRICE.allActionPP),
+    priceSub: q>0?gbp(PRICE.allActionPP)+' per person':'per person',
+    control:qtyControl({qty:q,max:pay,noun:"guests",attr:'data-step="aa" data-party="'+i+'"',
+      allAttr:'data-all="aa" data-party="'+i+'"',name:"All Action Pass guests, "+partyLabel(i)}) });
+}
+
+/* ---- Big Top Circus: summer holidays only ---- */
+function xCircus(i){
+  var p=parties()[i], pay=pPay(p), e=px(i), q=e.cir, total=q*PRICE.circusPP;
+  return extraCard({ id:"cir-"+i, icon:"☆", title:"Big Top Circus", added:q>0, scope:"Per person",
+    scopeLabel: q>0 ? (q+' guest'+(q===1?'':'s')) : '',
+    desc:"A full circus spectacular under the Big Top, on School Summer Holiday breaks only.",
+    more:"Live circus performance with aerialists, acrobats and clowns. One ticket per guest, one show per break. Under 2s sit on a lap for free.",
+    price: q>0?gbp(total):gbp(PRICE.circusPP),
+    priceSub: q>0?gbp(PRICE.circusPP)+' per person':'per person',
+    control:qtyControl({qty:q,max:pay,noun:"guests",attr:'data-step="cir" data-party="'+i+'"',
+      allAttr:'data-all="cir" data-party="'+i+'"',name:"Big Top Circus guests, "+partyLabel(i)}) });
+}
+
+/* ---- Spa: Bognor only. PRICE IS A PLACEHOLDER, no Family spa capture exists. ---- */
+function xSpa(i){
+  var p=parties()[i], pay=pPay(p), e=px(i), q=e.spa, total=q*PRICE.spaPP;
+  return extraCard({ id:"spa-"+i, icon:"❁", title:"Spa Experience", added:q>0, scope:"Per person",
+    scopeLabel: q>0 ? (q+' guest'+(q===1?'':'s')) : '',
+    desc:"A 2 hour session at Ocean Spa with hydrospa, outdoor hot tub, sauna and relaxation pods.",
+    more:"Your 2 hour session covers the hydrospa pool, outdoor hot tub, sauna, crystal steam room and heated loungers. Over 16s only, so the stepper still needs a per-guest steer at hi-fi. Bring swimwear and a towel, or add a towel pack.",
+    price: q>0?gbp(total):gbp(PRICE.spaPP),
+    priceSub: q>0?gbp(PRICE.spaPP)+' per person':'per person, price to confirm',
+    control:qtyControl({qty:q,max:pay,noun:"guests",attr:'data-step="spa" data-party="'+i+'"',
+      allAttr:'data-all="spa" data-party="'+i+'"',name:"Spa Experience guests, "+partyLabel(i)}) });
+}
+
+/* ---- Check-in and check-out: one card, two options, mutually exclusive.
+   Priced per unit, and each party has one unit, so this party's price is one unit's price.
+   The blocked option stays visible and focusable with aria-disabled and an announced reason,
+   which is the workstream convention (Phase 3 BBW section 6). Live uses a CSS pointer-events
+   lockout that assistive tech cannot see; that is the thing being fixed. ---- */
+/* The sub-line states the PER UNIT rate. It used to divide the unit price by that party's
+   guest count, which printed five different per-person rates for one GBP 22 product across
+   the 5-party preset (GBP 4.40 to GBP 7.33). A per-unit product states a per-unit price:
+   dividing it invents a basis the product does not have. The per-person sub-line belongs
+   only on the per-person cards, where it is the real rate. */
+/* WHOLE-BOOKING CARD, so the hero is the TOTAL and the rate demotes to the sub-line - the rule
+   stated at COST DISPLAY above. This read the per-unit rate as the hero until 21 Aug, which was
+   invisible while every party block showed its own single unit and plainly wrong once the
+   booking became one card: two units read "GBP 22" when the guest pays GBP 44. The sub-line
+   stays PER UNIT and is never divided by guests. */
+function coOption(o){
+  var u=nUnits(), total=o.per*u;
+  return '<div class="checkin-opt'+(o.on?' is-added':'')+'">'+
+    '<div class="co-info"><b>'+o.title+'</b><span class="row-sub">'+o.desc+'</span></div>'+
+    '<div class="cbar sm"><div class="co-priceblock"><span class="co-price">'+gbp(total)+'</span>'+
+    '<span class="co-pp">'+gbp(o.per)+' per unit'+(u>1?' \u00d7 '+u+' units':'')+'</span></div>'+
+    addBtn(o.on,'data-book="'+o.key+'"','Add to booking','Added to booking')+'</div></div>';
+}
+function xCheckin(i){
+  var anyOn=state.book.early||state.book.late;
+  /* Neither option is disabled when the other is on (Oliver, 21 Aug): clicking the opposite
+     one simply deselects the one that is selected. The exclusivity lives in the click handler,
+     which clears the other key, so the controls stay live and the swap is one tap. */
+  var early=coOption({ key:"early", on:state.book.early, per:PRICE.earlyPerUnit,
+    title:"Arrive from 1pm", desc:"Start your break 2 hours earlier. Standard check-in is 3pm." });
+  var late=coOption({ key:"late", on:state.book.late, per:PRICE.latePerUnit,
+    title:"Leave at 12pm", desc:"An extra 2 hours on your last day. Standard check-out is 10am." });
+  var note = multi()
+    ? '<div class="allnote">Charged per unit and applied to the whole booking, so adding it here adds it for all '+nParties()+' parties. The price shown is '+partyLabel(i)+'\'s unit.</div>'
+    : '';
+  return '<div class="card xcard'+(anyOn?' is-added':'')+'" id="card-checkin-'+i+'">'+
+    '<div class="xc-body"><div class="xc-head"><span class="xc-ico" aria-hidden="true">◑</span><h3>Extend your stay</h3>'+
+    scopeTag(multi()?"All parties":"Whole booking")+'</div>'+
+    '<p class="desc">Add one of these, not both. Your accommodation needs a cleaning turnaround between guests.</p>'+
+    note+
+    '<div class="checkin-opts">'+early+late+'</div></div></div>';
+}
+
+/* ---- Towels: per item ---- */
+function xTowels(i){
+  var p=parties()[i], g=pGuests(p), e=px(i), q=e.tow, total=q*PRICE.towelEach;
+  return extraCard({ id:"tow-"+i, icon:"▤", title:"Towel Pack", added:q>0, scope:"Per item",
+    scopeLabel: q>0 ? (q+' pack'+(q===1?'':'s')) : '',
+    desc:"A fresh bath towel and hand towel per pack, waiting in your accommodation on arrival.",
+    more:"Freshly laundered and in your unit when you arrive. Saves packing space and handy after Splash Waterworld. Packs are counted per item, not per guest, so add as many as you need.",
+    price: q>0?gbp(total):gbp(PRICE.towelEach),
+    priceSub: q>0?gbp(PRICE.towelEach)+' each':'each',
+    control:qtyControl({qty:q,max:g,noun:"guests",attr:'data-step="tow" data-party="'+i+'"',
+      allAttr:'data-all="tow" data-party="'+i+'"',name:"Towel packs, "+partyLabel(i)}) });
+}
+
+/* the products a party shows, in order, filtered for relevance. Big Top Circus only appears
+   on summer holiday breaks and Spa only at Bognor. This is the direct fix for P0's finding
+   about a spa tab showing where there is no spa.
+
+   ONE ORDER, THREE CONSUMERS. Party blocks, the single-party sections and the nav all read
+   this list, so the running order and the relevance filter cannot drift apart between them.
+   Tokens are NOT in here: they are a booking-level purchase priced in bands, so they render
+   once at the top of the step rather than inside every party block. */
+var PRODUCT_ORDER=[
+  { id:"vip", group:"pass",     label:"VIP Pass",         when:null,         build:xVip,
+    has:function(i){ return state.book.vip; } },
+  { id:"aa", group:"pass",      label:"All Action",       when:null,         build:xAllAction,
+    has:function(i){ return px(i).aa>0; } },
+  { id:"cir", group:"pass",     label:"Big Top Circus",   when:circusActive, build:xCircus,
+    has:function(i){ return px(i).cir>0; } },
+  { id:"spa", group:"extra",     label:"Spa",              when:spaActive,    build:xSpa,
+    has:function(i){ return px(i).spa>0; } },
+  { id:"checkin", group:"extra", label:"Extend your stay", when:null,         build:xCheckin,
+    has:function(i){ return state.book.early||state.book.late; } },
+  { id:"tow", group:"extra",     label:"Towels",           when:null,         build:xTowels,
+    has:function(i){ return px(i).tow>0; } }
+];
+function activeProducts(){ return PRODUCT_ORDER.filter(function(p){ return !p.when||p.when(); }); }
+/* PASSES AND EXTRAS ARE TWO SECTIONS (Oliver, 21 Aug), split out of the single "Extras & passes"
+   block. PRODUCT_ORDER.group is the only place the split is declared, so the sections, the
+   section nav and the mobile grouping cannot drift apart. */
+function productsIn(group){ return activeProducts().filter(function(p){ return p.group===group; }); }
+function partyProducts(i){
+  return activeProducts().map(function(p){ return p.build(i); }).join('');
+}
+
+/* ============================================================ PARTY BLOCKS */
+/* one-line recap of a collapsed party, so the block still says what is on it */
+
+/* ============================================================ SECTIONS */
+/* One flat list of product cards per section, each card its own anchor. The party-block branch
+   went on 21 Aug: nothing here is charged per party, so there was nothing for a block to group. */
+function productSection(group,id,label){
+  var prods=productsIn(group);
+  if(!prods.length) return '';
+  var out='<div class="sec-head"><h2 class="sec-label">'+label+'</h2></div>';
+  out+=prods.map(function(p){
+    return '<section class="subsec anchor-wrap" id="sec-'+p.id+'" data-sec="'+p.id+'">'+p.build(0)+'</section>';
+  }).join('');
+  return '<section class="sec anchor-wrap" id="sec-'+id+'" data-sec="'+id+'">'+out+'</section>';
+}
+function sectionPasses(){ return productSection("pass","passes","Passes"); }
+function sectionExtras(){ return productSection("extra","extras","Extras"); }
+
+/* Donation keeps its own section rather than sitting in a party block: it is a flat GBP 2 for
+   the booking and cannot be split per party. Live has it in the extras list; BBW gives it its
+   own section. Both put it in the sell, not the basket. */
+function sectionDonation(){
+  var on=state.book.donation;
+  return '<section class="sec" id="sec-donation" data-sec="donation">'+
+    extraCard({ id:"donation", icon:"♥", title:"Donation", added:on, scope:"Whole booking",
+      desc:"Add a &pound;2 donation to Great Ormond Street Hospital Children's Charity.",
+      more:"Great Ormond Street Hospital cares for some of the country's sickest children. Your optional &pound;2 donation goes straight to the charity to help fund research, equipment and support for families. <a href='#' onclick='return false;'>Find out more</a>",
+      price:gbp(PRICE.donation),
+      control:'<div class="xc-control">'+addBtn(on,'data-book="donation"','Add to booking','Added to booking')+'</div>' })+
+    '</section>';
+}
+
+/* ============================================================ OVERVIEW */
+function sectionOverview(){
+  var open=state._summaryOpen!==false;
+  var body=open ? ovAccom()+ovDining()+ovIncluded()+ovBreakdown() : '';
+  return '<section class="sec" id="sec-overview" data-sec="overview">'+
+    '<div class="sec-head"><button type="button" class="ovsum-toggle" data-summary-toggle aria-expanded="'+open+'" aria-controls="ovBody">'+
+    'Your booking<span class="chev" aria-hidden="true">'+(open?'▾':'▸')+'</span></button></div>'+
+    '<div id="ovBody">'+body+'</div></section>';
+}
+function ovAccom(){
+  var a=accom(), u=nUnits(), total=a.units.reduce(function(t,v){ return t+v; },0);
+  var rows='<div class="ov-row"><div><b>'+a.room+'</b><span class="row-sub">'+
+    (u>1?u+' units, ':'')+totalGuests()+' guests</span></div>'+
+    '<div class="ov-price"><span>'+gbp(total)+'</span></div></div>';
+  /* the room picker is booking-level and decided once, per the Phase 3 convention. Phase 3
+     Family verifies GBP 25 per unit (GBP 50 on the 2-party booking). */
+  var picked=state.book.roomPick;
+  var upsell = picked
+    ? '<div class="callout"><div><b>Rooms hand-picked</b><span class="callout-sub">'+gbp(ROOM_PICK)+' per unit × '+u+' unit'+(u===1?'':'s')+'. You will choose the exact rooms at the next step.</span></div>'+
+      '<button type="button" class="btn ghost sm" data-book="roomPick">Remove</button></div>'
+    : '<div class="callout"><div><b>Choose your exact room</b><span class="callout-sub">Hand-pick your spot, from a quiet corner to steps from the action. '+gbp(ROOM_PICK)+' per unit, '+gbp(ROOM_PICK*u)+' for your booking.</span></div>'+
+      '<button type="button" class="btn primary sm" data-book="roomPick">Add for '+gbp(ROOM_PICK*u)+'</button></div>';
+  return '<div class="ov-block"><h3 class="ov-head">Accommodation<span class="ov-sub">'+a.room+', '+resortName()+'</span></h3>'+
+    rows+upsell+'<a class="ov-changelink" href="#" onclick="return false;">Change accommodation</a></div>';
+}
+function ovDining(){
+  if(!anyDining()){
+    return '<div class="ov-block"><h3 class="ov-head">Dining</h3>'+
+      '<div class="callout"><div><b>No dining added</b><span class="callout-sub">Sort your meals before you arrive. Plans from '+gbp(DINING_FROM)+' per person, per day.</span></div>'+
+      '<button type="button" class="btn primary sm" onclick="return false;">Choose dining</button></div></div>';
+  }
+  var t=diningTotals();
+  var rows='<div class="ov-row"><div><b>'+DINING_NAME+'</b><span class="row-sub">'+
+    totalGuests()+' guests</span></div>'+
+    '<div class="ov-price"><span>'+gbp(t.now)+'</span></div></div>';
+  /* NOTE: this models food plans only, which are per party. Sarah's rules say drinks packages
+     and any bundled food-and-drink package apply to EVERY guest on the booking, so those need
+     a booking-level line here rather than a per-party one. Not modelled yet, see the notes. */
+  return '<div class="ov-block"><h3 class="ov-head">Dining<span class="ov-sub">Carried in from step 2</span>'+
+    '<button type="button" class="btn ghost sm" onclick="return false;">Edit</button></h3>'+rows+'</div>';
+}
+function ovIncluded(){
+  /* always visible with descriptions, per the BBW hi-fi. The sketch collapsed this to a list
+     of bare names, which drops a value message that matters more to Family than to BBW. */
+  return '<div class="ov-block"><h3 class="ov-head">Extras included in the price</h3>'+
+    INCLUDED.map(function(x){
+      return '<div class="incl-row"><div class="incl-text"><b>'+x.name+'</b><span>'+x.desc+'</span></div>'+
+        '<span class="inc-tag">Included</span></div>';
+    }).join('')+'</div>';
+}
+/* one breakdown line: a bold group label and value plus optional [label, value] sub-lines,
+   rendered as parallel stacks so the sub-rows line up. From the BBW hi-fi. */
+function bdRow(cls,label,val,subs){
+  var subL='',subV='';
+  (subs||[]).forEach(function(s){ subL+='<span class="bd-sub">'+s[0]+'</span>'; subV+='<span class="bd-sub">'+s[1]+'</span>'; });
+  return '<div class="bd-row'+(cls?' '+cls:'')+'">'+
+    '<div class="bd-l"><span class="bd-main">'+label+'</span>'+subL+'</div>'+
+    '<div class="bd-r"><span class="bd-main">'+val+'</span>'+subV+'</div></div>';
+}
+function breakdownRows(){
+  /* Sub-lines read as bare product names, as they do in the hi-fi and in the 21 Aug capture.
+     The party qualifier is kept only on a multi-party booking, where "Towel Pack £64.00" with
+     no party named would be unreadable across five parties. */
+  var c=computeAll(), a=accom(), rows='';
+  var accSubs=[];
+  var u=nUnits();
+  accSubs.push([a.room+(u>1?', '+u+' units':''),gbp(c.accom)]);
+  if(c.pick>0) accSubs.push(["Room picker"+(u>1?', '+u+' units':''),gbp(c.pick)]);
+  rows+=bdRow('','Accommodation',gbp(c.accomTotal),accSubs);
+
+  if(anyDining()){
+    var dSubs=[[DINING_NAME,gbp(c.diningNow)]];
+    rows+=bdRow('','Dining',gbp(c.diningNow),dSubs);
+  } else {
+    rows+=bdRow('link','Dining','<button type="button" class="sum-addlink" onclick="return false;">Choose from '+gbp(DINING_FROM)+'</button>',null);
+  }
+
+  var exSubs=[];
+  if(c.tokens>0) exSubs.push(["Tokens",gbp(c.tokens)]);
+  if(c.vip>0) exSubs.push(["Early Access VIP Pass",gbp(c.vip)]);
+  if(c.allAction>0) exSubs.push(["All Action Pass",gbp(c.allAction)]);
+  if(c.circus>0) exSubs.push(["Big Top Circus",gbp(c.circus)]);
+  if(c.spa>0) exSubs.push(["Spa Experience",gbp(c.spa)]);
+  if(c.early>0) exSubs.push(["Early check-in",gbp(c.early)]);
+  if(c.late>0) exSubs.push(["Late check-out",gbp(c.late)]);
+  if(c.towels>0) exSubs.push(["Towel Pack",gbp(c.towels)]);
+  if(c.donation>0)  exSubs.push(["Donation",gbp(c.donation)]);
+  if(exSubs.length) rows+=bdRow('','Extras',gbp(c.extras),exSubs);
+  else rows+=bdRow('muted','Extras','None added',null);
+
+  /* the only savings line is the genuine dining was/now delta. Nothing else on this step has a
+     verified was-price, and DMCC caution says do not aggregate until they do. */
+  if(c.diningSave>0) rows+=bdRow('savings','Savings','-'+gbp(c.diningSave),null);
+  rows+=bdRow('total','Total cost',gbp(c.grand),null);
+  return rows;
+}
+/* Matched to phase2-dining-extras-bbw-hifi.html's ovBreakdown() (Oliver, 21 Aug): the block
+   is headed "Price breakdown", sits on the plain ov-block ground rather than the tinted one,
+   and the grand total reads "Total cost". The hi-fi heads it with an SVG tick; this is a lo-fi
+   with no asset pipeline, so the heading stays text. */
+function ovBreakdown(){
+  return '<div class="ov-block"><h3 class="ov-head">Price breakdown</h3>'+
+    '<div class="bd-list">'+breakdownRows()+'</div></div>';
+}
+
+/* ============================================================ NAV
+   Single party: product anchors, which is what the live tabs do. Multi-party: party anchors,
+   because a product anchor would point at five places at once. The parties layout carries the
+   structure, so the nav follows it. */
+function currentNav(){
+  var out=[];
+  /* tokens first at Bognor, matching the live running order, and in both layouts because the
+     purchase is booking-level rather than per party. */
+  if(tokensActive()) out.push({id:"tokens",label:"Tokens"});
+  /* same list, same order, same relevance filter as the sections themselves */
+  activeProducts().forEach(function(p){ out.push({id:p.id,label:p.label}); });
+  out.push({id:"donation",label:"Donation"});
+  out.push({id:"overview",label:"Your booking"});
+  out.forEach(function(n){ n.covers=[n.id]; });
+  return state.device==="mobile" ? groupNavForMobile(out) : out;
+}
+/* MOBILE NAV, AT MOST FOUR PILLS (Oliver, 21 Aug). Eight product anchors put 415px of the row
+   off-screen at 390px, measured - hiding anchors is the thing the grouping exists to stop.
+   Same idea as the BBW hi-fi's NAV_MOBILE, but built from the live product list rather than
+   hard-coded, so a product that switches on by resort or break type is grouped, never dropped.
+   A group pill jumps to the first section it covers and lights up for any of them. */
+function groupNavForMobile(full){
+  var id=function(n){ return n.id; };
+  var isPass={}; productsIn("pass").forEach(function(p){ isPass[p.id]=1; });
+  var tokens=full.filter(function(n){ return n.id==="tokens"; });
+  var passes=full.filter(function(n){ return isPass[n.id]; });
+  var extras=full.filter(function(n){ return !isPass[n.id]&&n.id!=="tokens"&&n.id!=="overview"; });
+  var booking=full.filter(function(n){ return n.id==="overview"; });
+  var out=tokens.slice();
+  if(!tokens.length&&passes.length>1){
+    /* no Tokens pill at Minehead, so the fourth slot goes back to naming the two passes */
+    out.push({id:passes[0].id,label:passes[0].label,covers:[passes[0].id]});
+    out.push({id:passes[1].id,label:passes[1].label,covers:passes.slice(1).map(id)});
+  } else if(passes.length){
+    /* the group pill now targets the real section heading, not the first card in it */
+    out.push({id:"passes",label:passes.length>1?"Passes":passes[0].label,
+              covers:["passes"].concat(passes.map(id))});
+  }
+  if(extras.length) out.push({id:"extras",label:"Extras",covers:["extras"].concat(extras.map(id))});
+  return out.concat(booking);
+}
+/* both branches count off the same relevance-filtered product list, so a product added to
+   PRODUCT_ORDER is picked up by the ticks without touching this function. */
+/* a pill is full when everything it covers is added, partial when only some of it is */
+function navTick(n){
+  var ids=(typeof n==='string')?[n]:(n.covers||[n.id]), got=0, count=0;
+  ids.forEach(function(id){
+    if(id==="overview") return;
+    count++;
+    if(id==="tokens"){ if(tokensTotal()>0) got++; return; }
+    if(id==="donation"){ if(state.book.donation) got++; return; }
+    var prod=null; activeProducts().forEach(function(p){ if(p.id===id) prod=p; });
+    if(prod&&prod.has(0)) got++;
+  });
+  if(!count||!got) return 'none';
+  return got>=count?'full':'partial';
+}
+/* which pill represents a section at the current breakpoint */
+function navPillFor(sec){
+  var hit=null;
+  currentNav().forEach(function(n){ if((n.covers||[n.id]).indexOf(sec)>=0) hit=n.id; });
+  return hit;
+}
+function buildNav(){
+  var el=document.getElementById('sectionNav');
+  el.innerHTML=currentNav().map(function(n){
+    var t=navTick(n), active=state._activeSec===n.id;
+    var tcls=t==='full'?' added':(t==='partial'?' partial':'');
+    var ttl=t==='full'?' title="Added"':(t==='partial'?' title="Some added"':'');
+    return '<button type="button" class="nav-item'+(active?' is-active':'')+tcls+'" data-nav="'+n.id+'"'+ttl+'>'+
+      '<span class="nav-tick" aria-hidden="true">✓</span>'+n.label+'</button>';
+  }).join('');
+  el.querySelectorAll('[data-nav]').forEach(function(b){
+    b.addEventListener('click',function(){ gotoSec(b.getAttribute('data-nav')); });
+  });
+  updateNavAffordance();
+}
+function setActiveNav(sec){ var id=navPillFor(sec)||sec; if(state._activeSec===id) return; state._activeSec=id;
+  document.querySelectorAll('#sectionNav .nav-item').forEach(function(b){ b.classList.toggle('is-active',b.getAttribute('data-nav')===id); }); }
+function gotoSec(id){
+  var el=document.getElementById('sec-'+id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+/* nav overflow affordance: edge fades plus chevron scrollers, from the BBW lofi */
+function updateNavAffordance(){
+  var nav=document.getElementById('sectionNav'), wrap=document.getElementById('navWrap');
+  if(!nav||!wrap) return;
+  /* is-over reserves the two chevron tracks and is set from overflow alone, so it does not
+     change while scrolling. has-left / has-right then toggle the fades and the chevrons'
+     visibility within those tracks. Measure overflow first, then set is-over: the tracks it
+     adds only ever narrow the scroller, so an overflowing nav cannot flip itself back. */
+  var max=nav.scrollWidth-nav.clientWidth, overflow=max>1;
+  wrap.classList.toggle('is-over', overflow);
+  max=nav.scrollWidth-nav.clientWidth;   /* re-measure once the tracks are in */
+  wrap.classList.toggle('has-left', overflow && nav.scrollLeft>1);
+  wrap.classList.toggle('has-right', overflow && nav.scrollLeft<max-1);
+}
+function scrollNav(dir){ var nav=document.getElementById('sectionNav'); if(nav) nav.scrollBy({left:dir*(nav.clientWidth/2),behavior:'smooth'}); }
+(function(){
+  var nav=document.getElementById('sectionNav');
+  var cl=document.getElementById('navChevLeft'), cr=document.getElementById('navChevRight');
+  if(cl) cl.addEventListener('click',function(){ scrollNav(-1); });
+  if(cr) cr.addEventListener('click',function(){ scrollNav(1); });
+  if(nav) nav.addEventListener('scroll',updateNavAffordance,{passive:true});
+  window.addEventListener('resize',updateNavAffordance);
+})();
+
+/* ============================================================ RENDER */
+var content=document.getElementById('content');
+var scrollEl=document.getElementById('scroll');
+function render(){
+  var keep=scrollEl.scrollTop;
+  content.innerHTML=tokensSection()+sectionPasses()+sectionExtras()+sectionDonation()+sectionOverview();
+  wireContent();
+  buildNav();
+  recompute();
+  scrollEl.scrollTop=keep;
+  renderSheet();
+}
+/* The modal, and the two things that make it a real one rather than a box on top: focus moves
+   into the dialog on open and back to the trigger on close, and everything behind it is set
+   inert, so tab and a screen reader cursor cannot walk around behind an open dialog. The BBW
+   precedent this pattern comes from does neither for its sheet. */
+/* closing the drawer. The exit animation has to play before the DOM goes, so the element is
+   marked and the state change waits for it. Reduced motion and the wide frame close at once. */
+function closeTokModal(){
+  var host=document.getElementById('sheetHost');
+  var mo=host&&host.querySelector&&host.querySelector('.modal');
+  var back=host&&host.querySelector&&host.querySelector('.modal-back');
+  var reduce=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  function done(){ state._tokList=false; announce("Activity costs closed"); render(); }
+  if(!mo||reduce||state.device!=="mobile"){ done(); return; }
+  if(mo.classList) mo.classList.add('is-closing');
+  if(back&&back.classList) back.classList.add('is-closing');
+  setTimeout(done,200);
+}
+/* UPDATE AN OPEN DIALOG IN PLACE. Nothing here replaces an element that carries a listener or
+   an animation: the chips get an attribute, the list is inert markup, the price block is text,
+   and the stepper keeps its own buttons and only has its readout and disabled states set.
+   That is what stops the drawer re-sliding and the scrim re-fading on every press, and it also
+   means focus is never lost, so no focus needs restoring. */
+function syncTokModal(){
+  var host=document.getElementById('sheetHost');
+  var mo=host&&host.querySelector&&host.querySelector('.modal');
+  if(!mo) return false;
+  var key=state._tokFilter||"all";
+  mo.querySelectorAll('[data-tokfilter]').forEach(function(b){
+    b.setAttribute('aria-pressed', b.getAttribute('data-tokfilter')===key ? 'true' : 'false');
+  });
+  /* SIMPLER SINCE 24 Aug. The rows are inert, so rebuilding the list cannot pull a control out
+     from under a finger or lose anyone's focus, and the only thing that changes the visible set
+     is the filter. The set it last rendered is stamped on the list so a press on the chip that
+     is already pressed does not rebuild for nothing. */
+  var list=mo.querySelector('#tokModalList');
+  if(list){
+    var want=tokVisibleIdx().join(',');
+    if(list.getAttribute('data-set')!==want){
+      list.innerHTML=tokModalList(); list.setAttribute('data-set',want);
+    }
+  }
+  /* V3: the ladder quotes the break type, and the toolbar sits outside the inert frame, so it
+     stays live while the dialog is open. Repainted in place like the list, keyed on what it
+     last drew: inert markup, no listeners, nothing pulled from under a finger. */
+  var rb=mo.querySelector('#tokRateBox');
+  if(rb){
+    var wantR=state.breakType+':'+tokensTotal();
+    if(rb.getAttribute('data-set')!==wantR){
+      rb.innerHTML='<h4 class="tok-rlbl">Price per token</h4>'+tokRateLadder(tokensTotal());
+      rb.setAttribute('data-set',wantR);
+    }
+  }
+  /* SUPERSEDED 27 Aug: the footer is gone, so there is no count to keep in step - nothing
+     else in the dialog reads state.book. */
+  return true;
+}
+function renderSheet(){
+  var host=document.getElementById('sheetHost');
+  if(!host) return;
+  /* already open and already mounted: update it, do not rebuild it */
+  if(state._tokList && host.querySelector && host.querySelector('.modal')){ syncTokModal(); return; }
+  host.innerHTML=tokenModal();
+  var open=!!state._tokList;
+  if(scrollEl&&scrollEl.classList) scrollEl.classList.toggle('is-locked',open);
+  var frame=document.querySelector('.frame');
+  if(frame&&frame.children) [].slice.call(frame.children).forEach(function(el){
+    if(el.id!=='sheetHost') el.inert=open;
+  });
+  if(open){
+    /* focus the dialog once, on mount. preventScroll matters: without it the browser scrolls
+       the document to bring the dialog into view and lifts the whole device frame. */
+    var sh=document.getElementById('tokSheet');
+    if(sh&&sh.focus) sh.focus({preventScroll:true});
+  } else if(state._sheetWas){
+    var trig=document.querySelector('[data-toklist]');
+    if(trig&&trig.focus) trig.focus({preventScroll:true});
+  }
+  state._sheetWas=open;
+}
+function recompute(){
+  var c=computeAll();
+  document.getElementById('totalFig').innerHTML=gbp(c.grand);
+  document.getElementById('guestSumm').textContent=totalGuests()+" guests"+(multi()?", "+nParties()+" parties":"");
+  document.getElementById('resortSumm').textContent=resortName();
+  /* PARITY WITH LIVE (Oliver, 20 Aug). The live bar carries one fixed label and one fixed line
+     of copy, so the contextual continue ("Continue without extras" / "Continue to guest
+     details") and the contextual note have both gone. If a contextual label is ever wanted
+     back, this is where it goes.
+     Nothing writes to summaryInner any more either - the footer panel has gone, and
+     breakdownRows() still renders into the Your booking section via the overview. */
+  var navById={}; currentNav().forEach(function(n){ navById[n.id]=n; });
+  document.querySelectorAll('#sectionNav .nav-item').forEach(function(b){
+    var t=navTick(navById[b.getAttribute('data-nav')]||b.getAttribute('data-nav'));
+    b.classList.toggle('added',t==='full'); b.classList.toggle('partial',t==='partial');
+  });
+}
+
+/* ============================================================ WIRING */
+var NOUN={aa:"All Action Pass",cir:"Big Top Circus",spa:"Spa Experience",tow:"Towel Pack"};
+var UNITNOUN={aa:"guest",cir:"guest",spa:"guest",tow:"pack"};
+function maxFor(key,i){ var p=parties()[i]; return key==="tow"?pGuests(p):pPay(p); }
+
+function wireContent(){
+  content.querySelectorAll('[data-more]').forEach(function(b){
+    b.addEventListener('click',function(e){ e.stopPropagation();
+      var d=document.getElementById('more-'+b.getAttribute('data-more')); if(!d) return;
+      var open=d.classList.toggle('open');
+      b.textContent=open?'Read less':'Read more';
+      b.setAttribute('aria-expanded',open?'true':'false'); });
+  });
+  /* token packs: one tap sets the booking's token count, and the footer total moves with it.
+     Never pre-selected, per the DMCC caution on pre-ticked paid add-ons in the review. */
+  content.querySelectorAll('[data-tokpack]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var n=parseInt(b.getAttribute('data-tokpack'),10);
+      state.book.tokens=(state.book.tokens===n)?0:n; state._tokOwn=false;
+      /* taking the pack path abandons the draft, so the panel does not sit open underneath
+         contradicting what is now on the booking */
+      state._ownOpen=false; state._ownDraft=null;
+      announce(state.book.tokens
+        ? (n+" tokens added, "+gbp(tokCost())+", "+gbp(tokenRate(n))+" per token")
+        : "Tokens removed");
+      render(); });
+  });
+  content.querySelectorAll('.stepper[data-tokqty]').forEach(function(st){
+    st.querySelectorAll('.step-btn').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var dir=parseInt(btn.getAttribute('data-dir'),10);
+        var cur=state.book.tokens||0, next=Math.min(TOKEN_MAX,Math.max(0,cur+dir));
+        if(next===cur){ announce(dir>0?("Tokens are capped at "+TOKEN_MAX):"No tokens on the booking"); return; }
+        var before=tokenRate(cur||1);
+        state.book.tokens=next; state._tokOwn=next>0;
+        var after=tokenRate(next);
+        announce(next+" token"+(next===1?"":"s")+", "+gbp(tokCost())+
+          (next>0&&after!==before?(", the rate is now "+gbp(after)+" per token"):""));
+        render(); });
+    });
+  });
+  content.querySelectorAll('[data-tokclear]').forEach(function(b){
+    b.addEventListener('click',function(){ state.book.tokens=0; state._tokOwn=false; announce("Tokens removed"); render(); });
+  });
+  /* opens the activity costs modal. It used to expand the card in place, which added about
+     300px to a step the review measured at 10,874px. (user, 20 Aug) */
+  /* THE CUSTOM CHOOSER (client, 24 Aug). Three controls, and only the last of them renders.
+     BUG FIXED ON THE WAY BACK IN: this handler toggled state._tokOwn, which is PROVENANCE - the
+     flag that decides whether a pack or the guest owns the count. Nothing had rendered
+     data-tokown since 21 Aug so it never fired, but wired to the disclosure it would have
+     flipped the meaning of the count on every open. Open state is its own flag now. */
+  content.querySelectorAll('[data-tokown]').forEach(function(b){
+    b.addEventListener('click',function(){
+      state._ownOpen=!state._ownOpen;
+      /* reopening starts from what is on the booking rather than the last abandoned draft */
+      if(state._ownOpen) state._ownDraft=null;
+      announce(state._ownOpen?"Choose your own amount, open":"Choose your own amount, closed");
+      render(); });
+  });
+  /* IN-PLACE, NO RENDER. See the note on ownBar(): a full render loses keyboard focus, which
+     would make the number input impossible to type a second digit into. Both draft controls
+     write state._ownDraft and then repaint the three things that depend on it. */
+  function paintOwn(d){
+    state._ownDraft=d;
+    var live=document.getElementById('tokOwnLive');
+    if(live) live.innerHTML=ownLive(d);
+    var add=document.querySelector('[data-ownadd]');
+    if(add){
+      add.textContent=ownAddLabel(d);
+      if(d>0) add.removeAttribute('aria-disabled'); else add.setAttribute('aria-disabled','true');
+    }
+    var st=document.querySelector('.stepper[data-ownstep]');
+    if(st){
+      /* no .qty to update: the input inside the control IS the readout. Its value is written by
+         whichever control changed it - the field by the guest, the buttons by their handler -
+         so paintOwn only has to keep the two buttons' limits honest. */
+      var less=st.querySelector('.step-btn[data-dir="-1"]'), more=st.querySelector('.step-btn[data-dir="1"]');
+      if(less){ if(d<=0) less.setAttribute('aria-disabled','true'); else less.removeAttribute('aria-disabled'); }
+      if(more){ if(d>=TOKEN_MAX) more.setAttribute('aria-disabled','true'); else more.removeAttribute('aria-disabled'); }
+    }
+  }
+  content.querySelectorAll('[data-ownnum]').forEach(function(inp){
+    inp.addEventListener('input',function(){
+      /* an empty field or junk reads as 0, which ownLive() answers with a prompt rather than a
+         price, and which disables the commit. The field is NOT rewritten while it is being
+         typed into: forcing the value back would fight the caret. */
+      var v=parseInt(inp.value,10);
+      if(isNaN(v)||v<0) v=0;
+      if(v>TOKEN_MAX){ v=TOKEN_MAX; inp.value=v; }
+      paintOwn(v); });
+  });
+  content.querySelectorAll('.stepper[data-ownstep]').forEach(function(st){
+    st.querySelectorAll('.step-btn').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var dir=parseInt(btn.getAttribute('data-dir'),10);
+        var cur=ownDraft(), next=Math.min(TOKEN_MAX,Math.max(0,cur+dir));
+        if(next===cur){ announce(dir>0?("Tokens are capped at "+TOKEN_MAX):"None chosen"); return; }
+        var inp=document.getElementById('tokOwnNum');
+        if(inp) inp.value=next;
+        paintOwn(next);
+        announce(next+" token"+(next===1?"":"s")+", "+gbp(next*tokenRate(next))); });
+    });
+  });
+  /* the commit, and the ONLY thing in the panel that reaches the booking. _tokOwn goes true
+     here: the count is the guest's own from now on, which is what keeps the amendable card
+     above the packs rather than lighting up whichever pack happens to match. */
+  content.querySelectorAll('[data-ownadd]').forEach(function(b){
+    b.addEventListener('click',function(){
+      if(b.getAttribute('aria-disabled')==='true'){ announce("Choose how many tokens first"); return; }
+      var d=ownDraft();
+      state.book.tokens=d; state._tokOwn=true; state._ownOpen=false; state._ownDraft=null;
+      announce(d+" token"+(d===1?"":"s")+" added, "+gbp(tokCost())+", "+gbp(tokenRate(d))+" per token");
+      render(); });
+  });
+  /* SLIM approach (27 Aug): rows are a draft, the card footer prices the draft, and only
+     Add to booking reaches state.book.tokens. All three selectors match nothing unless the
+     slim branch rendered, so this wiring is inert under the other two approaches. */
+  content.querySelectorAll('[data-slimsel]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var v=b.getAttribute('data-slimsel');
+      state._slimSel = v==="custom" ? "custom" : parseInt(v,10);
+      var n=slimCount(state._slimSel);
+      announce(n>0 ? (n+" tokens selected, "+gbp(n*tokenRate(n))+", not yet on your booking")
+                   : "Choose how many tokens");
+      render(); });
+  });
+  content.querySelectorAll('.stepper[data-slimstep]').forEach(function(st){
+    st.querySelectorAll('.step-btn').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var dir=parseInt(btn.getAttribute('data-dir'),10);
+        var cur=slimN(), next=Math.min(TOKEN_MAX,Math.max(0,cur+dir));
+        if(next===cur){ announce(dir>0?("Tokens are capped at "+TOKEN_MAX):"None chosen"); return; }
+        state._slimN=next; state._slimSel="custom";
+        announce(next+" token"+(next===1?"":"s")+", "+gbp(next*tokenRate(next)));
+        render(); });
+    });
+  });
+  /* the commit. Clicking while the selection is already ON the booking removes it, the same
+     toggle the pack grid's data-tokpack buttons have always had. */
+  content.querySelectorAll('[data-slimadd]').forEach(function(b){
+    b.addEventListener('click',function(){
+      if(b.getAttribute('aria-disabled')==='true'){ announce("Choose how many tokens first"); return; }
+      var sel=slimSel(), n=slimCount(sel);
+      if(tokensTotal()===n && n>0 && (sel!=="custom" ? !state._tokOwn : state._tokOwn)){
+        state.book.tokens=0; state._tokOwn=false; state._slimSel=null;
+        announce("Tokens removed");
+      } else {
+        state.book.tokens=n; state._tokOwn=(sel==="custom");
+        announce(n+" token"+(n===1?"":"s")+" added, "+gbp(tokCost())+", "+gbp(tokenRate(n))+" per token");
+      }
+      render(); });
+  });
+  /* QUICK WINS wiring (#qwNum, .qw-panel, data-qwmore) went with the variant in V3, 25 Sep. */
+  /* the mobile hero carousel: wrap-around, full render per the file's accepted limitation */
+  content.querySelectorAll('[data-heroarrow]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var dir=parseInt(b.getAttribute('data-heroarrow'),10);
+      state._heroIdx=(state._heroIdx+dir+3)%3;
+      announce("Activity photo "+(state._heroIdx+1)+" of 3");
+      render(); });
+  });
+  content.querySelectorAll('[data-toklist]').forEach(function(b){
+    b.addEventListener('click',function(){
+      state._tokList=true;
+      announce("What tokens buy, "+TOKEN_ACTIVITIES.length+" activities");
+      render(); });
+  });
+  content.querySelectorAll('.stepper[data-step]').forEach(function(st){
+    var key=st.getAttribute('data-step'), i=parseInt(st.getAttribute('data-party'),10);
+    st.querySelectorAll('.step-btn').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var dir=parseInt(btn.getAttribute('data-dir'),10), max=maxFor(key,i), e=px(i);
+        var next=Math.min(max,Math.max(0,e[key]+dir));
+        if(next===e[key]){
+          announce(dir>0 ? (NOUN[key]+" is already added for everyone in "+partyLabel(i))
+                         : (NOUN[key]+" is not on "+partyLabel(i)));
+          return;
+        }
+        e[key]=next;
+        announce(NOUN[key]+", "+partyLabel(i)+", "+next+" "+UNITNOUN[key]+(next===1?"":"s"));
+        render(); });
+    });
+  });
+  content.querySelectorAll('[data-all]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var key=b.getAttribute('data-all'), i=parseInt(b.getAttribute('data-party'),10);
+      var max=maxFor(key,i), e=px(i);
+      e[key]=(e[key]>=max?0:max);
+      announce(NOUN[key]+", "+partyLabel(i)+", "+e[key]+" "+UNITNOUN[key]+(e[key]===1?"":"s"));
+      render(); });
+  });
+  /* whole-booking toggles. The check-in pair clears its partner rather than stacking. */
+  content.querySelectorAll('[data-book]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var k=b.getAttribute('data-book');
+      state.book[k]=!state.book[k];
+      if(k==="early"&&state.book.early) state.book.late=false;
+      if(k==="late"&&state.book.late)   state.book.early=false;
+      var names={vip:"Early Access VIP Pass",early:"Early check-in",late:"Late check-out",
+                 donation:"Donation",roomPick:"Room picker"};
+      var scope=(k==="vip"||k==="early"||k==="late")&&multi()?" for all "+nParties()+" parties":"";
+      announce((state.book[k]?"Added ":"Removed ")+names[k]+scope);
+      render(); });
+  });
+  content.querySelectorAll('[data-summary-toggle]').forEach(function(b){
+    b.addEventListener('click',function(){
+      state._summaryOpen=!(state._summaryOpen!==false);
+      announce(state._summaryOpen?"Your booking expanded":"Your booking collapsed");
+      render(); });
+  });
+}
+
+
+
+/* ============================================================ SCROLL-SPY */
+function onScroll(){
+  var top=scrollEl.getBoundingClientRect().top, secs=content.querySelectorAll('[data-sec]'), cur=null;
+  secs.forEach(function(s){ if(s.getBoundingClientRect().top-top<=110) cur=s; });
+  if(cur) setActiveNav(cur.getAttribute('data-sec'));
+}
+scrollEl.addEventListener('scroll',onScroll,{passive:true});
+
+/* ============================================================ DEV CONTROLS */
+/* null-safe: p5 can still be set programmatically though its button is gone, and setPreset
+   presses every booking button. Without the guard that would throw on the real page. */
+function press(id,on){ var el=document.getElementById(id); if(el) el.setAttribute('aria-pressed',on?'true':'false'); }
+function clampAll(){
+  for(var i=0;i<nParties();i++){
+    var e=px(i);
+    e.aa=Math.min(e.aa,maxFor('aa',i)); e.cir=Math.min(e.cir,maxFor('cir',i));
+    e.spa=Math.min(e.spa,maxFor('spa',i)); e.tow=Math.min(e.tow,maxFor('tow',i));
+  }
+}
+function setPreset(id){
+  state.presetId=id; resetParties();
+  press('bkP1',id==="p1"); press('bkP2',id==="p2"); press('bkP5',id==="p5");
+  state._activeSec=null; render();
+}
+function setResort(r){ state.resort=r;
+  if(!spaActive()) for(var i=0;i<nParties();i++) px(i).spa=0;
+  if(!tokensActive()){ state.book.tokens=0; state._tokOwn=false; state._ownOpen=false; state._ownDraft=null; }
+  press('rsMine',r==="minehead"); press('rsBognor',r==="bognor"); render(); }
+function setBreak(b){ state.breakType=b;
+  if(!circusActive()) for(var i=0;i<nParties();i++) px(i).cir=0;
+  press('brTerm',b==="term"); press('brSummer',b==="summer"); render(); }
+/* V2. Switching approach replaces the whole tokens section, so the scroll-spy's cached section
+   is stale - clear it and let render() rebuild the nav, as setPreset() does. Token state is
+   left alone deliberately: carrying the count across the toggle is how you compare the two
+   approaches on the same booking. */
+function setTokenApproach(a){ state.tokenApproach=a;
+  press('tkSlim',a==="slim"); press('tkPacks',a==="packs");   /* tkCurrent went in V3 */
+  state._activeSec=null; render(); }
+function setDevice(d){ state.device=d;
+  document.getElementById('rootToggleHost').setAttribute('data-device',d);
+  document.getElementById('deviceHost').setAttribute('data-device',d);
+  press('dvMobile',d==="mobile"); press('dvDesktop',d==="desktop");
+  /* V3: the quick-wins paging reset that lived here went with the variant. No branch's markup
+     depends on the device any more, so the switch does not pay for a re-render. */
+  /* The nav differs by breakpoint since 21 Aug: granular product anchors on desktop, four
+     grouped pills on mobile. So switching device has to REBUILD it, not just re-measure the
+     overflow. This only re-measured, which left whichever nav was built at load - mobile, the
+     default - showing at both sizes. buildNav() ends by calling updateNavAffordance(). */
+  buildNav(); onScroll(); }
+
+document.getElementById('bkP1').addEventListener('click',function(){ setPreset("p1"); });
+document.getElementById('bkP2').addEventListener('click',function(){ setPreset("p2"); });
+/* Escape closes the activity costs modal, as the BBW sheet does. Registered once here rather
+   than per render, so it survives the innerHTML rebuild. */
+if(document.addEventListener) document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&state._tokList){ closeTokModal(); }
+});
+/* TAP TO ADD, delegated and attached ONCE. #sheetHost itself is never replaced, only its
+   contents, so attaching this per open stacked one listener per open and a single tap fired as
+   many times as the dialog had been opened. Delegation also means it survives the in-place row
+   updates without needing to be re-bound. */
+/* EVERY CONTROL IN THE DIALOG IS DELEGATED, from one listener attached once to #sheetHost.
+   Two reasons. #sheetHost is never replaced, only its contents, so per-open binding stacked a
+   listener per open and a single tap fired as many times as the dialog had been opened. And
+   delegation means syncTokModal() can rewrite any part of the dialog, including the footer
+   actions, without a control going dead. */
+(function(){
+  var host=document.getElementById('sheetHost');
+  if(!host||!host.addEventListener) return;
+  host.addEventListener('click',function(e){
+    var el=e.target; if(!el||!el.closest) return;
+
+    /* the backdrop, but only when the backdrop itself was hit */
+    if(el.matches&&el.matches('[data-scrim]')){ closeTokModal(); return; }
+    if(el.closest('[data-sheetclose]')){ closeTokModal(); return; }
+
+    /* THE ONLY CONTROL LEFT IN HERE IS THE AGE FILTER (client, 24 Aug). Clear all, the footer
+       stepper and tap-to-add have all gone: the dialog is read-only reference and nothing inside
+       it may write to state.book. If a control is ever added back it belongs above this line,
+       and the read-only assertions in the harness should be repointed rather than removed. */
+    var chip=el.closest('[data-tokfilter]');
+    if(chip){ state._tokFilter=chip.getAttribute('data-tokfilter');
+      announce('Filtered to '+chip.textContent); render(); return; }
+  });
+})();
+document.getElementById('rsMine').addEventListener('click',function(){ setResort("minehead"); });
+document.getElementById('rsBognor').addEventListener('click',function(){ setResort("bognor"); });
+document.getElementById('brTerm').addEventListener('click',function(){ setBreak("term"); });
+document.getElementById('brSummer').addEventListener('click',function(){ setBreak("summer"); });
+document.getElementById('tkSlim').addEventListener('click',function(){ setTokenApproach("slim"); });
+document.getElementById('tkPacks').addEventListener('click',function(){ setTokenApproach("packs"); });
+document.getElementById('dvMobile').addEventListener('click',function(){ setDevice("mobile"); });
+document.getElementById('dvDesktop').addEventListener('click',function(){ setDevice("desktop"); });
+
+resetParties();
+render();
+</script>
+</body>
+</html>
