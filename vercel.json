@@ -13,6 +13,7 @@
     { "source": "/bbw-homepage", "destination": "/external-prototypes/bbw-homepage-prototype" },
     { "source": "/weekender", "destination": "/external-prototypes/90s-weekender-prototype" },
     { "source": "/weekender-lineup", "destination": "/external-prototypes/90s-weekender-prototype-lineup-cta" },
+    { "source": "/bbw-guests", "destination": "/bbw-guests-desktop-prototype" },
     { "source": "/brand-kit-bbw", "destination": "/brand-kits/bbw/gallery" },
     { "source": "/brand-kit-family", "destination": "/brand-kits/family/gallery" },
     { "source": "/phase4-lofi", "destination": "/phase4-extras-fam-lofi-v3" }
