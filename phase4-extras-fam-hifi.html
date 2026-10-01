@@ -135,6 +135,8 @@
         downward for Read more. They replace the 17 Sep 1x crops (vip-early-access.png,
         all-action.png, kept in assets-img for the record). The All Action source is 820x533, so
         its crop is upscaled in the export: [TK] a higher-res original if retina sharpness matters.
+        On the phone, both draw Oliver's 844x372 landscapes instead (1 Oct: all-action-phone.jpg,
+        vip-early-access-phone.jpg), because the tall crops' strips cut badly; see PHONE-ONLY PHOTO.
       * Card icons are the Phase 2 exports in assets-bbw (spa, towels, donation, check-in),
         inlined on currentColor with the baked BBW orange stripped, drawn at grey/200 per
         the Phase 3 .fglyph decision. Circus and the scope-tag glyphs are drawn here - no
@@ -330,8 +332,14 @@ ul{margin:0;padding:0;list-style:none;}
    --ph-pos; the phone's 160px pane never grows. The photos are Oliver's 728x1160 exports (29 Sep):
    282 wide they draw 449 tall, taller than the open panes (378 and 408), so Read more only ever
    reveals more photo. On the phone each card sets its own focal height (featureCard's photoY:
-   VIP 12% for the helmets, All Action 25% for his face), since a centred strip cut the face. */
+   VIP 12% for the helmets), since a centred strip cut the face. Both are superseded (1 Oct):
+   the phone draws each card's own landscape photo, below. */
 [data-device="desktop"] .feature-card{--ph-pos:50% 0;}
+/* PHONE-ONLY PHOTO (Oliver, 1 Oct): a card can pass photoSrcPhone, which featureCard() writes as
+   --ph-m beside the desktop url. The inline image reads var(--ph-dev, <desktop url>), so only the
+   phone, and only a card that has one, swaps. VIP and All Action use it: the tall crops' 160px
+   strips cut badly, so the phone draws his 844x372 landscapes (about 1:1 at 2x on the 160px band). */
+[data-device="mobile"] .feature-card .ph-img[style*="--ph-m"]{--ph-dev:var(--ph-m);}
 .fc-main{flex:1;min-width:0;display:flex;flex-direction:column;}
 .fc-pad{padding:var(--card-pad);flex:1;display:flex;flex-direction:column;gap:24px;}   /* 24px between text elements (18 Sep); the kit's --card-pad since 25 Sep */
 /* the description takes Body-L (18/24), held to the design's 600px measure */
@@ -1866,7 +1874,7 @@ function featureCard(o){
     '<h3 class="dc-head">'+(o.icon?'<span class="dc-ico" aria-hidden="true">'+o.icon+'</span>':'')+'<span class="dc-t">'+o.title+'</span></h3>'+
     '<div class="feature-card">'+
     (o.photoSrc
-      ? '<div class="ph-img square" aria-hidden="true" style="background-image:url(\''+o.photoSrc+'\');background-size:cover;background-position:var(--ph-pos,50% '+(o.photoY||'50%')+');"></div>'
+      ? '<div class="ph-img square" aria-hidden="true" style="'+(o.photoSrcPhone?'--ph-m:url(\''+o.photoSrcPhone+'\');':'')+'background-image:var(--ph-dev,url(\''+o.photoSrc+'\'));background-size:cover;background-position:var(--ph-pos,50% '+(o.photoY||'50%')+');"></div>'
       : '<div class="ph-img square" aria-hidden="true"><span class="ph-chip">Photo to come: '+(o.photo||o.title)+'</span></div>')+
     '<div class="fc-main"><div class="fc-pad">'+
     '<p class="desc">'+o.desc+'</p>'+cardIncl(o)+(o.body||'')+cardMore(o)+'</div>'+
@@ -1888,7 +1896,7 @@ function xVip(i){
      BBW gives its VIP Pass rather than the icon-led card the everyday extras use. */
   /* photos extracted from Oliver's Figma cards (BBW_Featured_Cards, 17 Sep) into assets-img */
   return featureCard({ id:"vip-"+i, title:"Early Access VIP Pass", added:on, icon:NAV_ICO.vip,
-    photo:"VIP Pass", photoSrc:"assets-img/vip-early-access-tall.jpg", photoY:"12%",   /* Oliver's 728x1160 export (29 Sep); the phone strip sits on the helmets */
+    photo:"VIP Pass", photoSrc:"assets-img/vip-early-access-tall.jpg", photoSrcPhone:"assets-img/vip-early-access-phone.jpg", photoY:"20%",   /* desktop: Oliver's 728x1160 export (29 Sep); phone: his 844x372 landscape (1 Oct) */
     scope: multi()?"All parties":"Whole booking",
     desc:"Book shows and activities 3 days before slots open to other guests, plus venue entry 15 minutes early.",
     incl:["Book shows and activities 3 days early","Into entertainment venues 15 minutes before doors","Covers every guest on the booking","Under 2s go free"],
@@ -2601,7 +2609,7 @@ function tokensSectionPacks(){
 function xAllAction(i){
   var p=parties()[i], pay=pPay(p), e=px(i), q=e.aa, total=q*PRICE.allActionPP;
   return featureCard({ id:"aa-"+i, photo:"All Action Pass", title:"All Action Pass", added:q>0, scope:"Per person", icon:NAV_ICO.aa,
-    photoSrc:"assets-img/all-action-tall.jpg", photoY:"25%",   /* Oliver's 728x1160 export (29 Sep, replaces the 17 Sep 282x340 crop); the phone strip sits on his face */
+    photoSrc:"assets-img/all-action-tall.jpg", photoSrcPhone:"assets-img/all-action-phone.jpg", photoY:"30%",   /* desktop: Oliver's 728x1160 export (29 Sep); phone: his 844x372 landscape (1 Oct), the tall crop's strip cut badly */
     scopeLabel: q>0 ? (q+' guest'+(q===1?'':'s')) : '',
     desc:"Unlimited goes on our headline activities across your break, from the climbing wall to go-karts.",
     incl:["Unlimited sessions all break","Climbing wall, go-karts, aerial adventure","Height and age limits apply on some activities"],
