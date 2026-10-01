@@ -120,14 +120,51 @@
   .frame[data-variant=b] .scroll.collapsed{padding-bottom:40px}
   .frame[data-variant=b] .sheet{background:none;border:0;border-radius:0;padding:0}
   .frame[data-variant=b] .grid{grid-template-columns:repeat(3,180px)}
-  .frame[data-variant=b] .tile{border-color:var(--tile-line)}
-  .frame[data-variant=b] .tile:hover{background:#222}
+  /* B cards (Amit, 1 Oct): no outline, grey fill. States step up in white overlay like the stepper buttons */
+  .frame[data-variant=b] .tile{border-color:transparent;background:rgba(255,255,255,.03)}                          /* rest   ≈ #1f1f1f */
+  .frame[data-variant=b].has-selection .opt input:not(:checked) + .tile{background:rgba(255,255,255,.01)}          /* once a number is picked, the others recede ≈ #1b1b1b */
+  .frame[data-variant=b] .opt input:not(:checked) + .tile:hover{background:rgba(255,255,255,.10)}                  /* hover  ≈ #2f2f2f */
+  .frame[data-variant=b] .opt input:not(:checked) + .tile:active{background:rgba(255,255,255,.14)}                 /* press  ≈ #383838 */
   .frame[data-variant=b] .grid .tile{font-size:72px;padding-top:7px}
   .frame[data-variant=b] .opt input:checked + .tile{border-color:transparent;box-shadow:4px 10px 27px #000}
   .frame[data-variant=b] .call{font-size:20px;line-height:24px}
   .frame[data-variant=b] .grid .call{gap:14px}
   .frame[data-variant=b] .collapsed .more{display:inline-flex;width:auto;margin:24px 0 0}
   .frame[data-variant=b] .track{left:1205px;top:100px;height:632px}
+
+
+  /* ---------- Variant C hides the scrolling grid ---------- */
+  .frame[data-variant=c] #scroll, .frame[data-variant=c] #track{display:none}
+
+  /* ---------- Variant C: stepper, styled from Figma 1722:2941 ---------- */
+  /* Full-height panel x 620-1204 (centred on the CTA), same 60% gradient and 20% white edge as A */
+  .frame[data-variant=c] #stepperSheet{display:block}
+  #stepperSheet{display:none;position:absolute;left:620px;top:-43px;width:584px;height:918px;padding:0}
+  .stepper{position:absolute;left:139px;top:367.5px;width:300px}   /* x 760, y 325.5 (inside the 1px panel edge): level with the heading */
+  .stepRow{display:flex;gap:6px}
+  .countBox{width:196px;height:135px;border:1px solid rgba(255,255,255,.2);border-radius:3px;display:grid;place-items:center;background:var(--bg)}  /* page background #181818, as Figma 1722:2941 */
+  .count{width:100%;height:100%;padding:0;border:0;border-radius:3px;background:transparent;color:#fff;text-align:center;
+    font:400 110px/1 var(--display);caret-color:var(--yellow);-moz-appearance:textfield;appearance:textfield}
+  .count::-webkit-outer-spin-button,.count::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .count:hover{background:rgba(255,255,255,.07)}   /* ≈ #282828: lighter than the panel (#202020) so it still reads as hover */
+  .count:focus{outline:none}
+  /* Editing: the box's own border turns solid white at 2px (inset shadow adds the second pixel, so nothing shifts) */
+  .countBox:focus-within{border-color:#fff;box-shadow:inset 0 0 0 1px #fff}
+  .steps{display:flex;flex-direction:column;gap:6px}
+  .step{width:98px;height:64.5px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.2);border-radius:3px;background:var(--bg);
+    color:#fff;cursor:pointer;transition:background .12s,border-color .12s,color .12s;touch-action:none}
+  .step{user-select:none;-webkit-user-select:none}
+  .step:hover{background:#282828}
+  /* Pressed: lighter fill and brighter edge while the pointer or key is held (stays on during hold-to-repeat) */
+  .step:not(:disabled):active, .step.pressed{background:#363636;border-color:rgba(255,255,255,.5)}
+  .step:focus-visible{outline:2px solid #fff;outline-offset:4px}
+  /* Disabled keeps the dark fill (fading the whole button would blend it into the panel); icon and edge dim instead */
+  .step:disabled{cursor:default;background:var(--bg);color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.08)}
+  .stepNote{display:flex;align-items:center;gap:12px;margin-top:12px;color:rgba(255,255,255,.6);font:400 14px/17px var(--body)}
+  .stepNote svg{flex-shrink:0}
+  .stepNote b{font-weight:700}
+  .stepNote a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+  .stepNote a:hover{color:#fff}
 
   /* Footer + CTA */
   .footer{position:absolute;left:0;right:0;bottom:0;height:100px;z-index:5;pointer-events:none;
@@ -159,6 +196,7 @@
 <div class="switch" role="group" aria-label="Prototype variant">
   <button type="button" data-v="a" aria-pressed="true">A · Scrolling grid 1–19</button>
   <button type="button" data-v="b" aria-pressed="false">B · 1–9, then load more</button>
+  <button type="button" data-v="c" aria-pressed="false">C · Stepper</button>
 </div>
 
 <div class="stage"><div class="scaler" id="scaler">
@@ -184,6 +222,26 @@
     </div>
   </div>
   <div class="track" id="track" aria-hidden="true"><div class="thumb" id="thumb"></div></div>
+
+  <!-- Variant C: stepper -->
+  <div class="sheet" id="stepperSheet">
+    <div class="stepper">
+      <div class="stepRow">
+        <div class="countBox">
+          <input class="count" id="count" type="number" inputmode="numeric" min="1" max="19" step="1" value="2"
+            aria-labelledby="q" aria-describedby="stepNote">
+        </div>
+        <div class="steps">
+          <button type="button" class="step" id="plus" aria-label="One more guest"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4.5v15m7.5-7.5h-15" stroke="currentColor" stroke-width="1.5"/></svg></button>
+          <button type="button" class="step" id="minus" aria-label="One fewer guest"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19.5 12h-15" stroke="currentColor" stroke-width="1.5"/></svg></button>
+        </div>
+      </div>
+      <div class="stepNote" id="stepNote">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p><b>Maximum 19</b> guests, please call to make a larger booking, on <a href="tel:03301009732">0330 100 9732</a></p>
+      </div>
+    </div>
+  </div>
 
   <div class="footer" aria-hidden="true"></div>
   <button class="cta" id="cta">View accommodation</button>
@@ -211,32 +269,80 @@ function setSelected(n){
   cta.classList.toggle('show', n !== null);
   frame.classList.toggle('has-selection', n !== null);
 }
-grid.addEventListener('change', e => {
+function radioGroup(group){
+group.addEventListener('change', e => {
   setSelected(+e.target.value);
   live.textContent = e.target.getAttribute('aria-label') + ' selected';
 });
 /* Clicking (or pressing Space on) the selected tile clears it. Arrow-key moves never clear. */
-function clear(input){ input.checked = false; setSelected(null); live.textContent = 'Selection cleared'; }
 let wasChecked = null, spaceOnChecked = false;
-grid.addEventListener('pointerdown', e => {
+group.addEventListener('pointerdown', e => {
   const opt = e.target.closest('.opt'); wasChecked = opt ? opt.querySelector('input').checked : null;
 });
-grid.addEventListener('click', e => {
+group.addEventListener('click', e => {
   if (e.target.type !== 'radio') return;
   const input = e.target, clearIt = wasChecked === true;
   wasChecked = null;
   if (clearIt) setTimeout(() => clear(input));   // after the browser's own radio activation has run
 });
-grid.addEventListener('keydown', e => {
+group.addEventListener('keydown', e => {
   if (e.target.type !== 'radio') return;
   wasChecked = null;
   spaceOnChecked = e.key === ' ' && e.target.checked;
 });
 /* Space on an already-checked radio fires no click, so clear it here */
-grid.addEventListener('keyup', e => {
+group.addEventListener('keyup', e => {
   if (e.key === ' ' && spaceOnChecked && e.target.checked){ const input = e.target; setTimeout(() => clear(input)); }
   spaceOnChecked = false;
 });
+}
+function clear(input){ input.checked = false; setSelected(null); live.textContent = 'Selection cleared'; }
+radioGroup(grid);
+
+/* ---------- Variant C: stepper (1 to 19, default 2) ---------- */
+const count = $('#count'), minus = $('#minus'), plus = $('#plus');
+let reachedLimit = false;
+function setCount(n, announce = true, overLimit = false){
+  n = Math.max(1, Math.min(19, Math.round(n) || 1));
+  count.value = n;
+  minus.disabled = n <= 1; plus.disabled = n >= 19;
+  const atLimit = (n >= 19 || overLimit) && !reachedLimit;   // the maximum note is always visible; announce it the first time someone hits it
+  reachedLimit = n >= 19 || overLimit;
+  setSelected(n);
+  if (announce) live.textContent = n + (n === 1 ? ' guest' : ' guests') + (atLimit ? '. Maximum 19 guests. To book a larger group, call 0330 100 9732' : '');
+}
+/* Hold − or + to repeat */
+function holdRepeat(btn, d){
+  let t1, t2;
+  const stop = () => { clearTimeout(t1); clearInterval(t2); btn.classList.remove('pressed'); };
+  btn.addEventListener('pointerdown', e => {
+    if (btn.disabled || e.button !== 0) return;
+    btn.classList.add('pressed');
+    setCount(+count.value + d);
+    t1 = setTimeout(() => { t2 = setInterval(() => { if (btn.disabled) return stop(); setCount(+count.value + d); }, 90); }, 450);
+  });
+  ['pointerup','pointerleave','pointercancel'].forEach(ev => btn.addEventListener(ev, stop));
+  btn.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); btn.classList.add('pressed'); setCount(+count.value + d); }
+  });
+  btn.addEventListener('keyup', e => { if (e.key === 'Enter' || e.key === ' ') btn.classList.remove('pressed'); });
+  btn.addEventListener('blur', stop);
+}
+holdRepeat(minus, -1); holdRepeat(plus, 1);
+/* Typing: digits only, two at most; values over 19 snap to 19 and show the phone line */
+count.addEventListener('input', () => {
+  const raw = count.value.replace(/\D/g, '').slice(0, 2);
+  if (raw === '') return;                       // let people clear the field while typing
+  const n = +raw;
+  if (n > 19) setCount(19, true, true);
+  else if (n >= 1) setCount(n, false);
+});
+count.addEventListener('blur', () => { if (count.value === '' || +count.value < 1) setCount(1); });
+count.addEventListener('keydown', e => {          // native arrows step by 1 within min/max; keep state in sync
+  if (e.key === 'ArrowUp' || e.key === 'ArrowDown'){ e.preventDefault(); setCount(+count.value + (e.key === 'ArrowUp' ? 1 : -1)); }
+  if (e.key === 'Enter') count.blur();
+});
+count.addEventListener('wheel', e => e.preventDefault(), {passive:false});   // stop the wheel changing the number by accident
 
 /* ---------- Variant switcher ---------- */
 function setVariant(v){
@@ -244,6 +350,7 @@ function setVariant(v){
   document.querySelectorAll('.switch button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === v));
   grid.querySelectorAll('input').forEach(i => i.checked = false);
   setSelected(null);
+  if (v === 'c') setCount(2, false);
   scroll.classList.toggle('collapsed', v === 'b');
   grid.querySelectorAll('.big').forEach(el => el.classList.remove('revealed'));
   scroll.scrollTop = 0; scroll.style.setProperty('--ft', '0px'); syncThumb();
@@ -297,6 +404,7 @@ function smoothBy(dy){
 }
 function stopSmooth(){ if (raf) cancelAnimationFrame(raf); raf = null; target = null; }
 frame.addEventListener('wheel', e => {
+  if (frame.dataset.variant === 'c') return;
   const dy = e.deltaY * (e.deltaMode === 1 ? 40 : 1);
   if (frame.dataset.variant === 'b'){            // B: native scroll over the grid, instant elsewhere (unchanged)
     if (scroll.contains(e.target)) return;
@@ -342,7 +450,7 @@ addEventListener('resize', fit);
 document.fonts.ready.then(fit);
 fit();
 const v = new URLSearchParams(location.search).get('v');
-if (v === 'b') setVariant('b');
+if (['b','c'].includes(v)) setVariant(v);
 </script>
 </body>
 </html>
