@@ -11,8 +11,9 @@
    See ../STYLING-RECIPE.md. Component reference: ./gallery.html.
 
    Unlike the BBW kit, app.css was never written against the lofi role-token
-   vocabulary, so this kit adds a remap block at the end. That block is the only
-   hand-authored part of the file: review it first if a re-skin looks wrong.
+   vocabulary, so this kit adds a remap block at the end. That block and the
+   PHASE 3 GRADUATION section are the hand-authored parts of the file: review
+   the remap first if a re-skin looks wrong.
 
    DO NOT EDIT app.css to change this kit, and do not edit this kit to fix a
    single screen. Screen-specific overrides belong in the screen.
@@ -35,6 +36,9 @@
 
 :root{
   --u:8px;
+  /* CARD PADDING (Oliver, 25 Sep 2026): every card body pads 24px on desktop and 16px on the
+     phone. One token, switched by the device frame, so a new card cannot drift from it. */
+  --card-pad:calc(var(--u)*3);
   /* neutrals */
   --ink:#000000;
   --ink-2:#3c3c3b;
@@ -354,12 +358,26 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 .card[data-plan="hotel"].is-selected{border-color:var(--c-lawn);}
 .card[data-plan="dinearound"].is-selected{border-color:var(--c-candy);}
 .card-img{position:relative;height:160px;overflow:hidden;background:var(--paper-3);}
-/* carousel layers — motion happens ONLY during the arrow transition, there is no idle animation:
-   .ci-slide = the horizontal slide, .ci-par = parallax lag + zoom-settle, .ci-img = the image (static at rest) */
-.card-img .ci-slide{position:absolute;inset:0;overflow:hidden;}
-.card-img .ci-par{position:absolute;inset:0;}
-.card-img .ci-img{position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;}
-.card-img .ci-slide.ci-anim,.card-img .ci-par.ci-anim{transition:transform .55s cubic-bezier(.22,1,.36,1);}
+/* THE PROJECT CAROUSEL TRANSITION (Oliver, 30 Sep 2026: "a refined style that should be used for
+   all carousels within this project"; the house rule is in STYLING-RECIPE.md step 4). Every image
+   carousel uses these three layers and this motion, and nothing else:
+     .ci-slide  the whole panel, sliding in from the side of the arrow pressed (translateX 100% -> 0)
+                while the outgoing one leaves the other way (0 -> -100%)
+     .ci-par    a 3% parallax lag against the slide plus a zoom that settles, 1.08 -> 1 coming in,
+                1 -> 1.08 going out
+     .ci-img    the photo, static at rest (cover; set background-position per photo for a focal point)
+   .55s cubic-bezier(.22,1,.36,1) on both moving layers; motion ONLY during the arrow transition, no
+   idle animation; one transition at a time; prefers-reduced-motion swaps the photo at once.
+   The JS drives it: slidePlanImage() in phase1-dining-fam-hifi.html is the original, ciSlide() in
+   phase4-extras-fam-hifi.html the generic version (any host, inserts before the arrows/pill).
+   .card-img is Phase 1's host; any other carousel adds .ci-host to its photo box. A carousel that
+   re-renders its whole screen on an arrow press cannot animate - it must slide in place.
+   Known exception: phase3-accom-bbw-hifi's slideAccom() slides without the .ci-par lag and zoom. */
+.card-img .ci-slide,.ci-host .ci-slide{position:absolute;inset:0;overflow:hidden;}
+.card-img .ci-par,.ci-host .ci-par{position:absolute;inset:0;}
+.card-img .ci-img,.ci-host .ci-img{position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;}
+.card-img .ci-slide.ci-anim,.card-img .ci-par.ci-anim,
+.ci-host .ci-slide.ci-anim,.ci-host .ci-par.ci-anim{transition:transform .55s cubic-bezier(.22,1,.36,1);}
 /* "save £X" price tab overlaid on the image (per Figma) */
 .save-tab{position:absolute;left:0;bottom:0;display:inline-flex;align-items:baseline;gap:5px;padding:8px 12px;background:var(--accent);color:#fff;border-top-right-radius:20px;font-size:14px;font-weight:700;text-transform:lowercase;letter-spacing:.02em;line-height:1;}
 .save-tab b{font-size:22px;font-weight:700;}
@@ -370,7 +388,7 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 @media(hover:hover){.card-img .img-nav:hover{background:#fff;}}
 .card-img .img-nav:active{transform:translateY(-50%) scale(.94);}
 /* plan card images are now driven by JS (.ci-slide) so the carousel can animate between them */
-.card-body{display:flex;flex-direction:column;gap:calc(var(--u)*3);padding:calc(var(--u)*3);}
+.card-body{display:flex;flex-direction:column;gap:calc(var(--u)*3);padding:var(--card-pad);}
 .card .desc{font-size:16px;line-height:1.5;color:var(--ink);margin:0;}
 .plan-links{display:flex;gap:calc(var(--u)*2);align-items:flex-end;justify-content:space-between;}
 .incl{list-style:none;margin:0;padding:0;font-size:16px;display:flex;flex-direction:column;gap:8px;flex:0 0 auto;}
@@ -397,6 +415,18 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 .price .now-row{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;}
 .price .now{font-size:24px;line-height:30px;font-weight:700;letter-spacing:.1em;color:var(--ink);}
 .price .basis{font-size:14px;line-height:18px;color:var(--ink);}
+/* ADD AND ADDED KEEP ONE WIDTH (Oliver, 29 Sep 2026; the house rule is in STYLING-RECIPE.md
+   step 4). Where possible a commit button is the same width in its default and added states.
+   .card-cta is width:100%, so it holds one width by construction. A button that sizes to its
+   label must reserve its wider state: both labels in one grid cell, the inactive one hidden
+   with visibility (worked example: addBtn() in phase4-extras-fam-hifi.html, .bs-on/.bs-off).
+   The ADDED LABEL is the one word "Added" behind its tick (Oliver, revised later on 29 Sep),
+   never "Added to booking" / "Added to your booking": the default "Add to booking" already says
+   what it does. A quantity control shows its count instead, and the label gives way before a
+   neighbouring stepper or price shrinks: "3 of 3 guests" where it fits, "3 of 3" where it does
+   not, decided by measurement, the dropped words kept for screen readers with .sr-only. The
+   added state always carries its tick, on the left padding, the label centred - this rule's
+   own tick / label / .cta-ghost layout below. */
 /* full-width commit button (per Figma): outline = select, filled red = selected */
 .card-cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;font:inherit;font-family:var(--font);font-size:16px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;border:1px solid var(--ink);border-radius:var(--radius);background:transparent;color:var(--ink);padding:11px 20px;cursor:pointer;transition:background .12s ease,border-color .12s ease,color .12s ease;}
 @media(hover:hover){.card-cta:hover{background:rgba(0,0,0,.05);}}
@@ -495,18 +525,19 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 .unit-customise{font:inherit;font-family:var(--font);font-size:16px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:10px 20px;cursor:pointer;border-radius:var(--radius);border:1px solid var(--ink-2);background:var(--paper);color:var(--ink);white-space:nowrap;}
 @media(hover:hover){.unit-customise:hover{background:var(--paper-2);}}
 .unit-customise:active{transform:translateY(1px);}
-.party-body{padding:calc(var(--u)*3);}
+.party-body{padding:var(--card-pad);}
 .party-summary{font-size:14px;color:var(--ink-2);padding:calc(var(--u)*1.5) calc(var(--u)*3);}
 .party-summary b{color:var(--ink);}
 .party-summary.none{color:var(--ink-3);font-style:italic;}
 .mode-explainer{font-size:13px;color:var(--ink-3);padding:0 calc(var(--u)*3) calc(var(--u)*2);}
 .booking-level-bar{margin-bottom:calc(var(--u)*3);}
-[data-device="mobile"] .card-body{padding:calc(var(--u)*1.5);}
+[data-device="mobile"]{--card-pad:calc(var(--u)*2);}   /* 16px on the phone (was 12 here; 24/16 is the rule, 25 Sep) */
+[data-device="mobile"] .card-body{padding:var(--card-pad);}
 [data-device="mobile"] .unit-samerow{flex-wrap:wrap;gap:var(--u);padding:calc(var(--u)*1.5);}
 [data-device="mobile"] .unit-samerow .usr-right{width:100%;flex-direction:column;align-items:stretch;gap:var(--u);}
 [data-device="mobile"] .unit-samerow .usr-price{font-size:22px;}
 [data-device="mobile"] .unit-customise{width:100%;text-align:center;}
-[data-device="mobile"] .party-body{padding:calc(var(--u)*1.5);}
+[data-device="mobile"] .party-body{padding:var(--card-pad);}
 
 /* ============================================================
    CHRISTMAS BANNER (same bones as drinks bar; Figma 452:3298)
@@ -623,6 +654,378 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
 @media(prefers-reduced-motion:reduce){*{transition:none!important;}}
 
 
+/* ============================================================================
+   PHASE 3 GRADUATION  (24 Aug 2026)
+   Tokens and components built in phase3-accom-fam-hifi.html, promoted here per
+   STYLING-RECIPE step 5 ahead of the Phase 4 Family hi-fi. The Phase 3 screen
+   still carries its own copies and, loading after the kit, wins every tie -
+   so this block changes nothing there. New screens use these classes directly
+   and override in the screen only where the screen genuinely differs.
+
+   DELIBERATELY NOT GRADUATED: the accommodation card (.acard) and the sleeping
+   arrangement tiles. One consumer each, both still churning with the client -
+   they graduate when a second screen needs them. The category colour tokens
+   they will need ARE here, so the move is a copy-paste when it comes.
+
+   THREE RENDERING FACTS these components are built on. All measured in Blink
+   at deviceScaleFactor 1 and 2 - do not re-litigate without re-measuring:
+   1. Blink stores border-width AND outline-width as integers and FLOORS them:
+      0.5px and 1.5px both paint 1px. BOX-SHADOW SPREAD IS A PAINT-TIME FLOAT
+      and does not floor - a 1.5px inset ring paints a true 1.5px. Hence the
+      ring idiom used throughout this section: any edge that needs a half-pixel
+      weight, or must change weight without moving the box, is an inset
+      box-shadow on an element with NO border, so the padding box is the border
+      box and rings replace each other cleanly. Corollary: a real border has
+      nothing between 1px and 2px - if a thinner edge is wanted, the lever is
+      its colour, not its weight.
+   2. Never animate border-width - it relayouts every frame and snaps rather
+      than eases. Rings cost no layout, so they can actually transition.
+   3. A screen that re-renders in full on every interaction breaks transitions
+      (the replacement node arrives already in its final state) and drops
+      :hover until the pointer next moves. The fixes, proven in Phase 3: flip
+      the state attribute on the LIVE element in the click handler before
+      re-rendering; track hover in state and emit an .is-hover class twinned
+      with every :hover rule (the mouseenter/leave listeners must only set the
+      flag, never re-render); and where something must visibly play after a
+      re-render, use one-shot @keyframes gated by a render flag, not a
+      transition.
+   Also worth expecting again: Figma trims text boxes to cap height and CSS
+   does not, so a Figma flex gap reads as gap+leading here - price stacks use
+   gap:0 and let the leading do the work. And .card-cta is white-space:nowrap,
+   so measure .cta-label scrollWidth against the button content box whenever a
+   label or its column changes.
+   ========================================================================== */
+
+/* ---------- GRADUATED TOKENS ---------- */
+:root{
+  /* MOTION - three curves, three durations, nothing off-system (13 Aug).
+       calm  state changes: fills, borders, colours (the kit's expander curve)
+       rise  entrances and slides - decelerates into place
+       pop   gentle overshoot, CONFIRMATIONS ONLY (a tick landing, a toggle
+             knob settling). Nothing else takes the bounce. */
+  --ease-calm:cubic-bezier(.4,0,.2,1);
+  --ease-rise:cubic-bezier(.22,1,.36,1);
+  --ease-pop:cubic-bezier(.34,1.56,.64,1);
+  --t-quick:.18s;   /* small colour changes, pressed states */
+  --t-state:.24s;   /* a component changing state */
+  --t-move:.45s;    /* something arriving or leaving */
+  /* THE ONE GUTTER a results screen is built on (client, 10 Aug): tile gaps,
+     stacked-card gaps and a card's internal column gaps all take it, or the
+     shared column grid stops lining up. The HORIZONTAL uses are the ones that
+     must stay equal; Phase 3 moved its vertical card stacking to 24px without
+     harm. */
+  --grid-gutter:12px;
+  /* EVERY NEUTRAL BOX EDGE, one token so a whole screen moves together.
+     Blink floors it to a painted 1px - consistently, so nothing needs fixing. */
+  --card-edge:1.5px solid var(--line);
+  /* CLIENT GREYS, values from their own exports, not matched by eye. The kit's
+     --line #e4e4e3 is lighter and --line-strong #9a9a99 much darker - do not
+     bend these onto kit tokens. grey-100 is the resting hairline ring on every
+     tile below; grey-200 the next step up (BBW dialogs, card edges at 1px). */
+  --grey-100:#d4d3d6;
+  --grey-200:#a5a4a8;
+  --grey-100-20:rgba(212,211,214,.20); /* card fill; resolves #f6f6f7 over white, and IS translucent */
+  --grey-100-24:rgba(212,211,214,.24); /* basis-toggle track fill (its node says 24, the card's says 20 -
+                                          two nodes, each followed as drawn rather than merged) */
+  --neutral-12:rgba(0,0,0,.12);        /* neutral stand-in for a 12% category tint: same lightness
+                                          (#e0e0e0 over white), no hue - for tiles that take the tile
+                                          grammar but must stay off the accent palette */
+  /* ACCOMMODATION CATEGORY COLOURS (Figma 1240:7811). The authoritative source
+     is the client's exported icons - each stroked in its own colour. Six are
+     kit tokens; Caravans has none, declared once here. 12% tints are the
+     design's own rgba values, not color-mix, so nothing depends on support.
+     All clear 3:1 on white for non-text UI; Studios 3.62 and Lodges 3.96 are
+     the thinnest - first to look at if the client wants any darker. */
+  --cat-rooms:var(--c-lake);              --cat-rooms-12:rgba(0,94,184,.12);
+  --cat-apartments:var(--positive-text);  --cat-apartments-12:rgba(42,124,39,.12);
+  --cat-chalets:var(--c-violet-2);        --cat-chalets-12:rgba(89,49,95,.12);
+  --cat-caravans:#c25f00;                 --cat-caravans-12:rgba(194,95,0,.12);
+  --cat-hotels:var(--c-violet);           --cat-hotels-12:rgba(109,32,119,.12);
+  --cat-studios:var(--c-sky-2);           --cat-studios-12:rgba(41,143,194,.12);
+  --cat-lodges:var(--c-candy);            --cat-lodges-12:rgba(224,69,123,.12);
+}
+
+/* KIT-LEVEL FIX (was a Phase 3 screen patch): .frame set no position, so any
+   absolutely positioned child - a dialog, a mobile sheet - resolved against
+   the viewport and escaped the device frame. Every modal below depends on
+   this line. */
+.frame{position:relative;}
+
+/* an unmapped category falls back to a mid grey, so a new one reads as
+   obviously unassigned rather than silently borrowing another's identity */
+.ctile,.acard{--cat:var(--line-strong);--cat-12:transparent;}
+.ctile[data-cattile="Rooms"],     .acard[data-cat="Rooms"]     {--cat:var(--cat-rooms);--cat-12:var(--cat-rooms-12);}
+.ctile[data-cattile="Apartments"],.acard[data-cat="Apartments"]{--cat:var(--cat-apartments);--cat-12:var(--cat-apartments-12);}
+.ctile[data-cattile="Chalets"],   .acard[data-cat="Chalets"]   {--cat:var(--cat-chalets);--cat-12:var(--cat-chalets-12);}
+.ctile[data-cattile="Caravans"],  .acard[data-cat="Caravans"]  {--cat:var(--cat-caravans);--cat-12:var(--cat-caravans-12);}
+.ctile[data-cattile="Hotels"],    .acard[data-cat="Hotels"]    {--cat:var(--cat-hotels);--cat-12:var(--cat-hotels-12);}
+.ctile[data-cattile="Studios"],   .acard[data-cat="Studios"]   {--cat:var(--cat-studios);--cat-12:var(--cat-studios-12);}
+.ctile[data-cattile="Lodges"],    .acard[data-cat="Lodges"]    {--cat:var(--cat-lodges);--cat-12:var(--cat-lodges-12);}
+
+/* ============================================================
+   CATEGORY FILTER TILE  (Figma 1247:8309 / 1245:8116 disabled / 1247:8325 mobile)
+   Multi-select filter, everything on by default, tap to hide. "Selected" means
+   "this type is showing", and because the row starts all-on, selected carries
+   NO edge - the 12% tint and filled checkbox do the work; an outline would
+   ring every tile on load. The tile has NO border property at all: every edge
+   on every state is an inset ring (rendering fact 1 above), so 1.5px is real
+   and state changes cannot move the row.
+     selected          12% category tint, no edge,        filled checkbox + tick
+     hover (both)      12% tint, 1.5px category ring      (checkbox tells them apart)
+     deselected        transparent, 1px grey-100 ring,    empty grey checkbox
+     disabled          transparent, 1px grey-100 ring,    checkbox GONE, text --ink-3
+   Disabled is not an opacity dim, and it deliberately matches deselected's
+   edge - heavier would be louder than a usable tile. Keep disabled tiles in
+   the tab order: activating one is what announces WHY it is blocked. */
+.cat-tiles{display:grid;grid-template-columns:repeat(var(--cat-cols,4),minmax(0,1fr));
+  gap:var(--grid-gutter);margin-bottom:calc(var(--u)*3);}
+[data-device="mobile"] .cat-tiles{grid-template-columns:repeat(2,minmax(0,1fr));
+  margin-bottom:calc(var(--u)*1.5);}
+.ctile{display:flex;flex-direction:column;align-items:stretch;gap:calc(var(--u)*3);text-align:left;
+  font:inherit;font-family:var(--font);background:transparent;border:0;
+  border-radius:var(--radius);padding:14px;color:#000;
+  box-shadow:inset 0 0 0 1px var(--grey-100);
+  transition:background var(--t-state) var(--ease-calm),
+             box-shadow var(--t-state) var(--ease-calm),transform var(--t-quick) var(--ease-calm);}
+.ctile:active{transform:translateY(1px);}
+.ct-top{display:flex;align-items:flex-start;justify-content:space-between;gap:calc(var(--u));}
+/* 32px icon over a 28px viewBox: clean vector scale, artwork keeps its place in the frame */
+.ct-ico{flex:0 0 auto;display:block;width:32px;height:32px;color:var(--cat);}
+/* the checkbox FADES rather than switching off, so a tile going disabled loses it
+   without a snap, and the row geometry never moves */
+.ct-check{flex:0 0 auto;width:20px;height:20px;border-radius:var(--radius);display:grid;place-items:center;
+  border:1.5px solid var(--line-strong);color:#fff;opacity:1;
+  transition:background var(--t-state) var(--ease-calm),border-color var(--t-state) var(--ease-calm),
+             opacity var(--t-state) var(--ease-calm);}
+/* the tick fades UP into place - a 4px rise, no scale-pop */
+.ct-check svg{display:block;transform:translateY(4px);opacity:0;
+  transition:transform var(--t-state) var(--ease-rise),opacity var(--t-state) var(--ease-calm);}
+.ct-text{display:flex;flex-direction:column;gap:var(--u);}
+/* all usable-tile text is #000 - roughly 19:1 on the darkest 12% tint, so nothing
+   is near the AA line. The disabled grey is a state signal and keeps --ink-3. */
+.ctile b{font-size:16px;font-weight:700;line-height:18px;text-transform:uppercase;letter-spacing:.1em;color:#000;}
+.ctile .ct-from{font-size:16px;font-weight:400;line-height:24px;color:#000;}
+.ctile .ct-nofit{font-size:14px;font-weight:400;line-height:18px;color:var(--ink-3);}
+.ctile[aria-pressed="true"]{background:var(--cat-12);box-shadow:none;}
+.ctile[aria-pressed="true"] .ct-check{background:var(--cat);border-color:var(--cat);}
+.ctile[aria-pressed="true"] .ct-check svg{transform:none;opacity:1;}
+@media(hover:hover){
+  /* one hover for both states; .is-hover twin per rendering fact 3 */
+  .ctile:not([aria-disabled="true"]):hover,
+  .ctile.is-hover:not([aria-disabled="true"]){background:var(--cat-12);
+    box-shadow:inset 0 0 0 1.5px var(--cat);}
+  .ctile:not([aria-disabled="true"]):hover .ct-check,
+  .ctile.is-hover:not([aria-disabled="true"]) .ct-check{border-color:var(--cat);}
+}
+.ctile[aria-disabled="true"]{background:transparent;box-shadow:inset 0 0 0 1px var(--grey-100);cursor:not-allowed;}
+.ctile[aria-disabled="true"] .ct-ico{color:var(--ink-3);}
+.ctile[aria-disabled="true"] b{color:var(--ink-3);}
+.ctile[aria-disabled="true"] .ct-check{opacity:0;}
+/* mobile (1247:8325): inner gap halves, name to Mobile/H3 14px, no price line.
+   The unavailable reason line IS kept - the mobile node has no disabled state,
+   and without it a blocked tile gives no reason on this breakpoint. */
+[data-device="mobile"] .ctile{gap:calc(var(--u)*1.5);}
+[data-device="mobile"] .ctile b{font-size:14px;}
+[data-device="mobile"] .ctile .ct-from{display:none;}
+
+/* ============================================================
+   PRICE BASIS TOGGLE  (Figma 1256:8346)
+   Grey-100 pill track with a 24% grey-100 fill and a Bright Rose active pill.
+   The edge is an inset ring, not a border (rendering fact 1): border 0 with
+   the padding carrying the ring's width keeps the node's true 1.5px desktop /
+   1px mobile weights. Each breakpoint is defined by its own numbers - height
+   comes from padding plus the 18px line, no min-height.
+   GRAMMAR NOTE: this puts rose on a STATE rather than an action, which the
+   Family colour grammar does not otherwise allow. It is the client's own
+   design, so it stands - but it is a documented exception. Watch that rose
+   does not spread to further states on its account. */
+.basis-seg{display:inline-flex;align-items:center;flex:0 0 auto;background:var(--grey-100-24);
+  border:0;border-radius:var(--radius-pill);padding:4.5px;
+  box-shadow:inset 0 0 0 1.5px var(--grey-100);}
+[data-device="mobile"] .basis-seg{padding:4px;box-shadow:inset 0 0 0 1px var(--grey-100);}
+.basis-seg button{display:inline-flex;align-items:center;justify-content:center;
+  padding:10px 16px;font:inherit;font-family:var(--font);font-size:16px;font-weight:700;line-height:18px;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--ink);background:transparent;border:0;
+  border-radius:var(--radius-pill);white-space:nowrap;
+  transition:background var(--t-state) var(--ease-calm),color var(--t-state) var(--ease-calm);}
+[data-device="mobile"] .basis-seg button{padding:8px;font-size:14px;}
+@media(hover:hover){.basis-seg button:not([aria-pressed="true"]):hover{background:rgba(0,0,0,.05);}}
+/* white on --accent is 4.87:1, AA at this size */
+.basis-seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);}
+@media(hover:hover){.basis-seg button[aria-pressed="true"]:hover{background:var(--accent-strong);}}
+.basis-seg button:focus-visible{outline:3px solid var(--focus);outline-offset:1px;}
+
+/* ============================================================
+   PARTY STEP BADGE + HEADER STATUS  (multi-party sections)
+   The badge appears when a party is COMPLETE and is absent otherwise - the
+   heading beside it already says "Party 1", so a resting numbered circle says
+   it twice. The done check is the kit's .stepbar dot, so a finished party
+   reads like a finished booking step. .ph-choice is the right-hand status in
+   a .unit-head: the resolved choice in bold, or the "Choosing now" /
+   "Up next" whisper. */
+.pstep{flex:0 0 auto;width:24px;height:24px;border-radius:var(--radius-pill);border:1px solid var(--ink-2);
+  display:grid;place-items:center;font-size:13px;color:var(--ink-2);background:var(--paper);}
+/* the titles must grow, or a third child in .unit-head (the badge) centres them:
+   the kit's own two-child rows justify the same either way */
+.unit-head .uh-titles{flex:1 1 auto;}
+.pstep.done{border-color:var(--positive);color:transparent;font-size:0;
+  background:var(--paper) url("../../assets-hdr/check.svg") center/14px no-repeat;}
+.ph-choice{font-size:14px;font-weight:700;color:var(--ink);text-align:right;}
+.ph-choice .pc-add{display:block;font-weight:400;color:var(--ink-2);}
+.ph-choice.now,.ph-choice.dim{font-size:13px;font-weight:400;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em;}
+[data-device="mobile"] .ph-choice{flex:1 1 100%;text-align:left;}
+
+/* ============================================================
+   INFO TOOLTIP
+   Hover/focus disclosure on a 20px "i" disc. Ink surface, white copy, opens
+   below-left with a rotated-square caret. focus-within keeps it keyboard
+   reachable; the trigger needs tabindex or to be a button. */
+.infotip{position:relative;display:inline-flex;}
+.infotip-btn{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--ink-2);background:var(--paper);color:var(--ink-2);
+  font:700 12px/1 var(--font);display:inline-flex;align-items:center;justify-content:center;cursor:help;padding:0;}
+.infotip-pop{position:absolute;left:-4px;top:calc(100% + 8px);z-index:30;width:260px;background:var(--ink);color:var(--on-dark);
+  font:400 14px/1.45 var(--font);text-transform:none;letter-spacing:normal;padding:12px 14px;border-radius:var(--radius);
+  box-shadow:0 6px 18px rgba(0,0,0,.28);opacity:0;visibility:hidden;transform:translateY(-3px);
+  transition:opacity var(--t-quick) var(--ease-calm),transform var(--t-quick) var(--ease-calm),visibility var(--t-quick);text-align:left;}
+.infotip-pop::before{content:"";position:absolute;left:9px;top:-4px;width:9px;height:9px;background:var(--ink);transform:rotate(45deg);}
+.infotip:hover .infotip-pop,.infotip:focus-within .infotip-pop{opacity:1;visibility:visible;transform:translateY(0);}
+
+/* ============================================================
+   ADD-ON ROW + TOGGLE SWITCH
+   Each add-on is its own outlined card: 1px grey-100 inset ring on the tile
+   radius (one idiom for every card edge), 16px padding, transparent fill. An
+   added row takes a white fill and loses its edge - the same mark as every
+   other "chosen, inside a card" state in Phase 3; the toggle is the louder
+   signal. The class is set at render from the same flag the toggle reads, not
+   :has(), so it survives a full re-render.
+   .tswitch is BBW's control at its exact geometry (58x44 hit area, 52x28
+   track, 19px knob), adopted for Family with the shadows dropped. THE ON
+   STATE IS ROSE (user, 14 Aug) - the grammar's second documented
+   state-not-action exception, after the basis toggle. A third would make the
+   rule the exception. Off carries the state on the knob: --ink-3 at 5.03:1
+   satisfies WCAG 1.4.11 by position and colour; the track outline is
+   containment, not state. The knob under 44px CSS is a known touch-target
+   flag, carried from BBW. */
+.gf-prefs{display:flex;flex-direction:column;gap:calc(var(--u)*1.5);}
+.gf-row{display:flex;align-items:flex-start;gap:calc(var(--u)*2);background:transparent;
+  border:0;border-radius:var(--radius);padding:calc(var(--u)*2);
+  box-shadow:inset 0 0 0 1px var(--grey-100);
+  transition:background var(--t-state) var(--ease-calm);}
+[data-device="mobile"] .gf-row{gap:calc(var(--u)*1.5);}
+.gf-row.is-on{background:var(--paper);box-shadow:none;}
+/* the glyph is just the icon, grey/200, aria-hidden - the heading carries the meaning */
+.gf-row .fglyph{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;color:var(--grey-200);}
+.gf-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px;}
+.gf-main b{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);}
+.gf-main .row-sub{font-size:14px;color:var(--ink-2);line-height:1.35;}
+.gf-price{font-size:16px;font-weight:700;letter-spacing:.1em;margin-top:6px;}
+.tswitch{flex:0 0 auto;margin-left:auto;align-self:center;position:relative;display:inline-flex;
+  align-items:center;width:58px;height:44px;background:none;border:0;padding:0 3px;cursor:pointer;}
+.tswitch .track{width:52px;height:28px;border-radius:16px;
+  background:var(--grey-100-24);border:1.5px solid var(--grey-100);
+  transition:background var(--t-state) var(--ease-calm),border-color var(--t-state) var(--ease-calm);}
+/* the knob's slide takes the overshoot - a confirmation, the one place pop belongs */
+.tswitch .knob{position:absolute;top:50%;transform:translateY(-50%);left:8px;width:19px;height:19px;
+  border-radius:50%;background:var(--ink-3);
+  transition:left var(--t-state) var(--ease-pop),background var(--t-state) var(--ease-calm);}
+.tswitch[aria-checked="true"] .track{background:var(--accent);border-color:transparent;}
+.tswitch[aria-checked="true"] .knob{left:31px;background:#fff;}
+.tswitch:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:var(--radius);}
+
+/* ============================================================
+   CANDY PROMO BOX  (the client's own treatment, 12 Aug - the reference)
+   Solid Candy dark, white copy, white tick discs, inset to the content
+   column. White on --c-candy-2 is 6.99:1, AA for body copy (the BBW twin's
+   pink is 4.48:1 and fails at 14px - same component, this one does not).
+   Labels run 600 per the client's example. Named .candy-promo; Phase 3's
+   .p3-promo is this component and should adopt the kit class when next
+   touched. .promo-banner stays BBW's - never reuse that name here. */
+.candy-promo{align-self:stretch;background:var(--c-candy-2);border:0;border-radius:var(--radius);
+  padding:calc(var(--u)*2.5) calc(var(--u)*3);text-align:center;}
+.candy-promo h2{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--on-dark);margin:0 0 12px;}
+.candy-promo .promo-list{display:flex;align-items:center;justify-content:center;gap:10px 28px;flex-wrap:wrap;}
+.candy-promo .promo-list li{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--on-dark);}
+/* white disc, band-colour check. The hex lives in a data URI, which the token contract leaves alone. */
+.candy-promo .promo-tick{flex:0 0 auto;width:20px;height:20px;border-radius:50%;
+  background:#fff url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2012%2012'%20fill='none'%3E%3Cpath%20d='M2.6%206.3L4.8%208.5L9.4%203.7'%20stroke='%23ac145a'%20stroke-width='1.9'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E") center/13px no-repeat;}
+[data-device="mobile"] .candy-promo{padding:calc(var(--u)*2) calc(var(--u)*1.5);}
+[data-device="mobile"] .candy-promo h2{font-size:13px;}
+/* mobile 2-2-1: a grid, not natural wrapping - wrapping cannot guarantee the pattern
+   once label lengths change. align-items:start, or a one-line item floats half a line
+   below a two-line neighbour and the pattern collapses. If copy grows, the right
+   answer is a wrap that still reads, not a smaller font. */
+[data-device="mobile"] .candy-promo .promo-list{display:grid;grid-template-columns:1fr 1fr;
+  align-items:start;gap:10px 12px;text-align:left;}
+[data-device="mobile"] .candy-promo .promo-list li{font-size:13px;line-height:1.3;gap:6px;align-items:flex-start;}
+[data-device="mobile"] .candy-promo .promo-list li:last-child{grid-column:1 / -1;justify-content:center;}
+
+/* ============================================================
+   MODAL / MOBILE SHEET  (Figma 1170:4789)
+   Centred dialog on desktop, bottom sheet on mobile, both INSIDE the device
+   frame (which is why .frame is position:relative above). Flex column: the
+   body scrolls, the header and actions stay fixed - that is what makes the
+   sheet work. Close on Escape and on the scrim; it does NOT trap focus,
+   which is fine for moderated testing and not fine for build.
+   Title pattern: bold eyebrow over a 22px display title. BBW runs the title
+   at 30px League Gothic; Family has no condensed face, so the pattern
+   transfers and the value does not - 30px Neutraface runs to three lines in
+   a 390px sheet. */
+.rp-modal{position:absolute;inset:0;z-index:60;}
+.rp-scrim{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity var(--t-state) var(--ease-calm);}
+.rp-modal.open .rp-scrim{opacity:1;}
+.rp-card{position:relative;display:flex;flex-direction:column;background:var(--paper);border-radius:var(--radius);
+  width:min(460px,100%);max-height:calc(100% - 48px);overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.35);
+  transform:translateY(10px) scale(.98);transition:transform var(--t-state) var(--ease-rise);}
+.rp-modal.open .rp-card{transform:none;}
+.rp-head{flex:0 0 auto;padding:calc(var(--u)*3) calc(var(--u)*7) 0 calc(var(--u)*3);}
+.rp-body{flex:1 1 auto;min-height:0;overflow-y:auto;padding:calc(var(--u)*2) calc(var(--u)*3) calc(var(--u)*3);}
+.rp-x{position:absolute;top:16px;right:16px;width:32px;height:32px;border:0;background:transparent;color:var(--ink-2);
+  border-radius:var(--radius);display:grid;place-items:center;z-index:2;
+  transition:background var(--t-quick) var(--ease-calm);}
+@media(hover:hover){.rp-x:hover{background:var(--paper-2);}}
+.rp-eyebrow{display:block;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px;}
+.rp-card h3{font-size:22px;text-transform:uppercase;letter-spacing:.04em;line-height:1.15;margin:0;}
+.rp-lead{font-size:16px;color:var(--ink-2);line-height:1.4;margin-bottom:calc(var(--u)*3);}
+/* the inset breakdown panel: label/detail rows left, fee + per-line right */
+.rp-breakdown{background:var(--paper-2);border-radius:var(--radius);padding:16px 18px;}
+.rp-breakdown h4{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:calc(var(--u)*1.5);}
+.rp-rows{display:flex;flex-direction:column;gap:calc(var(--u)*1.5);}
+.rp-row{display:flex;justify-content:space-between;align-items:flex-start;gap:calc(var(--u)*1.5);}
+.rp-row-l b{display:block;font-size:16px;}
+.rp-row-l span{font-size:14px;color:var(--ink-2);}
+.rp-row-r{text-align:right;white-space:nowrap;}
+.rp-fee{display:block;font-size:16px;}
+.rp-fee b{font-weight:700;letter-spacing:.06em;}
+.rp-per{color:var(--ink-2);font-size:14px;}
+.rp-actions{flex:0 0 auto;display:flex;flex-direction:column;gap:10px;border-top:var(--card-edge);
+  padding:calc(var(--u)*2) calc(var(--u)*3);}
+.rp-actions .continue,.rp-actions .savebtn{width:100%;text-align:center;justify-content:center;}
+.rp-actions .continue{padding:18px 20px;font-size:14px;font-weight:700;}
+.rp-actions .savebtn{padding:14px 20px;font-size:14px;}
+/* mobile: a sheet sliding up from the bottom, 20px top corners */
+[data-device="mobile"] .rp-scrim{align-items:flex-end;padding:0;}
+[data-device="mobile"] .rp-card{width:100%;max-height:90%;border-radius:20px 20px 0 0;transform:translateY(100%);}
+[data-device="mobile"] .rp-modal.open .rp-card{transform:none;}
+[data-device="mobile"] .rp-head{padding:calc(var(--u)*3) calc(var(--u)*7) 0 calc(var(--u)*2);}
+[data-device="mobile"] .rp-body{padding:calc(var(--u)*2) calc(var(--u)*2) calc(var(--u)*3);}
+[data-device="mobile"] .rp-actions{padding:calc(var(--u)*2);}
+
+/* ============================================================
+   EMPTY RESULTS PANEL
+   For a filter/constraint combination with nothing to show. Says why, and
+   what to do next. Copy is the screen's job; the panel is the kit's. */
+.noresults{background:var(--paper-2);border:var(--card-edge);border-radius:var(--radius);padding:var(--card-pad);}
+.noresults h3{font-size:18px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px;}
+.noresults p{font-size:16px;line-height:1.4;color:var(--ink-2);max-width:62ch;}
+
+/* graduated components honour reduced motion like everything else */
+@media(prefers-reduced-motion:reduce){
+  .ctile,.ct-check,.ct-check svg,.basis-seg button,.tswitch .track,.tswitch .knob,
+  .gf-row,.infotip-pop,.rp-scrim,.rp-card,.rp-x{transition:none!important;}
+  .ct-check svg{transform:none;}
+}
+
 /* ---------------------------------------------------------------- LOFI ROLE-TOKEN REMAP
    Maps the 14-token lofi contract (../LOFI-TOKEN-CONTRACT.md) onto the Family
    palette declared in the :root above. Hand-authored, so every line is a
@@ -693,4 +1096,19 @@ body{margin:0;font-family:var(--font);color:var(--ink);background:var(--shell);l
      --ink2 #3c3c3b on --paper .............. 11.04:1 AA
    So: --muted is safe on white and on --fill, but on --fill3 or any darker
    neutral it must step up to --ink-2. Watch this on pressed states and on
-   halo rings, which are exactly where --fill3 gets used. */
+   halo rings, which are exactly where --fill3 gets used.
+
+   PHASE 3 ADDITIONS, also measured:
+     white on --c-candy-2 #ac145a (candy promo) . 6.99:1  AA body copy
+     --positive-text on .freebie-pill #daf9d9 ... 4.62:1  AA at 12px/600
+     --ink-2 #3c3c3b on --grey-100 fill ......... 7.41:1  AA
+     --ink-3 #6f6f6e on --grey-100 fill ......... 3.37:1  INACTIVE COMPONENTS ONLY
+     --ink-3 on --paper-2 #f5f5f5 ............... 4.66:1  AA (little headroom)
+     #000 on the darkest 12% category tint ..... ~19:1    AA
+     --grey-200 #a5a4a8 on white ................ 2.48:1  DECORATIVE ONLY (fails 3:1)
+     --grey-100 #d4d3d6 on white ................ 1.49:1  containment edges only, never state
+   Category colours on white, all non-text UI needing 3:1:
+     Rooms 6.38  Apartments 5.24  Chalets 10.34  Caravans 4.28
+     Hotels 9.87  Studios 3.62  Lodges 3.96
+   Studios and Lodges are the thinnest; both clear 3:1, and a white tick in a
+   filled checkbox is a graphic, so 3:1 governs it too. */
