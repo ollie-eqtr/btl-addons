@@ -49,38 +49,57 @@
   /* Tiles (shared) */
   .opt{display:block;position:relative}
   .opt input{position:absolute;opacity:0;width:1px;height:1px}
-  .tile{position:relative;display:grid;place-items:center;width:100%;height:100%;border:1px solid var(--tile-line);border-radius:3px;
-    font-family:var(--display);color:var(--num);cursor:pointer;padding-top:10px;transition:background .12s,border-color .12s,color .12s}
-  .tile:hover{background:#222}
+  .tile{position:relative;display:grid;place-items:center;width:100%;height:100%;border:1px solid transparent;border-radius:3px;  /* 1708:2850: no tile outline */
+   
+    font-family:var(--display);color:var(--num);cursor:pointer;transition:background .12s,border-color .12s,color .12s}
+  .tile:hover{background:rgba(255,255,255,.05)}
   /* Selected: matches Month Cards 'Selected' variant (708:2533): 4px gap + 2px yellow outer stroke, gradient fill, drop shadow */
   .opt input:checked + .tile{border-color:transparent;color:#fff;background:linear-gradient(to bottom,#2b2b2b,#222121);
-    outline:2px solid var(--yellow);outline-offset:4px;box-shadow:4px 10px 27px #000;z-index:1}
+    outline:2px solid var(--yellow);outline-offset:4px;box-shadow:4px 10px 27px rgba(0,0,0,.4);z-index:1}
   /* Focus: white ring outside the selected outline so both states read together */
   .opt input:focus-visible + .tile::after{content:"";position:absolute;inset:-10px;border:2px solid #fff;border-radius:9px;pointer-events:none}
   fieldset{border:0}
   legend{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
-  /* Same style as the 'Big groups choose…' subtext */
-  .call{font:400 20px/24px var(--body);color:rgba(255,255,255,.6)}
+  /* Subtext colour, 14/20 */
+  .call{font:400 14px/20px var(--body);color:rgba(255,255,255,.6)}
   .call a{color:inherit;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
   .call a:hover{color:#fff}
 
   /* ---------- Grid panel (shared by A and B) ---------- */
-  .scroll{position:absolute;left:617px;top:0;width:588px;height:832px;overflow-y:auto;scrollbar-width:none;padding:100px 12px 124px;
+  .scroll{position:absolute;left:598px;top:0;width:626px;  /* sheet centred on the CTA (centre x 911), right edge 1224 = 26px gap to the scrollbar, matching scrollbar to screen edge */
+   height:832px;overflow-y:auto;scrollbar-width:none;padding:100px 0 124px;
     scroll-padding:100px 0 124px}  /* keeps keyboard-focused tiles clear of the header and CTA (WCAG 2.4.11) */
   .scroll::-webkit-scrollbar{display:none}
-  .grid{display:grid;grid-template-columns:repeat(3,180px);grid-auto-rows:180px;gap:12px}
+  /* Grey sheet scrolls with the numbers, so it has a visible top and bottom edge */
+  .sheet{background:linear-gradient(to bottom,rgba(43,43,43,.6),rgba(34,33,33,.6));border:1px solid rgba(255,255,255,.2);
+    border-radius:3px;padding:98px 97.5px 32px}  /* top 98 matches the 97.5px sides; grid centred in the sheet */
+  .grid{display:grid;grid-template-columns:repeat(3,135px);grid-auto-rows:135px;gap:12px}  /* 135px squares */
   .grid .tile{font-size:110px;line-height:1}
   /* Centred in the two-card space beside 19, info icon leading */
-  .grid .call{grid-column:span 2;align-self:center;justify-self:center;display:flex;align-items:center;gap:14px}
+  .grid .call{grid-column:span 2;align-self:center;justify-self:center;display:flex;align-items:center;gap:12px}
   .call svg{flex-shrink:0}
-  .call p{white-space:nowrap}  /* two lines, break after the comma, as in the Figma */
-  .track{position:absolute;left:1205px;top:100px;width:4px;height:632px;z-index:4;cursor:pointer}
+  .call p{white-space:nowrap}  /* two lines, break after the comma, centred on 19 */
+  .call a{white-space:nowrap}
+  .track{position:absolute;left:1250px;  /* centred under the close X (centre x 1252) */
+   top:100px;width:4px;height:632px;z-index:4;cursor:pointer}
   .track[hidden]{display:none}
-  .thumb{position:absolute;left:0;top:0;width:4px;border-radius:3px;background:#fff;cursor:grab;touch-action:none}
+  .thumb{position:absolute;left:0;top:0;width:4px;border-radius:3px;background:#646464;cursor:grab;touch-action:none}  /* 3.00:1 on #181818 (now outside the sheet), the WCAG 1.4.11 minimum */
   .thumb:active{cursor:grabbing}
   .track::before,.thumb::before{content:"";position:absolute;inset:0 -10px}  /* 24px pointer target (WCAG 2.5.8) */
+
+  /* Variant A: grid starts lower and fades off the bottom edge */
+  .frame[data-variant=a] .scroll{padding-top:76px;  /* sheet top at 76: 36px below the progress bar, matching the 36px above it */
+   padding-bottom:160px;  /* sheet ends above the fade */
+   
+    -webkit-mask-image:linear-gradient(to bottom,transparent 40px,#000 calc(40px + var(--ft,0px)),#000 calc(100% - 140px),transparent);
+            mask-image:linear-gradient(to bottom,transparent 40px,#000 calc(40px + var(--ft,0px)),#000 calc(100% - 140px),transparent)}
+  /* Top fade starts under the progress bar (y 40) and grows to the same 140px as the bottom fade as you scroll,
+     so nothing is faded at rest. */
+  /* Scrollbar runs from the sheet top edge (76) to its bottom edge at the end of the scroll (672) */
+  .frame[data-variant=a] .track{top:76px;height:596px}  /* top level with the sheet's top edge; bottom level with its bottom edge at the end of the scroll (672) */
+  /* Variant B: the 1–9 grid (3 x 135 + 2 x 12 = 429px) sits vertically centred in the frame */
 
   /* ---------- Variant B: 1–9, then load more ---------- */
   .more{display:none}
@@ -89,10 +108,26 @@
   .collapsed .more{display:inline-flex;align-items:center;margin-top:24px;padding:3px 0;border:0;border-bottom:1.5px solid #fff;
     background:none;color:#fff;cursor:pointer;font:700 16px/22px var(--body)}
   .scroll.collapsed{padding-bottom:40px}
+  /* No tile edges to align to here, so the link centres under the grid */
+  .collapsed .more{display:flex;width:max-content;margin:24px auto 0}
   .more:hover{border-bottom-color:var(--yellow)}
   .more:focus-visible{outline:2px solid #fff;outline-offset:4px}
   .big.revealed{animation:in .35s ease-out both}
   @keyframes in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+  /* ---------- Variant B keeps its previous styling: outlined 4:3 cards, no sheet ---------- */
+  .frame[data-variant=b] .scroll{left:617px;width:588px;padding:calc((832px - 429px) / 2) 12px 124px}
+  .frame[data-variant=b] .scroll.collapsed{padding-bottom:40px}
+  .frame[data-variant=b] .sheet{background:none;border:0;border-radius:0;padding:0}
+  .frame[data-variant=b] .grid{grid-template-columns:repeat(3,180px)}
+  .frame[data-variant=b] .tile{border-color:var(--tile-line)}
+  .frame[data-variant=b] .tile:hover{background:#222}
+  .frame[data-variant=b] .grid .tile{font-size:72px;padding-top:7px}
+  .frame[data-variant=b] .opt input:checked + .tile{border-color:transparent;box-shadow:4px 10px 27px #000}
+  .frame[data-variant=b] .call{font-size:20px;line-height:24px}
+  .frame[data-variant=b] .grid .call{gap:14px}
+  .frame[data-variant=b] .collapsed .more{display:inline-flex;width:auto;margin:24px 0 0}
+  .frame[data-variant=b] .track{left:1205px;top:100px;height:632px}
 
   /* Footer + CTA */
   .footer{position:absolute;left:0;right:0;bottom:0;height:100px;z-index:5;pointer-events:none;
@@ -141,10 +176,12 @@
   </div>
 
   <div class="scroll" id="scroll" tabindex="-1">
+    <div class="sheet">
     <fieldset aria-labelledby="q"><legend>How many of you are there?</legend>
       <div class="grid" id="grid"></div>
     </fieldset>
     <button type="button" class="more" id="moreBtn" aria-label="I have a bigger group! Show 10 to 19 guests">I have a bigger group!</button>
+    </div>
   </div>
   <div class="track" id="track" aria-hidden="true"><div class="thumb" id="thumb"></div></div>
 
@@ -209,7 +246,7 @@ function setVariant(v){
   setSelected(null);
   scroll.classList.toggle('collapsed', v === 'b');
   grid.querySelectorAll('.big').forEach(el => el.classList.remove('revealed'));
-  scroll.scrollTop = 0; syncThumb();
+  scroll.scrollTop = 0; scroll.style.setProperty('--ft', '0px'); syncThumb();
   try { history.replaceState(null, '', '?v=' + v); } catch(e){}
 }
 document.querySelectorAll('.switch button').forEach(b => b.addEventListener('click', () => setVariant(b.dataset.v)));
@@ -223,7 +260,7 @@ function syncThumb(){
   thumb.style.height = th + 'px';
   thumb.style.transform = `translateY(${(scroll.scrollTop / max) * (track.clientHeight - th)}px)`;
 }
-scroll.addEventListener('scroll', syncThumb);
+scroll.addEventListener('scroll', () => { syncThumb(); scroll.style.setProperty('--ft', Math.min(scroll.scrollTop, 140) + 'px'); });
 let drag = null;
 thumb.addEventListener('pointerdown', e => {
   drag = {y: e.clientY, top: scroll.scrollTop}; thumb.setPointerCapture(e.pointerId); e.preventDefault();
@@ -243,15 +280,36 @@ track.addEventListener('pointerdown', e => {
 });
 
 /* Wheel or trackpad anywhere in the frame scrolls the grid (the page itself never scrolls) */
+/* Smooth scrolling: each wheel or trackpad movement sets a target and the grid eases towards it.
+   Applies over the panel too. Reduced-motion users get instant scrolling. */
+let target = null, raf = null;
+function step(){
+  const d = target - scroll.scrollTop;
+  if (Math.abs(d) < 0.5){ scroll.scrollTop = target; target = null; raf = null; return; }
+  scroll.scrollTop += d * 0.16;
+  raf = requestAnimationFrame(step);
+}
+function smoothBy(dy){
+  const max = scroll.scrollHeight - scroll.clientHeight;
+  target = Math.max(0, Math.min(max, (target ?? scroll.scrollTop) + dy));
+  if (reduce){ scroll.scrollTop = target; target = null; return; }
+  if (!raf) raf = requestAnimationFrame(step);
+}
+function stopSmooth(){ if (raf) cancelAnimationFrame(raf); raf = null; target = null; }
 frame.addEventListener('wheel', e => {
-  if (scroll.contains(e.target)) return;
+  const dy = e.deltaY * (e.deltaMode === 1 ? 40 : 1);
+  if (frame.dataset.variant === 'b'){            // B: native scroll over the grid, instant elsewhere (unchanged)
+    if (scroll.contains(e.target)) return;
+    e.preventDefault(); scroll.scrollBy({top: dy}); return;
+  }
   e.preventDefault();
-  scroll.scrollBy({top: e.deltaY * (e.deltaMode === 1 ? 40 : 1)});
+  smoothBy(dy);
 }, {passive:false});
+thumb.addEventListener('pointerdown', stopSmooth);
 
 /* Keyboard focus: bring the whole tile into view, clear of header and CTA (scroll-padding) */
 scroll.addEventListener('focusin', e => {
-  const tile = e.target.closest('.opt'); if (tile) tile.scrollIntoView({block:'nearest'});
+  const tile = e.target.closest('.opt'); if (tile){ stopSmooth(); tile.scrollIntoView({block:'nearest', behavior: (reduce || frame.dataset.variant === 'b') ? 'auto' : 'smooth'}); }
 });
 
 /* ---------- Variant B: load more ---------- */
