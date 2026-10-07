@@ -17,7 +17,7 @@
     { "source": "/brand-kit-bbw", "destination": "/brand-kits/bbw/gallery" },
     { "source": "/brand-kit-family", "destination": "/brand-kits/family/gallery" },
     { "source": "/phase4-lofi", "destination": "/phase4-extras-fam-lofi-v3" },
-    { "source": "/phase4-hifi", "destination": "/phase4-extras-fam-hifi" },
-    { "source": "/phase4-fam-hifi", "destination": "/phase4-extras-fam-hifi" }
+    { "source": "/phase4-hifi", "destination": "/phase4-extras-fam-hifi-v2" },
+    { "source": "/phase4-fam-hifi", "destination": "/phase4-extras-fam-hifi-v2" }
   ]
 }
