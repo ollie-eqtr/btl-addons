@@ -11,6 +11,7 @@
     { "source": "/phase3-fam-hifi", "destination": "/phase3-accom-fam-hifi" },
     { "source": "/phase3-bbw-variant", "destination": "/bbw-unit-picker-lofi" },
     { "source": "/bbw-homepage", "destination": "/external-prototypes/bbw-homepage-prototype" },
+    { "source": "/bbw-homepage-eqtr", "destination": "/bbw-homepage-prototype-eqtr" },
     { "source": "/weekender", "destination": "/external-prototypes/90s-weekender-prototype" },
     { "source": "/weekender-lineup", "destination": "/external-prototypes/90s-weekender-prototype-lineup-cta" },
     { "source": "/bbw-guests", "destination": "/bbw-guests-desktop-prototype" },
